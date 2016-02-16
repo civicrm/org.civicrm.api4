@@ -1,10 +1,17 @@
 <?php
 namespace Civi\API\V4;
 use Civi\Api4\Participant;
+use Civi\Test\HeadlessInterface;
+use Civi\Test\TransactionalInterface;
 
 /**
+ * @group headless
  */
-class ParticipantTest extends \CiviUnitTestCase {
+class ParticipantTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
+
+  public function setUpHeadless() {
+    return \Civi\Test::headless()->installMe(__DIR__)->apply();
+  }
 
   public function testGetActions() {
     $result = Participant::getActions()
@@ -47,7 +54,7 @@ class ParticipantTest extends \CiviUnitTestCase {
     $this->assertEquals(1, $firstResult['id']);
 
     // By default the $result arrayObject should be non-associative
-    $this->assertEquals([0,1,2,3,4], array_keys((array) $result));
+    $this->assertEquals([0, 1, 2, 3, 4], array_keys((array) $result));
 
     // Let's re-index by id (in v3 "sequential => 0")
     // Ditching "sequential" keeps better separation between input params and output formats

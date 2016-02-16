@@ -2,9 +2,7 @@
 
 ini_set('memory_limit', '2G');
 ini_set('safe_mode', 0);
-
-set_include_path(dirname(dirname(__DIR__)) . PATH_SEPARATOR . __DIR__ . PATH_SEPARATOR . get_include_path());
-eval(cv('php:boot --level=settings --test', TRUE));
+eval(cv('php:boot --level=classloader', 'phpcode'));
 
 /**
  * Call the "cv" command.
@@ -21,8 +19,10 @@ eval(cv('php:boot --level=settings --test', TRUE));
 function cv($cmd, $decode = 'json') {
   $cmd = 'cv ' . $cmd;
   $descriptorSpec = array(0 => array("pipe", "r"), 1 => array("pipe", "w"), 2 => STDERR);
-  $env = $_ENV + array('CV_OUTPUT' => 'json');
-  $process = proc_open($cmd, $descriptorSpec, $pipes, __DIR__, $env);
+  $oldOutput = getenv('CV_OUTPUT');
+  putenv("CV_OUTPUT=json");
+  $process = proc_open($cmd, $descriptorSpec, $pipes, __DIR__);
+  putenv("CV_OUTPUT=$oldOutput");
   fclose($pipes[0]);
   $result = stream_get_contents($pipes[1]);
   fclose($pipes[1]);

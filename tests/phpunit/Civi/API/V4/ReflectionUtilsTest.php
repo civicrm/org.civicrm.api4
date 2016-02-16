@@ -1,9 +1,17 @@
 <?php
 namespace Civi\API\V4;
+use Civi\Test\HeadlessInterface;
+use Civi\Test\TransactionalInterface;
 
 /**
+ * @group headless
  */
-class ReflectionUtilsTest extends \CiviUnitTestCase {
+class ReflectionUtilsTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
+
+  public function setUpHeadless() {
+    return \Civi\Test::headless()->installMe(__DIR__)->apply();
+  }
+
   /**
    * Test that class annotations are returned across @inheritDoc
    */
@@ -40,9 +48,9 @@ This is the base class.';
 
 /**
  * Class TestV4ReflectionBase
- * 
+ *
  * This is the base class.
- * 
+ *
  * @internal
  */
 class TestV4ReflectionBase {
@@ -54,6 +62,7 @@ class TestV4ReflectionBase {
    * @var array
    */
   public $foo = array();
+
 }
 
 /**
@@ -66,6 +75,7 @@ class TestV4ReflectionChild extends TestV4ReflectionBase {
    * In the child class, foo has been barred.
    */
   public $foo = array('bar' => 1);
+
 }
 
 /**
@@ -74,8 +84,9 @@ class TestV4ReflectionChild extends TestV4ReflectionBase {
  * This is an extended description.
  *
  * There is a line break in this description.
- * 
+ *
  * @inheritDoc
  */
 class TestV4ReflectionGrandchild extends TestV4ReflectionChild {
+
 }

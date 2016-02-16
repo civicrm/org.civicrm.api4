@@ -20,4 +20,10 @@
       <directory suffix=".php">./</directory>
     </whitelist>
   </filter>
+
+  <listeners>
+    <listener class="Civi\Test\CiviTestListener">
+      <arguments></arguments>
+    </listener>
+  </listeners>
 </phpunit>
