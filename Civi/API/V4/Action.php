@@ -59,8 +59,6 @@ abstract class Action implements \ArrayAccess {
    */
   protected $checkPermissions = FALSE;
 
-  /* @var string */
-  private $entity;
 
   /**
    * Rarely used options.
@@ -68,6 +66,9 @@ abstract class Action implements \ArrayAccess {
    * @var array
    */
   protected $options = array();
+
+  /* @var string */
+  private $entity;
 
   /* @var \ReflectionClass */
   private $thisReflection;

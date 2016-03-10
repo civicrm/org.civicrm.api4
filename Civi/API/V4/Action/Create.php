@@ -31,8 +31,7 @@ use Civi\API\V4\Action;
 /**
  * Base class for all create actions.
  *
- * @method $this setValues(array)
- * @method $this addValues(array)
+ * @method $this setValues(array) Set all field values.
  */
 class Create extends Action {
 
@@ -43,8 +42,22 @@ class Create extends Action {
    */
   protected $values = array();
 
-  public function _run(Result $result) {
+  /**
+   * Set a field value for the created object.
+   *
+   * @param string $key
+   * @param mixed $value
+   * @return $this
+   */
+  public function setValue($key, $value) {
+    $this->values[$key] = $value;
+    return $this;
+  }
 
+  /**
+   * @inheritDoc
+   */
+  public function _run(Result $result) {
   }
 
 }
