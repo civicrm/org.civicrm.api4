@@ -98,13 +98,12 @@ class Get extends API\V4\Action {
   }
 
   public function _run(API\Result $result) {
-    $query = new API\Api4SelectQuery($this->getEntity());
+    $query = new API\Api4SelectQuery($this->getEntity(), $this->checkPermissions);
     $query->select = $this->select;
     $query->where = $this->where;
     $query->orderBy = $this->orderBy;
     $query->limit = $this->limit;
     $query->offset = $this->offset;
-    $query->checkPermissions = $this->checkPermissions;
     $result->exchangeArray($query->run());
   }
 
