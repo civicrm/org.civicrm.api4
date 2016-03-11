@@ -25,13 +25,12 @@
  +--------------------------------------------------------------------+
  */
 namespace Civi\Api4;
-use Civi\API\V4\Entity;
 
 /**
  * Participant entity.
  *
- * @method static Entity\Participant\Get get
+ * @method static \Civi\API\V4\Entity\Participant\Get get
  */
-class Participant extends Entity {
+class Participant extends \Civi\API\V4\Entity {
 
 }

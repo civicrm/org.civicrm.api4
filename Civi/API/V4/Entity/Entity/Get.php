@@ -33,6 +33,11 @@ use Civi\API\V4\Action;
  */
 class Get extends Action {
 
+  /**
+   * Scan all api directories to discover entities
+   *
+   * @param \Civi\API\Result $result
+   */
   public function _run(Result $result) {
     $entities = array();
     foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {

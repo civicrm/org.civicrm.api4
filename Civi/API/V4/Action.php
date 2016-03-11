@@ -163,7 +163,6 @@ abstract class Action implements \ArrayAccess {
 
   /**
    * @param \Civi\API\Result $result
-   * @return \Civi\API\Result
    */
   abstract public function _run(Result $result);
 
