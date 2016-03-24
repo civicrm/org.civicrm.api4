@@ -11,6 +11,11 @@ Requirements
 
 Depends on CiviCRM 4.7 + [these core patches](https://github.com/civicrm/civicrm-core/pull/7725).
 
+Discussion
+----------
+
+Use the mailing list http://lists.civicrm.org/lists/info/civicrm-api
+
 Contributing
 ------------
 
