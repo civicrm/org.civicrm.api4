@@ -9,7 +9,7 @@ https://wiki.civicrm.org/confluence/display/CRM/API+v4+Spec
 Requirements
 ------------
 
-Depends on CiviCRM 4.7 + [these core patches](https://github.com/civicrm/civicrm-core/pull/7725).
+CiviCRM version 4.7.13+
 
 Discussion
 ----------
