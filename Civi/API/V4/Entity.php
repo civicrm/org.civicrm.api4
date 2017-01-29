@@ -40,9 +40,11 @@ use Civi\API\Exception\NotImplementedException;
 abstract class Entity {
 
   /**
+   * Magic method to return the action object for an api.
+   *
    * @param string $action
    * @param null $ignore
-   * @return mixed
+   * @return Action
    * @throws NotImplementedException
    */
   public static function __callStatic($action, $ignore) {
