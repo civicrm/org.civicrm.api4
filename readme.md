@@ -24,6 +24,15 @@ Create a pull-request, or, for frequent contributors, we can give you direct pus
 Architecture
 ------------
 
+The API uses some magic to extend generic PHP OOP approaches and provide easy to use naming, autoloading and self-documentation.
+In order for the magic to work coders extending the API need to use consistent paths, class names and class name-spacing.
+
+API V4 entities have both general and specific single class actions.
+Specific single-class action class are named `\Civi\API\V4\Entity\[$entity]\[ucfirst($action)]`
+and generic actions `\Civi\API\V4\Action\[ucfirst($action)]`.
+Although called as static entity class methods, each action is implemented as its own class courtesy of some magic in
+[`Civi\API\V4\Entity::__callStatic()`](Civi\API\V4\Entity.php).
+
 A series of **action classes** inherit from the base
 [`Action`](Civi/API/V4/Action.php) class
 ([`GetActions`](Civi/API/V4/Action/GetActions.php),
@@ -35,7 +44,7 @@ A series of **action classes** inherit from the base
 
 The `Action` class uses the magic [__call()](http://php.net/manual/en/language.oop5.overloading.php#object.call) method to `set`, `add` and `get` parameters. The base `execute()` method calls the core `civi_api_kernel` service `runRequest()` method. Action objects find their business access objects via [V3 API code](https://github.com/civicrm/civicrm-core/blob/master/api/v3/utils.php#L381).
 
-Each action object has a `_run()` method that accepts a decorated [arrayobject](http://php.net/manual/en/class.arrayobject.php) ([`Result`](Civi/API/Result.php)) as a parameter.
+Each action object has a `_run()` method that accepts a decorated [arrayobject](http://php.net/manual/en/class.arrayobject.php) ([`Result`](Civi/API/Result.php)) as a parameter and is accessed by the action's `execute()` method.
 
 All `action` classes accept an entity with their constructor and use the standard PHP [ReflectionClass](http://php.net/manual/en/class.reflectionclass.php)
 for metadata tracking with a custom
@@ -43,10 +52,20 @@ for metadata tracking with a custom
 
 Each `action` object also has an `$options` property and a set of methods (`offsetExists()`, `offsetGet()`,  `offsetSet()` and `offsetUnset()`) that act as interface to a `thisArrayStorage` property.
 
-The **get** action class uses a [`Api4SelectQuery`](Civi/API/Api4SelectQuery.php) object to `_run()` the query based on `select`, `where`, `orderBy`, `limit` and `offset` parameters.
+The **get** action class uses a [`Api4SelectQuery`](Civi/API/Api4SelectQuery.php) object
+(based on the core
+[SelectQuery](https://github.com/civicrm/civicrm-core/blob/master/Civi/API/SelectQuery.php) object)
+to execute the query based on the action's `select`, `where`, `orderBy`, `limit` and `offset` parameters.
 
-[Result](Civi/API/Result.php),
-[ActionObjectProvider](Civi/API/Provider/ActionObjectProvider.php),
+The **[`GetActions`](Civi/API/V4/Action/GetActions.php) action** globs the
+`Civi/API/V4/Entity/[ENTITY_NAME]` subdirectories of the
+`[get_include_path()](http://php.net/manual/en/function.get-include-path.php)`
+then the `Civi/API/V4/Action` subdirectories for generic actions. In the event
+of duplicate actions, only the first is reported.
+
+The **[`GetFields`](Civi/API/V4/Action/GetFields.php) action** uses the `[BAO]->fields()` method.
+
+todo: [ActionObjectProvider](Civi/API/Provider/ActionObjectProvider.php),
 
 Security
 --------
