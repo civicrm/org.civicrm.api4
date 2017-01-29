@@ -42,7 +42,9 @@ A series of **action classes** inherit from the base
 [`Update`](Civi/API/V4/Action/Update.php),
 [`Delete`](Civi/API/V4/Action/Delete.php)).
 
-The `Action` class uses the magic [__call()](http://php.net/manual/en/language.oop5.overloading.php#object.call) method to `set`, `add` and `get` parameters. The base `execute()` method calls the core `civi_api_kernel` service `runRequest()` method. Action objects find their business access objects via [V3 API code](https://github.com/civicrm/civicrm-core/blob/master/api/v3/utils.php#L381).
+The `Action` class uses the magic [__call()](http://php.net/manual/en/language.oop5.overloading.php#object.call) method to `set`, `add` and `get` parameters.
+The base action `execute()` method calls the core [`civi_api_kernel`](https://github.com/civicrm/civicrm-core/blob/master/Civi/API/Kernel.php)
+service `runRequest()` method. Action objects find their business access objects via [V3 API code](https://github.com/civicrm/civicrm-core/blob/master/api/v3/utils.php#L381).
 
 Each action object has a `_run()` method that accepts a decorated [arrayobject](http://php.net/manual/en/class.arrayobject.php) ([`Result`](Civi/API/Result.php)) as a parameter and is accessed by the action's `execute()` method.
 
@@ -71,6 +73,11 @@ Symfony [EventSubscriberInterface](http://symfony.com/doc/current/components/eve
 (the single `getSubscribedEvents()` method) and
 the CiviCRM [ProviderInterface](https://github.com/civicrm/civicrm-core/blob/master/Civi/API/Provider/ProviderInterface.php) interfaces
 (`invoke($apiRequest)`, `getEntityNames($version)` and `getActionNames($version, $entity)`).
+
+The
+  [`API kernel`](https://github.com/civicrm/civicrm-core/blob/master/Civi/API/Kernel.php)
+, shared with V3 of the API, is constructed with a [Symfony event dispatcher](http://api.symfony.com/3.1/Symfony/Component/EventDispatcher.html)
+and a collection of `apiProviders`.
 
 Security
 --------
