@@ -24,10 +24,10 @@ Create a pull-request, or, for frequent contributors, we can give you direct pus
 Architecture
 ------------
 
-The API uses some magic to extend generic PHP OOP approaches and provide easy to use naming, autoloading and self-documentation.
-In order for the magic to work coders extending the API need to use consistent paths, class names and class name-spacing.
+The API use embedded magic functions to extend generic PHP OOP approaches and provide easy to use naming, autoloading and self-documentation.
+In order for the magic to work, coders extending the API need to use consistent paths, class names and class name-spacing.
 
-API V4 entities have both general and specific single class actions.
+API V4 **entities** have both general and specific single class actions.
 Specific single-class action class are named `\Civi\API\V4\Entity\[$entity]\[ucfirst($action)]`
 and generic actions `\Civi\API\V4\Action\[ucfirst($action)]`.
 Although called as static entity class methods, each action is implemented as its own class courtesy of some magic in
@@ -48,7 +48,7 @@ Each action object has a `_run()` method that accepts a decorated [arrayobject](
 
 All `action` classes accept an entity with their constructor and use the standard PHP [ReflectionClass](http://php.net/manual/en/class.reflectionclass.php)
 for metadata tracking with a custom
-[`ReflectionUtils`](Civi/API/V4/ReflectionUtils.php) class to extract PHP comments. The metadata is available via `getParams()` and `getParamInfo()` methods. Each object is able to report its entitiy (`getEntity()`) and action verb (`getAction()`).
+[`ReflectionUtils`](Civi/API/V4/ReflectionUtils.php) class to extract PHP comments. The metadata is available via `getParams()` and `getParamInfo()` methods. Each action object is able to report its entitiy class name (`getEntity()`) and action verb (`getAction()`).
 
 Each `action` object also has an `$options` property and a set of methods (`offsetExists()`, `offsetGet()`,  `offsetSet()` and `offsetUnset()`) that act as interface to a `thisArrayStorage` property.
 
@@ -66,6 +66,11 @@ of duplicate actions, only the first is reported.
 The **[`GetFields`](Civi/API/V4/Action/GetFields.php) action** uses the `[BAO]->fields()` method.
 
 todo: [ActionObjectProvider](Civi/API/Provider/ActionObjectProvider.php),
+  implements the
+Symfony [EventSubscriberInterface](http://symfony.com/doc/current/components/event_dispatcher.html#using-event-subscribers)
+(the single `getSubscribedEvents()` method) and
+the CiviCRM [ProviderInterface](https://github.com/civicrm/civicrm-core/blob/master/Civi/API/Provider/ProviderInterface.php) interfaces
+(`invoke($apiRequest)`, `getEntityNames($version)` and `getActionNames($version, $entity)`).
 
 Security
 --------
