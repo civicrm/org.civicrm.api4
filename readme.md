@@ -24,7 +24,7 @@ Create a pull-request, or, for frequent contributors, we can give you direct pus
 Architecture
 ------------
 
-A series of *action classes* inherit from the base
+A series of **action classes** inherit from the base
 [`Action`](Civi/API/V4/Action.php) class
 ([`GetActions`](Civi/API/V4/Action/GetActions.php),
 [`GetFields`](Civi/API/V4/Action/GetFields.php),
@@ -39,10 +39,14 @@ Each action object has a `_run()` method that accepts a decorated [arrayobject](
 
 All `action` classes accept an entity with their constructor and use the standard PHP [ReflectionClass](http://php.net/manual/en/class.reflectionclass.php)
 for metadata tracking with a custom
-[`ReflectionUtils`](Civi/API/V4/ReflectionUtils.php) class to extract PHP comments. The metadata is available via `getParams()` and `getParamInfo()` methods. Each object is able to report it's entitiy (`getEntity()`) and action verb (`getAction()`).
+[`ReflectionUtils`](Civi/API/V4/ReflectionUtils.php) class to extract PHP comments. The metadata is available via `getParams()` and `getParamInfo()` methods. Each object is able to report its entitiy (`getEntity()`) and action verb (`getAction()`).
 
 Each `action` object also has an `$options` property and a set of methods (`offsetExists()`, `offsetGet()`,  `offsetSet()` and `offsetUnset()`) that act as interface to a `thisArrayStorage` property.
 
+The **get** action class uses a [`Api4SelectQuery`](Civi/API/Api4SelectQuery.php) object to `_run()` the query based on `select`, `where`, `orderBy`, `limit` and `offset` parameters.
+
+[Result](Civi/API/Result.php),
+[ActionObjectProvider](Civi/API/Provider/ActionObjectProvider.php),
 
 Security
 --------
