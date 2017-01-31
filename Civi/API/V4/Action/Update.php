@@ -26,7 +26,6 @@
  */
 namespace Civi\API\V4\Action;
 use Civi\API\Result;
-use Civi\API\V4\Action;
 
 /**
  * Here's an idea... if we use one action to extend another, "update" inherits all the abilities of "get"
@@ -34,7 +33,7 @@ use Civi\API\V4\Action;
  * @method $this setValues(array)
  * @method $this addValues(array)
  */
-class Update extends Action {
+class Update extends Get {
 
   /**
    * Field values to set

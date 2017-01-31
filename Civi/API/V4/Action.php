@@ -52,12 +52,12 @@ abstract class Action implements \ArrayAccess {
   /**
    * Whether to enforce acl permissions based on the current user.
    *
-   * In PHP, this defaults to false.
-   * In REST/javascript this defaults to true and cannot be disabled.
+   * Setting to FALSE will disable permission checks and override ACLs.
+   * In REST/javascript this cannot be disabled.
    *
    * @var bool|string|int
    */
-  protected $checkPermissions = FALSE;
+  protected $checkPermissions = TRUE;
 
 
   /**
