@@ -56,7 +56,11 @@ Each `action` object also has an `$options` property and a set of methods (`offs
 
 The **get** action class uses a [`Api4SelectQuery`](Civi/API/Api4SelectQuery.php) object
 (based on the core
-[SelectQuery](https://github.com/civicrm/civicrm-core/blob/master/Civi/API/SelectQuery.php) object)
+[SelectQuery](https://github.com/civicrm/civicrm-core/blob/master/Civi/API/SelectQuery.php)
+object which uses
+[the V3 API utilities](https://github.com/civicrm/civicrm-core/blob/master/api/v3/utils.php)
+and the
+[CRM_Utils_SQL_Select](https://github.com/civicrm/civicrm-core/blob/master/CRM/Utils/SQL/Select.php) class)
 to execute the query based on the action's `select`, `where`, `orderBy`, `limit` and `offset` parameters.
 
 The **[`GetActions`](Civi/API/V4/Action/GetActions.php) action** globs the
