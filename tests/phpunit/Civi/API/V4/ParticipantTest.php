@@ -1,5 +1,7 @@
 <?php
 namespace Civi\API\V4;
+// fixme - what am I doing wrong to need this line?
+require 'UnitTestCase.php';
 use Civi\Api4\Participant;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
@@ -7,10 +9,22 @@ use Civi\Test\TransactionalInterface;
 /**
  * @group headless
  */
-class ParticipantTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
+//class ParticipantTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
+class ParticipantTest extends UnitTestCase  {
 
-  public function setUpHeadless() {
-    return \Civi\Test::headless()->installMe(__DIR__)->apply();
+ /**
+   * Tears down the fixture, for example, closes a network connection.
+   *
+   * This method is called after a test is executed.
+   */
+  public function tearDown() {
+    parent::tearDown();
+    $cleanup_params = array(
+      'tablesToTruncate' => array(
+        'civicrm_participant',
+      ),
+    );
+    $this->cleanup($cleanup_params);
   }
 
   public function testGetActions() {
@@ -33,9 +47,10 @@ class ParticipantTest extends \PHPUnit_Framework_TestCase implements HeadlessInt
     // )->version = 4
     //  ->entity = 'Participant'
     //  ->action = 'get'
-    $result = Participant::get()
-      ->setLimit(5)
-      ->execute();
+
+    $call = Participant::get()
+      ->setLimit(5);
+    $result = $call->execute();
 
     // Check that the $result arrayObject knows what the inputs were
     $this->assertEquals('Participant', $result->entity);
@@ -44,7 +59,22 @@ class ParticipantTest extends \PHPUnit_Framework_TestCase implements HeadlessInt
     // Result object ought to know what version of the api we are using
     $this->assertEquals(4, $result->version);
 
+    // @todo test these:
+    //$paramInfo = Participant::get()->getParamInfo();
+    //    $paramInfo = Participant::get()->getParams();
+    //    \Civi::log()->info('base params', $paramInfo);
+    //    $paramInfo = $call->getParams();
+    //    \Civi::log()->info('params', $paramInfo);
+
     //TODO: need to create some test records before proceeding
+    // - flush participant table
+    // - get some contacts
+    //  $result = civicrm_api3('Contact', 'get', array('sequential' => 1));
+    // - get an event
+    // - create a participant record
+    // - retrieve a participant record
+    // - update some records
+    // - delete some records
     $this->markTestIncomplete();
 
     // Here's a convenient way to get the first result - maybe a replacement for getsingle
