@@ -183,7 +183,7 @@ abstract class Action implements \ArrayAccess {
    * Get documentation for one or all params
    *
    * @param string $param
-   * @return array
+   * @return array of arrays [description, type, default, (comment)]
    */
   public function getParamInfo($param = NULL) {
     if (!isset($this->thisParamInfo)) {

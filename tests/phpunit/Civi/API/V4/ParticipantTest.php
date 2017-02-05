@@ -77,6 +77,24 @@ class ParticipantTest extends UnitTestCase  {
     $e1 = $this->createEntity(array('type' => 'Event', 'seq' => 1));
     \Civi::log()->debug('e1', $e1);
     // - create a participant record
+    $participant_rec = $this->sample(array(
+      'type' => 'Participant',
+      'overrides' => array(
+        'event_id' => $e1['id'],
+        'contact_id' => $c1['id'],
+    )))['sample_params'];
+    \Civi::log()->debug('participant_rec', $participant_rec);
+
+    $create_result = Participant::create()
+      ->setValues($participant_rec)
+      ->execute();
+    \Civi::log()->debug('create_result'.json_encode($create_result, JSON_PRETTY_PRINT));
+
+//    $p1 = $this->createEntity(array(
+//      'type' => 'Participant',
+//      'overrides' => $participant_rec,
+//    ));
+
     // - retrieve a participant record
     // - update some records
     // - delete some records

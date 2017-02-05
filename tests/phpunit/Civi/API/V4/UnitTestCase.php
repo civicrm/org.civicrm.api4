@@ -65,10 +65,9 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
    */
   public function createEntity($params) {
     $data = $this->sample($params);
-    $result = civicrm_api3(
-        $data['entity'],
-        'create',
-        array('sequential' => 1) + $data['sample_params']);
+    $api_params = array('sequential' => 1) + $data['sample_params'];
+    \Civi::log()->debug('api_params', $api_params);
+    $result = civicrm_api3($data['entity'], 'create', $api_params);
     if ($result['is_error']) {
       throw new Exception("creating $data[entity] failed");
     }
@@ -135,6 +134,13 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
         'is_monetary' => 0,
         'is_active' => 1,
         'is_show_location' => 0,
+      ),
+      'Participant' => array(
+        'status_id' => 2,
+        'role_id' => 1,
+        'register_date' => 20070219,
+        'source' => 'Wimbeldon',
+        'event_level' => 'Payment',
       ),
     );
     $sample_params = array();

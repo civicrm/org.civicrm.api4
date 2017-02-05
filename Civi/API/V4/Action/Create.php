@@ -43,6 +43,23 @@ class Create extends Action {
   protected $values = array();
 
   /**
+   * Bao object based on the entity
+   *
+   * @var object
+   */
+  protected $bao;
+
+  /**
+   * Action constructor.
+   * @param string $entity
+   */
+  public function __construct($entity) {
+    parent::__construct($entity);
+    $bao_name = $this->getBaoName();
+    $this->bao = new $bao_name();
+  }
+
+  /**
    * Set a field value for the created object.
    *
    * @param string $key
@@ -55,9 +72,35 @@ class Create extends Action {
   }
 
   /**
+   * Extract the true fields from a BAO
+   *
+   * @param object $bao
+   * @return array
+   */
+  public function baoToArray($bao) {
+    $fields = $bao->fields();
+    \Civi::log()->debug('fields'. json_encode($fields, JSON_PRETTY_PRINT));
+    $values = array();
+    foreach ($fields as $key => $field) {
+      $name = $field['name'];
+      if (property_exists($bao, $name)) {
+        $values[$name] = $bao->$name;
+      }
+    }
+    return $values;
+  }
+
+  /**
    * @inheritDoc
    */
   public function _run(Result $result) {
+    $create_params = $this->getParams()['values'];
+    // get a bao back from the standard factory method
+    $create_result = $this->bao->create($create_params);
+    // trim back the junk and just get the array:
+    $result_as_array = $this->baoToArray($create_result);
+    $result->exchangeArray($result_as_array);
+    return $this;
   }
 
 }
