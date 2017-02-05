@@ -67,10 +67,15 @@ class ParticipantTest extends UnitTestCase  {
     //    \Civi::log()->info('params', $paramInfo);
 
     //TODO: need to create some test records before proceeding
-    // - flush participant table
+    // - flush participant table (done on setup)
     // - get some contacts
-    //  $result = civicrm_api3('Contact', 'get', array('sequential' => 1));
+    $c1 = $this->createEntity(array('type' => 'Individual', 'seq' => 1));
+    \Civi::log()->debug('c1', $c1);
+    $c2 = $this->createEntity(array('type' => 'Individual', 'seq' => 2));
+    \Civi::log()->debug('c2', $c2);
     // - get an event
+    $e1 = $this->createEntity(array('type' => 'Event', 'seq' => 1));
+    \Civi::log()->debug('e1', $e1);
     // - create a participant record
     // - retrieve a participant record
     // - update some records
