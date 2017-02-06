@@ -58,24 +58,43 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
   }
 
   /**
+   * Quick record counter
+   *
+   * @param string $table_name
+   * @returns int record count
+   */
+  public function countTable($table_name) {
+    $sql = "SELECT count(*) FROM $table_name";
+    return (int)\CRM_Core_DAO::singleValueQuery($sql);
+  }
+
+  /**
    * Create sample entities (using V3 for now).
    *
-   * @param array (type, seq, overrides)
-   * @return array
+   * @param array (type, seq, overrides, count)
+   * @return array (either single, or array of array if count >1)
    */
   public function createEntity($params) {
-    $data = $this->sample($params);
-    $api_params = array('sequential' => 1) + $data['sample_params'];
-    \Civi::log()->debug('api_params', $api_params);
-    $result = civicrm_api3($data['entity'], 'create', $api_params);
-    if ($result['is_error']) {
-      throw new Exception("creating $data[entity] failed");
+    $params += array(
+      'count' => 1,
+      'seq' => 0,
+    );
+    $entities = array();
+    for ($i = 0; $i < $params['count']; $i++) {
+      $params['seq']++;
+      $data = $this->sample($params);
+      $api_params = array('sequential' => 1) + $data['sample_params'];
+      $result = civicrm_api3($data['entity'], 'create', $api_params);
+      if ($result['is_error']) {
+        throw new Exception("creating $data[entity] failed");
+      }
+      $entity = $result['values'][0];
+      if (!($entity['id'] > 0)) {
+        throw new Exception("created entity is malformed");
+      }
+      $entities[] = $entity;
     }
-    $entity = $result['values'][0];
-    if (!($entity['id'] > 0)) {
-      throw new Exception("created entity is malformed");
-    }
-    return $entity;
+    return $params['count'] == 1 ? $entity : $entities;
   }
 
   /**
