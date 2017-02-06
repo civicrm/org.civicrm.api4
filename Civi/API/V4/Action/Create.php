@@ -68,26 +68,8 @@ class Create extends Action {
    */
   public function setValue($key, $value) {
     $this->values[$key] = $value;
+    \Civi::log()->debug('setting $key: '.json_encode($key,JSON_PRETTY_PRINT));
     return $this;
-  }
-
-  /**
-   * Extract the true fields from a BAO
-   *
-   * @param object $bao
-   * @return array
-   */
-  public function baoToArray($bao) {
-    $fields = $bao->fields();
-    \Civi::log()->debug('fields'. json_encode($fields, JSON_PRETTY_PRINT));
-    $values = array();
-    foreach ($fields as $key => $field) {
-      $name = $field['name'];
-      if (property_exists($bao, $name)) {
-        $values[$name] = $bao->$name;
-      }
-    }
-    return $values;
   }
 
   /**
@@ -99,8 +81,8 @@ class Create extends Action {
     $create_result = $this->bao->create($create_params);
     // trim back the junk and just get the array:
     $result_as_array = $this->baoToArray($create_result);
+    // fixme should return a single row array???
     $result->exchangeArray($result_as_array);
-    return $this;
   }
 
 }
