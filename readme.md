@@ -25,7 +25,7 @@ $params array will be organized into categories, expanding on the "options" conv
   ->addOrderBy('sort_name', 'DESC')
   ->setCheckPermissions(TRUE)
   ->execute();
- 
+
 // traditional style
 civicrm_api4('Contact', 'get', array(
   'select' => array('id', 'sort_name'),
@@ -38,20 +38,21 @@ civicrm_api4('Contact', 'get', array(
 Output
 ------
 
-The php binding returns an arrayObject. This gives immediate access to the results, plus allows returning additional properties.
+The php binding returns an [arrayObject](http://php.net/manual/en/class.arrayobject.php). This gives immediate access to the results, plus allows returning additional metadata properties.
+
 
 ```php
 $result = \Civi\Api4\Contact::get()->execute();
- 
+
 // you can loop through the results directly
 foreach ($result as $contact) {}
- 
+
 // you can just grab the first one
 $contact1 = $result->first();
- 
+
 // reindex results on-the-fly (replacement for sequential=1 in v3)
 $result->indexBy('id');
- 
+
 // or fetch some metadata about the call
 $entity = $result->entity; // "Contact"
 $fields = $result->fields; // contact getfields
@@ -63,14 +64,29 @@ We can do the something very similar in javascript thanks to js arrays also bein
 CRM.api4('Contact', 'get', params).done(function(result) {
   // you can loop through the results
   result.forEach(function(contact, n) {});
- 
+
   // you can just grab the first one
   var contact1 = result[0];
- 
+
   // or fetch some metadata about the call
   var entity = result.entity; // "Contact"
 });
-``` 
+```
+
+Creating a new action
+---------------------
+
+For update operations extend the get class to allow batch operation (paging)
+
+Upgrading from Version 3:
+-------------------------
+
+API4 will be a while before it is ready to take over.
+
+These are notable changes:
+
+* Use `$result->indexBy('id');` rather than `sequential => 0`.
+* `getSingle` is gone, use `$result->first()`
 
 Feature Wishlist
 ----------------
