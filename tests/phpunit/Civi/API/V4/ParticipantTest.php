@@ -1,5 +1,7 @@
 <?php
 namespace Civi\API\V4;
+// fixme - what am I doing wrong to need this line?
+require 'UnitTestCase.php';
 use Civi\Api4\Participant;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
@@ -7,10 +9,28 @@ use Civi\Test\TransactionalInterface;
 /**
  * @group headless
  */
-class ParticipantTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
+//class ParticipantTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
+class ParticipantTest extends UnitTestCase  {
 
-  public function setUpHeadless() {
-    return \Civi\Test::headless()->installMe(__DIR__)->apply();
+ /**
+   * Set up baseline for testing
+   */
+  public function setUp() {
+    parent::tearDown();
+    $cleanup_params = array(
+      'tablesToTruncate' => array(
+        'civicrm_participant',
+      ),
+    );
+    $this->cleanup($cleanup_params);
+  }
+
+ /**
+   * Tears down the fixture, for example, closes a network connection.
+   *
+   * This method is called after a test is executed.
+   */
+  public function tearDown() {
   }
 
   public function testGetActions() {
@@ -23,51 +43,94 @@ class ParticipantTest extends \PHPUnit_Framework_TestCase implements HeadlessInt
   }
 
   public function testGet() {
-    // Api4 calls returns an arrayObject
-    // @see http://php.net/manual/en/class.arrayobject.php
-    // You can 'foreach' it like a normal array and it also stores "extra" properties - perfect for api metadata
-    // It looks like this:
-    // $result = array(
-    //   1 => array('id' => 123, 'event_id' => 12, 'contact_id' => 456... etc),
-    //   2 => array('id' => ... etc),
-    // )->version = 4
-    //  ->entity = 'Participant'
-    //  ->action = 'get'
-    $result = Participant::get()
-      ->setLimit(5)
-      ->execute();
 
-    // Check that the $result arrayObject knows what the inputs were
-    $this->assertEquals('Participant', $result->entity);
-    $this->assertEquals('get', $result->action);
+    $sql_count = $this->countTable('civicrm_participant');
+    $this->assertEquals(0, $sql_count,
+      "baseline count using SQL shows records still in table");
+
+    // test behaviour with no records:
+    $call = Participant::get()
+      ->setLimit(5);
+    $empty_result = $call->execute();
+    $this->assertEquals(0, count($empty_result),
+      "count of empty get is not 0");
+
+    // Check that the $empty_result arrayObject knows what the inputs were
+    $this->assertEquals('Participant', $empty_result->entity);
+    $this->assertEquals('get', $empty_result->action);
 
     // Result object ought to know what version of the api we are using
-    $this->assertEquals(4, $result->version);
+    $this->assertEquals(4, $empty_result->version);
 
-    //TODO: need to create some test records before proceeding
-    $this->markTestIncomplete();
+    // @todo test these:
+    //$paramInfo = Participant::get()->getParamInfo();
+    //    $paramInfo = Participant::get()->getParams();
+    //    $paramInfo = $call->getParams();
 
-    // Here's a convenient way to get the first result - maybe a replacement for getsingle
-    // Rationale for ditching getsingle - it's an output format & not a real action
-    // and output transformations would be better handled by the $result object.
+    // Create some test related records before proceeding
+    // (5 contacts to register with 2 events)
+    $contacts = $this->createEntity(array(
+      'type' => 'Individual',
+      'count' => 5,
+      'seq' => 1));
+    $events = $this->createEntity(array(
+      'type' => 'Event',
+      'count' => 2,
+      'seq' => 1));
+    // - create participants record
+    foreach ($contacts as $i => $contact) {
+      $participants[$i] = $this->sample(array(
+        'type' => 'Participant',
+        'overrides' => array(
+          'event_id' => $events[$i % 2]['id'],
+          'contact_id' => $contact['id'],
+      )))['sample_params'];
+      $create_result = Participant::create()
+        ->setValues($participants[$i])
+        ->execute();
+    }
+    $sql_count = $this->countTable('civicrm_participant');
+    $this->assertEquals(5, $sql_count,
+      "count using SQL shows records not created");
+
+    $call = Participant::get()
+      ->setLimit(2);
+    $result = $call->execute();
+    $this->assertEquals(2, count($result),
+      "did not get back two records as expected");
+
+    // fixme - this is a bit brittle?
     $firstResult = $result->first();
     $this->assertEquals(1, $firstResult['id']);
 
     // By default the $result arrayObject should be non-associative
-    $this->assertEquals([0, 1, 2, 3, 4], array_keys((array) $result));
+    $this->assertEquals([1, 2], array_keys((array)$result));
 
-    // Let's re-index by id (in v3 "sequential => 0")
-    // Ditching "sequential" keeps better separation between input params and output formats
+    // test indexBy():
     $result->indexBy('id');
-    // Array should still contain 5 items after re-index
-    $this->assertEquals(5, count($result));
+    // Array should still contain 2 items after re-index
+    $this->assertEquals(2, count($result));
 
     // All values should now be keyed by id
-    // This demonstrates how the $results object can be treated like a normal array
-    // Meta properties like entity and version will not be looped
     foreach ($result as $key => $values) {
       $this->assertEquals($values['id'], $key);
     }
+
+    // - retrieve a participant record
+    // - update some records
+    $patch_record = array(
+      'source' => "not " . $firstResult['source'],
+    );
+    $first_event_id = $events[0]['id'];
+    $call = Participant::update()
+      ->addWhere('event_id', '=', $first_event_id)
+      ->setLimit(20)
+      ->setValues($patch_record)
+      ->execute();
+      \Civi::log()->debug('$call: '.json_encode($call,JSON_PRETTY_PRINT));
+
+    // - delete some records
+    // $this->markTestIncomplete();
   }
 
 }

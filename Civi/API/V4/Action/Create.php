@@ -43,6 +43,23 @@ class Create extends Action {
   protected $values = array();
 
   /**
+   * Bao object based on the entity
+   *
+   * @var object
+   */
+  protected $bao;
+
+  /**
+   * Action constructor.
+   * @param string $entity
+   */
+  public function __construct($entity) {
+    parent::__construct($entity);
+    $bao_name = $this->getBaoName();
+    $this->bao = new $bao_name();
+  }
+
+  /**
    * Set a field value for the created object.
    *
    * @param string $key
@@ -51,6 +68,7 @@ class Create extends Action {
    */
   public function setValue($key, $value) {
     $this->values[$key] = $value;
+    \Civi::log()->debug('setting $key: '.json_encode($key,JSON_PRETTY_PRINT));
     return $this;
   }
 
@@ -58,6 +76,13 @@ class Create extends Action {
    * @inheritDoc
    */
   public function _run(Result $result) {
+    $create_params = $this->getParams()['values'];
+    // get a bao back from the standard factory method
+    $create_result = $this->bao->create($create_params);
+    // trim back the junk and just get the array:
+    $result_as_array = $this->baoToArray($create_result);
+    // fixme should return a single row array???
+    $result->exchangeArray($result_as_array);
   }
 
 }

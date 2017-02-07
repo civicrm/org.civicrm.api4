@@ -43,14 +43,23 @@ class Update extends Get {
   protected $values = array();
 
   public function _run(Result $result) {
+    $bao_name = $this->getBaoName();
     // First run the parent action (get)
     $this->select = array('id');
+    $patch_values = $this->getParams()['values'];
     parent::_run($result);
     // Then act on the result
+    $updated_results = array();
     foreach ($result as $item) {
+      // todo confirm we need a new object
+      $bao = new $bao_name();
+      $patch = $item + $patch_values;
       // update it
+      $update_result_bao = $bao->create($patch);
+      // trim back the junk and just get the array:
+      $updated_results[] = $this->baoToArray($update_result_bao);
     }
-    return $result;
+    $result->exchangeArray($updated_results);
   }
 
 }
