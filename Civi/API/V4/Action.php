@@ -143,7 +143,7 @@ abstract class Action implements \ArrayAccess {
           return $this;
       }
     }
-    throw new \API_Exception('Unknown api parameter');
+    throw new \API_Exception('Unknown api parameter: ' . $name);
   }
 
   /**
@@ -183,7 +183,7 @@ abstract class Action implements \ArrayAccess {
    * Get documentation for one or all params
    *
    * @param string $param
-   * @return array
+   * @return array of arrays [description, type, default, (comment)]
    */
   public function getParamInfo($param = NULL) {
     if (!isset($this->thisParamInfo)) {
@@ -288,5 +288,25 @@ abstract class Action implements \ArrayAccess {
     }
     unset($this->thisArrayStorage[$offset]);
   }
+
+  /**
+   * Extract the true fields from a BAO
+   *
+   * (Used by create and update actions)
+   * @param object $bao
+   * @return array
+   */
+  public static function baoToArray($bao) {
+    $fields = $bao->fields();
+    $values = array();
+    foreach ($fields as $key => $field) {
+      $name = $field['name'];
+      if (property_exists($bao, $name)) {
+        $values[$name] = $bao->$name;
+      }
+    }
+    return $values;
+  }
+
 
 }
