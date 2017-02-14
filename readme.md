@@ -5,6 +5,7 @@ Design Principles
 -----------------
 
 * **TDD** - tests come first; writing the tests will inform design decisions.
+* **Massively Scalable** - built from the outset with a view to support massive scales via asynchronous queues, efficient caching, job prioritisation etc.
 * **Clean** - leave all the legacy cruft in v3 and start with a clean slate.
 * **Consistent** - uniformity between all entities as much as possible, minimize oddities.
 * **Strict** - ditch the aliases, unique names, camelCase conversions, and alternate syntaxes. Params will only be accepted in one format.
