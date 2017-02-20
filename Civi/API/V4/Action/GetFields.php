@@ -33,6 +33,9 @@ use Civi\API\V4\Action;
  */
 class GetFields extends Action {
 
+  // over-ride default to allow open access
+  protected $checkPermissions = FALSE;
+
   public function _run(Result $result) {
     $baoName = $this->getBaoName();
     $bao = new $baoName();

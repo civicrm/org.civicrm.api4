@@ -38,6 +38,7 @@ class ParticipantTest extends UnitTestCase  {
       ->execute()
       ->indexBy('name');
 
+    // fixme why is this failing?
     $this->assertEquals(FALSE, $result['get']['params']['checkPermissions']['default']);
     $this->assertEquals('Array of conditions keyed by field.', $result['get']['params']['where']['description']);
   }
