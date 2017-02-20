@@ -130,6 +130,17 @@ class ParticipantTest extends UnitTestCase  {
       \Civi::log()->debug('$call: '.json_encode($call,JSON_PRETTY_PRINT));
 
     // - delete some records
+    $second_event_id = $events[1]['id'];
+    $delete_result = Participant::delete()
+      ->addWhere('event_id', '=', $second_event_id)
+      ->execute();
+    $this->assertEquals(array(2,4), (array)$delete_result,
+      "didn't delete every second record as expected");
+
+    $sql_count = $this->countTable('civicrm_participant');
+    $this->assertEquals(3, $sql_count,
+      "records not gone from database after delete");
+
     // $this->markTestIncomplete();
   }
 
