@@ -35,6 +35,7 @@ class ParticipantTest extends UnitTestCase  {
 
   public function testGetActions() {
     $result = Participant::getActions()
+      ->setCheckPermissions(FALSE)
       ->execute()
       ->indexBy('name');
 
@@ -50,6 +51,7 @@ class ParticipantTest extends UnitTestCase  {
 
     // test behaviour with no records:
     $call = Participant::get()
+      ->setCheckPermissions(FALSE)
       ->setLimit(5);
     $empty_result = $call->execute();
     $this->assertEquals(0, count($empty_result),
@@ -87,6 +89,7 @@ class ParticipantTest extends UnitTestCase  {
       )))['sample_params'];
       $create_result = Participant::create()
         ->setValues($participants[$i])
+        ->setCheckPermissions(FALSE)
         ->execute();
     }
     $sql_count = $this->countTable('civicrm_participant');
@@ -94,6 +97,7 @@ class ParticipantTest extends UnitTestCase  {
       "count using SQL shows records not created");
 
     $call = Participant::get()
+      ->setCheckPermissions(FALSE)
       ->setLimit(2);
     $result = $call->execute();
     $this->assertEquals(2, count($result),
@@ -126,6 +130,7 @@ class ParticipantTest extends UnitTestCase  {
       ->addWhere('event_id', '=', $first_event_id)
       ->setLimit(20)
       ->setValues($patch_record)
+      ->setCheckPermissions(FALSE)
       ->execute();
       \Civi::log()->debug('$call: '.json_encode($call,JSON_PRETTY_PRINT));
 
@@ -133,6 +138,7 @@ class ParticipantTest extends UnitTestCase  {
     $second_event_id = $events[1]['id'];
     $delete_result = Participant::delete()
       ->addWhere('event_id', '=', $second_event_id)
+      ->setCheckPermissions(FALSE)
       ->execute();
     $this->assertEquals(array(2,4), (array)$delete_result,
       "didn't delete every second record as expected");
