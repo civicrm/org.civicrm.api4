@@ -143,6 +143,8 @@ A series of **action classes** inherit from the base
 [`Update`](Civi/API/V4/Action/Update.php),
 [`Delete`](Civi/API/V4/Action/Delete.php)).
 
+Update actions extend the `Get` class allowing them to perform bulk operations.
+
 The `Action` class uses the magic [__call()](http://php.net/manual/en/language.oop5.overloading.php#object.call) method to `set`, `add` and `get` parameters.
 The base action `execute()` method calls the core [`civi_api_kernel`](https://github.com/civicrm/civicrm-core/blob/master/Civi/API/Kernel.php)
 service `runRequest()` method. Action objects find their business access objects via [V3 API code](https://github.com/civicrm/civicrm-core/blob/master/api/v3/utils.php#L381).
