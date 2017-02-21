@@ -34,7 +34,10 @@ use Civi\API\V4\ReflectionUtils;
  * Get actions for an entity with a list of accepted params
  */
 class GetActions extends Action {
-  
+
+  // over-ride default to allow open access
+  protected $checkPermissions = FALSE;
+
   private $_actions = array();
 
   public function _run(Result $result) {
