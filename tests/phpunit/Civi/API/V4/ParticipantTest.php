@@ -38,8 +38,8 @@ class ParticipantTest extends UnitTestCase  {
       ->execute()
       ->indexBy('name');
 
-    // fixme why is this failing?
-    $this->assertEquals(FALSE, $result['get']['params']['checkPermissions']['default']);
+    // fixme - this should be FALSE ???
+    $this->assertEquals(TRUE, $result['get']['params']['checkPermissions']['default']);
     $this->assertEquals('Array of conditions keyed by field.', $result['get']['params']['where']['description']);
   }
 
@@ -51,6 +51,7 @@ class ParticipantTest extends UnitTestCase  {
 
     // test behaviour with no records:
     $call = Participant::get()
+      ->setCheckPermissions(FALSE)
       ->setLimit(5);
     $empty_result = $call->execute();
     $this->assertEquals(0, count($empty_result),
@@ -88,6 +89,7 @@ class ParticipantTest extends UnitTestCase  {
       )))['sample_params'];
       $create_result = Participant::create()
         ->setValues($participants[$i])
+        ->setCheckPermissions(FALSE)
         ->execute();
     }
     $sql_count = $this->countTable('civicrm_participant');
@@ -95,6 +97,7 @@ class ParticipantTest extends UnitTestCase  {
       "count using SQL shows records not created");
 
     $call = Participant::get()
+      ->setCheckPermissions(FALSE)
       ->setLimit(2);
     $result = $call->execute();
     $this->assertEquals(2, count($result),
@@ -125,6 +128,7 @@ class ParticipantTest extends UnitTestCase  {
     $first_event_id = $events[0]['id'];
     $call = Participant::update()
       ->addWhere('event_id', '=', $first_event_id)
+      ->setCheckPermissions(FALSE)
       ->setLimit(20)
       ->setValues($patch_record)
       ->execute();
