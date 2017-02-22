@@ -34,14 +34,20 @@ class Api4SelectQuery extends SelectQuery {
 
   /**
    * @inheritDoc
+   * old style was [$key => $value, $key1 => $value1]  where $value was [operator => criteria]
+   * new style = [$fieldName, $operator, $criteria]
    */
   protected function buildWhereClause() {
-    foreach ($this->where as $key => $value) {
+    foreach ($this->where as $clause) {
+      $key = $clause[0];
+      $operator = $clause[1];
+      $criteria = $clause[2];
+      $value = array($operator => $criteria);
+      // $field = $this->getField($key); // <<-- unused
+
+      // derive table and column:
       $table_name = NULL;
       $column_name = NULL;
-
-      $field = $this->getField($key);
-
       if (in_array($key, $this->entityFieldNames)) {
         $table_name = self::MAIN_TABLE_ALIAS;
         $column_name = $key;
@@ -60,22 +66,13 @@ class Api4SelectQuery extends SelectQuery {
       if (!$table_name || !$column_name || is_null($value)) {
         throw new \API_Exception("Invalid field '$key' in where clause.");
       }
-      if (!is_array($value)) {
-        $this->query->where(array("`$table_name`.`$column_name` = @value"), array(
-          "@value" => $value,
-        ));
-      }
-      // We expect only one element in the array, of the form ["operator" => "rhs"].
-      elseif (count($value) !== 1) {
+
+      $clause = \CRM_Core_DAO::createSQLFilter("`$table_name`.`$column_name`", $value);
+      if ($clause === NULL) {
         throw new \API_Exception("Invalid value in where clause for field '$key'");
       }
-      else {
-        $clause = \CRM_Core_DAO::createSQLFilter("`$table_name`.`$column_name`", $value);
-        if ($clause === NULL) {
-          throw new \API_Exception("Invalid value in where clause for field '$key'");
-        }
-        $this->query->where($clause);
-      }
+      $this->query->where($clause);
+
     }
   }
 

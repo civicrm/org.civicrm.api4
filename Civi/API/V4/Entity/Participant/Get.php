@@ -38,7 +38,7 @@ class Get extends \Civi\API\V4\Action\Get {
    * $example->addWhere('contact_id.contact_type', 'IN', array('Individual', 'Household'))
    */
   protected $where = array(
-    'is_test' => 0,
+    array('is_test', '=', 0),
   );
 
 }
