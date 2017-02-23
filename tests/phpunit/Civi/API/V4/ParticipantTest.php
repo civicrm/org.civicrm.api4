@@ -121,12 +121,32 @@ class ParticipantTest extends UnitTestCase  {
       $this->assertEquals($values['id'], $key);
     }
 
+    $first_event_id = $events[0]['id'];
+    $second_event_id = $events[1]['id'];
+
+    $first_only_result = Participant::get()
+      ->setCheckPermissions(FALSE)
+      ->addClause(array('event_id', '=', $first_event_id))
+      ->execute();
+
+    $this->assertEquals(3, count($first_only_result),
+      "count of first event is not 3");
+
+    $all_result = Participant::get()
+      ->setCheckPermissions(FALSE)
+      ->addClause(array('OR', array(
+        array('event_id', '=', $first_event_id),
+        array('event_id', '=', $second_event_id))
+      ))
+      ->execute();
+    $this->assertEquals(5, count($all_result),
+      "count of first event is not 5");
+
     // - retrieve a participant record
     // - update some records
     $patch_record = array(
       'source' => "not " . $firstResult['source'],
     );
-    $first_event_id = $events[0]['id'];
     $call = Participant::update()
       ->addWhere('event_id', '=', $first_event_id)
       ->setCheckPermissions(FALSE)

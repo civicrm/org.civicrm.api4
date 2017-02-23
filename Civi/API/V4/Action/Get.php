@@ -88,6 +88,16 @@ class Get extends API\V4\Action {
   }
 
   /**
+   * @param array $clause
+   * @return $this
+   * @throws \API_Exception
+   */
+  public function addClause($clause) {
+    $this->where[] = $clause;
+    return $this;
+  }
+
+  /**
    * @param string $field
    * @param string $direction
    * @return $this
