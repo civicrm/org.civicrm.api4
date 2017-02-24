@@ -189,7 +189,7 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
     if (!count($sample_params)) {
       throw new Exception("unknown sample type: $type");
     }
-    $sample_params += $params['overrides'];
+    $sample_params = $params['overrides'] + $sample_params;
     return compact("entity", "sample_params");
   }
 

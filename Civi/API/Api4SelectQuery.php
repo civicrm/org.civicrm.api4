@@ -27,11 +27,11 @@
 namespace Civi\API;
 
 /**
- * A query node may be in one of three formats:
+ * A query `node` may be in one of three formats:
  *
  * * leaf: [$fieldName, $operator, $criteria]
- * * negated: ['NOT', $leaf]
- * * branch: ['OR|NOT', [$leaf, $leaf, ...]]
+ * * negated: ['NOT', $node]
+ * * branch: ['OR|NOT', [$node, $node, ...]]
  *
  * Leaf operators are one of:
  *
