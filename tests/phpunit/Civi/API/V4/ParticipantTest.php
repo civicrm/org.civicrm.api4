@@ -106,7 +106,6 @@ class ParticipantTest extends UnitTestCase  {
         ->setCheckPermissions(FALSE)
         ->execute();
     }
-    echo '$dummy: '.json_encode($dummy,JSON_PRETTY_PRINT)."\n";
     $sql_count = $this->countTable('civicrm_participant');
     $this->assertEquals($participant_count, $sql_count,
       "count using SQL shows records not created");
@@ -194,7 +193,6 @@ class ParticipantTest extends UnitTestCase  {
     $this->assertEquals(1, count($first_participant_result),
       "more than one registration");
     $first_participant = $first_participant_result->first()['id'];
-    echo '$first_participant: '.json_encode($first_participant,JSON_PRETTY_PRINT)."\n";
     // get a result which excludes $first_participant
     // using 2 different approaches
     $not_first_participant_result = Participant::get()
@@ -239,19 +237,19 @@ class ParticipantTest extends UnitTestCase  {
       ->setValues($patch_record)
       ->setCheckPermissions(FALSE)
       ->execute();
-      \Civi::log()->debug('$call: '.json_encode($call,JSON_PRETTY_PRINT));
 
     // - delete some records
-    $second_event_id = $events[1]['id'];
+    $second_event_id = $dummy['events'][1]['id'];
     $delete_result = Participant::delete()
       ->addWhere('event_id', '=', $second_event_id)
       ->setCheckPermissions(FALSE)
       ->execute();
-    $this->assertEquals(array(2,4), (array)$delete_result,
+    $expected_deletes = array(2,7,12,17);
+    $this->assertEquals($expected_deletes, (array)$delete_result,
       "didn't delete every second record as expected");
 
     $sql_count = $this->countTable('civicrm_participant');
-    $this->assertEquals(3, $sql_count,
+    $this->assertEquals($participant_count - count($expected_deletes), $sql_count,
       "records not gone from database after delete");
 
     // $this->markTestIncomplete();
