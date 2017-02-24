@@ -131,13 +131,7 @@ Feature Wishlist
 ----------------
 
 ### Get Action
-* `OR` as well as `AND` in select queries.
-* Ability to add a field to a query more than once e.g. `sort_name LIKE 'bob' OR sort_name LIKE 'robert'`.
 * Joins across all FKs and pseudo FKs.
-
-### Delete Action
-* Delete multiple items at once.
-* Search by any field, not just ID
 
 ### Error Handling
 * Ability to simulate an api call
