@@ -74,7 +74,7 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
    * @param array (type, seq, overrides, count)
    * @return array (either single, or array of array if count >1)
    */
-  public function createEntity($params) {
+  public static function createEntity($params) {
     $params += array(
       'count' => 1,
       'seq' => 0,
@@ -82,7 +82,7 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
     $entities = array();
     for ($i = 0; $i < $params['count']; $i++) {
       $params['seq']++;
-      $data = $this->sample($params);
+      $data = self::sample($params);
       $api_params = array('sequential' => 1) + $data['sample_params'];
       $result = civicrm_api3($data['entity'], 'create', $api_params);
       if ($result['is_error']) {
@@ -100,15 +100,18 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
   /**
    * Helper function for creating sample entities.
    *
+   * Depending on the supplied sequence integer, plucks values from the dummy data.
+   * Constructs a foreign entity when an ID is required but isn't supplied in the overrides.
+   *
    * Inspired by CiviUnitTestCase::
-   * @todo - extra this function to own class and share with CiviUnitTestCase?
+   * @todo - extract this function to own class and share with CiviUnitTestCase?
    * @param array
    * - type: string roughly matching entity type
    * - seq: (optional) int sequence number for the values of this type
    * - overrides: (optional) array of fill in parameters
    *
    * @return array
-   * - entity: string API entity type
+   * - entity: string API entity type (usually the type supplied except for contact subtypes)
    * - sample_params: array API sample_params properties of sample entity
    */
   public static function sample($params) {
@@ -118,12 +121,61 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
     );
     $type = $params['type'];
     // sample data - if field is array then chosed based on `seq`
-    $samples = array(
+    $sample_params = array();
+    if (in_array($type, array('Individual', 'Organization', 'Household'))) {
+      $sample_params['contact_type'] = $type;
+      $entity = 'Contact';
+    }
+    else {
+      $entity = $type;
+    }
+    // use the seq to pluck a set of params out
+    foreach (self::sampleData($type) as $key => $value) {
+      if (is_array($value)) {
+        $sample_params[$key] = $value[$params['seq'] % count($value)];
+      }
+      else {
+        $sample_params[$key] = $value;
+      }
+    }
+    if ($type == 'Individual') {
+      $sample_params['email'] = strtolower(
+        $sample_params['first_name'] . '_' . $sample_params['last_name'] . '@civicrm.org'
+      );
+      $sample_params['prefix_id'] = 3;
+      $sample_params['suffix_id'] = 3;
+    }
+    if (!count($sample_params)) {
+      throw new Exception("unknown sample type: $type");
+    }
+    $sample_params = $params['overrides'] + $sample_params;
+    // make foreign enitiies if they haven't been supplied
+    foreach ($sample_params as $key => $value) {
+      if (substr($value, 0, 6) === 'dummy.') {
+        $foreign_entity = self::createEntity(array(
+          'type' => substr($value, 6),
+          'seq' => $params['seq']));
+        $sample_params[$key] = $foreign_entity['id'];
+      }
+    }
+    return compact("entity", "sample_params");
+  }
+
+  /**
+   * Provider of sample data.
+   *
+   * @return array
+   *   Array values represent a set of allowable items.
+   *   Strings in the form "dummy.Entity" require creating a foreign entity first.
+   */
+  public static function sampleData($type) {
+    $data = array(
       'Individual' => array(
         // The number of values in each list need to be coprime numbers to not have duplicates
         'first_name' => array('Anthony', 'Joe', 'Terrence', 'Lucie', 'Albert', 'Bill', 'Kim'),
         'middle_name' => array('J.', 'M.', 'P', 'L.', 'K.', 'A.', 'B.', 'C.', 'D', 'E.', 'Z.'),
         'last_name' => array('Anderson', 'Miller', 'Smith', 'Collins', 'Peterson'),
+        'contact_type' => 'Individual'
       ),
       'Organization' => array(
         'organization_name' => array(
@@ -155,6 +207,8 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
         'is_show_location' => 0,
       ),
       'Participant' => array(
+        'event_id' => 'dummy.Event',
+        'contact_id' => 'dummy.Individual',
         'status_id' => 2,
         'role_id' => 1,
         'register_date' => 20070219,
@@ -162,35 +216,10 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
         'event_level' => 'Payment',
       ),
     );
-    $sample_params = array();
-    if (in_array($type, array('Individual', 'Organization', 'Household'))) {
-      $sample_params['contact_type'] = $type;
-      $entity = 'Contact';
+    if ($type == 'Contact') {
+      $type = 'Individual';
     }
-    else {
-      $entity = $type;
-    }
-    // use the seq to pluck a set of params out
-    foreach ($samples[$type] as $key => $value) {
-      if (is_array($value)) {
-        $sample_params[$key] = $value[$params['seq'] % count($value)];
-      }
-      else {
-        $sample_params[$key] = $value;
-      }
-    }
-    if ($type == 'Individual') {
-      $sample_params['email'] = strtolower(
-        $sample_params['first_name'] . '_' . $sample_params['last_name'] . '@civicrm.org'
-      );
-      $sample_params['prefix_id'] = 3;
-      $sample_params['suffix_id'] = 3;
-    }
-    if (!count($sample_params)) {
-      throw new Exception("unknown sample type: $type");
-    }
-    $sample_params = $params['overrides'] + $sample_params;
-    return compact("entity", "sample_params");
+    return $data[$type];
   }
 
 }
