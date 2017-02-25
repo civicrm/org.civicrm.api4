@@ -1,7 +1,7 @@
 <?php
 namespace Civi\API\V4;
 // fixme - what am I doing wrong to need this line?
-require 'UnitTestCase.php';
+require_once 'UnitTestCase.php';
 use Civi\Api4\Participant;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
