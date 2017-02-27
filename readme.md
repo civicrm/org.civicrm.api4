@@ -18,6 +18,15 @@ Input
 
 $params array will be organized into categories, expanding on the "options" convention in v3:
 
+Add complex limiting filters to `get` and various updating actions using `addWhere()` and `addClause()`.
+
+The `addWhere()` method takes filter "triples" [$fieldName, $operator, $criteria].
+Operators are one of the basic SQL operators:
+
+* '=', '<=', '>=', '>', '<', 'LIKE', "<>", "!=",
+* "NOT LIKE", 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN',
+* 'IS NOT NULL', or 'IS NULL'.
+
 ```php
 // fluent style
 \Civi\Api4\Contact::get()
@@ -34,6 +43,35 @@ civicrm_api4('Contact', 'get', array(
   'orderBy' => array('sort_name' => 'DESC'),
   'checkPermissions' => TRUE,
 ));
+```
+
+Using the `addClause()` method you can define complex logic trees.
+Each call to `addClause()` adds another node to the filter.
+A node may be in one of three forms, with the `branch` form allowing nesting:
+
+* leaf: [$fieldName, $operator, $criteria]
+* negated: ['NOT', $node]
+* branch: ['OR|NOT', [$node, $node, ...]]
+
+
+```php
+// more complex Boolean operations
+// (get participation records except for $contact_id at $event_id)
+$not_first_participant_result = \Civi\Api4\Participant::get()
+  ->setSelect(['id'])
+  ->addClause(array('NOT',
+    array('AND', array(
+      array('event_id', '=', $event_id),
+      array('contact_id', '=', $contact_id)))))
+  ->execute();
+
+// alternative presentation of above example:
+$not_first_participant_result_via_or = \Civi\Api4\Participant::get()
+  ->setSelect(['id'])
+  ->addClause(array('OR', array(
+      array('event_id', '!=', $event_id),
+      array('contact_id', '!=', $contact_id))))
+  ->execute();
 ```
 
 Output
@@ -93,13 +131,7 @@ Feature Wishlist
 ----------------
 
 ### Get Action
-* `OR` as well as `AND` in select queries.
-* Ability to add a field to a query more than once e.g. `sort_name LIKE 'bob' OR sort_name LIKE 'robert'`.
 * Joins across all FKs and pseudo FKs.
-
-### Delete Action
-* Delete multiple items at once.
-* Search by any field, not just ID
 
 ### Error Handling
 * Ability to simulate an api call

@@ -24,21 +24,13 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
-namespace Civi\API\V4\Entity\Participant;
-use Civi\API\Result;
+namespace Civi\Api4;
 
 /**
- * Base class for all get actions.
+ * Participant entity.
  *
+ * @method static \Civi\API\V4\Entity\Contact\Get get
  */
-class Get extends \Civi\API\V4\Action\Get {
-
-  /**
-   * @inheritDoc
-   * $example->addWhere('contact_id.contact_type', 'IN', array('Individual', 'Household'))
-   */
-  protected $where = array(
-    array('is_test', '=', 0),
-  );
+class Contact extends \Civi\API\V4\Entity {
 
 }

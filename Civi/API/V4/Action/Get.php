@@ -83,7 +83,17 @@ class Get extends API\V4\Action {
     if (!in_array($op, \CRM_Core_DAO::acceptedSQLOperators())) {
       throw new \API_Exception('Unsupported operator');
     }
-    $this->where[$field] = array($op => $value);
+    $this->where[] = array($field, $op, $value);
+    return $this;
+  }
+
+  /**
+   * @param array $clause
+   * @return $this
+   * @throws \API_Exception
+   */
+  public function addClause($clause) {
+    $this->where[] = $clause;
     return $this;
   }
 

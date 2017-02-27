@@ -27,6 +27,19 @@
 namespace Civi\API;
 
 /**
+ * A query `node` may be in one of three formats:
+ *
+ * * leaf: [$fieldName, $operator, $criteria]
+ * * negated: ['NOT', $node]
+ * * branch: ['OR|NOT', [$node, $node, ...]]
+ *
+ * Leaf operators are one of:
+ *
+ * * '=', '<=', '>=', '>', '<', 'LIKE', "<>", "!=",
+ * * "NOT LIKE", 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN',
+ * * 'IS NOT NULL', or 'IS NULL'.
+ *
+ * @param array $clause
  */
 class Api4SelectQuery extends SelectQuery {
 
@@ -34,49 +47,86 @@ class Api4SelectQuery extends SelectQuery {
 
   /**
    * @inheritDoc
+   * new style = [$fieldName, $operator, $criteria]
    */
   protected function buildWhereClause() {
-    foreach ($this->where as $key => $value) {
-      $table_name = NULL;
-      $column_name = NULL;
+    foreach ($this->where as $clause) {
+      $sql_clause = $this->treeWalkWhereClause($clause);
+      $this->query->where($sql_clause);
+    }
+  }
 
-      $field = $this->getField($key);
-
-      if (in_array($key, $this->entityFieldNames)) {
-        $table_name = self::MAIN_TABLE_ALIAS;
-        $column_name = $key;
-      }
-      // FIXME: Custom
-      elseif (($cf_id = \CRM_Core_BAO_CustomField::getKeyID($key)) != FALSE) {
-        //list($table_name, $column_name) = $this->addCustomField($this->apiFieldSpec['custom_' . $cf_id], 'INNER');
-      }
-      elseif (strpos($key, '.')) {
-        $fkInfo = $this->addFkField($key, 'INNER');
-        if ($fkInfo) {
-          list($table_name, $column_name) = $fkInfo;
-          $this->validateNestedInput($key, $value);
-        }
-      }
-      if (!$table_name || !$column_name || is_null($value)) {
-        throw new \API_Exception("Invalid field '$key' in where clause.");
-      }
-      if (!is_array($value)) {
-        $this->query->where(array("`$table_name`.`$column_name` = @value"), array(
-          "@value" => $value,
-        ));
-      }
-      // We expect only one element in the array, of the form ["operator" => "rhs"].
-      elseif (count($value) !== 1) {
-        throw new \API_Exception("Invalid value in where clause for field '$key'");
+  /**
+   * Recursively validate and transform a branch or leaf clause array to SQL.
+   *
+   * @param array $clause
+   * @return string SQL where clause
+   *
+   * @uses validateClauseAndComposeSql() to generate the SQL etc.
+   * @todo if an 'and' is nested within and 'and' (or or-in-or) then should
+   * flatten that to be a single list of clauses.
+   */
+  protected function treeWalkWhereClause($clause) {
+    switch ($clause[0]) {
+    case 'OR':
+    case 'AND':
+      // handle branches
+      if (count($clause[1]) === 1) {
+        // a single set so AND|OR is immaterial
+        return $this->treeWalkWhereClause($clause[1][0]);
       }
       else {
-        $clause = \CRM_Core_DAO::createSQLFilter("`$table_name`.`$column_name`", $value);
-        if ($clause === NULL) {
-          throw new \API_Exception("Invalid value in where clause for field '$key'");
+        foreach ($clause[1] as $subclause) {
+          $sql_subclauses[] = $this->treeWalkWhereClause($subclause);
         }
-        $this->query->where($clause);
+        return '(' . implode("\n" . $clause[0], $sql_subclauses) . ')';
+      }
+    case 'NOT':
+      // possibly these brackets are redundant
+      return 'NOT ('
+        . $this->treeWalkWhereClause($clause[1]) . ')';
+      break;
+    default:
+      return $this->validateClauseAndComposeSql($clause);
+    }
+  }
+
+  /**
+   * Validate and transform a leaf clause array to SQL.
+   * @param array $clause [$fieldName, $operator, $criteria]
+   * @return string SQL
+   */
+  protected function validateClauseAndComposeSql($clause) {
+    list($key, $operator, $criteria) = $clause;
+    $value = array($operator => $criteria);
+    // $field = $this->getField($key); // <<-- unused
+    // derive table and column:
+    $table_name = NULL;
+    $column_name = NULL;
+    if (in_array($key, $this->entityFieldNames)) {
+      $table_name = self::MAIN_TABLE_ALIAS;
+      $column_name = $key;
+    }
+    // FIXME: Custom
+    elseif (($cf_id = \CRM_Core_BAO_CustomField::getKeyID($key)) != FALSE) {
+      //list($table_name, $column_name) = $this->addCustomField($this->apiFieldSpec['custom_' . $cf_id], 'INNER');
+    }
+    elseif (strpos($key, '.')) {
+      $fkInfo = $this->addFkField($key, 'INNER');
+      if ($fkInfo) {
+        list($table_name, $column_name) = $fkInfo;
+        $this->validateNestedInput($key, $value);
       }
     }
+    if (!$table_name || !$column_name || is_null($value)) {
+      throw new \API_Exception("Invalid field '$key' in where clause.");
+    }
+
+    $sql_clause = \CRM_Core_DAO::createSQLFilter("`$table_name`.`$column_name`", $value);
+    if ($sql_clause === NULL) {
+      throw new \API_Exception("Invalid value in where clause for field '$key'");
+    }
+    return $sql_clause;
   }
 
   /**
