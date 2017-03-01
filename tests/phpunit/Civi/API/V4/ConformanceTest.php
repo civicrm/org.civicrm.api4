@@ -17,6 +17,7 @@ class ConformanceTest extends UnitTestCase  {
    * Set up baseline for testing
    */
   public function setUp() {
+    parent::setUp();
   }
 
  /**
@@ -25,6 +26,7 @@ class ConformanceTest extends UnitTestCase  {
    * This method is called after a test is executed.
    */
   public function tearDown() {
+    parent::tearDown();
   }
 
   protected function report($string) {
