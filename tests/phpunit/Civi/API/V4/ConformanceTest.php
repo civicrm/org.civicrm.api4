@@ -46,8 +46,21 @@ class ConformanceTest extends UnitTestCase  {
       $this->report("Actions: \n".json_encode(
         array_keys((array)$actions),JSON_PRETTY_PRINT));
 
-
       if ($entity != 'Entity') {
+        // FIELDS ////////////////////
+        $fields = $entity_class::getFields()
+          ->setCheckPermissions(FALSE)
+          ->execute()->indexBy('name');
+        $this->report("Fields: \n".json_encode(
+          (array)$fields, JSON_PRETTY_PRINT));
+        $this->assertArraySubset(
+          array('type' => 1, 'required' => TRUE),
+          $fields['id'],
+          "$entity fields missing required ID field of proper type");
+        $this->assertArraySubset(
+          array('type' => 1, 'required' => TRUE),
+          $fields['id'],
+          "$entity fields missing required ID field of proper type");
         // CREATE ////////////////////
         $dummy = $this->sample(array('type' => $entity))['sample_params'];
         $create_result = $entity_class::create()
