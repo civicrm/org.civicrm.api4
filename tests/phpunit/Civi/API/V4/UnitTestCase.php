@@ -215,6 +215,11 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
         'source' => 'Wimbeldon',
         'event_level' => 'Payment',
       ),
+      'Contribution' => array(
+        'contact_id' => 'dummy.Individual',
+        'financial_type_id' => 1, // donation, 2 = member, 3 = campaign contribution, 4=event
+        'total_amount' => 7.3,
+      ),
     );
     if ($type == 'Contact') {
       $type = 'Individual';

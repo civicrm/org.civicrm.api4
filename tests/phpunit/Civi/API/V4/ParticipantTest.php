@@ -16,7 +16,7 @@ class ParticipantTest extends UnitTestCase  {
    * Set up baseline for testing
    */
   public function setUp() {
-    parent::tearDown();
+    parent::setUp();
     $cleanup_params = array(
       'tablesToTruncate' => array(
         'civicrm_participant',
@@ -31,6 +31,7 @@ class ParticipantTest extends UnitTestCase  {
    * This method is called after a test is executed.
    */
   public function tearDown() {
+    parent::tearDown();
   }
 
   public function testGetActions() {
