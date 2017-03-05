@@ -47,8 +47,17 @@ class ConformanceTest extends UnitTestCase {
   /**
    * Reset the hook log
    */
-  protected function resetHookLog() {
+  private function resetHookLog() {
     $this->hook_calls = array();
+  }
+
+  /**
+   * Determine how many times a hook has been called since last reset.
+   */
+  private function hookCallCount($name) {
+    return isset($this->hook_calls[$name])
+      ? $this->hook_calls[$name]
+      : 0;
   }
 
   /**
@@ -57,8 +66,7 @@ class ConformanceTest extends UnitTestCase {
    * @param array $arguments hook paramters
    */
   public function __call($name, $arguments) {
-    $this->hook_calls[$name] = 1
-      + (isset($this->hook_calls[$name]) ? $this->hook_calls[$name] : 0);
+    $this->hook_calls[$name] = 1 + $this->hookCallCount($name);
   }
 
   public function testConformance() {
@@ -83,8 +91,8 @@ class ConformanceTest extends UnitTestCase {
           ->setCheckPermissions(FALSE)
           ->execute()
           ->indexBy('name');
-        $this->report("Fields: \n" . json_encode(
-          (array) $fields, JSON_PRETTY_PRINT));
+//        $this->report("Fields: \n" . json_encode(
+//          (array) $fields, JSON_PRETTY_PRINT));
         $this->assertArraySubset(
           array('type' => 1, 'required' => TRUE),
           $fields['id'],
@@ -96,14 +104,22 @@ class ConformanceTest extends UnitTestCase {
         // create
         $dummy = $this->sample(array('type' => $entity))['sample_params'];
         $this->resetHookLog();
-        $this->report("Hook calls: \n" . json_encode($this->hook_calls, JSON_PRETTY_PRINT));
         $create_result = $entity_class::create()
           ->setValues($dummy)
           ->setCheckPermissions(FALSE)
           ->execute();
         $this->assertArrayHasKey('id', $create_result, "create missing ID");
         $id = $create_result['id'];
-        $this->assertGreaterThanOrEqual(4, count($this->hook_calls), "$entity create not evoke enough hooks");
+        $hook_calls = array(
+          'pre' => 1,
+          'post' => 1,
+        //  'permission_check' => 1,
+        );
+        foreach ($hook_calls as $hook => $minimum) {
+          $this->assertGreaterThanOrEqual($minimum,
+            $this->hookCallCount("civicrm_$hook"),
+            "$entity create did not evoke civicrm_$hook enough");
+        }
         $this->report("Hook calls: \n" . json_encode($this->hook_calls, JSON_PRETTY_PRINT));
         $this->assertGreaterThanOrEqual(1, $id, "$entity ID not positive");
 
