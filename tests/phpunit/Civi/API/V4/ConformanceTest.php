@@ -9,14 +9,20 @@ use Civi\Test\TransactionalInterface;
 
 /**
  * @group headless
+ *
+ * This uses some hook kernel set-up copied from
+ *   tests/phpunit/CiviTest/CiviUnitTestCase.php
  */
 class ConformanceTest extends UnitTestCase {
+
+  private $hook_calls = array();
 
   /**
    * Set up baseline for testing
    */
   public function setUp() {
     parent::setUp();
+    $this->hookClass = \CRM_Utils_Hook::singleton();
   }
 
   /**
@@ -26,13 +32,37 @@ class ConformanceTest extends UnitTestCase {
    */
   public function tearDown() {
     parent::tearDown();
+    // \CRM_Utils_Hook::singleton()->reset(); << -- is this actually needed
+    $this->hookClass->reset();
   }
 
+  /**
+   * Temporary bodge to help with debugging
+   * @param string $string to report
+   */
   protected function report($string) {
     echo $string . "\n";
   }
 
+  /**
+   * Reset the hook log
+   */
+  protected function resetHookLog() {
+    $this->hook_calls = array();
+  }
+
+  /**
+   * Provide a catch method to snoop on hook calls
+   * @param string $name hook being invoked
+   * @param array $arguments hook paramters
+   */
+  public function __call($name, $arguments) {
+    $this->hook_calls[$name] = 1
+      + (isset($this->hook_calls[$name]) ? $this->hook_calls[$name] : 0);
+  }
+
   public function testConformance() {
+    $this->hookClass->setMock($this);
     // get list of all the entities we know about and loop over them:
     $entities = Entity::get()
       ->setCheckPermissions(FALSE)
@@ -65,13 +95,18 @@ class ConformanceTest extends UnitTestCase {
           "$entity fields missing required ID field of proper type");
         // create
         $dummy = $this->sample(array('type' => $entity))['sample_params'];
+        $this->resetHookLog();
+        $this->report("Hook calls: \n" . json_encode($this->hook_calls, JSON_PRETTY_PRINT));
         $create_result = $entity_class::create()
           ->setValues($dummy)
           ->setCheckPermissions(FALSE)
           ->execute();
         $this->assertArrayHasKey('id', $create_result, "create missing ID");
         $id = $create_result['id'];
+        $this->assertGreaterThanOrEqual(4, count($this->hook_calls), "$entity create not evoke enough hooks");
+        $this->report("Hook calls: \n" . json_encode($this->hook_calls, JSON_PRETTY_PRINT));
         $this->assertGreaterThanOrEqual(1, $id, "$entity ID not positive");
+
         // retrieve
         $get_result = $entity_class::get()
           ->setCheckPermissions(FALSE)
