@@ -45,6 +45,29 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
+   * Temporary bodge to help with debugging
+   * @param string $entity
+   * @param string $action
+   * @param array $calls to hooks since last reset
+   */
+  protected function reportHookCalls($entity, $action, $calls) {
+    $this->report("### $entity.$action hook calls: \n"
+      . json_encode($calls, JSON_PRETTY_PRINT));
+  }
+
+  /**
+   * Check that a number of hook calls have taken place
+   * @param array $calls to hooks since last reset
+   */
+  protected function assertHooksCalled($entity, $action, $call_assertions) {
+    foreach ($call_assertions as $hook => $minimum) {
+      $this->assertGreaterThanOrEqual($minimum,
+        $this->hookCallCount("civicrm_$hook"),
+        "$entity.$action did not evoke civicrm_$hook enough");
+    }
+  }
+
+  /**
    * Reset the hook log
    */
   private function resetHookLog() {
@@ -113,30 +136,39 @@ class ConformanceTest extends UnitTestCase {
         $hook_calls = array(
           'pre' => 1,
           'post' => 1,
+          'apiWrappers' => 1,
         //  'permission_check' => 1,
         );
-        foreach ($hook_calls as $hook => $minimum) {
-          $this->assertGreaterThanOrEqual($minimum,
-            $this->hookCallCount("civicrm_$hook"),
-            "$entity create did not evoke civicrm_$hook enough");
-        }
-        $this->report("Hook calls: \n" . json_encode($this->hook_calls, JSON_PRETTY_PRINT));
+        $this->assertHooksCalled($entity, 'Create', $hook_calls);
         $this->assertGreaterThanOrEqual(1, $id, "$entity ID not positive");
-
+        $this->reportHookCalls($entity, 'Create', $this->hook_calls);
         // retrieve
+        $this->resetHookLog();
         $get_result = $entity_class::get()
           ->setCheckPermissions(FALSE)
           ->addClause(array('id', '=', $id))
           ->execute();
+        $hook_calls = array(
+          'apiWrappers' => 2,
+        );
+        $this->assertHooksCalled($entity, 'Get', $hook_calls);
+        $this->reportHookCalls($entity, 'Get', $this->hook_calls);
+        $this->report("Hook calls: \n" . json_encode($this->hook_calls, JSON_PRETTY_PRINT));
         $this->assertEquals(1, count($get_result),
           "failed to get single fresh $entity");
         // update
 
         // delete
+        $this->resetHookLog();
         $delete_result = $entity_class::delete()
           ->setCheckPermissions(FALSE)
           ->addClause(array('id', '=', $id))
           ->execute();
+        $hook_calls = array(
+          'apiWrappers' => 2,
+        );
+        $this->assertHooksCalled($entity, 'Get', $hook_calls);
+        $this->reportHookCalls($entity, 'Delete', $this->hook_calls);
         // should get back an array of deleted id:
         $this->assertEquals(array($id), (array) $delete_result,
           "unexpected delete result from $entity");
