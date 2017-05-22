@@ -10,6 +10,9 @@ use Civi\Test\TransactionalInterface;
 /**
  * @group headless
  *
+ * Tip: If you are focusing on development/debugging of this test, you
+ * can set an environment variable `API4_DEBUG=1`.
+ *
  * This uses some hook kernel set-up copied from
  *   tests/phpunit/CiviTest/CiviUnitTestCase.php
  */
@@ -41,7 +44,9 @@ class ConformanceTest extends UnitTestCase {
    * @param string $string to report
    */
   protected function report($string) {
-    echo $string . "\n";
+    if (getenv('API4_DEBUG')) {
+      echo $string . "\n";
+    }
   }
 
   /**
