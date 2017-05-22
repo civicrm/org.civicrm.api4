@@ -27,9 +27,8 @@
 namespace Civi\Api4;
 
 /**
- * Participant entity.
+ * Contact entity.
  *
- * @method static \Civi\API\V4\Entity\Contact\Get get
  */
 class Contact extends \Civi\API\V4\Entity {
 

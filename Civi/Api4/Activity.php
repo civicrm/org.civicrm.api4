@@ -29,7 +29,6 @@ namespace Civi\Api4;
 /**
  * Activity entity.
  *
- * @method static \Civi\API\V4\Entity\Activity\Get get
  */
 class Activity extends \Civi\API\V4\Entity {
 
