@@ -31,7 +31,7 @@ use Civi\API\Result;
  * Base class for all api actions.
  *
  * @method $this addChain(Action $apiCall)
- * @method $this setCheckPermissions(bool)
+ * @method $this setCheckPermissions(bool $value)
  */
 abstract class Action implements \ArrayAccess {
 
