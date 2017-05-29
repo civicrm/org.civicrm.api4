@@ -3,13 +3,14 @@ namespace Civi\API\V4;
 
 use Civi\Api4\CustomField;
 use Civi\Api4\CustomGroup;
-use Civi\Api4\Contact;
+use Civi\Api4\OptionGroup;
+use Civi\Api4\OptionValue;
 use phpunit\Civi\TableDropperTrait;
 
 /**
  * @group headless
  */
-class CreateWithOptionGroupTest extends UnitTestCase {
+class CreateCustomValueTest extends UnitTestCase {
 
   use TableDropperTrait;
 
@@ -32,6 +33,9 @@ class CreateWithOptionGroupTest extends UnitTestCase {
   }
 
   public function testGetWithCustomData() {
+    $optionValues = ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'];
+    sort($optionValues);
+
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'MyContactFields')
@@ -44,31 +48,42 @@ class CreateWithOptionGroupTest extends UnitTestCase {
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'Color')
       ->setValue('title', 'Color')
-      ->setValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
+      ->setValue('options', $optionValues)
       ->setValue('custom_group_id', $customGroup->getArrayCopy()['id'])
       ->setValue('html_type', 'Select')
       ->setValue('data_type', 'String')
       ->execute();
 
-    Contact::create()
+    $customField = CustomField::get()
       ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Red')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('MyContactFields.Color', 'r')
-      ->execute();
-
-    $result = Contact::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('display_name')
-      ->addSelect('MyContactFields.Color')
-//      ->addSelect('MyContactFields.Color.label') // OptionValue.label
-      ->addWhere('MyContactFields.Color', '=', 'r')
+      ->addWhere('label', '=', 'Color')
       ->execute()
       ->first();
 
-    $this->assertEquals('r', $result['MyContactFields.Color']);
-//    $this->assertEquals('Red', $result['MyContactFields.Color.label']);
+    $this->assertNotNull($customField['option_group_id']);
+
+    $optionGroupId = $customField['option_group_id'];
+
+    $optionGroup = OptionGroup::get()
+      ->setCheckPermissions(FALSE)
+      ->addWhere('id', '=', $optionGroupId)
+      ->execute()
+      ->first();
+
+    $this->assertEquals('Color', $optionGroup['title']);
+
+    $createdOptionValues = OptionValue::get()
+      ->setCheckPermissions(FALSE)
+      ->addWhere('option_group_id', '=', $optionGroupId)
+      ->execute()
+      ->getArrayCopy();
+
+    $values = array_column($createdOptionValues, 'value');
+    $labels = array_column($createdOptionValues, 'label');
+    $createdOptionValues = array_combine($values, $labels);
+    sort($createdOptionValues);
+
+    $this->assertEquals($optionValues, $createdOptionValues);
   }
 
 }
