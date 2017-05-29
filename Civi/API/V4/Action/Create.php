@@ -27,6 +27,8 @@
 namespace Civi\API\V4\Action;
 use Civi\API\Result;
 use Civi\API\V4\Action;
+use Civi\Api4\CustomField;
+use Civi\Api4\CustomGroup;
 
 /**
  * Base class for all create actions.
@@ -76,13 +78,76 @@ class Create extends Action {
    * @inheritDoc
    */
   public function _run(Result $result) {
-    $create_params = $this->getParams()['values'];
+    $params = $this->getParams()['values'];
+
+    $entityId = \CRM_Utils_Array::value('id', $params);
+    $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
+
     // get a bao back from the standard factory method
-    $create_result = $this->bao->create($create_params);
+    $createResult = $this->bao->create($params);
+
+    if (!$createResult) {
+      $errMessage = sprintf('%s creation failed', $this->getEntity());
+      throw new \API_Exception($errMessage);
+    }
+
     // trim back the junk and just get the array:
-    $result_as_array = $this->baoToArray($create_result);
+    $resultAsArray = $this->baoToArray($createResult);
     // fixme should return a single row array???
-    $result->exchangeArray($result_as_array);
+    $result->exchangeArray($resultAsArray);
+  }
+
+  private function formatCustomParams($params, $entity, $entityId) {
+    $params['custom'] = array();
+
+    // $customValueID is the ID of the custom value in the custom table for this
+    // entity (i guess this assumes it's not a multi value entity)
+    foreach ($params as $name => $value) {
+
+      if (strpos($name, '.') === FALSE) {
+        continue;
+      }
+
+      $customGroup = strstr($name, '.', TRUE);
+      $customGroupId = CustomGroup::get()
+        ->setCheckPermissions(FALSE)
+        ->addWhere('name', '=', $customGroup)
+        ->execute()
+        ->first()['id'];
+
+      $customFieldData = CustomField::get()
+        ->setCheckPermissions(FALSE)
+        ->addWhere('custom_group_id', '=', $customGroupId)
+        ->execute()
+        ->first();
+
+      $customFieldId = $customFieldData['id'];
+      // todo custom value ID is needed if edit
+      $customValueID = NULL;
+
+      // todo are we sure we don't want to allow setting to NULL? need to test
+      if ($customFieldId && NULL !== $value) {
+
+        if ($customFieldData['html_type'] == 'CheckBox') {
+          // this function should be part of a class
+          formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
+        }
+
+        \CRM_Core_BAO_CustomField::formatCustomField(
+          $customFieldId,
+          $params['custom'],
+          $value,
+          $entity,
+          $customValueID,
+          $entityId,
+          FALSE,
+          FALSE,
+          TRUE
+        );
+      }
+    }
+
+    return $params;
   }
 
 }
