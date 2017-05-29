@@ -30,12 +30,12 @@ use Civi\API;
 /**
  * Base class for all get actions.
  *
- * @method $this addSelect(string)
- * @method $this setSelect(array)
- * @method $this setWhere(array)
- * @method $this setOrderBy(array)
- * @method $this setLimit(int)
- * @method $this setOffset(int)
+ * @method $this addSelect(string $select)
+ * @method $this setSelect(array $selects)
+ * @method $this setWhere(array $wheres)
+ * @method $this setOrderBy(array $order)
+ * @method $this setLimit(int $limit)
+ * @method $this setOffset(int $offset)
  */
 class Get extends API\V4\Action {
 
