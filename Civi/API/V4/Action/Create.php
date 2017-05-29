@@ -75,6 +75,15 @@ class Create extends Action {
   }
 
   /**
+   * @param $key
+   *
+   * @return mixed|null
+   */
+  public function getValue($key) {
+    return isset($this->values[$key]) ? $this->values[$key] : NULL;
+  }
+
+  /**
    * @inheritDoc
    */
   public function _run(Result $result) {

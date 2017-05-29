@@ -4,7 +4,6 @@ namespace Civi\API\V4\Entity\CustomField;
 
 use Civi\API\Result;
 use Civi\API\V4\Action;
-use \CRM_Utils_Array as ArrayHelper;
 
 class Create extends Action\Create {
   /**
@@ -12,7 +11,7 @@ class Create extends Action\Create {
    */
   public function _run(Result $result) {
 
-    $optionType = ArrayHelper::value('option_type', $this->values);
+    $optionType = $this->getValue('option_type');
     if (!$optionType) { // default to NULL
       $this->setValue('option_type', NULL);
     }
