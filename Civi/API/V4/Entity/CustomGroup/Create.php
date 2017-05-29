@@ -2,21 +2,21 @@
 
 namespace Civi\API\V4\Entity\CustomGroup;
 
+use Civi\API\Result;
 use Civi\API\V4\Action;
+use \CRM_Utils_Array as ArrayHelper;
 
 class Create extends Action\Create {
   /**
-   * @param string $key
-   * @param mixed $value
-   *
-   * @return $this
+   * @param Result $result
    */
-  public function setValue($key, $value) {
-    if ($key === 'extends' && is_string($value)) {
-      $value = [$value];
+  public function _run(Result $result) {
+    $extends = ArrayHelper::value('extends', $this->values);
+    if (is_string($extends)) {
+      $this->setValue('extends', array($extends));
     }
 
-    return parent::setValue($key, $value);
+    parent::_run($result);
   }
 
 }
