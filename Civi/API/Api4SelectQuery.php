@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -26,6 +27,10 @@
  */
 namespace Civi\API;
 
+use Civi\Api4\CustomField;
+use Civi\Api4\CustomGroup;
+use CRM_Utils_Array as ArrayHelper;
+
 /**
  * A query `node` may be in one of three formats:
  *
@@ -38,11 +43,12 @@ namespace Civi\API;
  * * '=', '<=', '>=', '>', '<', 'LIKE', "<>", "!=",
  * * "NOT LIKE", 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN',
  * * 'IS NOT NULL', or 'IS NULL'.
- *
- * @param array $clause
  */
 class Api4SelectQuery extends SelectQuery {
 
+  /**
+   * @var int
+   */
   protected $apiVersion = 4;
 
   /**
@@ -107,15 +113,17 @@ class Api4SelectQuery extends SelectQuery {
       $table_name = self::MAIN_TABLE_ALIAS;
       $column_name = $key;
     }
-    // FIXME: Custom
-    elseif (($cf_id = \CRM_Core_BAO_CustomField::getKeyID($key)) != FALSE) {
-      //list($table_name, $column_name) = $this->addCustomField($this->apiFieldSpec['custom_' . $cf_id], 'INNER');
-    }
     elseif (strpos($key, '.')) {
       $fkInfo = $this->addFkField($key, 'INNER');
       if ($fkInfo) {
         list($table_name, $column_name) = $fkInfo;
         $this->validateNestedInput($key, $value);
+      } else {
+        $customField = $this->addDotNotationCustomField($key);
+        if ($customField) {
+          $table_name = $customField[0];
+          $column_name = $customField[1];
+        }
       }
     }
     if (!$table_name || !$column_name || is_null($value)) {
@@ -146,5 +154,93 @@ class Api4SelectQuery extends SelectQuery {
     }
     return NULL;
   }
+
+  protected function buildSelectFields() {
+    parent::buildSelectFields();
+    foreach ($this->select as $selectAlias) {
+      $alreadyAdded = in_array($selectAlias, $this->selectFields);
+      $containsDot = strpos($selectAlias, '.') !== FALSE;
+      if ($alreadyAdded || !$containsDot) {
+        continue;
+      }
+
+      $customFieldData = $this->addDotNotationCustomField($selectAlias);
+
+      if (!$customFieldData) {
+        continue;
+      }
+
+      $tableAlias = $customFieldData[0];
+      $columnName = $customFieldData[1];
+      $field = sprintf('%s.%s', $tableAlias, $columnName);
+
+      $this->selectFields[$field] = $selectAlias;
+    }
+  }
+
+  /**
+   * @param $customField
+   *
+   * @return array|null
+   */
+  protected function addDotNotationCustomField($customField) {
+    list($groupName, $fieldName) = explode('.', $customField);
+
+    $customGroup = $this->getCustomGroup($this->entity, $groupName);
+    $tableName = ArrayHelper::value('table_name', $customGroup);
+    $customField = $this->getCustomField($customGroup['id'], $fieldName);
+    $columnName = ArrayHelper::value('column_name', $customField);
+
+    if (!$tableName || !$columnName) {
+      return NULL;
+    }
+
+    return $this->addCustomField(
+      array('table_name' => $tableName, 'column_name' => $columnName),
+      'INNER'
+    );
+  }
+
+  /**
+   * @param string $extends
+   * @param string $groupId
+   *
+   * @return array|null
+   */
+  protected function getCustomGroup($extends, $groupId) {
+    $customGroups = CustomGroup::get()
+      ->setCheckPermissions(FALSE)
+      ->addWhere('extends', '=', $extends)
+      ->execute();
+
+    foreach ($customGroups as $customGroup) {
+      if ($customGroup['name'] === $groupId) {
+        return $customGroup;
+      }
+    }
+
+    return NULL;
+  }
+
+  /**
+   * @param $customGroupId
+   * @param $fieldName
+   *
+   * @return array|null
+   */
+    protected function getCustomField($customGroupId, $fieldName) {
+      $customFields = CustomField::get()
+        ->setCheckPermissions(FALSE)
+        ->addWhere('custom_group_id', '=', $customGroupId)
+        ->execute();
+
+      foreach ($customFields as $customField) {
+        if ($fieldName === $customField['name']) {
+          return $customField;
+        }
+      }
+
+      return NULL;
+    }
 
 }
