@@ -1,46 +1,57 @@
 <?php
 namespace Civi\API\V4;
-use Civi\Api4\CustomGroup;
-use Civi\Api4\CustomField;
-use Civi\Api4\Contact;
 
-// fixme - what am I doing wrong to need this line?
-require_once 'UnitTestCase.php';
+// todo fix test autoloader
+include "UnitTestCase.php";
+
+use Civi\Api4\CustomField;
+use Civi\Api4\CustomGroup;
+use Civi\Api4\Contact;
 
 /**
  * @group headless
  */
-class EntityTest extends UnitTestCase {
+class ContactTest extends UnitTestCase {
 
   public function testGetWithCustomData() {
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'CustomContactFields')
-      ->setValue('title', 'CustomContactFields')
+      ->setValue('name', 'MyContactFields')
+      ->setValue('title', 'MyContactFields')
       ->setValue('extends', 'Contact')
+      ->setValue('is_active', 1) // todo this should be default
       ->execute();
-    $customField = CustomField::create()
+
+    CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'Color')
+      ->setValue('label', 'Color')
       ->setValue('title', 'Color')
       ->setValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
-      ->setValue('custom_group_id', $customGroup->id)
+      ->setValue('custom_group_id', $customGroup->getArrayCopy()['id'])
       ->setValue('html_type', 'Select')
+      ->setValue('data_type', 'String')
+      ->setValue('option_type', 'f')
       ->execute();
-    $contact = Contact::create()
+
+    Contact::create()
       ->setCheckPermissions(FALSE)
       ->setValue('first_name', 'Red')
       ->setValue('last_name', 'Tester')
-      ->setValue('CustomContactFields.Color', 'r')
+      ->setValue('contact_type', 'Individual')
+      ->setValue('MyContactFields.Color', 'r')
       ->execute();
+
     $result = Contact::get()
       ->setCheckPermissions(FALSE)
-      ->addWhere('CustomContactFields.Color.label', '=', 'Red')
-      ->addSelect('CustomContactFields.Color')
-      ->addSelect('CustomContactFields.Color.label')
-      ->execute();
-    $this->assertEquals('r', $result[$contact->id]['CustomContactFields.Color']);
-    $this->assertEquals('Red', $result[$contact->id]['CustomContactFields.Color.label']);
+      ->addSelect('display_name')
+      ->addSelect('MyContactFields.Color')
+//      ->addSelect('MyContactFields.Color.label') // OptionValue.label
+      ->addWhere('MyContactFields.Color', '=', 'r')
+      ->execute()
+      ->first();
+
+    $this->assertEquals('r', $result['MyContactFields.Color']);
+//    $this->assertEquals('Red', $result['MyContactFields.Color.label']);
   }
 
 }
