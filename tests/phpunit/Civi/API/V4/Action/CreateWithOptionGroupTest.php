@@ -1,17 +1,34 @@
 <?php
 namespace Civi\API\V4;
 
-// todo fix test autoloader
-include "UnitTestCase.php";
-
 use Civi\Api4\CustomField;
 use Civi\Api4\CustomGroup;
 use Civi\Api4\Contact;
+use phpunit\Civi\TableDropperTrait;
 
 /**
  * @group headless
  */
-class ContactTest extends UnitTestCase {
+class CreateWithOptionGroupTest extends UnitTestCase {
+
+  use TableDropperTrait;
+
+  /**
+   * Set up baseline for testing
+   */
+  public function setUp() {
+    $cleanup_params = array(
+      'tablesToTruncate' => array(
+        'civicrm_participant',
+        'civicrm_custom_group',
+        'civicrm_custom_field',
+        'civicrm_contact'
+      ),
+    );
+
+    $this->dropByPrefix('civicrm_value_mycontact');
+    $this->cleanup($cleanup_params);
+  }
 
   public function testGetWithCustomData() {
     $customGroup = CustomGroup::create()
@@ -30,7 +47,6 @@ class ContactTest extends UnitTestCase {
       ->setValue('custom_group_id', $customGroup->getArrayCopy()['id'])
       ->setValue('html_type', 'Select')
       ->setValue('data_type', 'String')
-      ->setValue('option_type', 'f')
       ->execute();
 
     Contact::create()
