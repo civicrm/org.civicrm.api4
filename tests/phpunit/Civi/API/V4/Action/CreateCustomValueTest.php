@@ -34,7 +34,6 @@ class CreateCustomValueTest extends UnitTestCase {
 
   public function testGetWithCustomData() {
     $optionValues = ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'];
-    sort($optionValues);
 
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
@@ -81,7 +80,6 @@ class CreateCustomValueTest extends UnitTestCase {
     $values = array_column($createdOptionValues, 'value');
     $labels = array_column($createdOptionValues, 'label');
     $createdOptionValues = array_combine($values, $labels);
-    sort($createdOptionValues);
 
     $this->assertEquals($optionValues, $createdOptionValues);
   }
