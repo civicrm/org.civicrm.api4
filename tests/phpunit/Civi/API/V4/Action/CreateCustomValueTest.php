@@ -1,7 +1,6 @@
 <?php
-namespace Civi\API\V4;
+namespace Civi\API\V4\Action;
 
-use Civi\Api\TableDropperTrait;
 use Civi\Api4\CustomField;
 use Civi\Api4\CustomGroup;
 use Civi\Api4\OptionGroup;
@@ -10,27 +9,7 @@ use Civi\Api4\OptionValue;
 /**
  * @group headless
  */
-class CreateCustomValueTest extends UnitTestCase {
-
-  use TableDropperTrait;
-
-  /**
-   * Set up baseline for testing
-   */
-  public function setUp() {
-    $cleanup_params = array(
-      'tablesToTruncate' => array(
-        'civicrm_custom_group',
-        'civicrm_custom_field',
-        'civicrm_contact',
-        'civicrm_option_group',
-        'civicrm_option_value'
-      ),
-    );
-
-    $this->dropByPrefix('civicrm_value_mycontact');
-    $this->cleanup($cleanup_params);
-  }
+class CreateCustomValueTest extends BaseCustomValueTest {
 
   public function testGetWithCustomData() {
     $optionValues = ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'];
@@ -60,7 +39,6 @@ class CreateCustomValueTest extends UnitTestCase {
       ->first();
 
     $this->assertNotNull($customField['option_group_id']);
-
     $optionGroupId = $customField['option_group_id'];
 
     $optionGroup = OptionGroup::get()
