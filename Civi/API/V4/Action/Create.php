@@ -107,7 +107,9 @@ class Create extends Action {
   }
 
   private function formatCustomParams($params, $entity, $entityId) {
+
     $params['custom'] = array();
+    $customParams = array();
 
     // $customValueID is the ID of the custom value in the custom table for this
     // entity (i guess this assumes it's not a multi value entity)
@@ -117,7 +119,8 @@ class Create extends Action {
         continue;
       }
 
-      $customGroup = strstr($name, '.', TRUE);
+      list($customGroup, $customField) = explode('.', $name);
+
       $customGroupId = CustomGroup::get()
         ->setCheckPermissions(FALSE)
         ->addWhere('name', '=', $customGroup)
@@ -127,6 +130,7 @@ class Create extends Action {
       $customFieldData = CustomField::get()
         ->setCheckPermissions(FALSE)
         ->addWhere('custom_group_id', '=', $customGroupId)
+        ->addWhere('name', '=', $customField)
         ->execute()
         ->first();
 
@@ -144,7 +148,7 @@ class Create extends Action {
 
         \CRM_Core_BAO_CustomField::formatCustomField(
           $customFieldId,
-          $params['custom'],
+          $customParams,
           $value,
           $entity,
           $customValueID,
@@ -154,6 +158,10 @@ class Create extends Action {
           TRUE
         );
       }
+    }
+
+    if (!empty($customParams)) {
+      $params['custom'] = $customParams;
     }
 
     return $params;
