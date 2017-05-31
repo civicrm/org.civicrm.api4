@@ -2,7 +2,7 @@
 
 namespace Civi\API\V4\Action;
 
-use Civi\Api\TableDropperTrait;
+use Civi\TableDropperTrait;
 use Civi\API\V4\UnitTestCase;
 
 abstract class BaseCustomValueTest extends UnitTestCase {

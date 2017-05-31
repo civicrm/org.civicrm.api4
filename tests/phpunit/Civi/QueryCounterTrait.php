@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\API;
+namespace Civi;
 
 use \CRM_Utils_Array as ArrayHelper;
 
