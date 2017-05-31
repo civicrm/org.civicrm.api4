@@ -19,7 +19,6 @@ class CreateCustomValueTest extends BaseCustomValueTest {
       ->setValue('name', 'MyContactFields')
       ->setValue('title', 'MyContactFields')
       ->setValue('extends', 'Contact')
-      ->setValue('is_active', 1) // todo this should be default
       ->execute();
 
     CustomField::create()

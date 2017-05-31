@@ -15,6 +15,10 @@ class Create extends Action\Create {
       $this->setValue('extends', array($extends));
     }
 
+    if (NULL === $this->getValue('is_active')) {
+      $this->setValue('is_active', 1);
+    }
+
     parent::_run($result);
   }
 
