@@ -26,9 +26,9 @@
  */
 namespace Civi\API\V4\Action;
 use Civi\API\Result;
+use Civi\API\Service\CustomFieldService;
+use Civi\API\Service\CustomGroupService;
 use Civi\API\V4\Action;
-use Civi\Api4\CustomField;
-use Civi\Api4\CustomGroup;
 
 /**
  * Base class for all create actions.
@@ -52,6 +52,16 @@ class Create extends Action {
   protected $bao;
 
   /**
+   * @var CustomFieldService
+   */
+  protected $customFieldService;
+
+  /**
+   * @var CustomGroupService
+   */
+  protected $customGroupService;
+
+  /**
    * Action constructor.
    * @param string $entity
    */
@@ -59,6 +69,8 @@ class Create extends Action {
     parent::__construct($entity);
     $bao_name = $this->getBaoName();
     $this->bao = new $bao_name();
+    $this->customGroupService = \Civi::container()->get('custom_group.service');
+    $this->customFieldService = \Civi::container()->get('custom_field.service');
   }
 
   /**
@@ -121,20 +133,19 @@ class Create extends Action {
 
       list($customGroup, $customField) = explode('.', $name);
 
-      $customGroupId = CustomGroup::get()
-        ->setCheckPermissions(FALSE)
-        ->addWhere('name', '=', $customGroup)
-        ->execute()
-        ->first()['id'];
+      $customGroups = $this->customGroupService->findBy(array(
+        array('extends', '=', $this->getEntity()),
+        array('name', '=', $customGroup),
+      ));
+      $customGroupId = array_shift($customGroups)['id'];
 
-      $customFieldData = CustomField::get()
-        ->setCheckPermissions(FALSE)
-        ->addWhere('custom_group_id', '=', $customGroupId)
-        ->addWhere('name', '=', $customField)
-        ->execute()
-        ->first();
-
+      $customFields = $this->customFieldService->findBy(array(
+        array('custom_group_id', '=', $customGroupId),
+        array('name', '=', $customField),
+      ));
+      $customFieldData = array_shift($customFields);
       $customFieldId = $customFieldData['id'];
+
       // todo custom value ID is needed if edit
       $customValueID = NULL;
 

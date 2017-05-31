@@ -27,8 +27,6 @@
  */
 namespace Civi\API;
 
-use Civi\Api4\CustomField;
-use Civi\Api4\CustomGroup;
 use CRM_Utils_Array as ArrayHelper;
 
 /**
@@ -148,6 +146,10 @@ class Api4SelectQuery extends SelectQuery {
 
   /**
    * Fetch a field from the getFields list
+   *
+   * @param string $fieldName
+   *
+   * @return string|null
    */
   protected function getField($fieldName) {
     if ($fieldName && isset($this->apiFieldSpec[$fieldName])) {
@@ -171,6 +173,7 @@ class Api4SelectQuery extends SelectQuery {
           $customFieldData = $this->addDotNotationCustomField($selectAlias);
           break;
         case 3:
+          // todo optimize
           $customFieldData = $this->addDotNotationCustomFieldWithOptionValue($selectAlias);
           break;
         default:
@@ -235,7 +238,13 @@ class Api4SelectQuery extends SelectQuery {
     $customValueAlias = $addedField[0];
     $customValueColumn = $addedField[1];
 
-    $optionGroupID = $customField['option_group_id'];
+    $optionGroupID = ArrayHelper::value('option_group_id', $customField);
+
+    // todo what to do here
+    if (NULL === $optionGroupID) {
+      return;
+    }
+
     $optionValueAlias = sprintf('%s_to_%s', self::MAIN_TABLE_ALIAS, 'option_value');
     $this->join(
       'INNER',
@@ -252,23 +261,18 @@ class Api4SelectQuery extends SelectQuery {
 
   /**
    * @param string $extends
-   * @param string $groupId
+   * @param string $groupName
    *
    * @return array|null
    */
-  protected function getCustomGroup($extends, $groupId) {
-    $customGroups = CustomGroup::get()
-      ->setCheckPermissions(FALSE)
-      ->addWhere('extends', '=', $extends)
-      ->execute();
+  protected function getCustomGroup($extends, $groupName) {
+    $result = \Civi::container()->get('custom_group.service')
+      ->findBy(array(
+        array('extends', '=', $extends),
+        array('name', '=', $groupName)
+      ));
 
-    foreach ($customGroups as $customGroup) {
-      if ($customGroup['name'] === $groupId) {
-        return $customGroup;
-      }
-    }
-
-    return NULL;
+    return array_shift($result);
   }
 
   /**
@@ -278,18 +282,13 @@ class Api4SelectQuery extends SelectQuery {
    * @return array|null
    */
     protected function getCustomField($customGroupId, $fieldName) {
-      $customFields = CustomField::get()
-        ->setCheckPermissions(FALSE)
-        ->addWhere('custom_group_id', '=', $customGroupId)
-        ->execute();
+      $result = \Civi::container()->get('custom_field.service')
+        ->findBy(array(
+          array('custom_group_id', '=', $customGroupId),
+          array('name', '=', $fieldName)
+        ));
 
-      foreach ($customFields as $customField) {
-        if ($fieldName === $customField['name']) {
-          return $customField;
-        }
-      }
-
-      return NULL;
+      return array_shift($result);
     }
 
 }
