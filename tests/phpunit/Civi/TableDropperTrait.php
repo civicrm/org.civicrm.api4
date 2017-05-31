@@ -1,6 +1,6 @@
 <?php
 
-namespace phpunit\Civi;
+namespace Civi\Api;
 
 trait TableDropperTrait {
   /**

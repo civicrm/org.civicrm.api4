@@ -1,11 +1,11 @@
 <?php
 namespace Civi\API\V4;
 
+use Civi\Api\TableDropperTrait;
 use Civi\Api4\CustomField;
 use Civi\Api4\CustomGroup;
 use Civi\Api4\OptionGroup;
 use Civi\Api4\OptionValue;
-use phpunit\Civi\TableDropperTrait;
 
 /**
  * @group headless

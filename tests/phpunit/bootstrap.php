@@ -7,6 +7,7 @@ eval(cv('php:boot --level=classloader', 'phpcode'));
 // todo fix test autoloader
 include __DIR__ . "/Civi/API/V4/UnitTestCase.php";
 include_once __DIR__ . "/Civi/TableDropperTrait.php";
+include_once __DIR__ . "/Civi/QueryCounterTrait.php";
 
 /**
  * Call the "cv" command.
