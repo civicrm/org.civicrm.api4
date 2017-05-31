@@ -82,6 +82,7 @@ class Api4SelectQuery extends SelectQuery {
         return $this->treeWalkWhereClause($clause[1][0]);
       }
       else {
+        $sql_subclauses = [];
         foreach ($clause[1] as $subclause) {
           $sql_subclauses[] = $this->treeWalkWhereClause($subclause);
         }
@@ -164,7 +165,17 @@ class Api4SelectQuery extends SelectQuery {
         continue;
       }
 
-      $customFieldData = $this->addDotNotationCustomField($selectAlias);
+      $parts = explode('.', $selectAlias);
+      switch (count($parts)) {
+        case 2:
+          $customFieldData = $this->addDotNotationCustomField($selectAlias);
+          break;
+        case 3:
+          $customFieldData = $this->addDotNotationCustomFieldWithOptionValue($selectAlias);
+          break;
+        default:
+          throw new \Exception('Invalid dot notation in select');
+      }
 
       if (!$customFieldData) {
         continue;
@@ -180,11 +191,15 @@ class Api4SelectQuery extends SelectQuery {
 
   /**
    * @param $customField
+   *   The field name in the format CustomGroupName.CustomFieldName
    *
    * @return array|null
+   *   An array containing the added table alias and column name
    */
   protected function addDotNotationCustomField($customField) {
-    list($groupName, $fieldName) = explode('.', $customField);
+    $parts = explode('.', $customField);
+    $groupName = ArrayHelper::value(0, $parts);
+    $fieldName = ArrayHelper::value(1, $parts);
 
     $customGroup = $this->getCustomGroup($this->entity, $groupName);
     $tableName = ArrayHelper::value('table_name', $customGroup);
@@ -199,6 +214,40 @@ class Api4SelectQuery extends SelectQuery {
       array('table_name' => $tableName, 'column_name' => $columnName),
       'INNER'
     );
+  }
+
+  /**
+   * @param $field
+   *
+   * @return array
+   *   An array containing the option value table alias and column name
+   */
+  protected function addDotNotationCustomFieldWithOptionValue($field) {
+    $parts = explode('.', $field);
+    $groupName = ArrayHelper::value(0, $parts);
+    $fieldName = ArrayHelper::value(1, $parts);
+
+    $customGroup = $this->getCustomGroup($this->entity, $groupName);
+    $customField = $this->getCustomField($customGroup['id'], $fieldName);
+
+    $optionValueField = ArrayHelper::value(2, $parts);
+    $addedField = $this->addDotNotationCustomField($field);
+    $customValueAlias = $addedField[0];
+    $customValueColumn = $addedField[1];
+
+    $optionGroupID = $customField['option_group_id'];
+    $optionValueAlias = sprintf('%s_to_%s', self::MAIN_TABLE_ALIAS, 'option_value');
+    $this->join(
+      'INNER',
+      'civicrm_option_value',
+      $optionValueAlias,
+      array(
+        sprintf('`%s`.value = `%s`.`%s`', $optionValueAlias, $customValueAlias, $customValueColumn),
+        sprintf('`%s`.option_group_id =  %d', $optionValueAlias, $optionGroupID)
+      )
+    );
+
+    return array($optionValueAlias, $optionValueField);
   }
 
   /**

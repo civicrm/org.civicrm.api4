@@ -62,13 +62,13 @@ class CreateWithOptionGroupTest extends UnitTestCase {
       ->setCheckPermissions(FALSE)
       ->addSelect('display_name')
       ->addSelect('MyContactFields.Color')
-//      ->addSelect('MyContactFields.Color.label') // OptionValue.label
+      ->addSelect('MyContactFields.Color.label') // OptionValue.label
       ->addWhere('MyContactFields.Color', '=', 'r')
       ->execute()
       ->first();
 
     $this->assertEquals('r', $result['MyContactFields.Color']);
-//    $this->assertEquals('Red', $result['MyContactFields.Color.label']);
+    $this->assertEquals('Red', $result['MyContactFields.Color.label']);
   }
 
 }
