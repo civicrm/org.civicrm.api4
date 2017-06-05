@@ -131,6 +131,12 @@ class Create extends Action {
         'html_type',
         'name'
       );
+      $customFieldExtends = \CRM_Core_BAO_CustomGroup::getFieldValue(
+        \CRM_Core_DAO_CustomGroup::class,
+        $customGroup,
+        'extends',
+        'name'
+      );
 
       // todo custom value ID is needed if edit
       $customValueID = NULL;
@@ -147,7 +153,7 @@ class Create extends Action {
           $customFieldId,
           $customParams,
           $value,
-          $entity,
+          $customFieldExtends,
           $customValueID,
           $entityId,
           FALSE,
