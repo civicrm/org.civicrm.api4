@@ -86,6 +86,6 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
       ->execute()
       ->first();
 
-    $this->assertLessThan(25, $this->getQueryCount());
+    $this->assertLessThan(30, $this->getQueryCount());
   }
 }
