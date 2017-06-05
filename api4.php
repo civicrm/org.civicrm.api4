@@ -6,6 +6,8 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Reference;
 use Civi\API\Provider\ActionObjectProvider;
+use Civi\API\Event\Subscriber\CreationDefaultProvider;
+use Civi\API\Event\Subscriber\CustomGroupRequestModifier;
 
 /**
  * Procedural wrapper for the OO api version 4.
@@ -35,6 +37,10 @@ function api4_civicrm_container($container) {
   $container->findDefinition('civi_api_kernel')->addMethodCall('registerApiProvider',
     array(new Reference('action_object_provider'))
   );
+
+  $dispatcher = $container->get('dispatcher');
+  $dispatcher->addSubscriber(new CreationDefaultProvider());
+  $dispatcher->addSubscriber(new CustomGroupRequestModifier());
 }
 
 /**
