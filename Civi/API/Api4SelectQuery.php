@@ -240,9 +240,11 @@ class Api4SelectQuery extends SelectQuery {
 
     $optionGroupID = ArrayHelper::value('option_group_id', $customField);
 
-    // todo what to do here
     if (NULL === $optionGroupID) {
-      return;
+      throw new \API_Exception(
+        'Cannot select option value field for a custom field that does not'
+        . ' have an option group defined'
+      );
     }
 
     $optionValueAlias = sprintf('%s_to_%s', self::MAIN_TABLE_ALIAS, 'option_value');
