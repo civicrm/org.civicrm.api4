@@ -6,8 +6,6 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Reference;
 use Civi\API\Provider\ActionObjectProvider;
-use Civi\API\Service\CustomGroupService;
-use Civi\API\Service\CustomFieldService;
 
 /**
  * Procedural wrapper for the OO api version 4.
@@ -37,12 +35,6 @@ function api4_civicrm_container($container) {
   $container->findDefinition('civi_api_kernel')->addMethodCall('registerApiProvider',
     array(new Reference('action_object_provider'))
   );
-  $container->setDefinition('custom_group.service', new Definition(
-    CustomGroupService::class
-  ));
-  $container->setDefinition('custom_field.service', new Definition(
-    CustomFieldService::class
-  ));
 }
 
 /**

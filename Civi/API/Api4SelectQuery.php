@@ -204,10 +204,18 @@ class Api4SelectQuery extends SelectQuery {
     $groupName = ArrayHelper::value(0, $parts);
     $fieldName = ArrayHelper::value(1, $parts);
 
-    $customGroup = $this->getCustomGroup($this->entity, $groupName);
-    $tableName = ArrayHelper::value('table_name', $customGroup);
-    $customField = $this->getCustomField($customGroup['id'], $fieldName);
-    $columnName = ArrayHelper::value('column_name', $customField);
+    $tableName = \CRM_Core_BAO_CustomGroup::getFieldValue(
+      \CRM_Core_DAO_CustomGroup::class,
+      $groupName,
+      'table_name',
+      'name'
+    );
+    $columnName = \CRM_Core_BAO_CustomField::getFieldValue(
+      \CRM_Core_DAO_CustomField::class,
+      $fieldName,
+      'column_name',
+      'name'
+    );
 
     if (!$tableName || !$columnName) {
       return NULL;
@@ -227,18 +235,19 @@ class Api4SelectQuery extends SelectQuery {
    */
   protected function addDotNotationCustomFieldWithOptionValue($field) {
     $parts = explode('.', $field);
-    $groupName = ArrayHelper::value(0, $parts);
     $fieldName = ArrayHelper::value(1, $parts);
-
-    $customGroup = $this->getCustomGroup($this->entity, $groupName);
-    $customField = $this->getCustomField($customGroup['id'], $fieldName);
 
     $optionValueField = ArrayHelper::value(2, $parts);
     $addedField = $this->addDotNotationCustomField($field);
     $customValueAlias = $addedField[0];
     $customValueColumn = $addedField[1];
 
-    $optionGroupID = ArrayHelper::value('option_group_id', $customField);
+    $optionGroupID = \CRM_Core_BAO_CustomField::getFieldValue(
+      \CRM_Core_DAO_CustomField::class,
+      $fieldName,
+      'option_group_id',
+      'name'
+    );
 
     if (NULL === $optionGroupID) {
       throw new \API_Exception(
@@ -269,37 +278,5 @@ class Api4SelectQuery extends SelectQuery {
 
     return array($optionValueAlias, $optionValueField);
   }
-
-  /**
-   * @param string $extends
-   * @param string $groupName
-   *
-   * @return array|null
-   */
-  protected function getCustomGroup($extends, $groupName) {
-    $result = \Civi::container()->get('custom_group.service')
-      ->findBy(array(
-        array('extends', '=', $extends),
-        array('name', '=', $groupName)
-      ));
-
-    return array_shift($result);
-  }
-
-  /**
-   * @param $customGroupId
-   * @param $fieldName
-   *
-   * @return array|null
-   */
-    protected function getCustomField($customGroupId, $fieldName) {
-      $result = \Civi::container()->get('custom_field.service')
-        ->findBy(array(
-          array('custom_group_id', '=', $customGroupId),
-          array('name', '=', $fieldName)
-        ));
-
-      return array_shift($result);
-    }
 
 }
