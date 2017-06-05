@@ -3,11 +3,9 @@
 namespace Civi\API\Event\Subscriber;
 
 use Civi\API\Event\PrepareEvent;
-use Civi\API\Events;
 use Civi\API\V4\Action\Create;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-abstract class ApiRequestModifier implements EventSubscriberInterface {
+abstract class PrepareCreationSubscriber Extends AbstractPrepareSubscriber {
   /**
    * @param PrepareEvent $event
    */
@@ -16,6 +14,8 @@ abstract class ApiRequestModifier implements EventSubscriberInterface {
     if (!$apiRequest instanceof Create) {
       return;
     }
+
+    $this->addDefaultCreationValues($apiRequest);
     $this->modify($apiRequest);
   }
 
@@ -27,11 +27,11 @@ abstract class ApiRequestModifier implements EventSubscriberInterface {
   abstract protected function modify(Create $request);
 
   /**
-   * @return array
+   * @param Create $request
    */
-  public static function getSubscribedEvents() {
-    return array(
-      Events::PREPARE => 'onApiPrepare'
-    );
+  protected function addDefaultCreationValues(Create $request) {
+    if (NULL === $request->getValue('is_active')) {
+      $request->setValue('is_active', 1);
+    }
   }
 }

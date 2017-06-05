@@ -4,7 +4,7 @@ namespace Civi\API\Event\Subscriber;
 
 use Civi\API\V4\Action\Create;
 
-class CustomGroupRequestModifier extends ApiRequestModifier {
+class CustomGroupPreCreationSubscriber extends PrepareCreationSubscriber {
   /**
    * @param Create $request
    */

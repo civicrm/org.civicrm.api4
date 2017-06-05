@@ -6,8 +6,8 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Reference;
 use Civi\API\Provider\ActionObjectProvider;
-use Civi\API\Event\Subscriber\CreationDefaultProvider;
-use Civi\API\Event\Subscriber\CustomGroupRequestModifier;
+use Civi\API\Event\Subscriber\CustomGroupPreCreationSubscriber;
+use Civi\API\Event\Subscriber\CustomFieldPreCreationSubscriber;
 
 /**
  * Procedural wrapper for the OO api version 4.
@@ -39,8 +39,8 @@ function api4_civicrm_container($container) {
   );
 
   $dispatcher = $container->get('dispatcher');
-  $dispatcher->addSubscriber(new CreationDefaultProvider());
-  $dispatcher->addSubscriber(new CustomGroupRequestModifier());
+  $dispatcher->addSubscriber(new CustomGroupPreCreationSubscriber());
+  $dispatcher->addSubscriber(new CustomFieldPreCreationSubscriber());
 }
 
 /**
