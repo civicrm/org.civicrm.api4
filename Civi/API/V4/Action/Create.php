@@ -26,8 +26,6 @@
  */
 namespace Civi\API\V4\Action;
 use Civi\API\Result;
-use Civi\API\Service\CustomFieldService;
-use Civi\API\Service\CustomGroupService;
 use Civi\API\V4\Action;
 
 /**
@@ -52,16 +50,6 @@ class Create extends Action {
   protected $bao;
 
   /**
-   * @var CustomFieldService
-   */
-  protected $customFieldService;
-
-  /**
-   * @var CustomGroupService
-   */
-  protected $customGroupService;
-
-  /**
    * Action constructor.
    * @param string $entity
    */
@@ -69,8 +57,6 @@ class Create extends Action {
     parent::__construct($entity);
     $bao_name = $this->getBaoName();
     $this->bao = new $bao_name();
-    $this->customGroupService = \Civi::container()->get('custom_group.service');
-    $this->customFieldService = \Civi::container()->get('custom_field.service');
   }
 
   /**
@@ -133,18 +119,18 @@ class Create extends Action {
 
       list($customGroup, $customField) = explode('.', $name);
 
-      $customGroups = $this->customGroupService->findBy(array(
-        array('extends', '=', $this->getEntity()),
-        array('name', '=', $customGroup),
-      ));
-      $customGroupId = array_shift($customGroups)['id'];
-
-      $customFields = $this->customFieldService->findBy(array(
-        array('custom_group_id', '=', $customGroupId),
-        array('name', '=', $customField),
-      ));
-      $customFieldData = array_shift($customFields);
-      $customFieldId = $customFieldData['id'];
+      $customFieldId = \CRM_Core_BAO_CustomField::getFieldValue(
+        \CRM_Core_DAO_CustomField::class,
+        $customField,
+        'id',
+        'name'
+      );
+      $customFieldType = \CRM_Core_BAO_CustomField::getFieldValue(
+        \CRM_Core_DAO_CustomField::class,
+        $customField,
+        'html_type',
+        'name'
+      );
 
       // todo custom value ID is needed if edit
       $customValueID = NULL;
@@ -152,7 +138,7 @@ class Create extends Action {
       // todo are we sure we don't want to allow setting to NULL? need to test
       if ($customFieldId && NULL !== $value) {
 
-        if ($customFieldData['html_type'] == 'CheckBox') {
+        if ($customFieldType == 'CheckBox') {
           // this function should be part of a class
           formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
         }
