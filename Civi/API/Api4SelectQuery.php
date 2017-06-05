@@ -248,14 +248,23 @@ class Api4SelectQuery extends SelectQuery {
     }
 
     $optionValueAlias = sprintf('%s_to_%s', self::MAIN_TABLE_ALIAS, 'option_value');
+    $optionValueMatching = sprintf(
+      '`%s`.value = `%s`.`%s`',
+      $optionValueAlias,
+      $customValueAlias,
+      $customValueColumn
+    );
+    $optionGroupRestriction = sprintf(
+      '`%s`.option_group_id =  %d',
+      $optionValueAlias,
+      $optionGroupID
+    );
+
     $this->join(
       'INNER',
       'civicrm_option_value',
       $optionValueAlias,
-      array(
-        sprintf('`%s`.value = `%s`.`%s`', $optionValueAlias, $customValueAlias, $customValueColumn),
-        sprintf('`%s`.option_group_id =  %d', $optionValueAlias, $optionGroupID)
-      )
+      array($optionValueMatching, $optionGroupRestriction)
     );
 
     return array($optionValueAlias, $optionValueField);
