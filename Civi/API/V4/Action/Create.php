@@ -146,9 +146,6 @@ class Create extends Action {
       $customFieldData = array_shift($customFields);
       $customFieldId = $customFieldData['id'];
 
-      // todo custom value ID is needed if edit
-      $customValueID = NULL;
-
       // todo are we sure we don't want to allow setting to NULL? need to test
       if ($customFieldId && NULL !== $value) {
 
@@ -162,7 +159,7 @@ class Create extends Action {
           $customParams,
           $value,
           $entity,
-          $customValueID,
+          NULL, // todo check when this is needed
           $entityId,
           FALSE,
           FALSE,
