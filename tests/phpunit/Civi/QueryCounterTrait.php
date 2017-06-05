@@ -14,7 +14,7 @@ trait QueryCounterTrait {
   /**
    * Start the query counter
    */
-  protected function beginCount() {
+  protected function beginQueryCount() {
     $this->startCount = $this->getCurrentGlobalQueryCount();
   }
 

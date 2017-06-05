@@ -56,7 +56,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
       ->setValue('data_type', 'String')
       ->execute();
 
-    $this->beginCount();
+    $this->beginQueryCount();
 
     Contact::create()
       ->setCheckPermissions(FALSE)
