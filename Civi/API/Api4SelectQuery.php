@@ -173,7 +173,6 @@ class Api4SelectQuery extends SelectQuery {
           $customFieldData = $this->addDotNotationCustomField($selectAlias);
           break;
         case 3:
-          // todo optimize
           $customFieldData = $this->addDotNotationCustomFieldWithOptionValue($selectAlias);
           break;
         default:
@@ -203,8 +202,6 @@ class Api4SelectQuery extends SelectQuery {
     $parts = explode('.', $customField);
     $groupName = ArrayHelper::value(0, $parts);
     $fieldName = ArrayHelper::value(1, $parts);
-
-    // todo cache added fields from select to use in where
 
     $tableName = \CRM_Core_BAO_CustomGroup::getFieldValue(
       \CRM_Core_DAO_CustomGroup::class,
