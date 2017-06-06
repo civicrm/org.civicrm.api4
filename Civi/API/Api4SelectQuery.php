@@ -204,6 +204,8 @@ class Api4SelectQuery extends SelectQuery {
     $groupName = ArrayHelper::value(0, $parts);
     $fieldName = ArrayHelper::value(1, $parts);
 
+    // todo cache added fields from select to use in where
+
     $tableName = \CRM_Core_BAO_CustomGroup::getFieldValue(
       \CRM_Core_DAO_CustomGroup::class,
       $groupName,
@@ -256,7 +258,11 @@ class Api4SelectQuery extends SelectQuery {
       );
     }
 
-    $optionValueAlias = sprintf('%s_to_%s', self::MAIN_TABLE_ALIAS, 'option_value');
+    $optionValueAlias = sprintf(
+      '%s_to_%s_options',
+      self::MAIN_TABLE_ALIAS,
+      $customValueColumn
+    );
     $optionValueMatching = sprintf(
       '`%s`.value = `%s`.`%s`',
       $optionValueAlias,
