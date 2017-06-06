@@ -4,6 +4,7 @@ namespace Civi\API\V4\Action;
 use Civi\Api4\Contact;
 use Civi\Api4\CustomField;
 use Civi\Api4\CustomGroup;
+use \CRM_Core_BAO_CustomValueTable as CustomValueTable;
 
 /**
  * @group headless
@@ -15,12 +16,9 @@ class UpdateCustomValueTest extends BaseCustomValueTest {
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'MyContactFields')
-      ->setValue('title', 'MyContactFields')
       ->setValue('extends', 'Contact')
       ->execute()
       ->getArrayCopy();
-
-    $tableName = $customGroup['table_name'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
@@ -48,11 +46,10 @@ class UpdateCustomValueTest extends BaseCustomValueTest {
       ->setValue('MyContactFields.FavColor', 'Blue')
       ->execute();
 
-    $selectQuery = sprintf('SELECT * FROM `%s`;', $tableName);
-    $result = \CRM_Core_DAO::executeQuery($selectQuery)->fetchAll();
+    $result = CustomValueTable::getEntityValues($contactId, 'Contact');
 
     $this->assertEquals(1, count($result));
-    $this->assertContains('Blue', array_shift($result));
+    $this->assertContains('Blue', $result);
   }
 
 }

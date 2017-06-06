@@ -13,13 +13,22 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
    * @param Create $request
    */
   public function modify(Create $request) {
-
     $this->formatOptionParams($request);
 
     $optionType = $request->getValue('option_type');
-    if (!$optionType) { // default to NULL
+    // default to NULL
+    if (!$optionType) {
       $request->setValue('option_type', NULL);
     }
+  }
+
+  /**
+   * @param Create $request
+   *
+   * @return bool
+   */
+  protected function applies(Create $request) {
+    return $request->getEntity() === 'CustomField';
   }
 
   /**

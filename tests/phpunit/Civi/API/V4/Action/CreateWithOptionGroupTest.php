@@ -23,7 +23,6 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'FavoriteThings')
-      ->setValue('title', 'FavoriteThings') // todo default to name if not set
       ->setValue('extends', 'Contact')
       ->execute();
 
@@ -50,7 +49,6 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'FinancialStuff')
-      ->setValue('title', 'FinancialStuff') // todo default to name if not set
       ->setValue('extends', 'Contact')
       ->execute();
 

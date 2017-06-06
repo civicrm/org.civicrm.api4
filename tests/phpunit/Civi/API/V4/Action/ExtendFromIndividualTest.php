@@ -15,7 +15,6 @@ class ExtendFromIndividualTest extends BaseCustomValueTest {
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'MyContactFields')
-      ->setValue('title', 'MyContactFields')
       ->setValue('extends', 'Individual') // not Contact
       ->execute()
       ->getArrayCopy();

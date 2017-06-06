@@ -16,10 +16,14 @@ abstract class PreCreationSubscriber Extends AbstractPrepareSubscriber {
     }
 
     $this->addDefaultCreationValues($apiRequest);
-    $this->modify($apiRequest);
+    if ($this->applies($apiRequest)) {
+      $this->modify($apiRequest);
+    }
   }
 
   /**
+   * Modify the request
+   *
    * @param Create $request
    *
    * @return void
@@ -27,6 +31,17 @@ abstract class PreCreationSubscriber Extends AbstractPrepareSubscriber {
   abstract protected function modify(Create $request);
 
   /**
+   * Check if this subscriber should be applied to the request
+   *
+   * @param Create $request
+   *
+   * @return bool
+   */
+  abstract protected function applies(Create $request);
+
+  /**
+   * Sets default values common to all creation requests
+   *
    * @param Create $request
    */
   protected function addDefaultCreationValues(Create $request) {
