@@ -82,7 +82,8 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       ->addSelect('FavoriteThings.FavFood.label')
       ->addSelect('FinancialStuff.Salary')
       ->addWhere('FavoriteThings.FavColor', '=', 'r')
-      ->addWhere('FavoriteThings.FavFood', 'IN', ['1', '2'])
+      ->addWhere('FavoriteThings.FavFood.label', 'IN', ['Corn', 'Potatoes'])
+      ->addWhere('FavoriteThings.FavFood', 'IN', [1, 2])
       ->addWhere('FinancialStuff.Salary', '>', '10000')
       ->execute()
       ->first();

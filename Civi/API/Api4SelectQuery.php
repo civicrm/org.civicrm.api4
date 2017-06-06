@@ -167,17 +167,7 @@ class Api4SelectQuery extends SelectQuery {
         continue;
       }
 
-      $parts = explode('.', $selectAlias);
-      switch (count($parts)) {
-        case 2:
-          $customFieldData = $this->addDotNotationCustomField($selectAlias);
-          break;
-        case 3:
-          $customFieldData = $this->addDotNotationCustomFieldWithOptionValue($selectAlias);
-          break;
-        default:
-          throw new \Exception('Invalid dot notation in select');
-      }
+      $customFieldData = $this->addDotNotationCustomField($selectAlias);
 
       if (!$customFieldData) {
         continue;
@@ -200,6 +190,13 @@ class Api4SelectQuery extends SelectQuery {
    */
   protected function addDotNotationCustomField($customField) {
     $parts = explode('.', $customField);
+
+    if (count($parts) === 3) {
+      return $this->addDotNotationCustomFieldWithOptionValue($customField);
+    } elseif (count($parts) !== 2) {
+      throw new \Exception('Invalid dot notation in select');
+    }
+
     $groupName = ArrayHelper::value(0, $parts);
     $fieldName = ArrayHelper::value(1, $parts);
 
@@ -235,9 +232,11 @@ class Api4SelectQuery extends SelectQuery {
   protected function addDotNotationCustomFieldWithOptionValue($field) {
     $parts = explode('.', $field);
     $fieldName = ArrayHelper::value(1, $parts);
-
+    $groupName = ArrayHelper::value(0, $parts);
     $optionValueField = ArrayHelper::value(2, $parts);
-    $addedField = $this->addDotNotationCustomField($field);
+    $customGroupAndField = sprintf('%s.%s', $groupName, $fieldName);
+
+    $addedField = $this->addDotNotationCustomField($customGroupAndField);
     $customValueAlias = $addedField[0];
     $customValueColumn = $addedField[1];
 
