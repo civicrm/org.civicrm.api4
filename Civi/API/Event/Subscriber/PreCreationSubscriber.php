@@ -5,7 +5,7 @@ namespace Civi\API\Event\Subscriber;
 use Civi\API\Event\PrepareEvent;
 use Civi\API\V4\Action\Create;
 
-abstract class PrepareCreationSubscriber Extends AbstractPrepareSubscriber {
+abstract class PreCreationSubscriber Extends AbstractPrepareSubscriber {
   /**
    * @param PrepareEvent $event
    */
