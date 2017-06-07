@@ -2,7 +2,7 @@
 
 namespace Civi\API\Event;
 
-class Events {
+interface Events {
 
   /**
    * Prepare the specification for a request. Fired from within a request to
