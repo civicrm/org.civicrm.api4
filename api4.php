@@ -6,6 +6,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
+use Civi\API\Event\Subscriber\GetFieldsSubscriber;
 
 /**
  * Procedural wrapper for the OO api version 4.
