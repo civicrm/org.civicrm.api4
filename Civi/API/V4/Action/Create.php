@@ -90,8 +90,9 @@ class Create extends Action {
     $entityId = \CRM_Utils_Array::value('id', $params);
     $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
 
-    // get a bao back from the standard factory method
+    $this->toggleAllowNullStringSetting(TRUE);
     $createResult = $this->bao->create($params);
+    $this->toggleAllowNullStringSetting(FALSE);
 
     if (!$createResult) {
       $errMessage = sprintf('%s creation failed', $this->getEntity());
@@ -165,6 +166,18 @@ class Create extends Action {
     }
 
     return $params;
+  }
+
+  /**
+   * @param $state
+   */
+  private function toggleAllowNullStringSetting($state) {
+    global $_DB_DATAOBJECT;
+    if ($state) {
+      $_DB_DATAOBJECT['CONFIG']['disable_null_strings'] = FALSE;
+    } else {
+      unset($_DB_DATAOBJECT['CONFIG']['disable_null_strings']);
+    }
   }
 
 }
