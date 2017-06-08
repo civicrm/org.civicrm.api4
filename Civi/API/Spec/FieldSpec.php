@@ -37,7 +37,7 @@ class FieldSpec {
    * @param $name
    * @param $dataType
    */
-  public function __construct($name, $dataType) {
+  public function __construct($name, $dataType = 'String') {
     $this->setName($name);
     $this->setDataType($dataType);
   }

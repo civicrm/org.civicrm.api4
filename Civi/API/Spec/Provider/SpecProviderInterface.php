@@ -3,7 +3,6 @@
 namespace Civi\API\Spec\Provider;
 
 use Civi\API\Spec\RequestSpec;
-use Civi\API\V4\Action;
 
 interface SpecProviderInterface {
   /**
@@ -14,9 +13,10 @@ interface SpecProviderInterface {
   public function modifySpec(RequestSpec $specification);
 
   /**
-   * @param Action $request
+   * @param string $entity
+   * @param string $action
    *
    * @return bool
    */
-  public function applies(Action $request);
+  public function applies($entity, $action);
 }
