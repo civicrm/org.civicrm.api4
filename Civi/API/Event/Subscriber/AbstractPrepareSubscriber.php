@@ -2,6 +2,7 @@
 
 namespace Civi\API\Event\Subscriber;
 
+use Civi\API\Event\PrepareEvent;
 use Civi\API\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -14,4 +15,9 @@ abstract class AbstractPrepareSubscriber implements EventSubscriberInterface {
       Events::PREPARE => 'onApiPrepare'
     );
   }
+
+  /**
+   * @param PrepareEvent $event
+   */
+  abstract public function onApiPrepare(PrepareEvent $event);
 }

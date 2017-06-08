@@ -9,7 +9,7 @@ abstract class PreCreationSubscriber Extends AbstractPrepareSubscriber {
   /**
    * @param PrepareEvent $event
    */
-  public function onApiPrepare($event) {
+  public function onApiPrepare(PrepareEvent $event) {
     $apiRequest = $event->getApiRequest();
     if (!$apiRequest instanceof Create) {
       return;
