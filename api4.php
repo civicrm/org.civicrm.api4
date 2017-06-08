@@ -8,6 +8,7 @@ use Symfony\Component\DependencyInjection\Reference;
 use Civi\API\Provider\ActionObjectProvider;
 use Civi\API\Event\Subscriber\CustomGroupPreCreationSubscriber;
 use Civi\API\Event\Subscriber\CustomFieldPreCreationSubscriber;
+use Civi\API\Event\Subscriber\ContactPreUpdateSubscriber;
 
 /**
  * Procedural wrapper for the OO api version 4.
@@ -41,6 +42,7 @@ function api4_civicrm_container($container) {
   $dispatcher = $container->get('dispatcher');
   $dispatcher->addSubscriber(new CustomGroupPreCreationSubscriber());
   $dispatcher->addSubscriber(new CustomFieldPreCreationSubscriber());
+  $dispatcher->addSubscriber(new ContactPreUpdateSubscriber());
 }
 
 /**
