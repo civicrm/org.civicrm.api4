@@ -3,9 +3,9 @@
 require_once 'api4.civix.php';
 
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
-use Civi\API\Event\Subscriber\GetFieldsSubscriber;
 
 /**
  * Procedural wrapper for the OO api version 4.
@@ -22,7 +22,7 @@ function civicrm_api4($entity, $action, $params = array()) {
 }
 
 /**
- * @param Symfony\Component\DependencyInjection\ContainerBuilder $container
+ * @param ContainerBuilder $container
  */
 function api4_civicrm_container($container) {
   $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
