@@ -25,7 +25,9 @@
  +--------------------------------------------------------------------+
  */
 namespace Civi\API\V4\Action;
+use Civi\API\Spec\SpecGatherer;
 use Civi\API\Result;
+use Civi\API\Spec\SpecFormatter;
 use Civi\API\V4\Action;
 
 /**
@@ -36,12 +38,35 @@ class GetFields extends Action {
   // over-ride default to allow open access
   protected $checkPermissions = FALSE;
 
+  /**
+   * @var string
+   */
+  protected $action;
+
   public function _run(Result $result) {
-    $baoName = $this->getBaoName();
-    $bao = new $baoName();
-    $result->exchangeArray(array_values($bao->fields()));
-    // todo: custom fields
-    // want to lose some of the cruft from v3 and key fields by name instead of custom_x
+    /** @var SpecGatherer $gatherer */
+    $gatherer = \Civi::container()->get('spec_gatherer');
+    $spec = $gatherer->getSpec($this->getEntity(), $this->getAction());
+    $fields = SpecFormatter::specToArray($spec);
+
+    $result->exchangeArray($fields);
   }
 
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return $this->action;
+  }
+
+  /**
+   * @param string $action
+   *
+   * @return $this
+   */
+  public function setAction($action) {
+    $this->action = $action;
+
+    return $this;
+  }
 }
