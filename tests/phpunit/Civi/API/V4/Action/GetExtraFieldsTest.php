@@ -8,9 +8,6 @@ use Civi\Api4\Contact;
 class GetExtraFieldsTest extends UnitTestCase {
 
   public function testBAOFieldsWillBeReturned() {
-
-    $this->markTestSkipped('lala');
-
     $returnedFields = Contact::getFields()
       ->execute()
       ->getArrayCopy();
