@@ -34,6 +34,15 @@ class FieldSpec {
   protected $dataType;
 
   /**
+   * Aliases for the valid data types
+   *
+   * @var array
+   */
+  public static $typeAliases = array(
+    'Int' => 'Integer'
+  );
+
+  /**
    * @param $name
    * @param $dataType
    */
@@ -146,8 +155,12 @@ class FieldSpec {
    * @throws \API_Exception
    */
   public function setDataType($dataType) {
+    if (array_key_exists($dataType, self::$typeAliases)) {
+      $dataType = self::$typeAliases[$dataType];
+    }
+
      if (!in_array($dataType, $this->getValidDataTypes())) {
-       throw new \API_Exception(sprintf('Invaid data type "%s', $dataType));
+       throw new \Exception(sprintf('Invalid data type "%s', $dataType));
      }
 
     $this->dataType = $dataType;
@@ -161,6 +174,8 @@ class FieldSpec {
    * @return array
    */
   private function getValidDataTypes() {
-    return array_merge(\CRM_Utils_Type::dataTypes(), array('Boolean'));
+    $extraTypes = array('Boolean', 'Text');
+    $extraTypes = array_combine($extraTypes, $extraTypes);
+    return array_merge(\CRM_Utils_Type::dataTypes(), $extraTypes);
   }
 }
