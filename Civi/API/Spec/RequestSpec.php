@@ -49,6 +49,16 @@ class RequestSpec {
   }
 
   /**
+   * @return array
+   *   Gets all the field names currently part of the specification
+   */
+  public function getFieldNames() {
+    return array_map(function(FieldSpec $field) {
+      return $field->getName();
+    }, $this->fields);
+  }
+
+  /**
    * @return FieldSpec[]
    */
   public function getFields() {
