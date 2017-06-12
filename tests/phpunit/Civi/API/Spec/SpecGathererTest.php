@@ -33,7 +33,6 @@ class SpecGathererTest extends UnitTestCase {
     return parent::setUpHeadless();
   }
 
-
   public function testBasicFieldsGathering() {
     $gatherer = new SpecGatherer();
     $specs = $gatherer->getSpec('Contact', 'create');
@@ -84,5 +83,37 @@ class SpecGathererTest extends UnitTestCase {
     $fieldNames = $spec->getFieldNames();
 
     $this->assertContains('FavoriteThings.FavColor', $fieldNames);
+  }
+
+  public function testPseudoConstantOptionsWillBeAdded() {
+    $customGroupId = CustomGroup::create()
+      ->setCheckPermissions(FALSE)
+      ->setValue('name', 'FavoriteThings')
+      ->setValue('extends', 'Contact')
+      ->execute()['id'];
+
+    $options = array('Red', 'Green', 'Pink');
+
+    CustomField::create()
+      ->setCheckPermissions(FALSE)
+      ->setValue('label', 'FavColor')
+      ->setValue('custom_group_id', $customGroupId)
+      ->setValue('options', $options)
+      ->setValue('html_type', 'Select')
+      ->setValue('data_type', 'String')
+      ->execute();
+
+    $gatherer = new SpecGatherer();
+    $gatherer->addSpecProvider(new CustomFieldSpecProvider());
+    $spec = $gatherer->getSpec('Contact', 'get');
+
+    $customField = $spec->getFieldByName('FavoriteThings.FavColor');
+    $regularField = $spec->getFieldByName('contact_type');
+
+    $this->assertNotEmpty($regularField->getOptions());
+    $this->assertContains('Individual', $regularField->getOptions());
+
+    $this->assertNotEmpty($customField->getOptions());
+    $this->assertSame(array_values($options), $customField->getOptions());
   }
 }

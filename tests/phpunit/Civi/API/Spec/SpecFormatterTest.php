@@ -7,6 +7,9 @@ use Civi\API\Spec\RequestSpec;
 use Civi\API\Spec\SpecFormatter;
 use Civi\API\V4\UnitTestCase;
 
+/**
+ * @group headless
+ */
 class SpecFormatterTest extends UnitTestCase {
 
   public function testSpecToArray() {
@@ -15,7 +18,6 @@ class SpecFormatterTest extends UnitTestCase {
     $field = new FieldSpec($fieldName);
     $spec->addFieldSpec($field);
     $arraySpec = SpecFormatter::specToArray($spec);
-
 
     $this->assertArrayHasKey($fieldName, $arraySpec);
     $this->assertEquals('String', $arraySpec[$fieldName]['data_type']);
