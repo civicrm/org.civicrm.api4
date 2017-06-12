@@ -21,16 +21,44 @@ class SpecFormatterTest extends UnitTestCase {
     $this->assertEquals('String', $arraySpec[$fieldName]['data_type']);
   }
 
-  public function testArrayToField() {
-    $fieldData = array(
-      'name' => 'Foo',
-      'title' => 'Bar',
-      'type' => \CRM_Utils_Type::T_STRING
-    );
-
+  /**
+   * @dataProvider arrayFieldSpecProvider
+   *
+   * @param array $fieldData
+   * @param string $expectedName
+   * @param string $expectedType
+   */
+  public function testArrayToField($fieldData, $expectedName, $expectedType) {
     $field = SpecFormatter::arrayToField($fieldData);
 
-    $this->assertEquals('Foo', $field->getName());
-    $this->assertEquals('String', $field->getDataType());
+    $this->assertEquals($expectedName, $field->getName());
+    $this->assertEquals($expectedType, $field->getDataType());
+  }
+
+  /**
+   * @return array
+   */
+  public function arrayFieldSpecProvider() {
+    return array(
+      array(
+        array(
+          'name' => 'Foo',
+          'title' => 'Bar',
+          'type' => \CRM_Utils_Type::T_STRING
+        ),
+        'Foo',
+        'String'
+      ),
+      array(
+        array(
+          'name' => 'MyField',
+          'title' => 'Bar',
+          'type' => \CRM_Utils_Type::T_STRING,
+          'data_type' => 'Boolean' // this should take precedence
+        ),
+        'MyField',
+        'Boolean'
+      )
+    );
   }
 }

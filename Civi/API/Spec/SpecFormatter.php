@@ -33,8 +33,7 @@ class SpecFormatter {
    */
   public static function arrayToField(array $data) {
     $name = ArrayHelper::value('name', $data);
-    $dataTypeInt = ArrayHelper::value('type', $data);
-    $dataTypeName = \CRM_Utils_Type::typeToString($dataTypeInt);
+    $dataTypeName = self::getDataType($data);
     $field = new FieldSpec($name, $dataTypeName);
 
     $field->setDescription(ArrayHelper::value('description', $data));
@@ -42,5 +41,24 @@ class SpecFormatter {
     $field->setRequired((bool) ArrayHelper::value('required', $data, FALSE));
 
     return$field;
+  }
+
+  /**
+   * Get the data type from an array. Defaults to 'data_type' with fallback to
+   * mapping for the integer value 'type'
+   *
+   * @param array $data
+   *
+   * @return string
+   */
+  private static function getDataType(array $data) {
+    if (isset($data['data_type'])) {
+      return $data['data_type'];
+    }
+
+    $dataTypeInt = ArrayHelper::value('type', $data);
+    $dataTypeName = \CRM_Utils_Type::typeToString($dataTypeInt);
+
+    return $dataTypeName;
   }
 }
