@@ -2,13 +2,9 @@
 
 require_once 'api4.civix.php';
 
-use Symfony\Component\DependencyInjection\Definition;
-use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\DependencyInjection\Reference;
-use Civi\API\Provider\ActionObjectProvider;
-use Civi\API\Event\Subscriber\CustomGroupPreCreationSubscriber;
-use Civi\API\Event\Subscriber\CustomFieldPreCreationSubscriber;
-use Civi\API\Event\Subscriber\ContactPreUpdateSubscriber;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
+use Symfony\Component\Config\FileLocator;
 
 /**
  * Procedural wrapper for the OO api version 4.
@@ -28,21 +24,24 @@ function civicrm_api4($entity, $action, $params = array()) {
  * @param Symfony\Component\DependencyInjection\ContainerBuilder $container
  */
 function api4_civicrm_container($container) {
-  $container->addResource(new FileResource(__FILE__));
-  $container->setDefinition('action_object_provider', new Definition(
-    ActionObjectProvider::class
-  ));
-  $container->findDefinition('dispatcher')->addMethodCall('addSubscriber',
-    array(new Reference('action_object_provider'))
-  );
-  $container->findDefinition('civi_api_kernel')->addMethodCall('registerApiProvider',
+  $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
+  $loader->load('services.xml');
+
+  $container->getDefinition('civi_api_kernel')->addMethodCall(
+    'registerApiProvider',
     array(new Reference('action_object_provider'))
   );
 
-  $dispatcher = $container->get('dispatcher');
-  $dispatcher->addSubscriber(new CustomGroupPreCreationSubscriber());
-  $dispatcher->addSubscriber(new CustomFieldPreCreationSubscriber());
-  $dispatcher->addSubscriber(new ContactPreUpdateSubscriber());
+  // add event subscribers$container->get(
+  $dispatcher = $container->getDefinition('dispatcher');
+  $subscribers = $container->findTaggedServiceIds('event_subscriber');
+
+  foreach (array_keys($subscribers) as $subscriber) {
+    $dispatcher->addMethodCall(
+      'addSubscriber',
+      array(new Reference($subscriber))
+    );
+  }
 }
 
 /**
