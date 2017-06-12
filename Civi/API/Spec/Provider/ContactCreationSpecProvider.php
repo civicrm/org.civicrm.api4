@@ -29,7 +29,7 @@ class ContactCreationSpecProvider implements SpecProviderInterface {
    * @param RequestSpec $specification
    */
   protected function addDedupeField(RequestSpec $specification) {
-    $dedupeField = $specification->getFieldSpecByName('dupe_check');
+    $dedupeField = $specification->getFieldByName('dupe_check');
 
     if (!$dedupeField) {
       $dedupeField = new FieldSpec('dupe_check', 'Boolean');

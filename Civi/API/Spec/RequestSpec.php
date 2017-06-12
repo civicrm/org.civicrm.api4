@@ -38,7 +38,7 @@ class RequestSpec {
    *
    * @return FieldSpec|null
    */
-  public function getFieldSpecByName($name) {
+  public function getFieldByName($name) {
     foreach ($this->fields as $field) {
       if ($field->getName() === $name) {
         return $field;
