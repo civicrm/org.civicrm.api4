@@ -2,6 +2,7 @@
 
 namespace phpunit\Civi\API\Spec;
 
+use Civi\API\Spec\CustomFieldSpec;
 use Civi\API\Spec\FieldSpec;
 use Civi\API\Spec\RequestSpec;
 use Civi\API\Spec\SpecFormatter;
@@ -35,6 +36,26 @@ class SpecFormatterTest extends UnitTestCase {
 
     $this->assertEquals($expectedName, $field->getName());
     $this->assertEquals($expectedType, $field->getDataType());
+  }
+
+  public function testCustomFieldWillBeReturned() {
+    $customGroupId = 1432;
+    $customFieldId = 3333;
+    $name = 'MyFancyField';
+
+    $data = array(
+      'custom_group_id' => $customGroupId,
+      'id' => $customFieldId,
+      'name' => $name,
+      'data_type' => 'String',
+    );
+
+    /** @var CustomFieldSpec $field */
+    $field = SpecFormatter::arrayToField($data);
+
+    $this->assertInstanceOf(CustomFieldSpec::class, $field);
+    $this->assertEquals($customGroupId, $field->getCustomGroupId());
+    $this->assertEquals($customFieldId, $field->getCustomFieldId());
   }
 
   /**

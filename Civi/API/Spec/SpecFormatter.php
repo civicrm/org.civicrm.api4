@@ -34,13 +34,20 @@ class SpecFormatter {
   public static function arrayToField(array $data) {
     $name = ArrayHelper::value('name', $data);
     $dataTypeName = self::getDataType($data);
-    $field = new FieldSpec($name, $dataTypeName);
+
+    if (isset($data['custom_group_id'])) {
+      $field = new CustomFieldSpec($name, $dataTypeName);
+      $field->setCustomFieldId(ArrayHelper::value('id', $data));
+      $field->setCustomGroupId($data['custom_group_id']);
+    } else {
+      $field = new FieldSpec($name, $dataTypeName);
+    }
 
     $field->setDescription(ArrayHelper::value('description', $data));
     $field->setTitle(ArrayHelper::value('title', $data));
     $field->setRequired((bool) ArrayHelper::value('required', $data, FALSE));
 
-    return$field;
+    return $field;
   }
 
   /**
