@@ -73,16 +73,98 @@ class Create extends Action {
   }
 
   /**
+   * @param $key
+   *
+   * @return mixed|null
+   */
+  public function getValue($key) {
+    return isset($this->values[$key]) ? $this->values[$key] : NULL;
+  }
+
+  /**
    * @inheritDoc
    */
   public function _run(Result $result) {
-    $create_params = $this->getParams()['values'];
+    $params = $this->getParams()['values'];
+
+    $entityId = \CRM_Utils_Array::value('id', $params);
+    $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
+
     // get a bao back from the standard factory method
-    $create_result = $this->bao->create($create_params);
+    $createResult = $this->bao->create($params);
+
+    if (!$createResult) {
+      $errMessage = sprintf('%s creation failed', $this->getEntity());
+      throw new \API_Exception($errMessage);
+    }
+
     // trim back the junk and just get the array:
-    $result_as_array = $this->baoToArray($create_result);
+    $resultAsArray = $this->baoToArray($createResult);
     // fixme should return a single row array???
-    $result->exchangeArray($result_as_array);
+    $result->exchangeArray($resultAsArray);
+  }
+
+  private function formatCustomParams($params, $entity, $entityId) {
+
+    $params['custom'] = array();
+    $customParams = array();
+
+    // $customValueID is the ID of the custom value in the custom table for this
+    // entity (i guess this assumes it's not a multi value entity)
+    foreach ($params as $name => $value) {
+
+      if (strpos($name, '.') === FALSE) {
+        continue;
+      }
+
+      list($customGroup, $customField) = explode('.', $name);
+
+      $customFieldId = \CRM_Core_BAO_CustomField::getFieldValue(
+        \CRM_Core_DAO_CustomField::class,
+        $customField,
+        'id',
+        'name'
+      );
+      $customFieldType = \CRM_Core_BAO_CustomField::getFieldValue(
+        \CRM_Core_DAO_CustomField::class,
+        $customField,
+        'html_type',
+        'name'
+      );
+      $customFieldExtends = \CRM_Core_BAO_CustomGroup::getFieldValue(
+        \CRM_Core_DAO_CustomGroup::class,
+        $customGroup,
+        'extends',
+        'name'
+      );
+
+      // todo are we sure we don't want to allow setting to NULL? need to test
+      if ($customFieldId && NULL !== $value) {
+
+        if ($customFieldType == 'CheckBox') {
+          // this function should be part of a class
+          formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
+        }
+
+        \CRM_Core_BAO_CustomField::formatCustomField(
+          $customFieldId,
+          $customParams,
+          $value,
+          $customFieldExtends,
+          NULL, // todo check when this is needed
+          $entityId,
+          FALSE,
+          FALSE,
+          TRUE
+        );
+      }
+    }
+
+    if (!empty($customParams)) {
+      $params['custom'] = $customParams;
+    }
+
+    return $params;
   }
 
 }

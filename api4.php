@@ -2,6 +2,11 @@
 
 require_once 'api4.civix.php';
 
+use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\Config\Resource\FileResource;
+use Symfony\Component\DependencyInjection\Reference;
+use Civi\API\Provider\ActionObjectProvider;
+
 /**
  * Procedural wrapper for the OO api version 4.
  *
@@ -20,16 +25,15 @@ function civicrm_api4($entity, $action, $params = array()) {
  * @param Symfony\Component\DependencyInjection\ContainerBuilder $container
  */
 function api4_civicrm_container($container) {
-  $container->addResource(new \Symfony\Component\Config\Resource\FileResource(__FILE__));
-  $container->setDefinition('action_object_provider', new \Symfony\Component\DependencyInjection\Definition(
-    'Civi\API\Provider\ActionObjectProvider',
-    array()
+  $container->addResource(new FileResource(__FILE__));
+  $container->setDefinition('action_object_provider', new Definition(
+    ActionObjectProvider::class
   ));
   $container->findDefinition('dispatcher')->addMethodCall('addSubscriber',
-    array(new \Symfony\Component\DependencyInjection\Reference('action_object_provider'))
+    array(new Reference('action_object_provider'))
   );
   $container->findDefinition('civi_api_kernel')->addMethodCall('registerApiProvider',
-    array(new \Symfony\Component\DependencyInjection\Reference('action_object_provider'))
+    array(new Reference('action_object_provider'))
   );
 }
 

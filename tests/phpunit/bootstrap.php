@@ -2,7 +2,12 @@
 
 ini_set('memory_limit', '2G');
 ini_set('safe_mode', 0);
-eval(cv('php:boot --level=classloader', 'phpcode'));
+$bootCode = cv('php:boot --level=classloader', 'phpcode');
+eval($bootCode);
+
+preg_match('/require_once\s*\'(.*)\'/', $bootCode, $matches);
+$loader = require(sprintf('%s/vendor/autoload.php', $matches[1]));
+$loader->add('', __DIR__);
 
 /**
  * Call the "cv" command.
