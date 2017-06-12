@@ -2,6 +2,7 @@
 
 namespace Civi\API\Spec;
 
+use Civi\API\Spec\Provider\CustomFieldSpecProvider;
 use Civi\API\Spec\Provider\SpecProviderInterface;
 
 class SpecGatherer {
@@ -12,6 +13,17 @@ class SpecGatherer {
   protected $specProviders = array();
 
   /**
+   * A cache of DAOs based on entity
+   *
+   * @var \CRM_Core_DAO[]
+   */
+  protected $DAONames;
+
+  /**
+   * Returns a RequestSpec with all the fields available. Uses spec providers
+   * to add or modify field specifications.
+   * For an example @see CustomFieldSpecProvider.
+   *
    * @param string $action
    * @param string $entity
    *
@@ -27,6 +39,8 @@ class SpecGatherer {
         $provider->modifySpec($specification);
       }
     }
+
+    $this->addFieldOptions($specification);
 
     return $specification;
   }
@@ -52,17 +66,58 @@ class SpecGatherer {
   }
 
   /**
-   * todo This should not rely on api3 code.
-   *
    * @param $entityName
    *
    * @return null|string
    */
   private function getDAOFields($entityName) {
-    require_once 'api/v3/utils.php';
-    /** @var \CRM_Core_DAO $bao */
-    $dao = \_civicrm_api3_get_DAO($entityName);
+    $dao = $this->getDAO($entityName);
 
     return $dao::fields();
+  }
+
+  /**
+   * @param RequestSpec $spec
+   */
+  private function addFieldOptions(RequestSpec $spec) {
+    $dao = $this->getDAO($spec->getEntity());
+
+    foreach ($spec->getFields() as $field) {
+      $fieldName = $field->getName();
+
+      if ($field instanceof CustomFieldSpec) {
+        // buildOptions relies on the custom_* type of field names
+        $fieldName = sprintf('custom_%d', $field->getCustomFieldId());
+      }
+
+      $options = $dao::buildOptions($fieldName);
+
+      if (!is_array($options)) {
+        continue;
+      }
+
+      foreach ($options as $option) {
+        $field->addOption($option);
+      }
+    }
+  }
+
+  /**
+   * todo this class should not rely on api3 code
+   *
+   * @param $entityName
+   *
+   * @return \CRM_Core_DAO|string
+   *   The DAO name for use in static calls. Return doc block is hacked to allow
+   *   auto-completion of static methods
+   */
+  private function getDAO($entityName) {
+    if (!isset($this->DAONames[$entityName])) {
+      require_once 'api/v3/utils.php';
+      $daoName = \_civicrm_api3_get_DAO($entityName);
+      $this->DAONames[$entityName] = $daoName;
+    }
+
+    return $this->DAONames[$entityName];
   }
 }

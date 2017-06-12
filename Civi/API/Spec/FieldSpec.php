@@ -29,6 +29,11 @@ class FieldSpec {
   protected $required = FALSE;
 
   /**
+   * @var array
+   */
+  protected $options = array();
+
+  /**
    * @var string
    */
   protected $dataType;
@@ -176,6 +181,32 @@ class FieldSpec {
   private function getValidDataTypes() {
     $extraTypes = array('Boolean', 'Text');
     $extraTypes = array_combine($extraTypes, $extraTypes);
+
     return array_merge(\CRM_Utils_Type::dataTypes(), $extraTypes);
+  }
+
+  /**
+   * @return array
+   */
+  public function getOptions() {
+    return $this->options;
+  }
+
+  /**
+   * @param array $options
+   *
+   * @return $this
+   */
+  public function setOptions($options) {
+    $this->options = $options;
+
+    return $this;
+  }
+
+  /**
+   * @param $option
+   */
+  public function addOption($option) {
+    $this->options[] = $option;
   }
 }
