@@ -38,6 +38,10 @@ class SpecGatherer {
     $this->specProviders[] = $provider;
   }
 
+  /**
+   * @param string $entity
+   * @param RequestSpec $specification
+   */
   private function addDAOFields($entity, RequestSpec $specification) {
     $DAOFields = $this->getDAOFields($entity);
 
@@ -48,7 +52,7 @@ class SpecGatherer {
   }
 
   /**
-   * todo This shouldn't rely on api3 code.
+   * todo This should not rely on api3 code.
    *
    * @param $entityName
    *
