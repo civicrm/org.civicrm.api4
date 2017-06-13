@@ -20,8 +20,8 @@ class SpecFormatterTest extends UnitTestCase {
     $spec->addFieldSpec($field);
     $arraySpec = SpecFormatter::specToArray($spec);
 
-    $this->assertArrayHasKey($fieldName, $arraySpec);
-    $this->assertEquals('String', $arraySpec[$fieldName]['data_type']);
+    $this->assertArrayHasKey($fieldName, $arraySpec['fields']);
+    $this->assertEquals('String', $arraySpec['fields'][$fieldName]['data_type']);
   }
 
   /**

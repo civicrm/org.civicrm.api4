@@ -47,9 +47,9 @@ class GetFields extends Action {
     /** @var SpecGatherer $gatherer */
     $gatherer = \Civi::container()->get('spec_gatherer');
     $spec = $gatherer->getSpec($this->getEntity(), $this->getAction());
-    $fields = SpecFormatter::specToArray($spec);
+    $specArray = SpecFormatter::specToArray($spec);
 
-    $result->exchangeArray($fields);
+    $result->exchangeArray($specArray['fields']);
   }
 
   /**

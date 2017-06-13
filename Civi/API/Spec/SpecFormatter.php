@@ -12,14 +12,18 @@ class SpecFormatter {
    */
   public static function specToArray(RequestSpec $spec) {
     $specArray = array();
+    $specArray['entity'] = $spec->getEntity();
+    $specArray['action'] = $spec->getAction();
+    $specArray['fields'] = array();
 
     foreach ($spec->getFields() as $field) {
-      $specArray[$field->getName()] = array(
+      $specArray['fields'][$field->getName()] = array(
         'name' => $field->getName(),
         'title' => $field->getTitle(),
         'data_type' => $field->getDataType(),
         'default_value' => $field->getDefaultValue(),
-        'description' => $field->getDescription()
+        'description' => $field->getDescription(),
+        'options' => $field->getOptions()
       );
     }
 
