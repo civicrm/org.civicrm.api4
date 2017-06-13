@@ -1,0 +1,39 @@
+{
+  "Contact": [
+    {
+      "first_name": "Test",
+      "last_name": "Contact",
+      "contact_type": "Individual",
+      "@ref": "test_contact"
+    }
+  ],
+  "OptionGroup": [
+    {
+      "name": "activity_type"
+    }
+  ],
+  "OptionValue" : [
+    {
+      "label": "Housing Support",
+      "name": "housing_support",
+      "option_group": "activity_type"
+    },
+    {
+      "label": "Another Activity Type",
+      "name": "another_activity_type",
+      "option_group": "activity_type"
+    }
+  ],
+  "Activity": [
+    {
+      "name": "Test Housing Support Activity",
+      "activity_type": "housing_support",
+      "source_contact_id": "@ref test_contact.id"
+    },
+    {
+      "name": "Another Activity",
+      "activity_type": "housing_support",
+      "source_contact_id": "@ref test_contact.id"
+    }
+  ]
+}
