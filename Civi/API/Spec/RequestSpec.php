@@ -17,7 +17,7 @@ class RequestSpec {
   /**
    * @var FieldSpec[]
    */
-  protected $fields;
+  protected $fields = array();
 
   /**
    * @param string $entity
@@ -26,7 +26,6 @@ class RequestSpec {
   public function __construct($entity, $action) {
     $this->entity = $entity;
     $this->action = $action;
-    $this->fields = array();
   }
 
   public function addFieldSpec(FieldSpec $field) {
