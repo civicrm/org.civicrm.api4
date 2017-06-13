@@ -157,7 +157,7 @@ class FieldSpec {
    * @param $dataType
    *
    * @return $this
-   * @throws \API_Exception
+   * @throws \Exception
    */
   public function setDataType($dataType) {
     if (array_key_exists($dataType, self::$typeAliases)) {
@@ -174,7 +174,7 @@ class FieldSpec {
   }
 
   /**
-   * Boolean is valid type but not part of types
+   * Add valid types that are not not part of \CRM_Utils_Type::dataTypes
    *
    * @return array
    */
