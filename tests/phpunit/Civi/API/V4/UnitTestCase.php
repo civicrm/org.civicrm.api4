@@ -1,13 +1,11 @@
 <?php
 namespace Civi\API\V4;
-use Civi\Api4\Participant;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
 
 /**
  * @group headless
  */
-//class ParticipantTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
 class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
 
   /**
@@ -28,7 +26,22 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
     return \Civi\Test::headless()->installMe(__DIR__)->apply();
   }
 
- /**
+  /**
+   * Creates entities from a JSON data set
+   *
+   * @param $path
+   */
+  protected function loadDataSet($path) {
+    $dataSet = json_decode(file_get_contents($path), TRUE);
+    foreach ($dataSet as $entityName => $entities) {
+      foreach ($entities as $entityValues) {
+        $params = array('values' => $entityValues, 'checkPermissions' => FALSE);
+        civicrm_api4($entityName, 'create', $params);
+      }
+    }
+  }
+
+  /**
    * Tears down the fixture, for example, closes a network connection.
    *
    * This method is called after a test is executed.
@@ -40,13 +53,11 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
   /**
    * Quick clean by emptying tables created for the test.
    *
-   * (Lifted from tests/phpunit/CiviTest/CiviUnitTestCase.php)
-   * @param array
-   * - $tablesToTruncate
+   * @param array $params
    */
   public function cleanup($params) {
     $params += array(
-        'tablesToTruncate' => array(),
+      'tablesToTruncate' => array(),
     );
     \CRM_Core_DAO::executeQuery("SET FOREIGN_KEY_CHECKS = 0;");
     foreach ($params['tablesToTruncate'] as $table) {
@@ -65,13 +76,13 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
    */
   public function countTable($table_name) {
     $sql = "SELECT count(*) FROM $table_name";
-    return (int)\CRM_Core_DAO::singleValueQuery($sql);
+    return (int) \CRM_Core_DAO::singleValueQuery($sql);
   }
 
   /**
    * Create sample entities (using V3 for now).
    *
-   * @param array (type, seq, overrides, count)
+   * @param array $params (type, seq, overrides, count)
    * @return array (either single, or array of array if count >1)
    */
   public static function createEntity($params) {
@@ -80,17 +91,18 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
       'seq' => 0,
     );
     $entities = array();
+    $entity = NULL;
     for ($i = 0; $i < $params['count']; $i++) {
       $params['seq']++;
       $data = self::sample($params);
       $api_params = array('sequential' => 1) + $data['sample_params'];
       $result = civicrm_api3($data['entity'], 'create', $api_params);
       if ($result['is_error']) {
-        throw new Exception("creating $data[entity] failed");
+        throw new \Exception("creating $data[entity] failed");
       }
       $entity = $result['values'][0];
       if (!($entity['id'] > 0)) {
-        throw new Exception("created entity is malformed");
+        throw new \Exception("created entity is malformed");
       }
       $entities[] = $entity;
     }
@@ -105,19 +117,19 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
    *
    * Inspired by CiviUnitTestCase::
    * @todo - extract this function to own class and share with CiviUnitTestCase?
-   * @param array
+   * @param array $params
    * - type: string roughly matching entity type
    * - seq: (optional) int sequence number for the values of this type
    * - overrides: (optional) array of fill in parameters
    *
    * @return array
-   * - entity: string API entity type (usually the type supplied except for contact subtypes)
-   * - sample_params: array API sample_params properties of sample entity
+   *   - entity: string API entity type (usually the type supplied except for contact subtypes)
+   *   - sample_params: array API sample_params properties of sample entity
    */
   public static function sample($params) {
     $params += array(
-        'seq' => 0,
-        'overrides' => array(),
+      'seq' => 0,
+      'overrides' => array(),
     );
     $type = $params['type'];
     // sample data - if field is array then chosed based on `seq`
@@ -146,7 +158,7 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
       $sample_params['suffix_id'] = 3;
     }
     if (!count($sample_params)) {
-      throw new Exception("unknown sample type: $type");
+      throw new \Exception("unknown sample type: $type");
     }
     $sample_params = $params['overrides'] + $sample_params;
     // make foreign enitiies if they haven't been supplied
@@ -175,7 +187,7 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
         'first_name' => array('Anthony', 'Joe', 'Terrence', 'Lucie', 'Albert', 'Bill', 'Kim'),
         'middle_name' => array('J.', 'M.', 'P', 'L.', 'K.', 'A.', 'B.', 'C.', 'D', 'E.', 'Z.'),
         'last_name' => array('Anderson', 'Miller', 'Smith', 'Collins', 'Peterson'),
-        'contact_type' => 'Individual'
+        'contact_type' => 'Individual',
       ),
       'Organization' => array(
         'organization_name' => array(
