@@ -97,7 +97,11 @@ class Create extends Action {
     $entityId = \CRM_Utils_Array::value('id', $params);
     $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
 
-    $createResult = $this->bao->create($params);
+    $method = 'create';
+    if (!method_exists($this->bao, $method)) {
+      $method = 'add';
+    }
+    $createResult = $this->bao->$method($params);
 
     if (!$createResult) {
       $errMessage = sprintf('%s creation failed', $this->getEntity());
