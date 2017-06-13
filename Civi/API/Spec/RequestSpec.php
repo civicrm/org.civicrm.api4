@@ -58,6 +58,15 @@ class RequestSpec {
   }
 
   /**
+   * @return array|FieldSpec[]
+   */
+  public function getRequiredFields() {
+    return array_filter($this->fields, function (FieldSpec $field) {
+      return $field->isRequired();
+    });
+  }
+
+  /**
    * @return FieldSpec[]
    */
   public function getFields() {
