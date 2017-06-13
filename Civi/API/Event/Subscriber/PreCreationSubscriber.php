@@ -5,7 +5,7 @@ namespace Civi\API\Event\Subscriber;
 use Civi\API\Event\PrepareEvent;
 use Civi\API\V4\Action\Create;
 
-abstract class PreCreationSubscriber Extends AbstractPrepareSubscriber {
+abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
    * @param PrepareEvent $event
    */
@@ -49,4 +49,5 @@ abstract class PreCreationSubscriber Extends AbstractPrepareSubscriber {
       $request->setValue('is_active', 1);
     }
   }
+
 }

@@ -18,8 +18,8 @@ class NullValueTest extends UnitTestCase {
       ->setValue('contact_type', 'Individual')
       ->execute();
 
-    $this->assertSame('null', $contact['last_name']);
-    $this->assertSame('Joseph null', $contact['display_name']);
+    $this->assertSame('Null', $contact['last_name']);
+    $this->assertSame('Joseph Null', $contact['display_name']);
   }
 
   public function testSettingToNullA() {

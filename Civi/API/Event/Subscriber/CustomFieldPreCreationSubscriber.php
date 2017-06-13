@@ -14,12 +14,7 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
    */
   public function modify(Create $request) {
     $this->formatOptionParams($request);
-
-    $optionType = $request->getValue('option_type');
-    // default to NULL
-    if (!$optionType) {
-      $request->setValue('option_type', NULL);
-    }
+    $this->setDefaults($request);
   }
 
   /**
@@ -81,6 +76,15 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
 
     if (!$optionWeight) {
       $request->setValue($optionWeightKey, range(1, count($options)));
+    }
+  }
+
+  /**
+   * @param Create $request
+   */
+  private function setDefaults(Create $request) {
+    if (!$request->getValue('option_type')) {
+      $request->setValue('option_type', NULL);
     }
   }
 }
