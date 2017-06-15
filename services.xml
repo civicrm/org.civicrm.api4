@@ -38,5 +38,9 @@
             <tag name="event_subscriber"/>
         </service>
 
+        <service id="activity.pre_creation.subscriber" class="Civi\API\Event\Subscriber\ActivityPreCreationSubscriber">
+            <tag name="event_subscriber"/>
+        </service>
+
     </services>
 </container>
