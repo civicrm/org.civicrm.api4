@@ -23,10 +23,12 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
       ->setValue('extends', 'Contact')
       ->execute();
 
+    $customGroupId = $customGroup->getArrayCopy()['id'];
+
     CustomField::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavColor')
-      ->setValue('custom_group_id', $customGroup->getArrayCopy()['id'])
+      ->setValue('custom_group_id', $customGroupId)
       ->setValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
       ->setValue('html_type', 'Select')
       ->setValue('data_type', 'String')
@@ -35,7 +37,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
     CustomField::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavAnimal')
-      ->setValue('custom_group_id', $customGroup->getArrayCopy()['id'])
+      ->setValue('custom_group_id', $customGroupId)
       ->setValue('html_type', 'Text')
       ->setValue('data_type', 'String')
       ->execute();
@@ -43,7 +45,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
     CustomField::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavLetter')
-      ->setValue('custom_group_id', $customGroup->getArrayCopy()['id'])
+      ->setValue('custom_group_id', $customGroupId)
       ->setValue('html_type', 'Text')
       ->setValue('data_type', 'String')
       ->execute();
@@ -51,7 +53,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
     CustomField::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavFood')
-      ->setValue('custom_group_id', $customGroup->getArrayCopy()['id'])
+      ->setValue('custom_group_id', $customGroupId)
       ->setValue('html_type', 'Text')
       ->setValue('data_type', 'String')
       ->execute();

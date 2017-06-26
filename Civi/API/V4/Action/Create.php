@@ -82,6 +82,13 @@ class Create extends Action {
   }
 
   /**
+   * @return array
+   */
+  public function getValues() {
+    return $this->values;
+  }
+
+  /**
    * @inheritDoc
    */
   public function _run(Result $result) {
@@ -90,7 +97,6 @@ class Create extends Action {
     $entityId = \CRM_Utils_Array::value('id', $params);
     $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
 
-    // get a bao back from the standard factory method
     $createResult = $this->bao->create($params);
 
     if (!$createResult) {
