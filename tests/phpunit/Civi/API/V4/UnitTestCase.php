@@ -8,11 +8,6 @@ use Civi\Test\TransactionalInterface;
  */
 class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
 
-  /**
-   * @var array
-   *   References to entities used for loading test data
-   */
-  protected $references;
 
   /**
    * Constructor.
@@ -30,35 +25,6 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
 
   public function setUpHeadless() {
     return \Civi\Test::headless()->installMe(__DIR__)->apply();
-  }
-
-  /**
-   * todo this should be in a dedicated class
-   *
-   * Creates entities from a JSON data set
-   *
-   * @param $path
-   */
-  protected function loadDataSet($path) {
-    $dataSet = json_decode(file_get_contents($path), TRUE);
-    foreach ($dataSet as $entityName => $entities) {
-      foreach ($entities as $entityValues) {
-
-        foreach ($entityValues as $name => $value) {
-          if (substr($value, 0, 4) === '@ref') {
-            $referenceName = substr($value, 5);
-            list ($reference, $property) = explode('.', $referenceName);
-            $entityValues[$name] =  $this->references[$reference][$property];
-          }
-        }
-
-        $params = array('values' => $entityValues, 'checkPermissions' => FALSE);
-        $result = civicrm_api4($entityName, 'create', $params);
-        if (isset($entityValues['@ref'])) {
-          $this->references[$entityValues['@ref']] = $result->getArrayCopy();
-        }
-      }
-    }
   }
 
   /**
@@ -263,5 +229,4 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
     }
     return $data[$type];
   }
-
 }

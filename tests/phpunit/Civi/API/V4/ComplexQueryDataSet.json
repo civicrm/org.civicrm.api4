@@ -4,15 +4,24 @@
       "first_name": "Test",
       "last_name": "Contact",
       "contact_type": "Individual",
-      "@ref": "test_contact"
+      "@ref": "test_contact_1"
+    },
+    {
+      "first_name": "Second",
+      "last_name": "Test",
+      "contact_type": "Individual",
+      "@ref": "test_contact_2"
     }
   ],
   "OptionGroup": [
     {
       "name": "activity_type"
+    },
+    {
+      "name": "activity_contacts"
     }
   ],
-  "OptionValue" : [
+  "OptionValue": [
     {
       "label": "Housing Support",
       "name": "housing_support",
@@ -22,18 +31,37 @@
       "label": "Another Activity Type",
       "name": "another_activity_type",
       "option_group": "activity_type"
+    },
+    {
+      "label": "Activity Source",
+      "name": "Activity Source",
+      "option_group": "activity_contacts"
+    },
+    {
+      "label": "Activity Assignees",
+      "name": "Activity Assignees",
+      "option_group": "activity_contacts"
+    },
+    {
+      "label": "Activity Targets",
+      "name": "Activity Targets",
+      "option_group": "activity_contacts"
     }
   ],
   "Activity": [
     {
       "name": "Test Housing Support Activity",
       "activity_type": "housing_support",
-      "source_contact_id": "@ref test_contact.id"
+      "source_contact_id": "@ref test_contact_1.id"
     },
     {
       "name": "Another Activity",
-      "activity_type": "housing_support",
-      "source_contact_id": "@ref test_contact.id"
+      "activity_type": "another_activity_type",
+      "source_contact_id": "@ref test_contact_1.id",
+      "assignee_contact_id": [
+        "@ref test_contact_1.id",
+        "@ref test_contact_2.id"
+      ]
     }
   ]
 }
