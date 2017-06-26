@@ -3,6 +3,8 @@
 namespace phpunit\Civi\API\V4\Action;
 
 use Civi\API\V4\UnitTestCase;
+use Civi\Api4\Activity;
+use Civi\TestDataLoaderTrait;
 
 /**
  * @group headless
@@ -11,6 +13,8 @@ use Civi\API\V4\UnitTestCase;
  * initial APIv4 specification
  */
 class ComplexQueryTest extends UnitTestCase {
+
+  use TestDataLoaderTrait;
 
   public function setUpHeadless() {
     $relatedTables = array(
@@ -27,10 +31,16 @@ class ComplexQueryTest extends UnitTestCase {
   }
 
   /**
-   * Fetch all activities for housing support cases
+   * Fetch all activities for housing support cases. Expects a single activity
+   * loaded from the data set.
    */
   public function testGetAllHousingSupportActivities() {
+    $results = Activity::get()
+      ->setCheckPermissions(FALSE)
+      ->addWhere('activity_type.name', '=', 'housing_support')
+      ->execute();
 
+    $this->assertCount(1, $results);
   }
 
   /**

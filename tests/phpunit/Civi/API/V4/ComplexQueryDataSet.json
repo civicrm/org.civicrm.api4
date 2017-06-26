@@ -63,5 +63,17 @@
         "@ref test_contact_2.id"
       ]
     }
+  ],
+  "Phone": [
+    {
+      "contact_id": "@ref test_contact_1.id",
+      "phone": "+35355439483",
+      "location_type": "Home"
+    },
+    {
+      "contact_id": "@ref test_contact_1.id",
+      "phone": "+3538733439483",
+      "location_type": "Work"
+    }
   ]
 }
