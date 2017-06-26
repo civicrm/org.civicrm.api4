@@ -13,15 +13,13 @@ class UpdateContactTest extends UnitTestCase {
       ->setValue('first_name', 'Johann')
       ->setValue('last_name', 'Tester')
       ->setValue('contact_type', 'Individual')
-      ->execute()
-      ->getArrayCopy()['id'];
+      ->execute()['id'];
 
     $contact = Contact::create()
       ->setCheckPermissions(FALSE)
       ->setValue('id', $contactId)
       ->setValue('first_name', 'Testy')
-      ->execute()
-      ->getArrayCopy();
+      ->execute();
 
     $this->assertEquals('Testy', $contact['first_name']);
   }
