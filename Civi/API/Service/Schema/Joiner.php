@@ -19,9 +19,12 @@ class Joiner {
 
   /**
    * @param Api4SelectQuery $query
-   * @param $targetAlias
+   * @param string $targetAlias
+   * @param string $side
+   *
+   * @throws \Exception
    */
-  public function join(Api4SelectQuery $query, $targetAlias) {
+  public function join(Api4SelectQuery $query, $targetAlias, $side = 'LEFT') {
 
     $from = $query->getFrom();
     $links = $this->schemaMap->getPath($from, $targetAlias);
@@ -34,7 +37,7 @@ class Joiner {
 
     foreach ($links as $link) {
       $query->join(
-        'LEFT',
+        $side,
         $link->getTargetTable(),
         $link->getAlias(),
         $link->getConditionsForJoin($baseTable)
