@@ -25,7 +25,7 @@ class ComplexQueryTest extends UnitTestCase {
       'civicrm_activity_contact',
     );
     $this->cleanup(array('tablesToTruncate' => $relatedTables));
-    $this->loadDataSet(__DIR__ . '/../ComplexQueryDataSet.json');
+    $this->loadDataSet(__DIR__ . '/ComplexQueryDataSet.json');
 
     return parent::setUpHeadless();
   }
