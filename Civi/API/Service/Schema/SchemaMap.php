@@ -2,6 +2,11 @@
 
 namespace Civi\API\Service\Schema;
 
+use Civi\API\Service\Schema\Joinable\Joinable;
+use Civi\API\Service\Schema\Joinable\OptionValueJoinable;
+use CRM_Core_DAO_AllCoreTables as TableHelper;
+use CRM_Utils_Array as ArrayHelper;
+
 class SchemaMap {
 
   const MAX_JOIN_DEPTH = 3;
@@ -10,6 +15,52 @@ class SchemaMap {
    * @var Table[]
    */
   protected $tables = array();
+
+  public function __construct() {
+    /** @var \CRM_Core_DAO $daoName */
+    foreach (TableHelper::get() as $daoName => $data) {
+      $table = new Table($data['table']);
+      foreach ($daoName::fields() as $field => $fieldData) {
+        $this->addJoins($table, $field, $fieldData);
+      }
+      $this->addTable($table);
+    }
+  }
+
+  /**
+   * @param Table $table
+   * @param string $field
+   * @param array $data
+   */
+  private function addJoins(Table $table, $field, array $data) {
+    if (isset($data['pseudoconstant'])) {
+      static::addPseudoConstantJoin($table, $field, $data['pseudoconstant']);
+    }
+  }
+
+  /**
+   * @param Table $table
+   * @param string $field
+   * @param array $data
+   */
+  private function addPseudoConstantJoin(Table $table, $field, array $data) {
+    $tableName = ArrayHelper::value('table', $data);
+    $optionGroupName = ArrayHelper::value('optionGroupName', $data);
+
+    if ($tableName) {
+      $keyColumn = ArrayHelper::value('keyColumn', $data, 'id');
+      $alias = str_replace('civicrm_', '', $tableName);
+      $joinable = new Joinable($tableName, $keyColumn, $alias);
+      $condition = ArrayHelper::value('condition', $data);
+      if ($condition) {
+        $joinable->addCondition($condition);
+      }
+      $table->addTableLink($field, $joinable);
+    } elseif ($optionGroupName) {
+      $joinable = new OptionValueJoinable($optionGroupName);
+      $table->addTableLink($field, $joinable);
+    }
+  }
 
   /**
    * @param $baseTableName
@@ -59,7 +110,9 @@ class SchemaMap {
    * @return $this
    */
   public function addTable(Table $table) {
-    $this->tables[] = $table;
+    if (!$this->getTableByName($table->getName())) {
+      $this->tables[] = $table;
+    }
 
     return $this;
   }
