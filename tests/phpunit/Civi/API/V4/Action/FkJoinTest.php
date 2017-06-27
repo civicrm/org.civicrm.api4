@@ -35,18 +35,11 @@ class FkJoinTest extends UnitTestCase {
   public function testThreeLevelJoin() {
     $results = Activity::get()
       ->setCheckPermissions(FALSE)
-      ->addSelect('activity_type.option_group.name')
-      ->addSelect('activity_type.option_group.is_active')
-      ->addWhere('activity_type.option_group.name', '=', 'activity_type')
+      ->addWhere('activity_type.name', '=', 'housing_support')
       ->execute();
 
-    $names = array_column($results->getArrayCopy(), 'activity_type.option_group.name');
-    $names = array_unique($names);
 
-    $this->assertCount(2, $results);
-    $this->assertCount(1, $names);
-    $this->assertEquals(array('activity_type'), $names);
-    $this->assertEquals(1, $results->first()['activity_type.option_group.is_active']);
+    $this->assertCount(1, $results);
   }
 
   public function testActivityContactJoin() {
