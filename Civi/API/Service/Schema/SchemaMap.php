@@ -16,7 +16,21 @@ class SchemaMap {
    */
   protected $tables = array();
 
-  public function __construct() {
+  /**
+   * @param bool $autoload
+   *   Whether to autoload the tables using core classes. If not tables must
+   *   be added manually
+   */
+  public function __construct($autoload = true) {
+    if ($autoload) {
+      $this->loadTables();
+    }
+  }
+
+  /**
+   * Add all tables and joins
+   */
+  private function loadTables() {
     /** @var \CRM_Core_DAO $daoName */
     foreach (TableHelper::get() as $daoName => $data) {
       $table = new Table($data['table']);
