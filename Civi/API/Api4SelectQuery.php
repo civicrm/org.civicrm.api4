@@ -28,6 +28,7 @@
 namespace Civi\API;
 
 use CRM_Utils_Array as ArrayHelper;
+use CRM_Core_DAO_AllCoreTables as TableHelper;
 
 /**
  * A query `node` may be in one of three formats:
@@ -118,13 +119,17 @@ class Api4SelectQuery extends SelectQuery {
         list($table_name, $column_name) = $fkInfo;
         $this->validateNestedInput($key, $value);
       } else {
-        $customField = $this->addDotNotationCustomField($key);
-        if ($customField) {
-          $table_name = $customField[0];
-          $column_name = $customField[1];
+        $fkInfo =
+          $this->addDotNotationCustomField($key) ?:
+          $this->joinFK($key, 'LEFT');
+
+        if ($fkInfo) {
+          $table_name = $fkInfo[0];
+          $column_name = $fkInfo[1];
         }
       }
     }
+
     if (!$table_name || !$column_name || is_null($value)) {
       throw new \API_Exception("Invalid field '$key' in where clause.");
     }
@@ -160,6 +165,7 @@ class Api4SelectQuery extends SelectQuery {
 
   protected function buildSelectFields() {
     parent::buildSelectFields();
+
     foreach ($this->select as $selectAlias) {
       $alreadyAdded = in_array($selectAlias, $this->selectFields);
       $containsDot = strpos($selectAlias, '.') !== FALSE;
@@ -247,11 +253,9 @@ class Api4SelectQuery extends SelectQuery {
       'name'
     );
 
+    // Cannot select a third level value if option group doesn't exist
     if (NULL === $optionGroupID) {
-      throw new \API_Exception(
-        'Cannot select option value field for a custom field that does not'
-        . ' have an option group defined'
-      );
+      return array();
     }
 
     $optionValueAlias = sprintf(
@@ -272,13 +276,53 @@ class Api4SelectQuery extends SelectQuery {
     );
 
     $this->join(
-      'INNER',
+      'LEFT',
       'civicrm_option_value',
       $optionValueAlias,
       array($optionValueMatching, $optionGroupRestriction)
     );
 
     return array($optionValueAlias, $optionValueField);
+  }
+
+  /**
+   * @param $key
+   * @param $side
+   *
+   * @return array
+   */
+  protected function joinFK($key, $side) {
+    // check if it's a custom field first
+    $customFieldData = $this->addDotNotationCustomField($key);
+    if ($customFieldData) {
+      return $customFieldData;
+    }
+
+    $stack = explode('.', $key);
+    $fieldData = array();
+    if (count($stack) < 2) {
+      return $fieldData;
+    }
+
+    $joiner = \Civi::container()->get('joiner');
+    $tableAlias = NULL;
+
+    // todo check if can join before joining
+    while (count($stack) > 1) {
+      $tableAlias = array_shift($stack);
+      $joiner->join($this, $tableAlias, $side);
+    }
+
+    $field = array_shift($stack);
+
+    return array($tableAlias, $field);
+  }
+
+  /**
+   * @return FALSE|string
+   */
+  public function getFrom() {
+    return TableHelper::getTableForClass(TableHelper::getFullName($this->entity));
   }
 
 }
