@@ -11,12 +11,18 @@ class Joiner {
   protected $schemaMap;
 
   /**
+   * @param SchemaMap $schemaMap
+   */
+  public function __construct(SchemaMap $schemaMap) {
+    $this->schemaMap = $schemaMap;
+  }
+
+  /**
    * @param Api4SelectQuery $query
    * @param $targetAlias
    */
   public function join(Api4SelectQuery $query, $targetAlias) {
 
-    // todo get from from query
     $from = $query->getFrom();
     $links = $this->schemaMap->getPath($from, $targetAlias);
 
@@ -24,13 +30,17 @@ class Joiner {
       throw new \Exception(sprintf('Cannot join %s to %s', $from, $targetAlias));
     }
 
+    $baseTable = $query::MAIN_TABLE_ALIAS;
+
     foreach ($links as $link) {
       $query->join(
         'LEFT',
         $link->getTargetTable(),
         $link->getAlias(),
-        $link->getConditions()
+        $link->getConditionsForJoin($baseTable)
       );
+
+      $baseTable = $link->getAlias();
     }
   }
 }
