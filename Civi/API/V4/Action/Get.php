@@ -24,10 +24,15 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
+
 namespace Civi\API\V4\Action;
-use Civi\API;
+
+use Civi\API\Api4SelectQuery;
+use Civi\API\Result;
+use Civi\API\V4\Action;
 
 /**
+ *
  * Base class for all get actions.
  *
  * @method $this addSelect(string $select)
@@ -37,8 +42,7 @@ use Civi\API;
  * @method $this setLimit(int $limit)
  * @method $this setOffset(int $offset)
  */
-class Get extends API\V4\Action {
-
+class Get extends Action {
   /**
    * Fields to return. Defaults to all non-custom fields.
    *
@@ -107,8 +111,8 @@ class Get extends API\V4\Action {
     return $this;
   }
 
-  public function _run(API\Result $result) {
-    $query = new API\Api4SelectQuery($this->getEntity(), $this->checkPermissions);
+  public function _run(Result $result) {
+    $query = new Api4SelectQuery($this->getEntity(), $this->checkPermissions);
     $query->select = $this->select;
     $query->where = $this->where;
     $query->orderBy = $this->orderBy;
