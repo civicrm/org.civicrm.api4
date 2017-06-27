@@ -9,10 +9,10 @@ use Civi\API\Spec\RequestSpec;
 class ContactCreationSpecProvider implements SpecProviderInterface {
 
   /**
-   * @param RequestSpec $specification
+   * @param RequestSpec $spec
    */
-  public function modifySpec(RequestSpec $specification) {
-    $this->addDedupeField($specification);
+  public function modifySpec(RequestSpec $spec) {
+    $this->addDedupeField($spec);
   }
 
   /**

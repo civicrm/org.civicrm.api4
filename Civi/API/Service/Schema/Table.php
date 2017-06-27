@@ -2,6 +2,8 @@
 
 namespace Civi\API\Service\Schema;
 
+use Civi\API\Service\Schema\Joinable\Joinable;
+
 class Table {
 
   /**

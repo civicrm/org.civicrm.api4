@@ -6,11 +6,11 @@ use Civi\API\Spec\RequestSpec;
 
 interface SpecProviderInterface {
   /**
-   * @param RequestSpec $specification
+   * @param RequestSpec $spec
    *
    * @return void
    */
-  public function modifySpec(RequestSpec $specification);
+  public function modifySpec(RequestSpec $spec);
 
   /**
    * @param string $entity

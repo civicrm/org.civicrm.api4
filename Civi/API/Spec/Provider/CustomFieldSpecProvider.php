@@ -13,12 +13,12 @@ class CustomFieldSpecProvider implements SpecProviderInterface {
    * Adds custom fields to the specification with names in the form:
    * CustomGroupName.CustomFieldName
    *
-   * @param RequestSpec $specification
+   * @param RequestSpec $spec
    */
-  public function modifySpec(RequestSpec $specification) {
+  public function modifySpec(RequestSpec $spec) {
     $customGroups = CustomGroup::get()
       ->setCheckPermissions(FALSE)
-      ->addWhere('extends','=', $specification->getEntity())
+      ->addWhere('extends','=', $spec->getEntity())
       ->execute()
       ->getArrayCopy();
 
@@ -44,7 +44,7 @@ class CustomFieldSpecProvider implements SpecProviderInterface {
       $fieldName = sprintf('%s.%s', $customGroupName, $customFieldName);
       $fieldSpec->setName($fieldName);
 
-      $specification->addFieldSpec($fieldSpec);
+      $spec->addFieldSpec($fieldSpec);
     }
   }
 
