@@ -39,6 +39,21 @@ class SchemaMap {
       }
       $this->addTable($table);
     }
+
+    // add back references
+    foreach ($this->tables as $table) {
+      foreach ($table->getTableLinks() as $link) {
+
+        // there are too many possible joins from option value so skip
+        if ($link instanceof OptionValueJoinable) {
+          continue;
+        }
+
+        $target = $this->getTableByName($link->getTargetTable());
+        $joinable = new Joinable($link->getBaseTable(), $link->getBaseColumn());
+        $target->addTableLink($link->getTargetColumn(), $joinable);
+      }
+    }
   }
 
   /**
@@ -47,8 +62,16 @@ class SchemaMap {
    * @param array $data
    */
   private function addJoins(Table $table, $field, array $data) {
-    if (isset($data['pseudoconstant'])) {
-      static::addPseudoConstantJoin($table, $field, $data['pseudoconstant']);
+    $pseudoConstant = ArrayHelper::value('pseudoconstant', $data);
+    $fkClass = ArrayHelper::value('FKClassName', $data);
+
+    // can there be multiple methods e.g. pseudoconstant and fkclass
+    if ($fkClass) {
+      $tableName = TableHelper::getTableForClass($fkClass);
+      $fkKey = ArrayHelper::value('FKKeyColumn', $data, 'id');
+      $table->addTableLink($field, new Joinable($tableName, $fkKey));
+    } else if ($pseudoConstant) {
+      $this->addPseudoConstantJoin($table, $field, $pseudoConstant);
     }
   }
 
@@ -148,7 +171,7 @@ class SchemaMap {
    * @param int $depth
    *   The current level of recursion which reflects the number of joins needed
    * @param Joinable[] $path
-   *   (By-reference) The path to the target table
+   *   (By-reference) The possible paths to the target table
    * @param Joinable[] $currentPath
    *   For internal use only to track the path to reach the target table
    */
@@ -161,25 +184,50 @@ class SchemaMap {
       $visited = array();
     }
 
+    $depth++;
+
     $tooFar = $depth > self::MAX_JOIN_DEPTH;
     $beenHere = in_array($table->getName(), $visited);
-    if ($tooFar || $beenHere) {
+    $alreadyFound = !empty($path);
+
+    if ($alreadyFound || $tooFar || $beenHere) {
       return;
     }
 
     // prevent circular reference
     $visited[] = $table->getName();
 
-    foreach ($table->getTableLinks() as $link) {
+    foreach ($table->getExternalLinks() as $link) {
       $currentPath[] = $link;
-      if ($link->getAlias() === $target) {
-        $path = $currentPath;
+      if (empty($path) && $link->getAlias() === $target) {
+        $path = $this->backTracePathToSource($currentPath, $table->getName());
       } else {
         $linkTable = $this->getTableByName($link->getTargetTable());
         if ($linkTable) {
-          $this->findInMap($linkTable, $target, ++$depth, $path, $currentPath);
+          $this->findInMap($linkTable, $target, $depth, $path, $currentPath);
         }
       }
     }
+  }
+
+  /**
+   * @param Joinable[] $path
+   * @param string $tableName
+   *
+   * @return Joinable[]
+   */
+  private function backTracePathToSource(array $path, $tableName) {
+    /** @var Joinable[] $path */
+    $path = array_reverse($path);
+    $goalPath = array();
+
+    foreach ($path as $step) {
+      $goalPath[] = $step;
+      if ($step->getBaseTable() === $tableName) {
+        return $goalPath;
+      }
+    }
+
+    return $goalPath;
   }
 }

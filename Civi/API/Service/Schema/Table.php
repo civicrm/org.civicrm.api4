@@ -50,15 +50,31 @@ class Table {
   }
 
   /**
+   * @return Joinable[]
+   *   Only those links that are not joining the table to itself
+   */
+  public function getExternalLinks() {
+    return array_filter($this->tableLinks, function (Joinable $joinable) {
+      return $joinable->getTargetTable() !== $this->getName();
+    });
+  }
+
+  /**
    * @param string $baseColumn
    * @param Joinable $joinable
    *
    * @return $this
    */
   public function addTableLink($baseColumn, Joinable $joinable) {
-    $joinable->setBaseTable($this->getName());
-    $joinable->setBaseColumn($baseColumn);
-    $this->tableLinks[] = $joinable;
+    $target= $joinable->getTargetTable();
+    $targetCol = $joinable->getTargetColumn();
+    $alias = $joinable->getAlias();
+
+    if (!$this->hasLink($target, $targetCol, $alias)) {
+      $joinable->setBaseTable($this->getName());
+      $joinable->setBaseColumn($baseColumn);
+      $this->tableLinks[] = $joinable;
+    }
 
     return $this;
   }
@@ -72,5 +88,25 @@ class Table {
     $this->tableLinks = $tableLinks;
 
     return $this;
+  }
+
+  /**
+   * @param $target
+   * @param $targetCol
+   * @param $alias
+   *
+   * @return bool
+   */
+  private function hasLink($target, $targetCol, $alias) {
+    foreach ($this->tableLinks as $link) {
+      if ($link->getTargetTable() === $target
+        && $link->getTargetColumn() === $targetCol
+        && $link->getAlias() === $alias
+      ) {
+        return TRUE;
+      }
+    }
+
+    return FALSE;
   }
 }
