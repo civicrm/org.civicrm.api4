@@ -36,10 +36,12 @@ class Joinable {
   /**
    * @param $targetTable
    * @param $targetColumn
+   * @param string|null $alias
    */
-  public function __construct($targetTable, $targetColumn) {
+  public function __construct($targetTable, $targetColumn, $alias = NULL) {
     $this->targetTable = $targetTable;
     $this->targetColumn = $targetColumn;
+    $this->alias = $alias ?: $targetTable;
   }
 
   /**
@@ -99,9 +101,7 @@ class Joinable {
    * @return string
    */
   public function getAlias() {
-    $defaultAlias = sprintf('%s_to_%s', $this->baseTable, $this->targetTable);
-
-    return $this->alias ?: $defaultAlias;
+    return $this->alias;
   }
 
   /**

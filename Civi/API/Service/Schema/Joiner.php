@@ -5,7 +5,6 @@ namespace Civi\API\Service\Schema;
 use Civi\API\Api4SelectQuery;
 
 class Joiner {
-
   /**
    * @var SchemaMap
    */
@@ -20,6 +19,10 @@ class Joiner {
     // todo get from from query
     $from = $query->getFrom();
     $links = $this->schemaMap->getPath($from, $targetAlias);
+
+    if (empty($links)) {
+      throw new \Exception(sprintf('Cannot join %s to %s', $from, $targetAlias));
+    }
 
     foreach ($links as $link) {
       $query->join(

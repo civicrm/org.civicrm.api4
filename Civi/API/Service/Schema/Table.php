@@ -17,11 +17,9 @@ class Table {
 
   /**
    * @param $name
-   * @param string|null $alias
    */
-  public function __construct($name, $alias = NULL) {
+  public function __construct($name) {
     $this->name = $name;
-    $this->alias = $alias ? $alias : $name;
   }
 
   /**

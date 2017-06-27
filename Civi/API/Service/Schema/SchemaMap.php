@@ -4,7 +4,7 @@ namespace Civi\API\Service\Schema;
 
 class SchemaMap {
 
-  const MAX_JOIN_DEPTH = 2;
+  const MAX_JOIN_DEPTH = 3;
 
   /**
    * @var Table[]
@@ -13,12 +13,12 @@ class SchemaMap {
 
   /**
    * @param $baseTableName
-   * @param $targetTableName
+   * @param $targetTableAlias
    *
    * @return Joinable[]
    *   Array of links to the target table, empty if no path found
    */
-  public function getPath($baseTableName, $targetTableName) {
+  public function getPath($baseTableName, $targetTableAlias) {
     $table = $this->getTableByName($baseTableName);
     $path = array();
 
@@ -26,7 +26,7 @@ class SchemaMap {
       return $path;
     }
 
-    $this->findInMap($table, $targetTableName, 1, $path);
+    $this->findInMap($table, $targetTableAlias, 1, $path);
 
     return $path;
   }
@@ -77,7 +77,7 @@ class SchemaMap {
    * @param Table $table
    *   The current table to base fromm
    * @param string $target
-   *   The target table name
+   *   The target joinable table alias
    * @param int $depth
    *   The current level of recursion which reflects the number of joins needed
    * @param Joinable[] $path
@@ -105,11 +105,13 @@ class SchemaMap {
 
     foreach ($table->getTableLinks() as $link) {
       $currentPath[] = $link;
-      if ($link->getTargetTable() === $target) {
+      if ($link->getAlias() === $target) {
         $path = $currentPath;
       } else {
         $linkTable = $this->getTableByName($link->getTargetTable());
-        $this->findInMap($linkTable, $target, ++$depth, $path, $currentPath);
+        if ($linkTable) {
+          $this->findInMap($linkTable, $target, ++$depth, $path, $currentPath);
+        }
       }
     }
   }
