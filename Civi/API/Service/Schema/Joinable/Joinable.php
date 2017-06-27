@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\API\Service\Schema;
+namespace Civi\API\Service\Schema\Joinable;
 
 class Joinable {
   /**
@@ -41,24 +41,27 @@ class Joinable {
   public function __construct($targetTable, $targetColumn, $alias = NULL) {
     $this->targetTable = $targetTable;
     $this->targetColumn = $targetColumn;
-    $this->alias = $alias ?: $targetTable;
+    $this->alias = $alias ?: str_replace('civicrm_', '', $targetTable);
   }
 
   /**
    * Gets conditions required when joining to a base table
    *
+   * @param string|null $baseTableAlias
+   *   Name of the base table, if aliased.
+   *
    * @return array
    */
-  protected function getConditionsForJoin() {
+  public function getConditionsForJoin($baseTableAlias = NULL) {
     $baseCondition = sprintf(
       '%s.%s =  %s.%s',
-      $this->baseTable,
+      $baseTableAlias ?: $this->baseTable,
       $this->baseColumn,
       $this->getAlias(),
       $this->targetColumn
     );
 
-    return array_merge(array($baseCondition), $this->getConditions());
+    return array_merge(array($baseCondition), $this->conditions);
   }
 
   /**
@@ -127,13 +130,6 @@ class Joinable {
    */
   public function getTargetColumn() {
     return $this->targetColumn;
-  }
-
-  /**
-   * @return array
-   */
-  public function getConditions() {
-    return $this->conditions;
   }
 
   /**

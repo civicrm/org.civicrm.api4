@@ -18,6 +18,10 @@
             <tag name="spec_provider"/>
         </service>
 
+        <service id="activity.spec_provider" class="Civi\API\Spec\Provider\ActivitySpecProvider">
+            <tag name="spec_provider"/>
+        </service>
+
         <service id="custom_group.pre_creation.subsciber" class="Civi\API\Event\Subscriber\CustomGroupPreCreationSubscriber">
             <tag name="event_subscriber"/>
         </service>
