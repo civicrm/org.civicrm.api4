@@ -10,9 +10,10 @@ class OptionValueJoinable extends Joinable {
 
   /**
    * @param string $optionGroupName
+   * @param string $keyColumn
    * @param string|null $alias
    */
-  public function __construct($optionGroupName, $alias = NULL) {
+  public function __construct($optionGroupName, $keyColumn = 'value', $alias = NULL) {
     $this->optionGroupName = $optionGroupName;
     $optionValueTable = 'civicrm_option_value';
 
@@ -21,7 +22,7 @@ class OptionValueJoinable extends Joinable {
       $alias = $optionGroupName;
     }
 
-    parent::__construct($optionValueTable, 'value', $alias);
+    parent::__construct($optionValueTable, $keyColumn, $alias);
 
     $subSelect = 'SELECT id FROM civicrm_option_group WHERE name = "%s"';
     $subQuery = sprintf($subSelect, $optionGroupName);

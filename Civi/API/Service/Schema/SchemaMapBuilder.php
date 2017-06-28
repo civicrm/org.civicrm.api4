@@ -94,9 +94,9 @@ class SchemaMapBuilder {
   private function addPseudoConstantJoin(Table $table, $field, array $data) {
     $tableName = ArrayHelper::value('table', $data);
     $optionGroupName = ArrayHelper::value('optionGroupName', $data);
+    $keyColumn = ArrayHelper::value('keyColumn', $data, 'id');
 
     if ($tableName) {
-      $keyColumn = ArrayHelper::value('keyColumn', $data, 'id');
       $alias = str_replace('civicrm_', '', $tableName);
       $joinable = new Joinable($tableName, $keyColumn, $alias);
       $condition = ArrayHelper::value('condition', $data);
@@ -105,7 +105,7 @@ class SchemaMapBuilder {
       }
       $table->addTableLink($field, $joinable);
     } elseif ($optionGroupName) {
-      $joinable = new OptionValueJoinable($optionGroupName);
+      $joinable = new OptionValueJoinable($optionGroupName, $keyColumn);
       $table->addTableLink($field, $joinable);
     }
   }
