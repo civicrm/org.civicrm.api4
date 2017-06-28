@@ -114,19 +114,13 @@ class Api4SelectQuery extends SelectQuery {
       $column_name = $key;
     }
     elseif (strpos($key, '.')) {
-      $fkInfo = $this->addFkField($key, 'INNER');
-      if ($fkInfo) {
-        list($table_name, $column_name) = $fkInfo;
-        $this->validateNestedInput($key, $value);
-      } else {
-        $fkInfo =
-          $this->addDotNotationCustomField($key) ?:
-          $this->joinFK($key, 'LEFT');
+      $fkInfo =
+        $this->addDotNotationCustomField($key) ?:
+        $this->joinFK($key, 'LEFT');
 
-        if ($fkInfo) {
-          $table_name = $fkInfo[0];
-          $column_name = $fkInfo[1];
-        }
+      if ($fkInfo) {
+        $table_name = $fkInfo[0];
+        $column_name = $fkInfo[1];
       }
     }
 
