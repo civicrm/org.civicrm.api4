@@ -11,4 +11,9 @@ class Events {
    * @see GetSpecEvent
    */
   const GET_SPEC = 'civi.api.get_spec';
+
+  /**
+   * Build the database schema, allow adding of custom joins and tables.
+   */
+  const SCHEMA_MAP_BUILD = 'api.schema_map.build';
 }

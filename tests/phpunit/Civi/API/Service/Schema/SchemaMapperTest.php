@@ -13,7 +13,7 @@ use Civi\API\V4\UnitTestCase;
 class SchemaMapperTest extends UnitTestCase {
 
   public function testWillHaveNoPathWithNoTables() {
-    $map = new SchemaMap(false);
+    $map = new SchemaMap();
     $this->assertEmpty($map->getPath('foo', 'bar'));
   }
 
@@ -23,7 +23,7 @@ class SchemaMapperTest extends UnitTestCase {
     $link = new Joinable('civicrm_location_type', 'id', 'location');
     $phoneTable->addTableLink('location_type_id', $link);
 
-    $map = new SchemaMap(false);
+    $map = new SchemaMap();
     $map->addTables(array($phoneTable, $locationTable));
 
     $this->assertNotEmpty($map->getPath('civicrm_phone', 'location'));
@@ -37,7 +37,7 @@ class SchemaMapperTest extends UnitTestCase {
     $activity->addTableLink('id', $middleLink);
     $activityContact->addTableLink('contact_id', $contactLink);
 
-    $map = new SchemaMap(false);
+    $map = new SchemaMap();
     $map->addTables(array($activity, $activityContact));
 
     $this->assertNotEmpty($map->getPath('activity', 'contact'));
@@ -51,7 +51,7 @@ class SchemaMapperTest extends UnitTestCase {
     $second->addTableLink('id', new Joinable('third', 'id'));
     $third->addTableLink('id', new Joinable('fourth', 'id'));
 
-    $map = new SchemaMap(false);
+    $map = new SchemaMap();
     $map->addTables(array($first, $second, $third));
 
     $this->assertNotEmpty($map->getPath('first', 'fourth'));
@@ -65,7 +65,7 @@ class SchemaMapperTest extends UnitTestCase {
     $contactTable->addTableLink('car_id', $carLink);
     $carTable->addTableLink('owner_id', $ownerLink);
 
-    $map = new SchemaMap(false);
+    $map = new SchemaMap();
     $map->addTables(array($contactTable, $carTable));
 
     $this->assertEmpty($map->getPath('contact', 'foo'));
@@ -81,14 +81,14 @@ class SchemaMapperTest extends UnitTestCase {
     $third->addTableLink('id', new Joinable('fourth', 'id'));
     $fourth->addTableLink('id', new Joinable('fifth', 'id'));
 
-    $map = new SchemaMap(false);
+    $map = new SchemaMap();
     $map->addTables(array($first, $second, $third, $fourth));
 
     $this->assertEmpty($map->getPath('first', 'fifth'));
   }
 
   public function testAutoloadWillPopulateTablesByDefault() {
-    $map = new SchemaMap();
+    $map = \Civi::container()->get('schema_map');
     $this->assertNotEmpty($map->getTables());
   }
 }
