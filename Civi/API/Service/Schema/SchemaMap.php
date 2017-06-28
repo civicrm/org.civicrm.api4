@@ -142,6 +142,8 @@ class SchemaMap {
   }
 
   /**
+   * Adds a table to the schema map if it has not already been added
+   *
    * @param Table $table
    *
    * @return $this
@@ -164,6 +166,8 @@ class SchemaMap {
   }
 
   /**
+   * Recursive function to traverse the schema looking for a path
+   *
    * @param Table $table
    *   The current table to base fromm
    * @param string $target
@@ -184,7 +188,6 @@ class SchemaMap {
       $visited = array();
     }
 
-    $depth++;
     $tooFar = $depth > self::MAX_JOIN_DEPTH;
     $beenHere = in_array($table->getName(), $visited);
     $alreadyFound = !empty($path);
@@ -203,7 +206,7 @@ class SchemaMap {
         $linkTable = $this->getTableByName($link->getTargetTable());
         if ($linkTable) {
           $nextStep = array_merge($currentPath, [$link]);
-          $this->findInMap($linkTable, $target, $depth, $path, $nextStep);
+          $this->findInMap($linkTable, $target, $depth + 1, $path, $nextStep);
         }
       }
     }
