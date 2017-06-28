@@ -108,15 +108,19 @@ class SchemaMap {
    */
   public function getPath($baseTableName, $targetTableAlias) {
     $table = $this->getTableByName($baseTableName);
-    $path = array();
+    $paths = array();
 
     if (!$table) {
-      return $path;
+      return $paths;
     }
 
-    $this->findInMap($table, $targetTableAlias, 1, $path);
+    $this->findPaths($table, $targetTableAlias, 1, $paths);
 
-    return $path;
+    // return the shortest path
+    return array_reduce($paths, function ($shortest, array $path) {
+      $isShorter = (!$shortest || count($path) < count($shortest));
+      return $isShorter ? $path : $shortest;
+    });
   }
 
   /**
@@ -179,7 +183,7 @@ class SchemaMap {
    * @param Joinable[] $currentPath
    *   For internal use only to track the path to reach the target table
    */
-  private function findInMap(Table $table, $target, $depth, &$path, $currentPath = array()
+  private function findPaths(Table $table, $target, $depth, &$path, $currentPath = array()
   ) {
     static $visited = array();
 
@@ -200,13 +204,13 @@ class SchemaMap {
     $visited[] = $table->getName();
 
     foreach ($table->getExternalLinks() as $link) {
-      if (empty($path) && $link->getAlias() === $target) {
-        $path = $currentPath + array($link);
+      if ($link->getAlias() === $target) {
+        $path[] = $currentPath + array($link);
       } else {
         $linkTable = $this->getTableByName($link->getTargetTable());
         if ($linkTable) {
           $nextStep = array_merge($currentPath, [$link]);
-          $this->findInMap($linkTable, $target, $depth + 1, $path, $nextStep);
+          $this->findPaths($linkTable, $target, $depth + 1, $path, $nextStep);
         }
       }
     }
