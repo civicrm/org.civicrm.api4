@@ -185,7 +185,6 @@ class SchemaMap {
     }
 
     $depth++;
-
     $tooFar = $depth > self::MAX_JOIN_DEPTH;
     $beenHere = in_array($table->getName(), $visited);
     $alreadyFound = !empty($path);
@@ -198,36 +197,15 @@ class SchemaMap {
     $visited[] = $table->getName();
 
     foreach ($table->getExternalLinks() as $link) {
-      $currentPath[] = $link;
       if (empty($path) && $link->getAlias() === $target) {
-        $path = $this->backTracePathToSource($currentPath, $table->getName());
+        $path = $currentPath + array($link);
       } else {
         $linkTable = $this->getTableByName($link->getTargetTable());
         if ($linkTable) {
-          $this->findInMap($linkTable, $target, $depth, $path, $currentPath);
+          $nextStep = array_merge($currentPath, [$link]);
+          $this->findInMap($linkTable, $target, $depth, $path, $nextStep);
         }
       }
     }
-  }
-
-  /**
-   * @param Joinable[] $path
-   * @param string $tableName
-   *
-   * @return Joinable[]
-   */
-  private function backTracePathToSource(array $path, $tableName) {
-    /** @var Joinable[] $path */
-    $path = array_reverse($path);
-    $goalPath = array();
-
-    foreach ($path as $step) {
-      $goalPath[] = $step;
-      if ($step->getBaseTable() === $tableName) {
-        return $goalPath;
-      }
-    }
-
-    return $goalPath;
   }
 }
