@@ -19,6 +19,10 @@ trait TestDataLoaderTrait {
    * @param $path
    */
   protected function loadDataSet($path) {
+    if (!file_exists($path)) {
+      $path = __DIR__ . '/DataSets/' . $path . '.json';
+    }
+
     $dataSet = json_decode(file_get_contents($path), TRUE);
     foreach ($dataSet as $entityName => $entities) {
       foreach ($entities as $entityValues) {
