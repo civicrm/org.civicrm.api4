@@ -96,18 +96,17 @@ class SchemaMap {
   private function findPaths(Table $table, $target, $depth, &$path, $currentPath = array()
   ) {
     static $visited = array();
-    static $shortestLength;
 
     // reset if new call
     if ($depth === 1) {
       $visited = array();
-      $shortestLength = INF;
     }
 
+    $canBeShorter = empty($path) || count($currentPath) + 1 < count($path);
     $tooFar = $depth > self::MAX_JOIN_DEPTH;
     $beenHere = in_array($table->getName(), $visited);
 
-    if ($tooFar || $beenHere) {
+    if ($tooFar || $beenHere || !$canBeShorter) {
       return;
     }
 
@@ -115,8 +114,7 @@ class SchemaMap {
     $visited[] = $table->getName();
 
     foreach ($table->getExternalLinks() as $link) {
-      $currentLength = count($currentPath) + 1;
-      if ($link->getAlias() === $target &&  $currentLength < $shortestLength) {
+      if ($link->getAlias() === $target) {
         $path = array_merge($currentPath, array($link));
       } else {
         $linkTable = $this->getTableByName($link->getTargetTable());
