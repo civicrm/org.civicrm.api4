@@ -53,5 +53,9 @@
             <tag name="event_subscriber"/>
         </service>
 
+        <service id="contact.schema_map.subscriber" class="Civi\API\Event\Subscriber\ContactSchemaMapSubscriber">
+            <tag name="event_subscriber"/>
+        </service>
+
     </services>
 </container>
