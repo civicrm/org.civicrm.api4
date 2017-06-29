@@ -20,6 +20,7 @@ class FkJoinTest extends UnitTestCase {
       'civicrm_option_group',
       'civicrm_option_value',
       'civicrm_activity',
+      'civicrm_phone',
       'civicrm_activity_contact',
     );
     $this->cleanup(array('tablesToTruncate' => $relatedTables));
@@ -66,14 +67,15 @@ class FkJoinTest extends UnitTestCase {
 
     $results = Contact::get()
       ->setCheckPermissions(FALSE)
-      ->addSelect('phones.phone')
-      ->addWhere('contact.id', '=', $testContact['id'])
-      ->addWhere('phones.location.name', '=', 'Home')
+      ->addSelect('phone.phone')
+      ->addWhere('id', '=', $testContact['id'])
+      ->addWhere('phone.location_type.name', '=', 'Home')
       ->execute()
       ->first();
 
-    $this->assertArrayHasKey('phones', $results);
-    $firstPhone = array_shift($results['phones']);
-    $this->assertEquals($testPhone['phone'], $firstPhone);
+    $this->assertArrayHasKey('phone', $results);
+    $this->assertCount(1, $results['phone']);
+    $firstPhone = array_shift($results['phone']);
+    $this->assertEquals($testPhone['phone'], $firstPhone['phone']);
   }
 }
