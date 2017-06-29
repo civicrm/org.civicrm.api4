@@ -23,7 +23,7 @@ class Api4SelectQueryTest extends UnitTestCase {
       'civicrm_activity_contact',
     );
     $this->cleanup(array('tablesToTruncate' => $relatedTables));
-    $this->loadDataSet(__DIR__ . '/../API/V4/Action/DefaultDataSet.json');
+    $this->loadDataSet('DefaultDataSet');
 
     return parent::setUpHeadless();
   }
@@ -50,6 +50,8 @@ class Api4SelectQueryTest extends UnitTestCase {
     $phoneNum = '+35355439483';
 
     $query = new Api4SelectQuery('Contact', FALSE);
+    $query->select[] = 'id';
+    $query->select[] = 'display_name';
     $query->select[] = 'phone.phone';
     $query->where[] = array('phone.phone', '=', $phoneNum);
     $results = $query->run();
@@ -57,7 +59,7 @@ class Api4SelectQueryTest extends UnitTestCase {
     $this->assertCount(1, $results);
     $firstResult = array_shift($results);
     $this->assertArrayHasKey('phone', $firstResult);
-    $firstPhone = array_shift($firstResult['phones']);
+    $firstPhone = array_shift($firstResult['phone']);
     $this->assertEquals($phoneNum, $firstPhone['phone']);
   }
 }

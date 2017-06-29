@@ -86,9 +86,4 @@ class SchemaMapperTest extends UnitTestCase {
 
     $this->assertEmpty($map->getPath('first', 'fifth'));
   }
-
-  public function testAutoloadWillPopulateTablesByDefault() {
-    $map = \Civi::container()->get('schema_map');
-    $this->assertNotEmpty($map->getTables());
-  }
 }
