@@ -34,7 +34,7 @@ class SchemaMap {
     return array_reduce($paths, function ($shortest, array $path) {
       $isShorter = (!$shortest || count($path) < count($shortest));
       return $isShorter ? $path : $shortest;
-    });
+    }, array());
   }
 
   /**
