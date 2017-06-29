@@ -51,6 +51,13 @@ class Api4SelectQuery extends SelectQuery {
   protected $apiVersion = 4;
 
   /**
+   * @var array
+   *   Cache of dot notation fields that were joined in the form
+   *   [table_alias, field_name, is_custom]
+   */
+  protected $joinedFields = array();
+
+  /**
    * @inheritDoc
    * new style = [$fieldName, $operator, $criteria]
    */
@@ -67,37 +74,105 @@ class Api4SelectQuery extends SelectQuery {
    * @return array|int
    */
   public function run() {
+    $this->preRun();
     $baseResults = parent::run();
-    $relatedSelects = array();
+    return $this->postRun($baseResults);
+  }
 
-    foreach ($this->select as $select) {
-      if (false === strpos($select, '.')) {
-        continue;
+  // todo move me somewhere
+  protected function preRun() {
+    $allFields = array_merge(array_column($this->where, 0), $this->select, $this->orderBy);
+    $dotFields = array_filter($allFields, function ($field) {
+      return strpos($field, '.') !== false;
+    });
+    foreach ($dotFields as $dotField) {
+      $fkInfo = $this->joinFK($dotField);
+      if ($fkInfo) {
+        $this->joinedFields[$dotField] = $fkInfo;
       }
+    }
+  }
 
-      $finalDotPos = strrpos($select, '.');
-      $alias = substr($select, $finalDotPos + 1);
-      $relatedSelects[$alias][] = $select;
+  // todo move me somewhere
+  protected function postRun($baseResults) {
+
+    if (empty($baseResults)) {
+      return $baseResults;
     }
 
-    foreach ($relatedSelects as $alias => $fields) {
-      $fields[] = "$alias.id as related_id";
-      $fields = implode(', ', $fields);
+    $relatedSelects = array();
+    $joinedDotSelects = array_filter($this->select, function ($select) {
+      $joinData = ArrayHelper::value($select, $this->joinedFields, array());
+      $isCustom = ArrayHelper::value(2, $joinData);
+      return !$isCustom && !empty($joinData);
+    });
+
+    // group related selects by alias so they can be executed in one query
+    foreach ($joinedDotSelects as $select) {
+      $parts = explode('.', $select);
+      $finalAlias = $parts[count($parts) - 2];
+      $relatedSelects[$finalAlias][] = $select;
+    }
+
+    foreach ($relatedSelects as $finalAlias => $selects) {
+
+      $firstSelect = $selects[0];
+      $pathParts = explode('.', $firstSelect);
+      array_pop($pathParts);
+
+      $fields = array_map(function ($select) use ($finalAlias) {
+        $field = substr($select, strrpos($select, '.') + 1);
+        return sprintf('%s.%s', $finalAlias, $field);
+      }, $selects);
+
+      $fields[] = "$finalAlias.id as id";
+      $numParts = count($pathParts);
+      $baseAlias = $numParts > 1 ? $pathParts[$numParts - 2] : self::MAIN_TABLE_ALIAS;
+      $fields[] = sprintf('%s.id as _parent_id', $baseAlias);
+      $fields[] = sprintf('%s.id as _base_id', self::MAIN_TABLE_ALIAS);
+      $newSelect = sprintf('SELECT DISTINCT %s', implode(", ", $fields));
+
       $sql = str_replace("\n", ' ', $this->query->toSQL());
-      $sql = preg_replace("/SELECT (.*) FROM/", "SELECT a.id as base_id, $fields FROM", $sql);
+      $originalSelect = substr($sql, 0, strpos($sql, ' FROM'));
+      $sql = str_replace($originalSelect, $newSelect, $sql);
       $relatedResults = \CRM_Core_DAO::executeQuery($sql)->fetchAll();
-      foreach ($relatedResults as $relatedResult) {
-        foreach ($baseResults as $key => $baseResult) {
-          if ($baseResult['id'] === $relatedResult['base_id']) {
-            $relatedId = $relatedResult['related_id'];
-            unset($relatedResult['base_id'], $relatedResult['related_id']);
-            $baseResults[$key][$alias][$relatedId] = $relatedResult;
-          }
-        }
+
+      foreach ($baseResults as &$baseResult) {
+        $baseId = $baseResult['id'];
+        $relatedResultsForBase = array_filter($relatedResults, function ($res) use ($baseId) {
+          return ($res['_base_id'] === $baseId);
+        });
+        $this->insertAtLevel($baseResult, $pathParts, $relatedResultsForBase);
       }
     }
 
     return $baseResults;
+  }
+
+  /**
+   * @param $array
+   * @param $parts
+   * @param $values
+   */
+  private function insertAtLevel(&$array, array $parts, array $values) {
+    $currentLevel = array_shift($parts);
+    if (!array_key_exists($currentLevel, $array)) {
+      $array[$currentLevel][] = [];
+    }
+    if (empty($parts)) {
+      $parentId = ArrayHelper::value('id', $array);
+      $values = array_filter($values, function ($value) use ($parentId) {
+        return $value['_parent_id'] === $parentId;
+      });
+      array_walk($values, function (&$value) {
+        unset($value['_parent_id'], $value['_base_id']);
+      });
+      $array[$currentLevel] = $values;
+    } else {
+      foreach ($array[$currentLevel] as $key => &$current) {
+        $this->insertAtLevel($current, $parts, $values);
+      }
+    }
   }
 
   /**
@@ -153,14 +228,9 @@ class Api4SelectQuery extends SelectQuery {
       $column_name = $key;
     }
     elseif (strpos($key, '.')) {
-      $fkInfo =
-        $this->addDotNotationCustomField($key) ?:
-        $this->joinFK($key, 'LEFT');
-
-      if ($fkInfo) {
-        $table_name = $fkInfo[0];
-        $column_name = $fkInfo[1];
-      }
+      $fkInfo = ArrayHelper::value($key, $this->joinedFields);
+      $table_name = $fkInfo[0];
+      $column_name = $fkInfo[1];
     }
 
     if (!$table_name || !$column_name || is_null($value)) {
@@ -206,14 +276,16 @@ class Api4SelectQuery extends SelectQuery {
         continue;
       }
 
-      $customFieldData = $this->addDotNotationCustomField($selectAlias);
+      $joinData = ArrayHelper::value($selectAlias, $this->joinedFields);
+      $isCustom = ArrayHelper::value(2, $joinData);
 
-      if (!$customFieldData) {
+      // only select custom joined fields, the rest is done in post processing
+      if (!$joinData || !$isCustom) {
         continue;
       }
 
-      $tableAlias = $customFieldData[0];
-      $columnName = $customFieldData[1];
+      $tableAlias = $joinData[0];
+      $columnName = $joinData[1];
       $field = sprintf('%s.%s', $tableAlias, $columnName);
 
       $this->selectFields[$field] = $selectAlias;
@@ -224,16 +296,18 @@ class Api4SelectQuery extends SelectQuery {
    * @param $customField
    *   The field name in the format CustomGroupName.CustomFieldName
    *
-   * @return array|null
-   *   An array containing the added table alias and column name
+   * @return array
+   *   Containing the added table alias and column name
    */
   protected function addDotNotationCustomField($customField) {
     $parts = explode('.', $customField);
 
+    if (count($parts) < 2 || count($parts) > 3) {
+      return array();
+    }
+
     if (count($parts) === 3) {
       return $this->addDotNotationCustomFieldWithOptionValue($customField);
-    } elseif (count($parts) !== 2) {
-      throw new \Exception('Invalid dot notation in select');
     }
 
     $groupName = ArrayHelper::value(0, $parts);
@@ -276,6 +350,11 @@ class Api4SelectQuery extends SelectQuery {
     $customGroupAndField = sprintf('%s.%s', $groupName, $fieldName);
 
     $addedField = $this->addDotNotationCustomField($customGroupAndField);
+
+    if (empty($addedField)) {
+      return array();
+    }
+
     $customValueAlias = $addedField[0];
     $customValueColumn = $addedField[1];
 
@@ -320,15 +399,15 @@ class Api4SelectQuery extends SelectQuery {
 
   /**
    * @param $key
-   * @param $side
    *
    * @return array
+   *   in the form [alias_name, field_name, is_custom]
    */
-  protected function joinFK($key, $side) {
+  protected function joinFK($key) {
     // check if it's a custom field first
     $customFieldData = $this->addDotNotationCustomField($key);
-    if ($customFieldData) {
-      return $customFieldData;
+    if (!empty($customFieldData)) {
+      return array_merge($customFieldData, array(true));
     }
 
     $stack = explode('.', $key);
@@ -338,17 +417,16 @@ class Api4SelectQuery extends SelectQuery {
     }
 
     $joiner = \Civi::container()->get('joiner');
-    $tableAlias = NULL;
+    $joinPath = substr($key, 0, strrpos($key, '.'));
 
     // todo check if can join before joining
-    while (count($stack) > 1) {
-      $tableAlias = array_shift($stack);
-      $joiner->join($this, $tableAlias, $side);
-    }
+    $joiner->join($this, $joinPath, 'LEFT');
 
-    $field = array_shift($stack);
+    $reversed = array_reverse($stack);
+    $field = array_shift($reversed);
+    $lastAlias = array_shift($reversed);
 
-    return array($tableAlias, $field);
+    return array($lastAlias, $field, false);
   }
 
   /**
