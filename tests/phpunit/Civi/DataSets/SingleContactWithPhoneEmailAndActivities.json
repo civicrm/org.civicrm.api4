@@ -5,12 +5,6 @@
       "last_name": "Contact",
       "contact_type": "Individual",
       "@ref": "test_contact_1"
-    },
-    {
-      "first_name": "Second",
-      "last_name": "Test",
-      "contact_type": "Individual",
-      "@ref": "test_contact_2"
     }
   ],
   "OptionGroup": [
@@ -23,12 +17,12 @@
   ],
   "OptionValue": [
     {
-      "label": "Housing Support",
-      "name": "housing_support",
+      "label": "Did Something Amazing",
+      "name": "did_something_great",
       "option_group": "activity_type"
     },
     {
-      "label": "Another Activity Type",
+      "label": "Did That Other Thing",
       "name": "another_activity_type",
       "option_group": "activity_type"
     },
@@ -50,31 +44,43 @@
   ],
   "Activity": [
     {
-      "name": "Test Housing Support Activity",
-      "activity_type": "housing_support",
-      "source_contact_id": "@ref test_contact_1.id"
+      "subject": "Won A Nobel Prize",
+      "activity_type": "did_something_great",
+      "source_contact_id": "@ref test_contact_1.id",
+      "@ref": "test_activity_1"
     },
     {
-      "name": "Another Activity",
+      "subject": "Cleaned The House",
       "activity_type": "another_activity_type",
       "source_contact_id": "@ref test_contact_1.id",
       "assignee_contact_id": [
-        "@ref test_contact_1.id",
-        "@ref test_contact_2.id"
-      ]
+        "@ref test_contact_1.id"
+      ],
+      "@ref": "test_activity_2"
     }
   ],
   "Phone": [
     {
       "contact_id": "@ref test_contact_1.id",
-      "phone": "+35355439483",
-      "location_type_id": "1",
-      "@ref": "test_phone_1"
+      "phone": "+1111111111111",
+      "location_type_id": 1
     },
     {
       "contact_id": "@ref test_contact_1.id",
-      "phone": "+3538733439483",
-      "location_type_id": "2"
+      "phone": "+2222222222222",
+      "location_type_id": 2
+    }
+  ],
+  "Email": [
+    {
+      "contact_id": "@ref test_contact_1.id",
+      "email": "test_contact_home@fakedomain.com",
+      "location_type_id": 1
+    },
+    {
+      "contact_id": "@ref test_contact_1.id",
+      "email": "test_contact_work@fakedomain.com",
+      "location_type_id": 2
     }
   ]
 }
