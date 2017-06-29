@@ -22,19 +22,15 @@ class SchemaMap {
    */
   public function getPath($baseTableName, $targetTableAlias) {
     $table = $this->getTableByName($baseTableName);
-    $paths = array();
+    $path = array();
 
     if (!$table) {
-      return $paths;
+      return $path;
     }
 
-    $this->findPaths($table, $targetTableAlias, 1, $paths);
+    $this->findPaths($table, $targetTableAlias, 1, $path);
 
-    // return the shortest path
-    return array_reduce($paths, function ($shortest, array $path) {
-      $isShorter = (!$shortest || count($path) < count($shortest));
-      return $isShorter ? $path : $shortest;
-    }, array());
+    return $path;
   }
 
   /**
@@ -100,17 +96,18 @@ class SchemaMap {
   private function findPaths(Table $table, $target, $depth, &$path, $currentPath = array()
   ) {
     static $visited = array();
+    static $shortestLength;
 
-    // reset visited if new call
+    // reset if new call
     if ($depth === 1) {
       $visited = array();
+      $shortestLength = INF;
     }
 
     $tooFar = $depth > self::MAX_JOIN_DEPTH;
     $beenHere = in_array($table->getName(), $visited);
-    $alreadyFound = !empty($path);
 
-    if ($alreadyFound || $tooFar || $beenHere) {
+    if ($tooFar || $beenHere) {
       return;
     }
 
@@ -118,12 +115,13 @@ class SchemaMap {
     $visited[] = $table->getName();
 
     foreach ($table->getExternalLinks() as $link) {
-      if ($link->getAlias() === $target) {
-        $path[] = $currentPath + array($link);
+      $currentLength = count($currentPath) + 1;
+      if ($link->getAlias() === $target &&  $currentLength < $shortestLength) {
+        $path = array_merge($currentPath, array($link));
       } else {
         $linkTable = $this->getTableByName($link->getTargetTable());
         if ($linkTable) {
-          $nextStep = array_merge($currentPath, [$link]);
+          $nextStep = array_merge($currentPath, array($link));
           $this->findPaths($linkTable, $target, $depth + 1, $path, $nextStep);
         }
       }
