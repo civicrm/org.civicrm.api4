@@ -19,23 +19,34 @@ class Joiner {
 
   /**
    * @param Api4SelectQuery $query
-   * @param string $targetAlias
+   *   The query object to do the joins on
+   * @param string $joinPath
+   *   A path of aliases in dot notation, e.g. contact.phone
    * @param string $side
+   *   Can be LEFT or INNER
    *
    * @throws \Exception
    */
-  public function join(Api4SelectQuery $query, $targetAlias, $side = 'LEFT') {
+  public function join(Api4SelectQuery $query, $joinPath, $side = 'LEFT') {
 
     $from = $query->getFrom();
-    $links = $this->schemaMap->getPath($from, $targetAlias);
+    $stack = explode('.', $joinPath);
+    $fullPath = array();
 
-    if (empty($links)) {
-      throw new \Exception(sprintf('Cannot join %s to %s', $from, $targetAlias));
+    foreach ($stack as $targetAlias) {
+      $links = $this->schemaMap->getPath($from, $targetAlias);
+
+      if (empty($links)) {
+        throw new \Exception(sprintf('Cannot join %s to %s', $from, $joinPath));
+      } else {
+        $fullPath = array_merge($fullPath, $links);
+        $from = end($links)->getTargetTable();
+      }
     }
 
     $baseTable = $query::MAIN_TABLE_ALIAS;
 
-    foreach ($links as $link) {
+    foreach ($fullPath as $link) {
       $query->join(
         $side,
         $link->getTargetTable(),
