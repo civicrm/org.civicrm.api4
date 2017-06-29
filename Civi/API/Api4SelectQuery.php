@@ -62,6 +62,45 @@ class Api4SelectQuery extends SelectQuery {
   }
 
   /**
+   * Why walk when you can
+   *
+   * @return array|int
+   */
+  public function run() {
+    $baseResults = parent::run();
+    $relatedSelects = array();
+
+    foreach ($this->select as $select) {
+      if (false === strpos($select, '.')) {
+        continue;
+      }
+
+      $finalDotPos = strrpos($select, '.');
+      $alias = substr($select, $finalDotPos + 1);
+      $relatedSelects[$alias][] = $select;
+    }
+
+    foreach ($relatedSelects as $alias => $fields) {
+      $fields[] = "$alias.id as related_id";
+      $fields = implode(', ', $fields);
+      $sql = str_replace("\n", ' ', $this->query->toSQL());
+      $sql = preg_replace("/SELECT (.*) FROM/", "SELECT a.id as base_id, $fields FROM", $sql);
+      $relatedResults = \CRM_Core_DAO::executeQuery($sql)->fetchAll();
+      foreach ($relatedResults as $relatedResult) {
+        foreach ($baseResults as $key => $baseResult) {
+          if ($baseResult['id'] === $relatedResult['base_id']) {
+            $relatedId = $relatedResult['related_id'];
+            unset($relatedResult['base_id'], $relatedResult['related_id']);
+            $baseResults[$key][$alias][$relatedId] = $relatedResult;
+          }
+        }
+      }
+    }
+
+    return $baseResults;
+  }
+
+  /**
    * Recursively validate and transform a branch or leaf clause array to SQL.
    *
    * @param array $clause
