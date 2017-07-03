@@ -37,7 +37,7 @@ class Api4SelectQueryTest extends UnitTestCase {
   }
 
   public function testWithSingleWhereJoin() {
-    $phoneNum = '+35355439483';
+    $phoneNum = $this->getReference('test_phone_1')['phone'];
 
     $query = new Api4SelectQuery('Contact', FALSE);
     $query->where[] = array('phones.phone', '=', $phoneNum);
@@ -47,7 +47,7 @@ class Api4SelectQueryTest extends UnitTestCase {
   }
 
   public function testWithSelectAndWhereJoin() {
-    $phoneNum = '+35355439483';
+    $phoneNum = $this->getReference('test_phone_1')['phone'];
 
     $query = new Api4SelectQuery('Contact', FALSE);
     $query->select[] = 'id';
