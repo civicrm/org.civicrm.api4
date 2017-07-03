@@ -40,7 +40,7 @@ class Api4SelectQueryTest extends UnitTestCase {
     $phoneNum = '+35355439483';
 
     $query = new Api4SelectQuery('Contact', FALSE);
-    $query->where[] = array('phone.phone', '=', $phoneNum);
+    $query->where[] = array('phones.phone', '=', $phoneNum);
     $results = $query->run();
 
     $this->assertCount(1, $results);
@@ -52,14 +52,14 @@ class Api4SelectQueryTest extends UnitTestCase {
     $query = new Api4SelectQuery('Contact', FALSE);
     $query->select[] = 'id';
     $query->select[] = 'display_name';
-    $query->select[] = 'phone.phone';
-    $query->where[] = array('phone.phone', '=', $phoneNum);
+    $query->select[] = 'phones.phone';
+    $query->where[] = array('phones.phone', '=', $phoneNum);
     $results = $query->run();
 
     $this->assertCount(1, $results);
     $firstResult = array_shift($results);
-    $this->assertArrayHasKey('phone', $firstResult);
-    $firstPhone = array_shift($firstResult['phone']);
+    $this->assertArrayHasKey('phones', $firstResult);
+    $firstPhone = array_shift($firstResult['phones']);
     $this->assertEquals($phoneNum, $firstPhone['phone']);
   }
 }

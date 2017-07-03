@@ -51,20 +51,7 @@ class SchemaMapBuilder {
       $map->addTable($table);
     }
 
-    // add back references
-    foreach ($map->getTables() as $table) {
-      foreach ($table->getTableLinks() as $link) {
-
-        // there are too many possible joins from option value so skip
-        if ($link instanceof OptionValueJoinable) {
-          continue;
-        }
-
-        $target = $map->getTableByName($link->getTargetTable());
-        $joinable = new Joinable($link->getBaseTable(), $link->getBaseColumn());
-        $target->addTableLink($link->getTargetColumn(), $joinable);
-      }
-    }
+    $this->addBackReferences($map);
   }
 
   /**
@@ -107,6 +94,48 @@ class SchemaMapBuilder {
     } elseif ($optionGroupName) {
       $joinable = new OptionValueJoinable($optionGroupName, $keyColumn);
       $table->addTableLink($field, $joinable);
+    }
+  }
+
+  /**
+   * Loop through existing links and provide link from the other side
+   *
+   * @param SchemaMap $map
+   */
+  private function addBackReferences(SchemaMap $map) {
+    foreach ($map->getTables() as $table) {
+      foreach ($table->getTableLinks() as $link) {
+        // there are too many possible joins from option value so skip
+        if ($link instanceof OptionValueJoinable) {
+          continue;
+        }
+
+        $target = $map->getTableByName($link->getTargetTable());
+        $tableName = $link->getBaseTable();
+        $plural = str_replace('civicrm_', '', $this->getPlural($tableName));
+        $joinable = new Joinable($tableName, $link->getBaseColumn(), $plural);
+        $target->addTableLink($link->getTargetColumn(), $joinable);
+      }
+    }
+  }
+
+  /**
+   * Simple implementation of pluralization.
+   * Could be replaced with symfony/inflector
+   *
+   * @param string $singular
+   *
+   * @return string
+   */
+  private function getPlural($singular) {
+    $last_letter = substr($singular, -1);
+    switch($last_letter) {
+      case 'y':
+        return substr($singular,0,-1) . 'ies';
+      case 's':
+        return $singular . 'es';
+      default:
+        return $singular . 's';
     }
   }
 }

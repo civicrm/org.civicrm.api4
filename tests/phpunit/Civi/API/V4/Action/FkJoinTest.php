@@ -67,15 +67,15 @@ class FkJoinTest extends UnitTestCase {
 
     $results = Contact::get()
       ->setCheckPermissions(FALSE)
-      ->addSelect('phone.phone')
+      ->addSelect('phones.phone')
       ->addWhere('id', '=', $testContact['id'])
-      ->addWhere('phone.location_type.name', '=', 'Home')
+      ->addWhere('phones.location_type.name', '=', 'Home')
       ->execute()
       ->first();
 
-    $this->assertArrayHasKey('phone', $results);
-    $this->assertCount(1, $results['phone']);
-    $firstPhone = array_shift($results['phone']);
+    $this->assertArrayHasKey('phones', $results);
+    $this->assertCount(1, $results['phones']);
+    $firstPhone = array_shift($results['phones']);
     $this->assertEquals($testPhone['phone'], $firstPhone['phone']);
   }
 }

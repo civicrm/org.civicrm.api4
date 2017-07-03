@@ -15,7 +15,7 @@ class SchemaMapRealTableTest extends UnitTestCase {
 
   public function testSimplePathWillExist() {
     $map = \Civi::container()->get('schema_map');
-    $path = $map->getPath('civicrm_contact', 'email');
+    $path = $map->getPath('civicrm_contact', 'emails');
     $this->assertCount(1, $path);
   }
 }
