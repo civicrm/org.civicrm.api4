@@ -23,8 +23,8 @@ class ContactSchemaMapSubscriber implements EventSubscriberInterface {
   public function onSchemaBuild(SchemaMapBuildEvent $event) {
     $schema = $event->getSchemaMap();
     $table = $schema->getTableByName('civicrm_contact');
-    $joinable = new Joinable('civicrm_activity_contact', 'contact_id', 'created_activity');
-    $joinable->addCondition('created_activity.record_type_id = 1');
+    $joinable = new Joinable('civicrm_activity_contact', 'contact_id', 'created_activities');
+    $joinable->addCondition('created_activities.record_type_id = 1');
     $table->addTableLink('id', $joinable);
   }
 }

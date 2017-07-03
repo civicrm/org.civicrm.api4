@@ -33,9 +33,9 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
     $query->select[] = 'phone.phone';
     $query->select[] = 'email.email';
     $query->select[] = 'email.location_type.name';
-    $query->select[] = 'created_activity.contact_id';
-    $query->select[] = 'created_activity.activity.subject';
-    $query->select[] = 'created_activity.activity.activity_type.name';
+    $query->select[] = 'created_activities.contact_id';
+    $query->select[] = 'created_activities.activity.subject';
+    $query->select[] = 'created_activities.activity.activity_type.name';
     $results = $query->run();
 
     $testActivities = [
@@ -46,8 +46,8 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
 
     $this->assertCount(1, $results);
     $firstResult = array_shift($results);
-    $this->assertArrayHasKey('created_activity', $firstResult);
-    $firstCreatedActivity = array_shift($firstResult['created_activity']);
+    $this->assertArrayHasKey('created_activities', $firstResult);
+    $firstCreatedActivity = array_shift($firstResult['created_activities']);
     $this->assertArrayHasKey('activity', $firstCreatedActivity);
     $firstActivity = array_shift($firstCreatedActivity['activity']);
     $this->assertContains($firstActivity['subject'], $activitySubjects);
