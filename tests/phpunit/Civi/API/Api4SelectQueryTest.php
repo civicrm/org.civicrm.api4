@@ -17,6 +17,7 @@ class Api4SelectQueryTest extends UnitTestCase {
     $relatedTables = array(
       'civicrm_contact',
       'civicrm_contact',
+      'civicrm_phone',
       'civicrm_option_group',
       'civicrm_option_value',
       'civicrm_activity',
@@ -46,7 +47,7 @@ class Api4SelectQueryTest extends UnitTestCase {
     $this->assertCount(1, $results);
   }
 
-  public function testWithSelectAndWhereJoin() {
+  public function testOneToManyJoin() {
     $phoneNum = $this->getReference('test_phone_1')['phone'];
 
     $query = new Api4SelectQuery('Contact', FALSE);
@@ -61,5 +62,23 @@ class Api4SelectQueryTest extends UnitTestCase {
     $this->assertArrayHasKey('phones', $firstResult);
     $firstPhone = array_shift($firstResult['phones']);
     $this->assertEquals($phoneNum, $firstPhone['phone']);
+  }
+
+  public function testManyToOneJoin() {
+    $phoneNum = $this->getReference('test_phone_1')['phone'];
+    $contact = $this->getReference('test_contact_1');
+
+    $query = new Api4SelectQuery('Phone', FALSE);
+    $query->select[] = 'id';
+    $query->select[] = 'phone';
+    $query->select[] = 'contact.display_name';
+    $query->where[] = array('phone', '=', $phoneNum);
+    $results = $query->run();
+
+    $this->assertCount(1, $results);
+    $firstResult = array_shift($results);
+    $this->assertArrayHasKey('contact', $firstResult);
+    $firstContact = array_shift($firstResult['contact']);
+    $this->assertEquals($contact['display_name'], $firstContact['display_name']);
   }
 }
