@@ -85,7 +85,13 @@ class Api4SelectQuery extends SelectQuery {
 
   // todo move me somewhere
   protected function preRun() {
-    $allFields = array_merge(array_column($this->where, 0), $this->select, $this->orderBy);
+    $allFields = array_merge(
+      array_column($this->where, 0),
+      $this->select,
+      $this->orderBy
+    );
+    $allFields = array_unique($allFields);
+
     $dotFields = array_filter($allFields, function ($field) {
       return strpos($field, '.') !== false;
     });
@@ -93,8 +99,6 @@ class Api4SelectQuery extends SelectQuery {
       $this->joinFK($dotField);
     }
   }
-
-
 
   // todo move me somewhere
   protected function postRun($baseResults) {
@@ -105,8 +109,7 @@ class Api4SelectQuery extends SelectQuery {
 
     $relatedSelects = array();
     $joinedDotSelects = array_filter($this->select, function ($select) {
-      $joinData = ArrayHelper::value($select, $this->joinedFields, array());
-      return !empty($joinData);
+      return isset($this->joinedFields[$select]);
     });
 
     // group related selects by alias so they can be executed in one query
@@ -121,11 +124,14 @@ class Api4SelectQuery extends SelectQuery {
       $firstSelect = $selects[0];
       $pathParts = explode('.', $firstSelect);
       array_pop($pathParts);
+      $joinType = $this->joinedFields[$firstSelect][2];
+      $isMultiple = $joinType === Joinable::JOIN_TYPE_ONE_TO_MANY;
 
       $selectFields = array();
       foreach ($selects as $select) {
         $fieldName = $this->joinedFields[$select][1];
-        $selectFields[$select] = sprintf('%s.%s', $finalAlias, $fieldName);
+        $fieldAlias = substr($select, strrpos($select, '.') + 1);
+        $selectFields[$fieldAlias] = $fieldName;
       }
 
       // todo why do I need this, couldn't I use $finalAlias instead of array index
@@ -164,11 +170,12 @@ class Api4SelectQuery extends SelectQuery {
         $relatedResultsForBase = array_filter($relatedResults, function ($res) use ($baseId) {
           return ($res['_base_id'] === $baseId);
         });
-        $this->insertAtLevel($baseResult, $pathParts, $relatedResultsForBase);
+        $this->insertAtLevel($baseResult, $pathParts, array_values($relatedResultsForBase), $isMultiple);
       }
     }
 
-    return $baseResults;
+    // no associative option
+    return array_values($baseResults);
   }
 
   /**
@@ -176,7 +183,7 @@ class Api4SelectQuery extends SelectQuery {
    * @param $parts
    * @param $values
    */
-  private function insertAtLevel(&$array, array $parts, array $values) {
+  private function insertAtLevel(&$array, array $parts, array $values, $isMultiple = true) {
     $currentLevel = array_shift($parts);
     if (!array_key_exists($currentLevel, $array)) {
       $array[$currentLevel][] = [];
@@ -189,6 +196,11 @@ class Api4SelectQuery extends SelectQuery {
       array_walk($values, function (&$value) {
         unset($value['_parent_id'], $value['_base_id']);
       });
+
+      if (!$isMultiple) {
+        $values = array_shift($values);
+      }
+
       $array[$currentLevel] = $values;
     } else {
       foreach ($array[$currentLevel] as $key => &$current) {
@@ -249,8 +261,8 @@ class Api4SelectQuery extends SelectQuery {
       $table_name = self::MAIN_TABLE_ALIAS;
       $column_name = $key;
     }
-    elseif (strpos($key, '.')) {
-      $fkInfo = ArrayHelper::value($key, $this->joinedFields);
+    elseif (strpos($key, '.') && isset($this->joinedFields[$key])) {
+      $fkInfo = $this->joinedFields[$key];
       $table_name = $fkInfo[0];
       $column_name = $fkInfo[1];
     }
@@ -304,7 +316,7 @@ class Api4SelectQuery extends SelectQuery {
     $field = substr($key, $finalDot + 1);
 
     // todo check if can join before joining
-    $joinPath = $joiner->join($this, $pathString, 'LEFT');
+    $joinPath = $joiner->join($this, $pathString, 'INNER');
 
     $lastLink = end($joinPath);
     // custom groups use aliases for field names
@@ -312,7 +324,7 @@ class Api4SelectQuery extends SelectQuery {
       $field = \CRM_Core_DAO_CustomField::getFieldValue(\CRM_Core_DAO_CustomField::class, $field, 'column_name', 'name');
     }
 
-    $this->joinedFields[$key] = array($lastLink->getAlias(), $field);
+    $this->joinedFields[$key] = array($lastLink->getAlias(), $field, $lastLink->getJoinType());
   }
 
   /**
