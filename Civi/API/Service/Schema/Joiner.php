@@ -3,6 +3,9 @@
 namespace Civi\API\Service\Schema;
 
 use Civi\API\Api4SelectQuery;
+use Civi\API\Service\Schema\Joinable\CustomGroupJoinable;
+use Civi\API\Service\Schema\Joinable\Joinable;
+use Civi\API\Service\Schema\Joinable\OptionValueJoinable;
 
 class Joiner {
   /**
@@ -26,6 +29,8 @@ class Joiner {
    *   Can be LEFT or INNER
    *
    * @throws \Exception
+   * @return Joinable[]
+   *   The path used to make the join
    */
   public function join(Api4SelectQuery $query, $joinPath, $side = 'LEFT') {
 
@@ -33,14 +38,20 @@ class Joiner {
     $stack = explode('.', $joinPath);
     $fullPath = array();
 
-    foreach ($stack as $targetAlias) {
+    foreach ($stack as $key => $targetAlias) {
       $links = $this->schemaMap->getPath($from, $targetAlias);
 
       if (empty($links)) {
         throw new \Exception(sprintf('Cannot join %s to %s', $from, $joinPath));
       } else {
         $fullPath = array_merge($fullPath, $links);
-        $from = end($links)->getTargetTable();
+        $lastLink = end($links);
+        $from = $lastLink->getTargetTable();
+      }
+
+      // Cannot join further from custom group table
+      if ($lastLink instanceof CustomGroupJoinable) {
+        break;
       }
     }
 
@@ -56,5 +67,7 @@ class Joiner {
 
       $baseTable = $link->getAlias();
     }
+
+    return $fullPath;
   }
 }

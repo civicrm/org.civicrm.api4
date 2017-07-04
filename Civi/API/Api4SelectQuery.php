@@ -27,6 +27,8 @@
  */
 namespace Civi\API;
 
+use Civi\API\Service\Schema\Joinable\CustomGroupJoinable;
+use Civi\API\Service\Schema\Joinable\Joinable;
 use CRM_Utils_Array as ArrayHelper;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
 
@@ -45,6 +47,9 @@ use CRM_Core_DAO_AllCoreTables as TableHelper;
  */
 class Api4SelectQuery extends SelectQuery {
 
+  const JOIN_ONE_TO_MANY = 1;
+  const JOIN_ONE_TO_ONE = 2;
+
   /**
    * @var int
    */
@@ -53,13 +58,12 @@ class Api4SelectQuery extends SelectQuery {
   /**
    * @var array
    *   Cache of dot notation fields that were joined in the form
-   *   [table_alias, field_name, is_custom]
+   *   [table_alias, field_name]
    */
   protected $joinedFields = array();
 
   /**
    * @inheritDoc
-   * new style = [$fieldName, $operator, $criteria]
    */
   protected function buildWhereClause() {
     foreach ($this->where as $clause) {
@@ -86,12 +90,11 @@ class Api4SelectQuery extends SelectQuery {
       return strpos($field, '.') !== false;
     });
     foreach ($dotFields as $dotField) {
-      $fkInfo = $this->joinFK($dotField);
-      if ($fkInfo) {
-        $this->joinedFields[$dotField] = $fkInfo;
-      }
+      $this->joinFK($dotField);
     }
   }
+
+
 
   // todo move me somewhere
   protected function postRun($baseResults) {
@@ -103,8 +106,7 @@ class Api4SelectQuery extends SelectQuery {
     $relatedSelects = array();
     $joinedDotSelects = array_filter($this->select, function ($select) {
       $joinData = ArrayHelper::value($select, $this->joinedFields, array());
-      $isCustom = ArrayHelper::value(2, $joinData);
-      return !$isCustom && !empty($joinData);
+      return !empty($joinData);
     });
 
     // group related selects by alias so they can be executed in one query
@@ -120,22 +122,42 @@ class Api4SelectQuery extends SelectQuery {
       $pathParts = explode('.', $firstSelect);
       array_pop($pathParts);
 
-      $fields = array_map(function ($select) use ($finalAlias) {
-        $field = substr($select, strrpos($select, '.') + 1);
-        return sprintf('%s.%s', $finalAlias, $field);
-      }, $selects);
+      $selectFields = array();
+      foreach ($selects as $select) {
+        $fieldName = $this->joinedFields[$select][1];
+        $selectFields[$select] = sprintf('%s.%s', $finalAlias, $fieldName);
+      }
 
-      $fields[] = "$finalAlias.id as id";
+      // todo why do I need this, couldn't I use $finalAlias instead of array index
       $numParts = count($pathParts);
       $baseAlias = $numParts > 1 ? $pathParts[$numParts - 2] : self::MAIN_TABLE_ALIAS;
-      $fields[] = sprintf('%s.id as _parent_id', $baseAlias);
-      $fields[] = sprintf('%s.id as _base_id', self::MAIN_TABLE_ALIAS);
-      $newSelect = sprintf('SELECT DISTINCT %s', implode(", ", $fields));
+
+      $selectFields['id'] = sprintf('%s.id', $finalAlias);
+      $selectFields['_parent_id'] = $baseAlias . '.id';
+      $selectFields['_base_id'] = self::MAIN_TABLE_ALIAS . '.id';
+
+      $selectFieldsAliased = array_map(function ($field, $alias) {
+        return sprintf('%s as "%s"', $field, $alias);
+      }, $selectFields, array_keys($selectFields));
+
+      $newSelect = sprintf('SELECT DISTINCT %s', implode(", ", $selectFieldsAliased));
 
       $sql = str_replace("\n", ' ', $this->query->toSQL());
       $originalSelect = substr($sql, 0, strpos($sql, ' FROM'));
       $sql = str_replace($originalSelect, $newSelect, $sql);
-      $relatedResults = \CRM_Core_DAO::executeQuery($sql)->fetchAll();
+
+      $relatedResults = array();
+      $resultDAO = \CRM_Core_DAO::executeQuery($sql);
+      while ($resultDAO->fetch()) {
+        $relatedResults[$resultDAO->id] = array();
+        foreach ($selectFields as $alias => $column) {
+          $returnName = $alias;
+          $alias = str_replace('.', '_', $alias);
+          if (property_exists($resultDAO, $alias)) {
+            $relatedResults[$resultDAO->id][$returnName] = $resultDAO->$alias;
+          }
+        };
+      }
 
       foreach ($baseResults as &$baseResult) {
         $baseId = $baseResult['id'];
@@ -266,167 +288,31 @@ class Api4SelectQuery extends SelectQuery {
     return NULL;
   }
 
-  protected function buildSelectFields() {
-    parent::buildSelectFields();
-
-    foreach ($this->select as $selectAlias) {
-      $alreadyAdded = in_array($selectAlias, $this->selectFields);
-      $containsDot = strpos($selectAlias, '.') !== FALSE;
-      if ($alreadyAdded || !$containsDot) {
-        continue;
-      }
-
-      $joinData = ArrayHelper::value($selectAlias, $this->joinedFields);
-      $isCustom = ArrayHelper::value(2, $joinData);
-
-      // only select custom joined fields, the rest is done in post processing
-      if (!$joinData || !$isCustom) {
-        continue;
-      }
-
-      $tableAlias = $joinData[0];
-      $columnName = $joinData[1];
-      $field = sprintf('%s.%s', $tableAlias, $columnName);
-
-      $this->selectFields[$field] = $selectAlias;
-    }
-  }
-
-  /**
-   * @param $customField
-   *   The field name in the format CustomGroupName.CustomFieldName
-   *
-   * @return array
-   *   Containing the added table alias and column name
-   */
-  protected function addDotNotationCustomField($customField) {
-    $parts = explode('.', $customField);
-
-    if (count($parts) < 2 || count($parts) > 3) {
-      return array();
-    }
-
-    if (count($parts) === 3) {
-      return $this->addDotNotationCustomFieldWithOptionValue($customField);
-    }
-
-    $groupName = ArrayHelper::value(0, $parts);
-    $fieldName = ArrayHelper::value(1, $parts);
-
-    $tableName = \CRM_Core_BAO_CustomGroup::getFieldValue(
-      \CRM_Core_DAO_CustomGroup::class,
-      $groupName,
-      'table_name',
-      'name'
-    );
-    $columnName = \CRM_Core_BAO_CustomField::getFieldValue(
-      \CRM_Core_DAO_CustomField::class,
-      $fieldName,
-      'column_name',
-      'name'
-    );
-
-    if (!$tableName || !$columnName) {
-      return NULL;
-    }
-
-    return $this->addCustomField(
-      array('table_name' => $tableName, 'column_name' => $columnName),
-      'INNER'
-    );
-  }
-
-  /**
-   * @param $field
-   *
-   * @return array
-   *   An array containing the option value table alias and column name
-   */
-  protected function addDotNotationCustomFieldWithOptionValue($field) {
-    $parts = explode('.', $field);
-    $fieldName = ArrayHelper::value(1, $parts);
-    $groupName = ArrayHelper::value(0, $parts);
-    $optionValueField = ArrayHelper::value(2, $parts);
-    $customGroupAndField = sprintf('%s.%s', $groupName, $fieldName);
-
-    $addedField = $this->addDotNotationCustomField($customGroupAndField);
-
-    if (empty($addedField)) {
-      return array();
-    }
-
-    $customValueAlias = $addedField[0];
-    $customValueColumn = $addedField[1];
-
-    $optionGroupID = \CRM_Core_BAO_CustomField::getFieldValue(
-      \CRM_Core_DAO_CustomField::class,
-      $fieldName,
-      'option_group_id',
-      'name'
-    );
-
-    // Cannot select a third level value if option group doesn't exist
-    if (NULL === $optionGroupID) {
-      return array();
-    }
-
-    $optionValueAlias = sprintf(
-      '%s_to_%s_options',
-      self::MAIN_TABLE_ALIAS,
-      $customValueColumn
-    );
-    $optionValueMatching = sprintf(
-      '`%s`.value = `%s`.`%s`',
-      $optionValueAlias,
-      $customValueAlias,
-      $customValueColumn
-    );
-    $optionGroupRestriction = sprintf(
-      '`%s`.option_group_id =  %d',
-      $optionValueAlias,
-      $optionGroupID
-    );
-
-    $this->join(
-      'LEFT',
-      'civicrm_option_value',
-      $optionValueAlias,
-      array($optionValueMatching, $optionGroupRestriction)
-    );
-
-    return array($optionValueAlias, $optionValueField);
-  }
-
   /**
    * @param $key
-   *
-   * @return array
-   *   in the form [alias_name, field_name, is_custom]
-   */
+   **/
   protected function joinFK($key) {
-    // check if it's a custom field first
-    $customFieldData = $this->addDotNotationCustomField($key);
-    if (!empty($customFieldData)) {
-      return array_merge($customFieldData, array(true));
-    }
-
     $stack = explode('.', $key);
-    $fieldData = array();
+
     if (count($stack) < 2) {
-      return $fieldData;
+      return;
     }
 
     $joiner = \Civi::container()->get('joiner');
-    $joinPath = substr($key, 0, strrpos($key, '.'));
+    $finalDot = strrpos($key, '.');
+    $pathString = substr($key, 0, $finalDot);
+    $field = substr($key, $finalDot + 1);
 
     // todo check if can join before joining
-    $joiner->join($this, $joinPath, 'LEFT');
+    $joinPath = $joiner->join($this, $pathString, 'LEFT');
 
-    $reversed = array_reverse($stack);
-    $field = array_shift($reversed);
-    $lastAlias = array_shift($reversed);
+    $lastLink = end($joinPath);
+    // custom groups use aliases for field names
+    if ($lastLink instanceof CustomGroupJoinable) {
+      $field = \CRM_Core_DAO_CustomField::getFieldValue(\CRM_Core_DAO_CustomField::class, $field, 'column_name', 'name');
+    }
 
-    return array($lastAlias, $field, false);
+    $this->joinedFields[$key] = array($lastLink->getAlias(), $field);
   }
 
   /**

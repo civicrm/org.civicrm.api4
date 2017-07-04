@@ -4,7 +4,10 @@ namespace Civi\API\Service\Schema;
 
 use Civi\API\Event\Events;
 use Civi\API\Event\SchemaMapBuildEvent;
+use Civi\API\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\API\Service\Schema\Joinable\Joinable;
+use Civi\Api4\CustomField;
+use Civi\Api4\CustomGroup;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Civi\API\Service\Schema\Joinable\OptionValueJoinable;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
@@ -49,6 +52,7 @@ class SchemaMapBuilder {
         $this->addJoins($table, $field, $fieldData);
       }
       $map->addTable($table);
+      $this->addCustomFields($map, $table, $data['name']);
     }
 
     $this->addBackReferences($map);
@@ -67,7 +71,9 @@ class SchemaMapBuilder {
     if ($fkClass) {
       $tableName = TableHelper::getTableForClass($fkClass);
       $fkKey = ArrayHelper::value('FKKeyColumn', $data, 'id');
-      $table->addTableLink($field, new Joinable($tableName, $fkKey));
+      $joinable = new Joinable($tableName, $fkKey);
+      $joinable->setJoinType($joinable::JOIN_TYPE_MANY_TO_ONE);
+      $table->addTableLink($field, $joinable);
     } else if ($pseudoConstant) {
       $this->addPseudoConstantJoin($table, $field, $pseudoConstant);
     }
@@ -114,6 +120,7 @@ class SchemaMapBuilder {
         $tableName = $link->getBaseTable();
         $plural = str_replace('civicrm_', '', $this->getPlural($tableName));
         $joinable = new Joinable($tableName, $link->getBaseColumn(), $plural);
+        $joinable->setJoinType($joinable::JOIN_TYPE_ONE_TO_MANY);
         $target->addTableLink($link->getTargetColumn(), $joinable);
       }
     }
@@ -136,6 +143,20 @@ class SchemaMapBuilder {
         return $singular . 'es';
       default:
         return $singular . 's';
+    }
+  }
+
+  private function addCustomFields(SchemaMap $map, Table $baseTable, $entityName) {
+
+    $customFields = \CRM_Core_BAO_CustomField::getFields($entityName, true);
+
+    foreach ($customFields as $customFieldData) {
+      $tableName = ArrayHelper::value('table_name', $customFieldData);
+      $map->addTable(new Table($tableName));
+      $alias = ArrayHelper::value('groupTitle', $customFieldData);
+      $isMultiple = ArrayHelper::value('is_multiple', $customFieldData);
+      $joinable = new CustomGroupJoinable($tableName, $alias, $isMultiple);
+      $baseTable->addTableLink('id', $joinable);
     }
   }
 }

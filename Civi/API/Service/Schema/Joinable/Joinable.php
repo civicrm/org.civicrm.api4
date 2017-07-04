@@ -3,6 +3,14 @@
 namespace Civi\API\Service\Schema\Joinable;
 
 class Joinable {
+
+  const JOIN_SIDE_LEFT = 'LEFT';
+  const JOIN_SIDE_INNER = 'INNER';
+
+  const JOIN_TYPE_ONE_TO_ONE = 1;
+  const JOIN_TYPE_MANY_TO_ONE = 2;
+  const JOIN_TYPE_ONE_TO_MANY = 3;
+
   /**
    * @var string
    */
@@ -32,6 +40,16 @@ class Joinable {
    * @var array
    */
   protected $conditions = array();
+
+  /**
+   * @var string
+   */
+  protected $joinSide = self::JOIN_SIDE_INNER;
+
+  /**
+   * @var int
+   */
+  protected $joinType = self::JOIN_TYPE_ONE_TO_ONE;
 
   /**
    * @param $targetTable
@@ -153,4 +171,39 @@ class Joinable {
     return $this;
   }
 
+  /**
+   * @return string
+   */
+  public function getJoinSide() {
+    return $this->joinSide;
+  }
+
+  /**
+   * @param string $joinSide
+   *
+   * @return $this
+   */
+  public function setJoinSide($joinSide) {
+    $this->joinSide = $joinSide;
+
+    return $this;
+  }
+
+  /**
+   * @return int
+   */
+  public function getJoinType() {
+    return $this->joinType;
+  }
+
+  /**
+   * @param int $joinType
+   *
+   * @return $this
+   */
+  public function setJoinType($joinType) {
+    $this->joinType = $joinType;
+
+    return $this;
+  }
 }
