@@ -52,7 +52,7 @@ class Api4SelectQueryTest extends UnitTestCase {
 
     $query = new Api4SelectQuery('Contact', FALSE);
     $query->select[] = 'id';
-    $query->select[] = 'display_name';
+    $query->select[] = 'first_name';
     $query->select[] = 'phones.phone';
     $query->where[] = array('phones.phone', '=', $phoneNum);
     $results = $query->run();

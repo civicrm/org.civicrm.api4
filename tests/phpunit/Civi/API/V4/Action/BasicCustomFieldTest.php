@@ -38,13 +38,17 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
 
     $contact = Contact::get()
       ->setCheckPermissions(FALSE)
-      ->addSelect('display_name')
+      ->addSelect('first_name')
       ->addSelect('MyContactFields.FavColor')
       ->addWhere('id', '=', $contactId)
+      ->addWhere('MyContactFields.FavColor', '=', 'Red')
       ->execute()
       ->first();
 
-    $this->assertEquals('Red', $contact['MyContactFields.FavColor']);
+    $this->assertArrayHasKey('MyContactFields', $contact);
+    $contactFields = $contact['MyContactFields'];
+    $this->assertArrayHasKey('FavColor', $contactFields);
+    $this->assertEquals('Red', $contactFields['FavColor']);
   }
 
 }
