@@ -108,25 +108,9 @@ class Api4SelectQuery extends SelectQuery {
 
     foreach ($groupedSelects as $finalAlias => $selects) {
 
-      $mainAlias = self::MAIN_TABLE_ALIAS;
-
-      $selectFields = array();
-      foreach ($selects as $select) {
-        $fieldName = $this->joinedFields[$select][1];
-        $fieldAlias = substr($select, strrpos($select, '.') + 1);
-        $selectFields[$fieldAlias] = sprintf('%s.%s', $finalAlias, $fieldName);
-      }
-
-      $firstSelect = $selects[0];
-      $pathParts = explode('.', $firstSelect);
-      $numParts = count($pathParts);
-      $parentAlias = $numParts > 1 ? $pathParts[$numParts - 2] : $mainAlias;
-
-      $selectFields['id'] = sprintf('%s.id', $finalAlias);
-      $selectFields['_parent_id'] = $parentAlias . '.id';
-      $selectFields['_base_id'] = $mainAlias . '.id';
-
-      $joinResults = $this->runWithNewSelects($selectFields);
+      $path = $this->buildPath($selects[0]);
+      $selects = $this->formatSelects($finalAlias, $selects);
+      $joinResults = $this->runWithNewSelects($selects);
 
       foreach ($baseResults as &$baseResult) {
         $baseId = $baseResult['id'];
@@ -134,12 +118,6 @@ class Api4SelectQuery extends SelectQuery {
           return ($res['_base_id'] === $baseId);
         });
         $targetJoinResults = array_values($targetJoinResults);
-        array_pop($pathParts); // remove field
-        $path = array();
-        foreach ($pathParts as $part) {
-          $fieldData = $this->getJoinDataByTableAlias($part);
-          $path[$part] = $fieldData[2] === Joinable::JOIN_TYPE_ONE_TO_MANY;
-        }
 
         ArrayInsertionService::insert($baseResult, $path, $targetJoinResults);
       }
@@ -147,6 +125,46 @@ class Api4SelectQuery extends SelectQuery {
 
     // no associative option
     return array_values($baseResults);
+  }
+
+  private function buildPath($pathString) {
+    $pathParts = explode('.', $pathString);
+    array_pop($pathParts); // remove field
+    $path = array();
+    foreach ($pathParts as $part) {
+      $fieldData = $this->getJoinDataByTableAlias($part);
+      $path[$part] = $fieldData[2] === Joinable::JOIN_TYPE_ONE_TO_MANY;
+    }
+
+    return $path;
+  }
+
+  /**
+   * @param $finalAlias
+   * @param $selects
+   *
+   * @return array
+   */
+  private function formatSelects($finalAlias, $selects) {
+    $mainAlias = self::MAIN_TABLE_ALIAS;
+    $selectFields = array();
+
+    foreach ($selects as $select) {
+      $fieldName = $this->joinedFields[$select][1];
+      $fieldAlias = substr($select, strrpos($select, '.') + 1);
+      $selectFields[$fieldAlias] = sprintf('%s.%s', $finalAlias, $fieldName);
+    }
+
+    $firstSelect = $selects[0];
+    $pathParts = explode('.', $firstSelect);
+    $numParts = count($pathParts);
+    $parentAlias = $numParts > 2 ? $pathParts[$numParts - 3] : $mainAlias;
+
+    $selectFields['id'] = sprintf('%s.id', $finalAlias);
+    $selectFields['_parent_id'] = $parentAlias . '.id';
+    $selectFields['_base_id'] = $mainAlias . '.id';
+
+    return $selectFields;
   }
 
   private function getJoinDataByTableAlias($alias) {
