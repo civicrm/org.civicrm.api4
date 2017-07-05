@@ -6,8 +6,6 @@ use Civi\API\Event\Events;
 use Civi\API\Event\SchemaMapBuildEvent;
 use Civi\API\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\API\Service\Schema\Joinable\Joinable;
-use Civi\Api4\CustomField;
-use Civi\Api4\CustomGroup;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Civi\API\Service\Schema\Joinable\OptionValueJoinable;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
@@ -148,13 +146,32 @@ class SchemaMapBuilder {
 
   private function addCustomFields(SchemaMap $map, Table $baseTable, $entityName) {
 
+    $parentTypes = array('Contact', 'Individual', 'Organization', 'Household');
+    if (in_array($entityName, $parentTypes)) {
+      $entityName = $parentTypes;
+    }
+
     $customFields = \CRM_Core_BAO_CustomField::getFields($entityName, true);
 
-    foreach ($customFields as $customFieldData) {
-      $tableName = ArrayHelper::value('table_name', $customFieldData);
-      $map->addTable(new Table($tableName));
-      $alias = ArrayHelper::value('groupTitle', $customFieldData);
-      $isMultiple = ArrayHelper::value('is_multiple', $customFieldData);
+    foreach ($customFields as $fieldData) {
+      $tableName = ArrayHelper::value('table_name', $fieldData);
+
+      $customTable = $map->getTableByName($tableName);
+      if (!$customTable) {
+        $customTable = new Table($tableName);
+      }
+
+      $group = ArrayHelper::value('option_group_id', $fieldData);
+      if ($group) {
+        $label = ArrayHelper::value('label', $fieldData);
+        $columnName = ArrayHelper::value('column_name', $fieldData);
+        $optionValueJoinable = new OptionValueJoinable($group, 'value', $label);
+        $customTable->addTableLink($columnName, $optionValueJoinable);
+      }
+
+      $map->addTable($customTable);
+      $alias = ArrayHelper::value('groupTitle', $fieldData);
+      $isMultiple = ArrayHelper::value('is_multiple', $fieldData);
       $joinable = new CustomGroupJoinable($tableName, $alias, $isMultiple);
       $baseTable->addTableLink('id', $joinable);
     }

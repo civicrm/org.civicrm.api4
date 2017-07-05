@@ -3,9 +3,7 @@
 namespace Civi\API\Service\Schema;
 
 use Civi\API\Api4SelectQuery;
-use Civi\API\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\API\Service\Schema\Joinable\Joinable;
-use Civi\API\Service\Schema\Joinable\OptionValueJoinable;
 
 class Joiner {
   /**
@@ -47,11 +45,6 @@ class Joiner {
         $fullPath = array_merge($fullPath, $links);
         $lastLink = end($links);
         $from = $lastLink->getTargetTable();
-      }
-
-      // Cannot join further from custom group table
-      if ($lastLink instanceof CustomGroupJoinable) {
-        break;
       }
     }
 
