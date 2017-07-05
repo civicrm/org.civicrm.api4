@@ -34,7 +34,7 @@ class Api4SelectQueryTest extends UnitTestCase {
     $results = $query->run();
 
     $this->assertCount(2, $results);
-    $this->assertEquals('Test Contact', array_shift($results)['display_name']);
+    $this->assertEquals('Test', array_shift($results)['first_name']);
   }
 
   public function testWithSingleWhereJoin() {

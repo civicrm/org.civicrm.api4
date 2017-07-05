@@ -92,5 +92,4 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
     $this->assertEquals('Corn', $favoriteFood['label']);
     $this->assertEquals(50000, $financialStuff['Salary']);
   }
-
 }
