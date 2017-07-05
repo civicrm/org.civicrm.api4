@@ -74,21 +74,23 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
 
     $result = Contact::get()
       ->setCheckPermissions(FALSE)
-      ->addSelect('display_name')
-      ->addSelect('FavoriteThings.FavColor')
+      ->addSelect('first_name')
       ->addSelect('FavoriteThings.FavColor.label')
       ->addSelect('FavoriteThings.FavFood.label')
       ->addSelect('FinancialStuff.Salary')
-      ->addWhere('FavoriteThings.FavColor', '=', 'r')
       ->addWhere('FavoriteThings.FavFood.label', 'IN', ['Corn', 'Potatoes'])
-      ->addWhere('FavoriteThings.FavFood', 'IN', [1, 2])
       ->addWhere('FinancialStuff.Salary', '>', '10000')
       ->execute()
       ->first();
 
-    $this->assertEquals('r', $result['FavoriteThings.FavColor']);
-    $this->assertEquals('Red', $result['FavoriteThings.FavColor.label']);
-    $this->assertEquals('Corn', $result['FavoriteThings.FavFood.label']);
+    $this->assertArrayHasKey('FavoriteThings', $result);
+    $favoriteThings = $result['FavoriteThings'];
+    $favoriteFood = $favoriteThings['FavFood'];
+    $favoriteColor = $favoriteThings['FavColor'];
+    $financialStuff = $result['FinancialStuff'];
+    $this->assertEquals('Red', $favoriteColor['label']);
+    $this->assertEquals('Corn', $favoriteFood['label']);
+    $this->assertEquals(50000, $financialStuff['Salary']);
   }
 
 }
