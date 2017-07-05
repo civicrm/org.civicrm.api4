@@ -46,9 +46,12 @@ class ArrayInsertionService {
    */
   private static function filterValues($parentArray, $isMulti, $values) {
     $parentID = ArrayHelper::value('id', $parentArray);
-    $values = array_filter($values, function ($value) use ($parentID) {
-      return ArrayHelper::value('_parent_id', $value) == $parentID;
-    });
+
+    if ($parentID) {
+      $values = array_filter($values, function ($value) use ($parentID) {
+        return ArrayHelper::value('_parent_id', $value) == $parentID;
+      });
+    }
 
     array_walk($values, function ($value) {
       $unsets = array('_parent_id', '_base_id');
