@@ -131,15 +131,14 @@ class Api4SelectQuery extends SelectQuery {
       foreach ($selects as $select) {
         $fieldName = $this->joinedFields[$select][1];
         $fieldAlias = substr($select, strrpos($select, '.') + 1);
-        $selectFields[$fieldAlias] = $fieldName;
+        $selectFields[$fieldAlias] = sprintf('%s.%s', $finalAlias, $fieldName);
       }
 
-      // todo why do I need this, couldn't I use $finalAlias instead of array index
       $numParts = count($pathParts);
-      $baseAlias = $numParts > 1 ? $pathParts[$numParts - 2] : self::MAIN_TABLE_ALIAS;
+      $parentAlias = $numParts > 1 ? $pathParts[$numParts - 2] : self::MAIN_TABLE_ALIAS;
 
       $selectFields['id'] = sprintf('%s.id', $finalAlias);
-      $selectFields['_parent_id'] = $baseAlias . '.id';
+      $selectFields['_parent_id'] = $parentAlias . '.id';
       $selectFields['_base_id'] = self::MAIN_TABLE_ALIAS . '.id';
 
       $selectFieldsAliased = array_map(function ($field, $alias) {
@@ -170,7 +169,13 @@ class Api4SelectQuery extends SelectQuery {
         $relatedResultsForBase = array_filter($relatedResults, function ($res) use ($baseId) {
           return ($res['_base_id'] === $baseId);
         });
-        $this->insertAtLevel($baseResult, $pathParts, array_values($relatedResultsForBase), $isMultiple);
+        $relatedResultsForBase = array_values($relatedResultsForBase);
+        if ($isMultiple) {
+          $this->insertAtLevelMulti($baseResult, $pathParts, $relatedResultsForBase);
+        } else {
+          $relatedResultsForBase = array_shift($relatedResultsForBase);
+          $this->insertAtLevelSingle($baseResult, $pathParts, $relatedResultsForBase);
+        }
       }
     }
 
@@ -183,29 +188,40 @@ class Api4SelectQuery extends SelectQuery {
    * @param $parts
    * @param $values
    */
-  private function insertAtLevel(&$array, array $parts, array $values, $isMultiple = true) {
+  private function insertAtLevelMulti(&$array, array $parts, array $values) {
     $currentLevel = array_shift($parts);
     if (!array_key_exists($currentLevel, $array)) {
       $array[$currentLevel][] = [];
     }
     if (empty($parts)) {
       $parentId = ArrayHelper::value('id', $array);
-      $values = array_filter($values, function ($value) use ($parentId) {
-        return $value['_parent_id'] === $parentId;
-      });
+      if ($parentId) {
+        $values = array_filter($values, function ($value) use ($parentId) {
+          return $value['_parent_id'] === $parentId;
+        });
+      }
       array_walk($values, function (&$value) {
         unset($value['_parent_id'], $value['_base_id']);
       });
 
-      if (!$isMultiple) {
-        $values = array_shift($values);
-      }
-
       $array[$currentLevel] = $values;
     } else {
-      foreach ($array[$currentLevel] as $key => &$current) {
-        $this->insertAtLevel($current, $parts, $values);
-      }
+        foreach ($array[$currentLevel] as $key => &$current) {
+          $this->insertAtLevelMulti($current, $parts, $values);
+        }
+    }
+  }
+
+  private function insertAtLevelSingle(&$array, array $parts, array $value) {
+    $currentLevel = array_shift($parts);
+    if (!array_key_exists($currentLevel, $array)) {
+      $array[$currentLevel] = [];
+    }
+    if (empty($parts)) {
+      unset($value['_parent_id'], $value['_base_id']);
+      $array[$currentLevel] = $value;
+    } else {
+      $this->insertAtLevelSingle($array[$currentLevel], $parts, $value);
     }
   }
 
