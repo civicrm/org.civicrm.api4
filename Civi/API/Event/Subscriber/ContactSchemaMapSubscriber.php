@@ -25,6 +25,7 @@ class ContactSchemaMapSubscriber implements EventSubscriberInterface {
     $table = $schema->getTableByName('civicrm_contact');
     $joinable = new Joinable('civicrm_activity_contact', 'contact_id', 'created_activities');
     $joinable->addCondition('created_activities.record_type_id = 1');
+    $joinable->setJoinType($joinable::JOIN_TYPE_ONE_TO_MANY);
     $table->addTableLink('id', $joinable);
   }
 }
