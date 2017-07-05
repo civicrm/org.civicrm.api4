@@ -3,7 +3,6 @@
 namespace phpunit\Civi\API\Spec;
 
 use Civi\API\Spec\FieldSpec;
-use Civi\API\Spec\Provider\CustomFieldSpecProvider;
 use Civi\API\Spec\Provider\SpecProviderInterface;
 use Civi\API\Spec\RequestSpec;
 use Civi\API\Spec\SpecGatherer;
@@ -62,29 +61,6 @@ class SpecGathererTest extends UnitTestCase {
     $this->assertContains('foo', $fieldNames);
   }
 
-  public function testWithCustomFields() {
-    $customGroupId = CustomGroup::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('name', 'FavoriteThings')
-      ->setValue('extends', 'Contact')
-      ->execute()['id'];
-
-    CustomField::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Text')
-      ->setValue('data_type', 'String')
-      ->execute();
-
-    $gather = new SpecGatherer();
-    $gather->addSpecProvider(new CustomFieldSpecProvider());
-    $spec = $gather->getSpec('Contact', 'get');
-    $fieldNames = $spec->getFieldNames();
-
-    $this->assertContains('FavoriteThings.FavColor', $fieldNames);
-  }
-
   public function testPseudoConstantOptionsWillBeAdded() {
     $customGroupId = CustomGroup::create()
       ->setCheckPermissions(FALSE)
@@ -104,16 +80,11 @@ class SpecGathererTest extends UnitTestCase {
       ->execute();
 
     $gatherer = new SpecGatherer();
-    $gatherer->addSpecProvider(new CustomFieldSpecProvider());
     $spec = $gatherer->getSpec('Contact', 'get');
 
-    $customField = $spec->getFieldByName('FavoriteThings.FavColor');
     $regularField = $spec->getFieldByName('contact_type');
 
     $this->assertNotEmpty($regularField->getOptions());
     $this->assertContains('Individual', $regularField->getOptions());
-
-    $this->assertNotEmpty($customField->getOptions());
-    $this->assertSame(array_values($options), $customField->getOptions());
   }
 }
