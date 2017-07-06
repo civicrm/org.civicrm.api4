@@ -43,6 +43,17 @@ function api4_civicrm_container($container) {
       array(new Reference($subscriber))
     );
   }
+
+  // add spec providers
+  $providers = $container->findTaggedServiceIds('spec_provider');
+  $gatherer = $container->getDefinition('spec_gatherer');
+
+  foreach (array_keys($providers) as $provider) {
+    $gatherer->addMethodCall(
+      'addSpecProvider',
+      array(new Reference($provider))
+    );
+  }
 }
 
 /**
