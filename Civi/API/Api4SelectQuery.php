@@ -238,9 +238,11 @@ class Api4SelectQuery extends SelectQuery {
     $pathString = substr($key, 0, $finalDot);
     $field = substr($key, $finalDot + 1);
 
-    // todo check if can join before joining
-    $joinPath = $joiner->join($this, $pathString, 'LEFT');
+    if (!$joiner->canJoin($this, $pathString)) {
+      return;
+    }
 
+    $joinPath = $joiner->join($this, $pathString);
     $lastLink = end($joinPath);
 
     // custom groups use aliases for field names

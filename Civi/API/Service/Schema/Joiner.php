@@ -12,6 +12,11 @@ class Joiner {
   protected $schemaMap;
 
   /**
+   * @var Joinable[][]
+   */
+  protected $cache = array();
+
+  /**
    * @param SchemaMap $schemaMap
    */
   public function __construct(SchemaMap $schemaMap) {
@@ -31,38 +36,60 @@ class Joiner {
    *   The path used to make the join
    */
   public function join(Api4SelectQuery $query, $joinPath, $side = 'LEFT') {
-
-    $from = $query->getFrom();
-    $stack = explode('.', $joinPath);
-    $fullPath = array();
-
-    foreach ($stack as $key => $targetAlias) {
-      $links = $this->schemaMap->getPath($from, $targetAlias);
-
-      if (empty($links)) {
-        throw new \Exception(sprintf('Cannot join %s to %s', $from, $joinPath));
-      } else {
-        $fullPath = array_merge($fullPath, $links);
-        $lastLink = end($links);
-        $from = $lastLink->getTargetTable();
-      }
-    }
-
+    $fullPath = $this->getPath($query->getFrom(), $joinPath);
     $baseTable = $query::MAIN_TABLE_ALIAS;
 
-    /** @var Joinable $link */
     foreach ($fullPath as $link) {
-      $query->join(
-        $side,
-        $link->getTargetTable(),
-        $link->getAlias(),
-        $link->getConditionsForJoin($baseTable)
-      );
+      $target = $link->getTargetTable();
+      $alias = $link->getAlias();
+      $conditions = $link->getConditionsForJoin($baseTable);
 
+      $query->join($side, $target, $alias, $conditions);
       $query->addJoinedTable($link);
+
       $baseTable = $link->getAlias();
     }
 
     return $fullPath;
+  }
+
+  /**
+   * @param Api4SelectQuery $query
+   * @param $joinPath
+   *
+   * @return bool
+   */
+  public function canJoin(Api4SelectQuery $query, $joinPath) {
+    return !empty($this->getPath($query->getFrom(), $joinPath));
+  }
+
+  /**
+   * @param string $baseTable
+   * @param string $joinPath
+   *
+   * @return array
+   * @throws \Exception
+   */
+  protected function getPath($baseTable, $joinPath) {
+    if (!isset($this->cache[$joinPath])) {
+      $stack = explode('.', $joinPath);
+      $fullPath = array();
+
+      foreach ($stack as $key => $targetAlias) {
+        $links = $this->schemaMap->getPath($baseTable, $targetAlias);
+
+        if (empty($links)) {
+          throw new \Exception(sprintf('Cannot join %s to %s', $baseTable, $targetAlias));
+        } else {
+          $fullPath = array_merge($fullPath, $links);
+          $lastLink = end($links);
+          $baseTable = $lastLink->getTargetTable();
+        }
+      }
+
+      $this->cache[$joinPath] = $fullPath;
+    }
+
+    return $this->cache[$joinPath];
   }
 }
