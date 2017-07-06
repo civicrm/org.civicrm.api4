@@ -2,6 +2,7 @@
 
 namespace Civi\API\V4\Service\Schema;
 
+use Civi\API\V4\Service\Schema\Joinable\BridgeJoinable;
 use Civi\API\V4\Service\Schema\Joinable\Joinable;
 
 class SchemaMap {
@@ -29,6 +30,15 @@ class SchemaMap {
     }
 
     $this->findPaths($table, $targetTableAlias, 1, $path);
+
+    foreach ($path as $index => $pathLink) {
+      if ($pathLink instanceof BridgeJoinable) {
+        $start = array_slice($path, 0, $index);
+        $middle = array($pathLink->getMiddleLink());
+        $end = array_slice($path, $index, count($path) - $index);
+        $path = array_merge($start, $middle, $end);
+      }
+    }
 
     return $path;
   }
