@@ -1,18 +1,19 @@
 <?php
+
 namespace Civi\API\V4;
+
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
 
 /**
  * @group headless
  */
-class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
-
-
+class UnitTestCase extends \PHPUnit_Framework_TestCase
+  implements HeadlessInterface, TransactionalInterface {
   /**
    * Constructor.
    *
-   * @see also tests/phpunit/CiviTest/CiviUnitTestCase.php
+   * @see CiviUnitTestCase
    *
    * @param string $name
    * @param array $data

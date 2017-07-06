@@ -2,10 +2,10 @@
 
 namespace phpunit\Civi\API\Spec;
 
-use Civi\API\Spec\CustomFieldSpec;
-use Civi\API\Spec\FieldSpec;
-use Civi\API\Spec\RequestSpec;
-use Civi\API\Spec\SpecFormatter;
+use Civi\API\V4\Spec\CustomFieldSpec;
+use Civi\API\V4\Spec\FieldSpec;
+use Civi\API\V4\Spec\RequestSpec;
+use Civi\API\V4\Spec\SpecFormatter;
 use Civi\API\V4\UnitTestCase;
 
 /**

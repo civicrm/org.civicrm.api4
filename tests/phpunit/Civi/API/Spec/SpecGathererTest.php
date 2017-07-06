@@ -2,13 +2,13 @@
 
 namespace phpunit\Civi\API\Spec;
 
-use Civi\API\Spec\FieldSpec;
-use Civi\API\Spec\Provider\SpecProviderInterface;
-use Civi\API\Spec\RequestSpec;
-use Civi\API\Spec\SpecGatherer;
+use Civi\API\V4\Spec\FieldSpec;
+use Civi\API\V4\Spec\Provider\SpecProviderInterface;
+use Civi\API\V4\Spec\RequestSpec;
+use Civi\API\V4\Spec\SpecGatherer;
 use Civi\API\V4\UnitTestCase;
-use Civi\Api4\CustomField;
-use Civi\Api4\CustomGroup;
+use Civi\API\V4\Entity\CustomField;
+use Civi\API\V4\Entity\CustomGroup;
 use Civi\TableDropperTrait;
 use Prophecy\Argument;
 

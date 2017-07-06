@@ -1,9 +1,9 @@
 <?php
 namespace Civi\API\V4\Action;
 
-use Civi\Api4\Contact;
-use Civi\Api4\CustomField;
-use Civi\Api4\CustomGroup;
+use Civi\API\V4\Entity\Contact;
+use Civi\API\V4\Entity\CustomField;
+use Civi\API\V4\Entity\CustomGroup;
 use \CRM_Core_BAO_CustomValueTable as CustomValueTable;
 
 /**

@@ -3,8 +3,8 @@
 namespace phpunit\Civi\API\V4\Action;
 
 use Civi\API\V4\UnitTestCase;
-use Civi\Api4\Activity;
-use Civi\Api4\Contact;
+use Civi\API\V4\Entity\Activity;
+use Civi\API\V4\Entity\Contact;
 use Civi\TestDataLoaderTrait;
 
 /**

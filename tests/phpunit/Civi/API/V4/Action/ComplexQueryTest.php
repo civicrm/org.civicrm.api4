@@ -3,7 +3,7 @@
 namespace phpunit\Civi\API\V4\Action;
 
 use Civi\API\V4\UnitTestCase;
-use Civi\Api4\Activity;
+use Civi\API\V4\Entity\Activity;
 use Civi\TestDataLoaderTrait;
 
 /**

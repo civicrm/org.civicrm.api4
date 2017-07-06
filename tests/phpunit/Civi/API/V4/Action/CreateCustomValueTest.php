@@ -1,10 +1,10 @@
 <?php
 namespace Civi\API\V4\Action;
 
-use Civi\Api4\CustomField;
-use Civi\Api4\CustomGroup;
-use Civi\Api4\OptionGroup;
-use Civi\Api4\OptionValue;
+use Civi\API\V4\Entity\CustomField;
+use Civi\API\V4\Entity\CustomGroup;
+use Civi\API\V4\Entity\OptionGroup;
+use Civi\API\V4\Entity\OptionValue;
 
 /**
  * @group headless

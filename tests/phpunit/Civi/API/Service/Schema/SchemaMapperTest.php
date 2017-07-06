@@ -2,9 +2,9 @@
 
 namespace phpunit\Civi\API\Service\Schema;
 
-use Civi\API\Service\Schema\Joinable\Joinable;
-use Civi\API\Service\Schema\SchemaMap;
-use Civi\API\Service\Schema\Table;
+use Civi\API\V4\Service\Schema\Joinable\Joinable;
+use Civi\API\V4\Service\Schema\SchemaMap;
+use Civi\API\V4\Service\Schema\Table;
 use Civi\API\V4\UnitTestCase;
 
 /**

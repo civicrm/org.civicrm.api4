@@ -1,10 +1,8 @@
 <?php
-namespace Civi\API\V4;
-// fixme - what am I doing wrong to need this line?
-require_once 'UnitTestCase.php';
-use Civi\Api4\Participant;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\TransactionalInterface;
+namespace Civi\API\V4\V4;
+
+use Civi\API\V4\Entity\BaseEntity;
+use Civi\API\V4\UnitTestCase;
 
 /**
  * @group headless
@@ -12,7 +10,7 @@ use Civi\Test\TransactionalInterface;
 class EntityTest extends UnitTestCase  {
 
   public function testEntityGet() {
-    $result = Entity::get()
+    $result = BaseEntity::get()
       ->setCheckPermissions(FALSE)
       ->execute();
     $this->assertContains('Entity', $result,
@@ -22,7 +20,7 @@ class EntityTest extends UnitTestCase  {
   }
 
   public function testEntity() {
-    $result = Entity::getActions()
+    $result = BaseEntity::getActions()
       ->setCheckPermissions(FALSE)
       ->execute()
       ->indexBy('name');

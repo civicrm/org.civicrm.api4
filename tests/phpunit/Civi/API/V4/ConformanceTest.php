@@ -1,11 +1,9 @@
 <?php
-namespace Civi\API\V4;
-// fixme - what am I doing wrong to need this line?
-require_once 'UnitTestCase.php';
-use Civi\Api4\Participant;
-use Civi\Api4\Contact;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\TransactionalInterface;
+
+namespace Civi\API\V4\V4;
+
+use Civi\API\V4\Entity\BaseEntity;
+use Civi\API\V4\UnitTestCase;
 
 /**
  * @group headless
@@ -18,7 +16,15 @@ use Civi\Test\TransactionalInterface;
  */
 class ConformanceTest extends UnitTestCase {
 
+  /**
+   * @var array
+   */
   private $hook_calls = array();
+
+  /**
+   * @var \CRM_Utils_Hook
+   */
+  protected $hookClass;
 
   /**
    * Set up baseline for testing
@@ -100,7 +106,7 @@ class ConformanceTest extends UnitTestCase {
   public function testConformance() {
     $this->hookClass->setMock($this);
     // get list of all the entities we know about and loop over them:
-    $entities = Entity::get()
+    $entities = BaseEntity::get()
       ->setCheckPermissions(FALSE)
       ->execute();
     foreach ($entities as $entity) {

@@ -2,8 +2,8 @@
 
 namespace phpunit\Civi\API\Spec;
 
-use Civi\API\Spec\FieldSpec;
-use Civi\API\Spec\RequestSpec;
+use Civi\API\V4\Spec\FieldSpec;
+use Civi\API\V4\Spec\RequestSpec;
 use Civi\API\V4\UnitTestCase;
 
 class RequestSpecTest extends UnitTestCase {

@@ -2,7 +2,7 @@
 
 namespace phpunit\Civi\API;
 
-use Civi\API\Api4SelectQuery;
+use Civi\API\V4\Api4SelectQuery;
 use Civi\API\V4\UnitTestCase;
 use Civi\TestDataLoaderTrait;
 

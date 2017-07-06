@@ -1,15 +1,13 @@
 <?php
-namespace Civi\API\V4;
-// fixme - what am I doing wrong to need this line?
-require_once 'UnitTestCase.php';
-use Civi\Api4\Participant;
-use Civi\Test\HeadlessInterface;
-use Civi\Test\TransactionalInterface;
+
+namespace Civi\API\V4\V4;
+
+use Civi\API\V4\Entity\Participant;
+use Civi\API\V4\UnitTestCase;
 
 /**
  * @group headless
  */
-//class ParticipantTest extends \PHPUnit_Framework_TestCase implements HeadlessInterface, TransactionalInterface {
 class ParticipantTest extends UnitTestCase  {
 
  /**
@@ -102,7 +100,7 @@ class ParticipantTest extends UnitTestCase  {
           'contact_id' => $dummy['contacts'][$i % $contact_count]['id'],
           'source' => $dummy['sources'][$i % 3], // 3 = number of sources
       )))['sample_params'];
-      $create_result = Participant::create()
+      Participant::create()
         ->setValues($dummy['participants'][$i])
         ->setCheckPermissions(FALSE)
         ->execute();

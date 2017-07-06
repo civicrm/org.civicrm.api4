@@ -2,7 +2,7 @@
 
 namespace phpunit\Civi\API\Service;
 
-use Civi\API\Service\ArrayInsertionService;
+use Civi\API\V4\Service\ArrayInsertionService;
 use Civi\API\V4\UnitTestCase;
 
 class ArrayInsertionServiceTest extends UnitTestCase {
