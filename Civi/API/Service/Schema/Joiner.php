@@ -50,6 +50,7 @@ class Joiner {
 
     $baseTable = $query::MAIN_TABLE_ALIAS;
 
+    /** @var Joinable $link */
     foreach ($fullPath as $link) {
       $query->join(
         $side,
@@ -58,6 +59,7 @@ class Joiner {
         $link->getConditionsForJoin($baseTable)
       );
 
+      $query->addJoinedTable($link);
       $baseTable = $link->getAlias();
     }
 

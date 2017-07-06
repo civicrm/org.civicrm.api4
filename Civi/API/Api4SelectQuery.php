@@ -58,20 +58,15 @@ class Api4SelectQuery extends SelectQuery {
 
   /**
    * @var array
-   *   Cache of dot notation fields that were joined in the form
-   *   [table_alias, field_name, join_type]
+   *   Maps select fields to [<table_alias>, <column_alias>]
    */
-  protected $joinedFields = array();
+  protected $fkSelectAliases = array();
 
   /**
-   * @inheritDoc
+   * @var Joinable[]
+   *   The joinable tables that have been joined so far
    */
-  protected function buildWhereClause() {
-    foreach ($this->where as $clause) {
-      $sql_clause = $this->treeWalkWhereClause($clause);
-      $this->query->where($sql_clause);
-    }
-  }
+  protected $joinedTables = array();
 
   /**
    * Why walk when you can
@@ -84,7 +79,9 @@ class Api4SelectQuery extends SelectQuery {
     return $this->postRun($baseResults);
   }
 
-  // todo move me somewhere
+  /**
+   * Gets all FK fields and does the required joins
+   */
   protected function preRun() {
     $whereFields = array_column($this->where, 0);
     $allFields = array_merge($whereFields, $this->select, $this->orderBy);
@@ -97,135 +94,44 @@ class Api4SelectQuery extends SelectQuery {
     }
   }
 
-  // todo move me somewhere
-  protected function postRun($baseResults) {
-
-    if (empty($baseResults)) {
-      return $baseResults;
+  /**
+   * @param $primaryResults
+   *
+   * @return array
+   */
+  protected function postRun($primaryResults) {
+    if (empty($primaryResults)) {
+      return $primaryResults;
     }
 
     $groupedSelects = $this->getJoinedDotSelects();
-
     foreach ($groupedSelects as $finalAlias => $selects) {
-
       $path = $this->buildPath($selects[0]);
       $selects = $this->formatSelects($finalAlias, $selects);
       $joinResults = $this->runWithNewSelects($selects);
 
-      foreach ($baseResults as &$baseResult) {
-        $baseId = $baseResult['id'];
-        $targetJoinResults = array_filter($joinResults, function ($res) use ($baseId) {
+      foreach ($primaryResults as &$primaryResult) {
+        $baseId = $primaryResult['id'];
+        $filtered = array_filter($joinResults, function ($res) use ($baseId) {
           return ($res['_base_id'] === $baseId);
         });
-        $targetJoinResults = array_values($targetJoinResults);
-
-        ArrayInsertionService::insert($baseResult, $path, $targetJoinResults);
+        $filtered = array_values($filtered);
+        ArrayInsertionService::insert($primaryResult, $path, $filtered);
       }
     }
 
     // no associative option
-    return array_values($baseResults);
-  }
-
-  private function buildPath($pathString) {
-    $pathParts = explode('.', $pathString);
-    array_pop($pathParts); // remove field
-    $path = array();
-    foreach ($pathParts as $part) {
-      $fieldData = $this->getJoinDataByTableAlias($part);
-      $path[$part] = $fieldData[2] === Joinable::JOIN_TYPE_ONE_TO_MANY;
-    }
-
-    return $path;
+    return array_values($primaryResults);
   }
 
   /**
-   * @param $finalAlias
-   * @param $selects
-   *
-   * @return array
+   * @inheritDoc
    */
-  private function formatSelects($finalAlias, $selects) {
-    $mainAlias = self::MAIN_TABLE_ALIAS;
-    $selectFields = array();
-
-    foreach ($selects as $select) {
-      $fieldName = $this->joinedFields[$select][1];
-      $fieldAlias = substr($select, strrpos($select, '.') + 1);
-      $selectFields[$fieldAlias] = sprintf('%s.%s', $finalAlias, $fieldName);
+  protected function buildWhereClause() {
+    foreach ($this->where as $clause) {
+      $sql_clause = $this->treeWalkWhereClause($clause);
+      $this->query->where($sql_clause);
     }
-
-    $firstSelect = $selects[0];
-    $pathParts = explode('.', $firstSelect);
-    $numParts = count($pathParts);
-    $parentAlias = $numParts > 2 ? $pathParts[$numParts - 3] : $mainAlias;
-
-    $selectFields['id'] = sprintf('%s.id', $finalAlias);
-    $selectFields['_parent_id'] = $parentAlias . '.id';
-    $selectFields['_base_id'] = $mainAlias . '.id';
-
-    return $selectFields;
-  }
-
-  private function getJoinDataByTableAlias($alias) {
-    foreach ($this->joinedFields as $fieldData) {
-      if ($fieldData[0] === $alias) {
-        return $fieldData;
-      }
-    }
-
-    return null;
-  }
-
-  /**
-   * @param array $selectFields
-   *
-   * @return array
-   */
-  private function runWithNewSelects(array $selectFields) {
-    $selectFieldsAliased = array_map(function ($field, $alias) {
-      return sprintf('%s as "%s"', $field, $alias);
-    }, $selectFields, array_keys($selectFields));
-
-    $newSelect = sprintf('SELECT DISTINCT %s', implode(", ", $selectFieldsAliased));
-
-    $sql = str_replace("\n", ' ', $this->query->toSQL());
-    $originalSelect = substr($sql, 0, strpos($sql, ' FROM'));
-    $sql = str_replace($originalSelect, $newSelect, $sql);
-
-    $relatedResults = array();
-    $resultDAO = \CRM_Core_DAO::executeQuery($sql);
-    while ($resultDAO->fetch()) {
-      $relatedResults[$resultDAO->id] = array();
-      foreach ($selectFields as $alias => $column) {
-        $returnName = $alias;
-        $alias = str_replace('.', '_', $alias);
-        if (property_exists($resultDAO, $alias)) {
-          $relatedResults[$resultDAO->id][$returnName] = $resultDAO->$alias;
-        }
-      };
-    }
-
-    return $relatedResults;
-  }
-
-  /**
-   * @return array
-   */
-  private function getJoinedDotSelects() {
-    $selects = array();
-    $joinedDotSelects = array_filter($this->select, function ($select) {
-      return isset($this->joinedFields[$select]);
-    });
-
-    // group related selects by alias so they can be executed in one query
-    foreach ($joinedDotSelects as $select) {
-      $parts = explode('.', $select);
-      $finalAlias = $parts[count($parts) - 2];
-      $selects[$finalAlias][] = $select;
-    }
-
-    return $selects;
   }
 
   /**
@@ -280,10 +186,8 @@ class Api4SelectQuery extends SelectQuery {
       $table_name = self::MAIN_TABLE_ALIAS;
       $column_name = $key;
     }
-    elseif (strpos($key, '.') && isset($this->joinedFields[$key])) {
-      $fkInfo = $this->joinedFields[$key];
-      $table_name = $fkInfo[0];
-      $column_name = $fkInfo[1];
+    elseif (strpos($key, '.') && isset($this->fkSelectAliases[$key])) {
+      list($table_name, $column_name) = explode('.', $this->fkSelectAliases[$key]);
     }
 
     if (!$table_name || !$column_name || is_null($value)) {
@@ -335,16 +239,32 @@ class Api4SelectQuery extends SelectQuery {
     $field = substr($key, $finalDot + 1);
 
     // todo check if can join before joining
-    $joinPath = $joiner->join($this, $pathString, 'INNER');
+    $joinPath = $joiner->join($this, $pathString, 'LEFT');
 
     $lastLink = end($joinPath);
 
     // custom groups use aliases for field names
     if ($lastLink instanceof CustomGroupJoinable) {
-      $field = CustomFieldDAO::getFieldValue(CustomFieldDAO::class, $field, 'column_name', 'name');
+      $field = CustomFieldDAO::getFieldValue(
+        CustomFieldDAO::class,
+        $field,
+        'column_name',
+        'name'
+      );
     }
 
-    $this->joinedFields[$key] = array($lastLink->getAlias(), $field, $lastLink->getJoinType());
+    $this->fkSelectAliases[$key] = sprintf('%s.%s', $lastLink->getAlias(), $field);
+  }
+
+  /**
+   * @param Joinable $joinable
+   *
+   * @return $this
+   */
+  public function addJoinedTable(Joinable $joinable) {
+    $this->joinedTables[] = $joinable;
+
+    return $this;
   }
 
   /**
@@ -352,6 +272,112 @@ class Api4SelectQuery extends SelectQuery {
    */
   public function getFrom() {
     return TableHelper::getTableForClass(TableHelper::getFullName($this->entity));
+  }
+
+
+  /**
+   * @param string $pathString
+   *   Dot separated path to the field, e.g. emails.location_type.label
+   *
+   * @return array
+   *   Index is table alias and value is boolean whether is 1-to-many join
+   */
+  private function buildPath($pathString) {
+    $pathParts = explode('.', $pathString);
+    array_pop($pathParts); // remove field
+    $path = array();
+    $isMultipleChecker = function($alias)  {
+      foreach ($this->joinedTables as $table) {
+        if ($table->getAlias() === $alias) {
+          return $table->getJoinType() === Joinable::JOIN_TYPE_ONE_TO_MANY;
+        }
+      }
+      return false;
+    };
+
+    foreach ($pathParts as $part) {
+      $path[$part] = $isMultipleChecker($part);
+    }
+
+    return $path;
+  }
+
+  /**
+   * @param $finalAlias
+   * @param $selects
+   *
+   * @return array
+   */
+  private function formatSelects($finalAlias, $selects) {
+    $mainAlias = self::MAIN_TABLE_ALIAS;
+    $selectFields = array();
+
+    foreach ($selects as $select) {
+      $selectAlias = $this->fkSelectAliases[$select];
+      $fieldAlias = substr($select, strrpos($select, '.') + 1);
+      $selectFields[$fieldAlias] = $selectAlias;
+    }
+
+    $firstSelect = $selects[0];
+    $pathParts = explode('.', $firstSelect);
+    $numParts = count($pathParts);
+    $parentAlias = $numParts > 2 ? $pathParts[$numParts - 3] : $mainAlias;
+
+    $selectFields['id'] = sprintf('%s.id', $finalAlias);
+    $selectFields['_parent_id'] = $parentAlias . '.id';
+    $selectFields['_base_id'] = $mainAlias . '.id';
+
+    return $selectFields;
+  }
+
+  /**
+   * @param array $selects
+   *
+   * @return array
+   */
+  private function runWithNewSelects(array $selects) {
+    $aliasedSelects = array_map(function ($field, $alias) {
+      return sprintf('%s as "%s"', $field, $alias);
+    }, $selects, array_keys($selects));
+
+    $newSelect = sprintf('SELECT DISTINCT %s', implode(", ", $aliasedSelects));
+    $sql = str_replace("\n", ' ', $this->query->toSQL());
+    $originalSelect = substr($sql, 0, strpos($sql, ' FROM'));
+    $sql = str_replace($originalSelect, $newSelect, $sql);
+
+    $relatedResults = array();
+    $resultDAO = \CRM_Core_DAO::executeQuery($sql);
+    while ($resultDAO->fetch()) {
+      $relatedResults[$resultDAO->id] = array();
+      foreach ($selects as $alias => $column) {
+        $returnName = $alias;
+        $alias = str_replace('.', '_', $alias);
+        if (property_exists($resultDAO, $alias)) {
+          $relatedResults[$resultDAO->id][$returnName] = $resultDAO->$alias;
+        }
+      };
+    }
+
+    return $relatedResults;
+  }
+
+  /**
+   * @return array
+   */
+  private function getJoinedDotSelects() {
+    $joinedDotSelects = array_filter($this->select, function ($select) {
+      return isset($this->fkSelectAliases[$select]);
+    });
+
+    $selects = array();
+    // group related selects by alias so they can be executed in one query
+    foreach ($joinedDotSelects as $select) {
+      $parts = explode('.', $select);
+      $finalAlias = $parts[count($parts) - 2];
+      $selects[$finalAlias][] = $select;
+    }
+
+    return $selects;
   }
 
 }
