@@ -2,6 +2,7 @@
 
 namespace Civi\Test\API\V4;
 
+use Civi\Test\API\V4\Traits\TestDataLoaderTrait;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
 
@@ -10,9 +11,10 @@ use Civi\Test\TransactionalInterface;
  */
 class UnitTestCase extends \PHPUnit_Framework_TestCase
   implements HeadlessInterface, TransactionalInterface {
+
+  use TestDataLoaderTrait;
+
   /**
-   * Constructor.
-   *
    * @see CiviUnitTestCase
    *
    * @param string $name

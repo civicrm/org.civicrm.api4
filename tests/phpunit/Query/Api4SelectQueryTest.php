@@ -4,14 +4,11 @@ namespace Civi\Test\API\V4\Query;
 
 use Civi\API\V4\Query\Api4SelectQuery;
 use Civi\Test\API\V4\UnitTestCase;
-use Civi\Test\API\V4\Traits\TestDataLoaderTrait;
 
 /**
  * @group headless
  */
 class Api4SelectQueryTest extends UnitTestCase {
-
-  use TestDataLoaderTrait;
 
   public function setUpHeadless() {
     $relatedTables = array(

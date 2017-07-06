@@ -5,14 +5,11 @@ namespace Civi\Test\API\V4\Action;
 use Civi\Test\API\V4\UnitTestCase;
 use Civi\API\V4\Entity\Activity;
 use Civi\API\V4\Entity\Contact;
-use Civi\Test\API\V4\Traits\TestDataLoaderTrait;
 
 /**
  * @group headless
  */
 class FkJoinTest extends UnitTestCase {
-
-  use TestDataLoaderTrait;
 
   public function setUpHeadless() {
     $relatedTables = array(

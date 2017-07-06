@@ -4,7 +4,6 @@ namespace Civi\Test\API\V4\Action;
 
 use Civi\Test\API\V4\UnitTestCase;
 use Civi\API\V4\Entity\Activity;
-use Civi\Test\API\V4\Traits\TestDataLoaderTrait;
 
 /**
  * @group headless
@@ -13,8 +12,6 @@ use Civi\Test\API\V4\Traits\TestDataLoaderTrait;
  * initial APIv4 specification
  */
 class ComplexQueryTest extends UnitTestCase {
-
-  use TestDataLoaderTrait;
 
   public function setUpHeadless() {
     $relatedTables = array(
