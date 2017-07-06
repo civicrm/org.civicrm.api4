@@ -7,7 +7,7 @@ eval($bootCode);
 
 preg_match('/require_once\s*\'(.*)\'/', $bootCode, $matches);
 $loader = require(sprintf('%s/vendor/autoload.php', $matches[1]));
-$loader->addPsr4('Civi\\', __DIR__ . '/Civi/');
+$loader->addPsr4('Civi\\Test\\API\\V4\\', __DIR__);
 
 /**
  * Call the "cv" command.
