@@ -27,9 +27,9 @@
 
 namespace Civi\API\V4\Action;
 
-use Civi\API\V4\Spec\SpecGatherer;
+use Civi\API\V4\Service\Spec\SpecGatherer;
 use Civi\API\V4\Result;
-use Civi\API\V4\Spec\SpecFormatter;
+use Civi\API\V4\Service\Spec\SpecFormatter;
 
 /**
  * Get fields for an entity

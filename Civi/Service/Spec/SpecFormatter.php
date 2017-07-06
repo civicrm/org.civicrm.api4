@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\API\V4\Spec;
+namespace Civi\API\V4\Service\Spec;
 
 use CRM_Utils_Array as ArrayHelper;
 

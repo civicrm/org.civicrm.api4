@@ -1,10 +1,10 @@
 <?php
 
-namespace Civi\API\V4\Spec\Provider;
+namespace Civi\API\V4\Service\Spec\Provider;
 
 use Civi\API\V4\Action\Actions;
-use Civi\API\V4\Spec\FieldSpec;
-use Civi\API\V4\Spec\RequestSpec;
+use Civi\API\V4\Service\Spec\FieldSpec;
+use Civi\API\V4\Service\Spec\RequestSpec;
 
 class ContactCreationSpecProvider implements SpecProviderInterface {
 

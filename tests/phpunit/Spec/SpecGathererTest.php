@@ -2,10 +2,10 @@
 
 namespace Civi\Test\API\V4\Spec;
 
-use Civi\API\V4\Spec\FieldSpec;
-use Civi\API\V4\Spec\Provider\SpecProviderInterface;
-use Civi\API\V4\Spec\RequestSpec;
-use Civi\API\V4\Spec\SpecGatherer;
+use Civi\API\V4\Service\Spec\FieldSpec;
+use Civi\API\V4\Service\Spec\Provider\SpecProviderInterface;
+use Civi\API\V4\Service\Spec\RequestSpec;
+use Civi\API\V4\Service\Spec\SpecGatherer;
 use Civi\Test\API\V4\UnitTestCase;
 use Civi\API\V4\Entity\CustomField;
 use Civi\API\V4\Entity\CustomGroup;

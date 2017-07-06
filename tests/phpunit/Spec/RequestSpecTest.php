@@ -2,8 +2,8 @@
 
 namespace Civi\Test\API\V4\Spec;
 
-use Civi\API\V4\Spec\FieldSpec;
-use Civi\API\V4\Spec\RequestSpec;
+use Civi\API\V4\Service\Spec\FieldSpec;
+use Civi\API\V4\Service\Spec\RequestSpec;
 use Civi\Test\API\V4\UnitTestCase;
 
 class RequestSpecTest extends UnitTestCase {

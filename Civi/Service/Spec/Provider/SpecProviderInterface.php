@@ -1,8 +1,8 @@
 <?php
 
-namespace Civi\API\V4\Spec\Provider;
+namespace Civi\API\V4\Service\Spec\Provider;
 
-use Civi\API\V4\Spec\RequestSpec;
+use Civi\API\V4\Service\Spec\RequestSpec;
 
 interface SpecProviderInterface {
   /**
