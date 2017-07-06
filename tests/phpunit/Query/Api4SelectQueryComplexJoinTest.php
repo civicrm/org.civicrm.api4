@@ -76,6 +76,6 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
     $results = $query->run();
     $firstResult = array_shift($results);
 
-    $this->assertNotEmpty($firstResult['emails'][0]['email']['location_type']['name']);
+    $this->assertNotEmpty($firstResult['emails'][0]['location_type']['name']);
   }
 }

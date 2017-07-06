@@ -380,6 +380,13 @@ class Api4SelectQuery extends SelectQuery {
       $selects[$finalAlias][] = $select;
     }
 
+    // sort by depth, e.g. email selects should be done before email.location
+    uasort($selects, function ($a, $b) {
+      $aFirst = $a[0];
+      $bFirst = $b[0];
+      return substr_count($aFirst, '.') > substr_count($bFirst, '.');
+    });
+
     return $selects;
   }
 
