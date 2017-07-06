@@ -28,7 +28,7 @@
 namespace Civi\API\V4\Query;
 
 use Civi\API\SelectQuery;
-use Civi\API\V4\Service\ArrayInsertionService;
+use Civi\API\V4\Utils\ArrayInsertionUtil;
 use Civi\API\V4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\API\V4\Service\Schema\Joinable\Joinable;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
@@ -117,7 +117,7 @@ class Api4SelectQuery extends SelectQuery {
           return ($res['_base_id'] === $baseId);
         });
         $filtered = array_values($filtered);
-        ArrayInsertionService::insert($primaryResult, $path, $filtered);
+        ArrayInsertionUtil::insert($primaryResult, $path, $filtered);
       }
     }
 

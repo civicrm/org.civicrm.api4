@@ -2,7 +2,7 @@
 
 namespace Civi\Test\API\V4\Service;
 
-use Civi\API\V4\Service\ArrayInsertionService;
+use Civi\API\V4\Utils\ArrayInsertionUtil;
 use Civi\Test\API\V4\UnitTestCase;
 
 class ArrayInsertionServiceTest extends UnitTestCase {
@@ -10,7 +10,7 @@ class ArrayInsertionServiceTest extends UnitTestCase {
   public function testInsertWillWork() {
     $arr = array();
     $path = ['foo' => false, 'bar' => false];
-    $inserter = new ArrayInsertionService();
+    $inserter = new ArrayInsertionUtil();
     $inserter::insert($arr, $path, array('LALA'));
 
     $expected = array(
@@ -50,7 +50,7 @@ class ArrayInsertionServiceTest extends UnitTestCase {
 
     $emailPath = ['emails' => true];
     $locationPath = ['emails' => true, 'location' => false];
-    $inserter = new ArrayInsertionService();
+    $inserter = new ArrayInsertionUtil();
 
     foreach ($contacts as &$contact) {
       $inserter::insert($contact, $emailPath, $emails);

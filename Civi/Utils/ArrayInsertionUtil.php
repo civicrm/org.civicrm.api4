@@ -1,10 +1,10 @@
 <?php
 
-namespace Civi\API\V4\Service;
+namespace Civi\API\V4\Utils;
 
 use CRM_Utils_Array as ArrayHelper;
 
-class ArrayInsertionService {
+class ArrayInsertionUtil {
   /**
    * If the values to be inserted contain a key _parent_id they will only be
    * inserted if the parent node ID matches their ID
