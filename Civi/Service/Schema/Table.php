@@ -71,8 +71,12 @@ class Table {
     $alias = $joinable->getAlias();
 
     if (!$this->hasLink($target, $targetCol, $alias)) {
-      $joinable->setBaseTable($this->getName());
-      $joinable->setBaseColumn($baseColumn);
+      if (!$joinable->getBaseTable()) {
+        $joinable->setBaseTable($this->getName());
+      }
+      if (!$joinable->getBaseColumn()) {
+        $joinable->setBaseColumn($baseColumn);
+      }
       $this->tableLinks[] = $joinable;
     }
 
