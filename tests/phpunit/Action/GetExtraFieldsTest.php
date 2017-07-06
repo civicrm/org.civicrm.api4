@@ -5,6 +5,9 @@ namespace Civi\Test\API\V4\Action;
 use Civi\Test\API\V4\UnitTestCase;
 use Civi\API\V4\Entity\Contact;
 
+/**
+ * @group headless
+ */
 class GetExtraFieldsTest extends UnitTestCase {
 
   public function testBAOFieldsWillBeReturned() {
