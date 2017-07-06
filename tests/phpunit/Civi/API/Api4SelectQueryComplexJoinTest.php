@@ -55,4 +55,15 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
     $activityType = $firstActivity['activity_type'];
     $this->assertArrayHasKey('name', $activityType);
   }
+
+  public function testWithSelectOfOrphanDeepValues() {
+    $query = new Api4SelectQuery('Contact', FALSE);
+    $query->select[] = 'id';
+    $query->select[] = 'first_name';
+    $query->select[] = 'emails.location_type.name'; // emails not selected
+    $results = $query->run();
+    $firstResult = array_shift($results);
+
+    $this->assertEmpty($firstResult['emails']);
+  }
 }
