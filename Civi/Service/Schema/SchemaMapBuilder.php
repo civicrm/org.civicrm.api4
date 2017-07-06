@@ -9,6 +9,7 @@ use Civi\API\V4\Service\Schema\Joinable\Joinable;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Civi\API\V4\Service\Schema\Joinable\OptionValueJoinable;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
+use CRM_Core_BAO_CustomField as CustomFieldBAO;
 use CRM_Utils_Array as ArrayHelper;
 
 class SchemaMapBuilder {
@@ -96,7 +97,7 @@ class SchemaMapBuilder {
       }
       $table->addTableLink($field, $joinable);
     } elseif ($optionGroupName) {
-      $joinable = new OptionValueJoinable($optionGroupName, $keyColumn);
+      $joinable = new OptionValueJoinable($optionGroupName);
       $table->addTableLink($field, $joinable);
     }
   }
@@ -151,7 +152,7 @@ class SchemaMapBuilder {
       $entityName = $parentTypes;
     }
 
-    $customFields = \CRM_Core_BAO_CustomField::getFields($entityName, true);
+    $customFields = CustomFieldBAO::getFields($entityName, true);
 
     foreach ($customFields as $fieldData) {
       $tableName = ArrayHelper::value('table_name', $fieldData);
@@ -165,7 +166,7 @@ class SchemaMapBuilder {
       if ($group) {
         $label = ArrayHelper::value('label', $fieldData);
         $columnName = ArrayHelper::value('column_name', $fieldData);
-        $optionValueJoinable = new OptionValueJoinable($group, 'value', $label);
+        $optionValueJoinable = new OptionValueJoinable($group, $label);
         $customTable->addTableLink($columnName, $optionValueJoinable);
       }
 

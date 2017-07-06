@@ -11,15 +11,17 @@ class OptionValueJoinable extends Joinable {
   /**
    * @param string $optionGroup
    *   Can be either the option group name or ID
-   * @param string $keyColumn
    * @param string|null $alias
+   *   The join alias
+   * @param string $keyColumn
+   *   Which column to use to join, defaults to "value"
    */
-  public function __construct($optionGroup, $keyColumn = 'value', $alias = NULL) {
+  public function __construct($optionGroup, $alias = NULL, $keyColumn = 'value') {
     $this->optionGroupName = $optionGroup;
     $optionValueTable = 'civicrm_option_value';
 
     // default join alias to option group name, e.g. activity_type
-    if (!$alias) {
+    if (!$alias && !is_numeric($optionGroup)) {
       $alias = $optionGroup;
     }
 
