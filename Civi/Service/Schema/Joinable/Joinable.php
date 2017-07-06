@@ -44,7 +44,7 @@ class Joinable {
   /**
    * @var string
    */
-  protected $joinSide = self::JOIN_SIDE_INNER;
+  protected $joinSide = self::JOIN_SIDE_LEFT;
 
   /**
    * @var int
