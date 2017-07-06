@@ -53,8 +53,8 @@ class ArrayInsertionService {
       });
     }
 
-    array_walk($values, function ($value) {
-      $unsets = array('_parent_id', '_base_id');
+    $unsets = array('_parent_id', '_base_id');
+    array_walk($values, function (&$value) use ($unsets) {
       foreach ($unsets as $unset) {
         if (isset($value[$unset])) {
           unset($value[$unset]);
