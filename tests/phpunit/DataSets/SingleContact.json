@@ -4,6 +4,7 @@
       "first_name": "Single",
       "last_name": "Contact",
       "contact_type": "Individual",
+      "preferred_communication_method": "phone",
       "@ref": "test_contact_1"
     }
   ],
@@ -13,6 +14,9 @@
     },
     {
       "name": "activity_contacts"
+    },
+    {
+      "name": "preferred_communication_method"
     }
   ],
   "OptionValue": [
@@ -27,19 +31,21 @@
       "option_group": "activity_type"
     },
     {
-      "label": "Activity Source",
       "name": "Activity Source",
       "option_group": "activity_contacts"
     },
     {
-      "label": "Activity Assignees",
       "name": "Activity Assignees",
       "option_group": "activity_contacts"
     },
     {
-      "label": "Activity Targets",
       "name": "Activity Targets",
       "option_group": "activity_contacts"
+    },
+    {
+      "name": "Phone",
+      "value": "phone",
+      "option_group": "preferred_communication_method"
     }
   ],
   "Activity": [
