@@ -25,7 +25,7 @@
  +--------------------------------------------------------------------+
  */
 
-namespace Civi\API\V4\V4\Entity\Entity;
+namespace Civi\API\V4\Action\Entity;
 
 use Civi\API\V4\Action\AbstractAction;
 use Civi\API\V4\Result;

@@ -27,7 +27,7 @@
 
 namespace Civi\API\V4\Entity;
 
-use Civi\API\V4\V4\Entity\Participant\Get;
+use Civi\API\V4\Action\Participant\Get;
 
 /**
  * @method static Get get

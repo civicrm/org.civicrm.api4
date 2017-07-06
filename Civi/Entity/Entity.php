@@ -24,7 +24,11 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
+
 namespace Civi\API\V4\Entity;
+
+use Civi\API\V4\Action\Entity\Get;
+use Civi\API\V4\Action\GetActions;
 
 /**
  * Meta entity.
@@ -32,17 +36,17 @@ namespace Civi\API\V4\Entity;
 class Entity {
 
   /**
-   * @return \Civi\API\V4\V4\Entity\Entity\Get
+   * @return Get
    */
   static function get() {
-    return new \Civi\API\V4\V4\Entity\Entity\Get('Entity');
+    return new Get('Entity');
   }
 
   /**
-   * @return \Civi\API\V4\Action\GetActions
+   * @return GetActions
    */
   static function getActions() {
-    return new \Civi\API\V4\Action\GetActions('Entity');
+    return new GetActions('Entity');
   }
 
 }

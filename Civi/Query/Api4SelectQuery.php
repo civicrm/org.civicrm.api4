@@ -1,5 +1,4 @@
 <?php
-
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -25,7 +24,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
-namespace Civi\API\V4;
+
+namespace Civi\API\V4\Query;
 
 use Civi\API\SelectQuery;
 use Civi\API\V4\Service\ArrayInsertionService;

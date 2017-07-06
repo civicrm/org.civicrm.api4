@@ -2,7 +2,7 @@
 
 namespace Civi\API\V4\Service\Schema;
 
-use Civi\API\V4\Api4SelectQuery;
+use Civi\API\V4\Query\Api4SelectQuery;
 use Civi\API\V4\Service\Schema\Joinable\Joinable;
 
 class Joiner {

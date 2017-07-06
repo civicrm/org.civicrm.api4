@@ -28,7 +28,7 @@ namespace Civi\API\V4\Action;
 
 use Civi\API\Exception\UnauthorizedException;
 use Civi\API\Kernel;
-use Civi\API\V4\ReflectionUtils;
+use Civi\API\V4\Utils\ReflectionUtils;
 use Civi\API\V4\Result;
 
 /**

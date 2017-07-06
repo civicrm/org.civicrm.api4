@@ -24,7 +24,8 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
-namespace Civi\API\V4;
+
+namespace Civi\API\V4\Utils;
 
 /**
  * Just another place to put static functions...

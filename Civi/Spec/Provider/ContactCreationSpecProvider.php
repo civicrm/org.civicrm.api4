@@ -2,7 +2,7 @@
 
 namespace Civi\API\V4\Spec\Provider;
 
-use Civi\API\V4\Actions;
+use Civi\API\V4\Action\Actions;
 use Civi\API\V4\Spec\FieldSpec;
 use Civi\API\V4\Spec\RequestSpec;
 

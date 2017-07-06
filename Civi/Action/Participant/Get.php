@@ -25,7 +25,7 @@
  +--------------------------------------------------------------------+
  */
 
-namespace Civi\API\V4\V4\Entity\Participant;
+namespace Civi\API\V4\Action\Participant;
 
 use Civi\API\V4\Action\Get as DefaultGet;
 

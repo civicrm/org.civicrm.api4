@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\API\V4;
+namespace Civi\API\V4\Action;
 
 interface Actions {
   const CREATE = 'create';

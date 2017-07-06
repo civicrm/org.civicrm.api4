@@ -29,7 +29,7 @@ namespace Civi\API\V4\Action;
 
 use Civi\API\Exception\NotImplementedException;
 use Civi\API\V4\Result;
-use Civi\API\V4\ReflectionUtils;
+use Civi\API\V4\Utils\ReflectionUtils;
 
 /**
  * Get actions for an entity with a list of accepted params
@@ -43,7 +43,7 @@ class GetActions extends AbstractAction {
 
   public function _run(Result $result) {
     $includePaths = array_unique(explode(PATH_SEPARATOR, get_include_path()));
-    $entityReflection = new \ReflectionClass('\Civi\Api4\\' . $this->getEntity());
+    $entityReflection = new \ReflectionClass('\Civi\API\V4\Entity\\' . $this->getEntity());
     // First search entity-specific actions (including those provided by extensions
     foreach ($includePaths as $path) {
       $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/API/V4/Entity/' . $this->getEntity();
@@ -86,7 +86,7 @@ class GetActions extends AbstractAction {
     try {
       if (!isset($this->_actions[$actionName])) {
         /* @var AbstractAction $action */
-        $action = call_user_func(array('\\Civi\\Api4\\' . $this->getEntity(), $actionName));
+        $action = call_user_func(array('\\Civi\\API\\V4\\Entity\\' . $this->getEntity(), $actionName));
         $actionReflection = new \ReflectionClass($action);
         $actionInfo = ReflectionUtils::getCodeDocs($actionReflection);
         unset($actionInfo['method']);
