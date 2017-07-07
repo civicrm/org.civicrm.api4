@@ -22,6 +22,8 @@ class Api4SelectQueryTest extends UnitTestCase {
     );
     $this->cleanup(array('tablesToTruncate' => $relatedTables));
     $this->loadDataSet('DefaultDataSet');
+    $displayNameFormat = '{contact.first_name}{ }{contact.last_name}';
+    \Civi::settings()->set('display_name_format', $displayNameFormat);
 
     return parent::setUpHeadless();
   }
@@ -69,13 +71,14 @@ class Api4SelectQueryTest extends UnitTestCase {
     $query->select[] = 'id';
     $query->select[] = 'phone';
     $query->select[] = 'contact.display_name';
+    $query->select[] = 'contact.first_name';
     $query->where[] = array('phone', '=', $phoneNum);
     $results = $query->run();
 
     $this->assertCount(1, $results);
     $firstResult = array_shift($results);
     $this->assertArrayHasKey('contact', $firstResult);
-    $firstContact = array_shift($firstResult['contact']);
-    $this->assertEquals($contact['display_name'], $firstContact['display_name']);
+    $resultContact = $firstResult['contact'];
+    $this->assertEquals($contact['display_name'], $resultContact['display_name']);
   }
 }
