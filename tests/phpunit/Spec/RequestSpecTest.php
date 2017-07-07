@@ -6,7 +6,11 @@ use Civi\API\V4\Service\Spec\FieldSpec;
 use Civi\API\V4\Service\Spec\RequestSpec;
 use Civi\Test\API\V4\UnitTestCase;
 
+/**
+ * @group headless
+ */
 class RequestSpecTest extends UnitTestCase {
+
   public function testRequiredFieldFetching() {
     $spec = new RequestSpec('Contact', 'get');
     $requiredField = new FieldSpec('name');

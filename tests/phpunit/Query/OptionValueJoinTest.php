@@ -5,6 +5,9 @@ namespace phpunit\Query;
 use Civi\API\V4\Query\Api4SelectQuery;
 use Civi\Test\API\V4\UnitTestCase;
 
+/**
+ * @group headless
+ */
 class OptionValueJoinTest extends UnitTestCase {
 
   public function setUpHeadless() {

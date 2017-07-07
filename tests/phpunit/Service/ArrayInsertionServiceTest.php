@@ -5,6 +5,9 @@ namespace Civi\Test\API\V4\Service;
 use Civi\API\V4\Utils\ArrayInsertionUtil;
 use Civi\Test\API\V4\UnitTestCase;
 
+/**
+ * @group headless
+ */
 class ArrayInsertionServiceTest extends UnitTestCase {
 
   public function testInsertWillWork() {
