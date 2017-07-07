@@ -11,6 +11,12 @@ use Civi\Api4\Contact;
 class NullValueTest extends UnitTestCase {
 
   public function testStringNull() {
+
+    \Civi::settings()->set(
+      'display_name_format',
+      '{contact.first_name}{ }{contact.last_name}'
+    );
+
     $contact = Contact::create()
       ->setCheckPermissions(FALSE)
       ->setValue('first_name', 'Joseph')

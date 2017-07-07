@@ -8,6 +8,12 @@
             <tag name="event_subscriber"/>
         </service>
 
+        <service id="spec_gatherer" class="Civi\API\Spec\SpecGatherer"/>
+
+        <service id="contact_creation.spec_provider" class="Civi\API\Spec\Provider\ContactCreationSpecProvider">
+            <tag name="spec_provider"/>
+        </service>
+
         <service id="custom_group.pre_creation.subsciber" class="Civi\API\Event\Subscriber\CustomGroupPreCreationSubscriber">
             <tag name="event_subscriber"/>
         </service>

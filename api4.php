@@ -3,6 +3,7 @@
 require_once 'api4.civix.php';
 
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
 
@@ -21,7 +22,7 @@ function civicrm_api4($entity, $action, $params = array()) {
 }
 
 /**
- * @param Symfony\Component\DependencyInjection\ContainerBuilder $container
+ * @param ContainerBuilder $container
  */
 function api4_civicrm_container($container) {
   $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
@@ -40,6 +41,17 @@ function api4_civicrm_container($container) {
     $dispatcher->addMethodCall(
       'addSubscriber',
       array(new Reference($subscriber))
+    );
+  }
+
+  // add spec providers
+  $providers = $container->findTaggedServiceIds('spec_provider');
+  $gatherer = $container->getDefinition('spec_gatherer');
+
+  foreach (array_keys($providers) as $provider) {
+    $gatherer->addMethodCall(
+      'addSpecProvider',
+      array(new Reference($provider))
     );
   }
 }
