@@ -30,6 +30,6 @@ namespace Civi\API\V4\Entity;
  * Activity entity.
  *
  */
-class Activity extends \Civi\API\V4\Entity\BaseEntity {
+class Activity extends BaseEntity {
 
 }

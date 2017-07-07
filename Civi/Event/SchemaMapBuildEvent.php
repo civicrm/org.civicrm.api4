@@ -3,7 +3,7 @@
 namespace Civi\API\V4\Event;
 
 use Civi\API\V4\Service\Schema\SchemaMap;
-use \Symfony\Component\EventDispatcher\Event as BaseEvent;
+use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
 class SchemaMapBuildEvent extends BaseEvent {
   /**
