@@ -1,25 +1,25 @@
 <?php
 
-namespace Civi\API\Event;
+namespace Civi\API\V4\Event;
 
-use Civi\API\V4\Action;
+use Civi\API\V4\Action\AbstractAction;
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
 class GetSpecEvent extends BaseEvent {
   /**
-   * @var Action
+   * @var AbstractAction
    */
   protected $request;
 
   /**
-   * @param Action $request
+   * @param AbstractAction $request
    */
-  public function __construct(Action $request) {
+  public function __construct(AbstractAction $request) {
     $this->request = $request;
   }
 
   /**
-   * @return Action
+   * @return AbstractAction
    */
   public function getRequest() {
     return $this->request;
@@ -28,7 +28,7 @@ class GetSpecEvent extends BaseEvent {
   /**
    * @param $request
    */
-  public function setRequest(Action $request) {
+  public function setRequest(AbstractAction $request) {
     $this->request = $request;
   }
 }

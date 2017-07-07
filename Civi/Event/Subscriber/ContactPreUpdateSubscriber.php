@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\API\Event\Subscriber;
+namespace Civi\API\V4\Event\Subscriber;
 
 use Civi\API\V4\Action\Create;
 
