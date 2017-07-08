@@ -58,6 +58,15 @@ function api4_civicrm_container($container) {
 }
 
 /**
+ * Implements hook_civicrm_coreResourceList().
+ */
+function api4_civicrm_coreResourceList(&$list, $region) {
+  if ($region == 'html-header') {
+    Civi::resources()->addScriptFile('org.civicrm.api4', 'js/api4.js', -9000, $region);
+  }
+}
+
+/**
  * Implements hook_civicrm_config().
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
