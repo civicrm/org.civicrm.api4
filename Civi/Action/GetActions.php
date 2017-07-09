@@ -46,13 +46,13 @@ class GetActions extends AbstractAction {
     $entityReflection = new \ReflectionClass('\Civi\API\V4\Entity\\' . $this->getEntity());
     // First search entity-specific actions (including those provided by extensions
     foreach ($includePaths as $path) {
-      $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/API/V4/Entity/' . $this->getEntity();
+      $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Action/' . $this->getEntity();
       $this->scanDir($dir);
     }
     // Scan all generic actions unless this entity does not extend generic entity
     if ($entityReflection->getParentClass()) {
       foreach ($includePaths as $path) {
-        $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/API/V4/Action';
+        $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Action';
         $this->scanDir($dir);
       }
     }
@@ -74,7 +74,9 @@ class GetActions extends AbstractAction {
         $matches = array();
         preg_match('/(\w*).php/', $file, $matches);
         $actionName = array_pop($matches);
-        $this->loadAction(lcfirst($actionName));
+        if ($actionName !== 'AbstractAction') {
+          $this->loadAction(lcfirst($actionName));
+        }
       }
     }
   }
@@ -86,7 +88,7 @@ class GetActions extends AbstractAction {
     try {
       if (!isset($this->_actions[$actionName])) {
         /* @var AbstractAction $action */
-        $action = call_user_func(array('\\Civi\\API\\V4\\Entity\\' . $this->getEntity(), $actionName));
+        $action = call_user_func(array("\\Civi\\API\\V4\\Entity\\" . $this->getEntity(), $actionName));
         $actionReflection = new \ReflectionClass($action);
         $actionInfo = ReflectionUtils::getCodeDocs($actionReflection);
         unset($actionInfo['method']);
