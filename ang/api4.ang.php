@@ -23,7 +23,7 @@ return array(
     'ang/api4/*/*.js',
   ),
   'css' => array(
-    'ang/api4.css',
+    'css/explorer.css',
   ),
   'partials' => array(
     'ang/api4',

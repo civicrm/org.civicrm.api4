@@ -1,7 +1,9 @@
 <div id="bootstrap-theme" class="api4-explorer-page">
   <div crm-ui-debug="actions"></div>
 
-  <h1 crm-page-title>{{ts('Api Explorer')}}</h1>
+  <h1 crm-page-title>
+    {{ entity ? ts('Api Explorer:') : ts('Api Explorer') }} {{ entity }}{{ action ? ('::' + action) : '' }}
+  </h1>
 
   <div class="row">
     <div class="col-md-8">
@@ -17,7 +19,7 @@
       </form>
     </div>
     <div class="col-md-4">
-      <div class="panel panel-info">
+      <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title" crm-icon="fa-info-circle">{{ helpTitle }}</h3>
         </div>
@@ -29,7 +31,7 @@
   </div>
   <div class="row">
     <div class="col-md-6">
-      <div class="panel panel-warning">
+      <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title" crm-icon="fa-code">{{ ts('Code') }}</h3>
         </div>
@@ -39,7 +41,7 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="panel panel-success">
+      <div class="panel panel-default">
         <div class="panel-heading">
           <h3 class="panel-title" crm-icon="fa-table">{{ ts('Result') }}</h3>
         </div>
