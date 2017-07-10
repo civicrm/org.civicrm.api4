@@ -21,11 +21,23 @@
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="contact_creation.spec_provider" class="Civi\Api4\Service\Spec\Provider\ContactCreationSpecProvider">
+        <service id="activity_creation.spec_provider" class="Civi\Api4\Service\Spec\Provider\ContactCreationSpecProvider">
             <tag name="spec_provider"/>
         </service>
 
-        <service id="custom_group.pre_creation.subsciber" class="Civi\Api4\Event\Subscriber\CustomGroupPreCreationSubscriber">
+        <service class="Civi\API\V4\Service\Spec\Provider\ActivityCreationSpecProvider">
+            <tag name="spec_provider"/>
+        </service>
+
+        <service class="Civi\API\V4\Service\Spec\Provider\ContributionCreationSpecProvider">
+            <tag name="spec_provider"/>
+        </service>
+
+        <service class="Civi\API\V4\Service\Spec\Provider\CustomGroupCreationSpecProvider">
+            <tag name="spec_provider"/>
+        </service>
+
+        <service id="custom_group.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\CustomGroupPreCreationSubscriber">
             <tag name="event_subscriber"/>
         </service>
 
