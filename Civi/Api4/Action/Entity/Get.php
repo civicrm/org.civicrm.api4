@@ -43,7 +43,7 @@ class Get extends AbstractAction {
   public function _run(Result $result) {
     $entities = array();
     foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
-      $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Entity';
+      $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Entity';
       if (is_dir($dir)) {
         foreach (glob("$dir/*.php") as $file) {
           $matches = array();

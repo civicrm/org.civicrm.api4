@@ -11,9 +11,6 @@ use Civi\Test\Api4\UnitTestCase;
 class EntityTest extends UnitTestCase  {
 
   public function testEntityGet() {
-
-    $this->markTestSkipped('todo: fix me');
-
     $result = Entity::get()
       ->setCheckPermissions(FALSE)
       ->execute();
