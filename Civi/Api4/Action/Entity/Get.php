@@ -52,7 +52,11 @@ class Get extends AbstractAction {
         }
       }
     }
-    $result->exchangeArray(array_values($entities));
+    $entities = array_values($entities);
+    if (in_array('BaseEntity', $entities)) {
+      unset($entities[array_search('BaseEntity', $entities)]);
+    }
+    $result->exchangeArray($entities);
   }
 
 }
