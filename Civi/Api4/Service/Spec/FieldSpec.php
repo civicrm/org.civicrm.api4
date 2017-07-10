@@ -39,6 +39,11 @@ class FieldSpec {
   protected $dataType;
 
   /**
+   * @var string
+   */
+  protected $fkEntity;
+
+  /**
    * Aliases for the valid data types
    *
    * @var array
@@ -208,5 +213,23 @@ class FieldSpec {
    */
   public function addOption($option) {
     $this->options[] = $option;
+  }
+
+  /**
+   * @return string
+   */
+  public function getFkEntity() {
+    return $this->fkEntity;
+  }
+
+  /**
+   * @param string $fkEntity
+   *
+   * @return $this
+   */
+  public function setFkEntity($fkEntity) {
+    $this->fkEntity = $fkEntity;
+
+    return $this;
   }
 }
