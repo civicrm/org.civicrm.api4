@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Test\API\V4\Traits;
+namespace Civi\Test\Api4\Traits;
 
 /**
  * This probably should be a separate class

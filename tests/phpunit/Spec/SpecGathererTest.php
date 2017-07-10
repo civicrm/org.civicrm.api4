@@ -1,15 +1,15 @@
 <?php
 
-namespace Civi\Test\API\V4\Spec;
+namespace Civi\Test\Api4\Spec;
 
-use Civi\API\V4\Service\Spec\FieldSpec;
-use Civi\API\V4\Service\Spec\Provider\SpecProviderInterface;
-use Civi\API\V4\Service\Spec\RequestSpec;
-use Civi\API\V4\Service\Spec\SpecGatherer;
-use Civi\Test\API\V4\UnitTestCase;
-use Civi\API\V4\Entity\CustomField;
-use Civi\API\V4\Entity\CustomGroup;
-use Civi\Test\API\V4\Traits\TableDropperTrait;
+use Civi\Api4\Service\Spec\FieldSpec;
+use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
+use Civi\Api4\Service\Spec\RequestSpec;
+use Civi\Api4\Service\Spec\SpecGatherer;
+use Civi\Test\Api4\UnitTestCase;
+use Civi\Api4\Entity\CustomField;
+use Civi\Api4\Entity\CustomGroup;
+use Civi\Test\Api4\Traits\TableDropperTrait;
 use Prophecy\Argument;
 
 /**

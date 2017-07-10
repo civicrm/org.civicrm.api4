@@ -161,19 +161,19 @@ The API use embedded magic functions to extend generic PHP OOP approaches and pr
 In order for the magic to work, coders extending the API need to use consistent paths, class names and class name-spacing.
 
 API V4 **entities** have both general and specific single class actions.
-Specific single-class action class are named `\Civi\API\V4\Entity\[$entity]\[ucfirst($action)]`
-and generic actions `\Civi\API\V4\Action\[ucfirst($action)]`.
+Specific single-class action class are named `\Civi\Api4\Entity\[$entity]\[ucfirst($action)]`
+and generic actions `\Civi\Api4\Action\[ucfirst($action)]`.
 Although called as static entity class methods, each action is implemented as its own class courtesy of some magic in
-[`Civi\API\V4\Entity::__callStatic()`](Civi\API\V4\Entity.php).
+[`Civi\Api4\Entity::__callStatic()`](Civi\Api4\Entity.php).
 
 A series of **action classes** inherit from the base
-[`Action`](Civi/API/V4/Action.php) class
-([`GetActions`](Civi/API/V4/Action/GetActions.php),
-[`GetFields`](Civi/API/V4/Action/GetFields.php),
-[`Create`](Civi/API/V4/Action/Create.php),
-[`Get`](Civi/API/V4/Action/Get.php),
-[`Update`](Civi/API/V4/Action/Update.php),
-[`Delete`](Civi/API/V4/Action/Delete.php)).
+[`Action`](Civi/Api4/Action.php) class
+([`GetActions`](Civi/Api4/Action/GetActions.php),
+[`GetFields`](Civi/Api4/Action/GetFields.php),
+[`Create`](Civi/Api4/Action/Create.php),
+[`Get`](Civi/Api4/Action/Get.php),
+[`Update`](Civi/Api4/Action/Update.php),
+[`Delete`](Civi/Api4/Action/Delete.php)).
 
 Update actions extend the `Get` class allowing them to perform bulk operations.
 
@@ -185,7 +185,7 @@ Each action object has a `_run()` method that accepts a decorated [arrayobject](
 
 All `action` classes accept an entity with their constructor and use the standard PHP [ReflectionClass](http://php.net/manual/en/class.reflectionclass.php)
 for metadata tracking with a custom
-[`ReflectionUtils`](Civi/API/V4/ReflectionUtils.php) class to extract PHP comments. The metadata is available via `getParams()` and `getParamInfo()` methods. Each action object is able to report its entitiy class name (`getEntity()`) and action verb (`getAction()`).
+[`ReflectionUtils`](Civi/Api4/ReflectionUtils.php) class to extract PHP comments. The metadata is available via `getParams()` and `getParamInfo()` methods. Each action object is able to report its entitiy class name (`getEntity()`) and action verb (`getAction()`).
 
 Each `action` object also has an `$options` property and a set of methods (`offsetExists()`, `offsetGet()`,  `offsetSet()` and `offsetUnset()`) that act as interface to a `thisArrayStorage` property.
 
@@ -198,13 +198,13 @@ and the
 [CRM_Utils_SQL_Select](https://github.com/civicrm/civicrm-core/blob/master/CRM/Utils/SQL/Select.php) class)
 to execute the query based on the action's `select`, `where`, `orderBy`, `limit` and `offset` parameters.
 
-The **[`GetActions`](Civi/API/V4/Action/GetActions.php) action** globs the
-`Civi/API/V4/Entity/[ENTITY_NAME]` subdirectories of the
+The **[`GetActions`](Civi/Api4/Action/GetActions.php) action** globs the
+`Civi/Api4/Entity/[ENTITY_NAME]` subdirectories of the
 `[get_include_path()](http://php.net/manual/en/function.get-include-path.php)`
-then the `Civi/API/V4/Action` subdirectories for generic actions. In the event
+then the `Civi/Api4/Action` subdirectories for generic actions. In the event
 of duplicate actions, only the first is reported.
 
-The **[`GetFields`](Civi/API/V4/Action/GetFields.php) action** uses the `[BAO]->fields()` method.
+The **[`GetFields`](Civi/Api4/Action/GetFields.php) action** uses the `[BAO]->fields()` method.
 
 todo: [ActionObjectProvider](Civi/API/Provider/ActionObjectProvider.php),
   implements the

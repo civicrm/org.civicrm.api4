@@ -1,9 +1,9 @@
 <?php
 
-namespace Civi\Test\API\V4\Entity;
+namespace Civi\Test\Api4\Entity;
 
-use Civi\API\V4\Entity\BaseEntity;
-use Civi\Test\API\V4\UnitTestCase;
+use Civi\Api4\AbstractEntity;
+use Civi\Test\Api4\UnitTestCase;
 
 /**
  * @group headless
@@ -109,7 +109,7 @@ class ConformanceTest extends UnitTestCase {
 
     $this->hookClass->setMock($this);
     // get list of all the entities we know about and loop over them:
-    $entities = BaseEntity::get()
+    $entities = AbstractEntity::get()
       ->setCheckPermissions(FALSE)
       ->execute();
     foreach ($entities as $entity) {

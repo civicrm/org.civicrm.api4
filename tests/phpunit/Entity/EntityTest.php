@@ -1,9 +1,9 @@
 <?php
 
-namespace Civi\Test\API\V4\Entity;
+namespace Civi\Test\Api4\Entity;
 
-use Civi\API\V4\Entity\Entity;
-use Civi\Test\API\V4\UnitTestCase;
+use Civi\Api4\Entity\Entity;
+use Civi\Test\Api4\UnitTestCase;
 
 /**
  * @group headless
@@ -11,9 +11,6 @@ use Civi\Test\API\V4\UnitTestCase;
 class EntityTest extends UnitTestCase  {
 
   public function testEntityGet() {
-
-    $this->markTestSkipped('todo: fix me');
-
     $result = Entity::get()
       ->setCheckPermissions(FALSE)
       ->execute();

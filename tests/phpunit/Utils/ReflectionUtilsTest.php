@@ -1,9 +1,9 @@
 <?php
 
-namespace Civi\Test\API\V4\Utils;
+namespace Civi\Test\Api4\Utils;
 
-use Civi\API\V4\Utils\ReflectionUtils;
-use Civi\Test\API\V4\UnitTestCase;
+use Civi\Api4\Utils\ReflectionUtils;
+use Civi\Test\Api4\UnitTestCase;
 
 /**
  * @group headless

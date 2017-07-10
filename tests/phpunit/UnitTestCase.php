@@ -1,8 +1,8 @@
 <?php
 
-namespace Civi\Test\API\V4;
+namespace Civi\Test\Api4;
 
-use Civi\Test\API\V4\Traits\TestDataLoaderTrait;
+use Civi\Test\Api4\Traits\TestDataLoaderTrait;
 use Civi\Test\HeadlessInterface;
 use Civi\Test\TransactionalInterface;
 

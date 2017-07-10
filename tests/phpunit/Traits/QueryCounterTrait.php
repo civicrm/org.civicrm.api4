@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Test\API\V4\Traits;
+namespace Civi\Test\Api4\Traits;
 
 use \CRM_Utils_Array as ArrayHelper;
 

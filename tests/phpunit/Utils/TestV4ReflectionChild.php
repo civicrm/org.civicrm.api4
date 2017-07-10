@@ -1,8 +1,8 @@
 <?php
 
-namespace Civi\Test\API\V4\Utils;
+namespace Civi\Test\Api4\Utils;
 
-use Civi\Test\API\V4\Utils;
+use Civi\Test\Api4\Utils;
 
 /**
  * @inheritDoc
