@@ -28,30 +28,34 @@
 
     function selectAction() {
       $scope.action = $routeParams.action;
-      var actionInfo = _.findWhere(actions, {id: $scope.action});
-      _.each(actionInfo.params, function(param, name) {
-        var format;
-        switch (param.type[0]) {
-          case 'int':
-          case 'bool':
-            format = param.type[0];
-            break;
+      if ($scope.action) {
+        var actionInfo = _.findWhere(actions, {id: $scope.action});
+        _.each(actionInfo.params, function (param, name) {
+          var format;
+          if (param.type) {
+            switch (param.type[0]) {
+              case 'int':
+              case 'bool':
+                format = param.type[0];
+                break;
 
-          case 'array':
-          case 'object':
-            format = 'json';
-            break;
+              case 'array':
+              case 'object':
+                format = 'json';
+                break;
 
-          default:
-            format = 'raw';
-        }
-        $scope.$bindToRoute({
-          expr: 'params["' + name + '"]',
-          param: name,
-          format: format
+              default:
+                format = 'raw';
+            }
+            $scope.$bindToRoute({
+              expr: 'params["' + name + '"]',
+              param: name,
+              format: format
+            });
+          }
         });
-      });
-      $scope.availableParams = actionInfo.params;
+        $scope.availableParams = actionInfo.params;
+      }
     }
 
     function writeCode() {

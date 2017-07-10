@@ -2,7 +2,7 @@
   <div crm-ui-debug="params"></div>
 
   <h1 crm-page-title>
-    {{ entity ? ts('Api Explorer:') : ts('Api Explorer') }} {{ entity }}{{ action ? ('::' + action) : '' }}
+    {{ ts('CiviCRM API v4') }}{{ entity ? (' (' + entity + '::' + action + ')') : '' }}
   </h1>
 
   <div class="row">

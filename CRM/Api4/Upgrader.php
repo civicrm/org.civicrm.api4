@@ -12,7 +12,7 @@ class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base {
    * Install script
    */
   public function install() {
-    // Add menu item for api explorer
+    // Add menu item for api explorer; rename v3 explorer menu item.
     try {
       $v3Item = civicrm_api3('Navigation', 'get', array(
         'name' => 'API Explorer',
@@ -54,10 +54,15 @@ class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base {
   }
 
   /**
-   * Example: Run an external SQL script when the module is uninstalled.
-   *
+   * Uninstall script
+   */
   public function uninstall() {
-   $this->executeSqlFile('sql/myuninstall.sql');
+    // Remove Api4 Explorer navigation menu item
+    civicrm_api3('Navigation', 'get', array(
+      'name' => 'Api Explorer v4',
+      'return' => array('id'),
+      'api.Navigation.delete' => array(),
+    ));
   }
 
   /**
