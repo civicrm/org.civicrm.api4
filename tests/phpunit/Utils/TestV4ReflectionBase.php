@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Test\API\V4\Utils;
+namespace Civi\Test\Api4\Utils;
 
 /**
  * Class TestV4ReflectionBase

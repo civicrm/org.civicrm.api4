@@ -1,9 +1,9 @@
 <?php
 
-namespace Civi\Test\API\V4\Action;
+namespace Civi\Test\Api4\Action;
 
-use Civi\Test\API\V4\UnitTestCase;
-use Civi\API\V4\Entity\Activity;
+use Civi\Test\Api4\UnitTestCase;
+use Civi\Api4\Entity\Activity;
 
 /**
  * @group headless

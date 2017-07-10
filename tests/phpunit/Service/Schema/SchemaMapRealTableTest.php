@@ -2,7 +2,7 @@
 
 namespace phpunit\Civi\API\Service\Schema;
 
-use Civi\Test\API\V4\UnitTestCase;
+use Civi\Test\Api4\UnitTestCase;
 
 /**
  * @group headless

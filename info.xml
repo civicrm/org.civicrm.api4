@@ -21,7 +21,7 @@
   </compatibility>
   <comments>This extension does nothing on its own. Install it if other extensions require you to do so.</comments>
   <classloader>
-    <psr4 prefix="Civi\API\V4\" path="Civi" />
+    <psr4 prefix="Civi\" path="Civi" />
   </classloader>
   <civix>
     <namespace>CRM/Api4</namespace>

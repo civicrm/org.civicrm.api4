@@ -1,12 +1,12 @@
 <?php
 
-namespace Civi\Test\API\V4\Spec;
+namespace Civi\Test\Api4\Spec;
 
-use Civi\API\V4\Service\Spec\CustomFieldSpec;
-use Civi\API\V4\Service\Spec\FieldSpec;
-use Civi\API\V4\Service\Spec\RequestSpec;
-use Civi\API\V4\Service\Spec\SpecFormatter;
-use Civi\Test\API\V4\UnitTestCase;
+use Civi\Api4\Service\Spec\CustomFieldSpec;
+use Civi\Api4\Service\Spec\FieldSpec;
+use Civi\Api4\Service\Spec\RequestSpec;
+use Civi\Api4\Service\Spec\SpecFormatter;
+use Civi\Test\Api4\UnitTestCase;
 
 /**
  * @group headless

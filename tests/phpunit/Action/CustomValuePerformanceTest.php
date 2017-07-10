@@ -1,11 +1,11 @@
 <?php
 
-namespace Civi\Test\API\V4\Action;
+namespace Civi\Test\Api4\Action;
 
-use Civi\API\V4\Entity\Contact;
-use Civi\API\V4\Entity\CustomField;
-use Civi\API\V4\Entity\CustomGroup;
-use Civi\Test\API\V4\Traits\QueryCounterTrait;
+use Civi\Api4\Entity\Contact;
+use Civi\Api4\Entity\CustomField;
+use Civi\Api4\Entity\CustomGroup;
+use Civi\Test\Api4\Traits\QueryCounterTrait;
 
 /**
  * @group headless

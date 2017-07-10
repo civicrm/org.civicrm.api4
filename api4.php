@@ -14,7 +14,7 @@ use Symfony\Component\Config\FileLocator;
  * @param $action
  * @param array $params
  *
- * @return \Civi\API\V4\Result
+ * @return \Civi\Api4\Result
  */
 function civicrm_api4($entity, $action, $params = array()) {
   $params['version'] = 4;

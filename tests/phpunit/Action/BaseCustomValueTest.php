@@ -1,9 +1,9 @@
 <?php
 
-namespace Civi\Test\API\V4\Action;
+namespace Civi\Test\Api4\Action;
 
-use Civi\Test\API\V4\UnitTestCase;
-use Civi\Test\API\V4\Traits\TableDropperTrait;
+use Civi\Test\Api4\UnitTestCase;
+use Civi\Test\Api4\Traits\TableDropperTrait;
 
 abstract class BaseCustomValueTest extends UnitTestCase {
 
