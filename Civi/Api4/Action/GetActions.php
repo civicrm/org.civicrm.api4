@@ -47,13 +47,13 @@ class GetActions extends AbstractAction {
     $entityReflection = new \ReflectionClass('\Civi\Api4\Entity\\' . $this->getEntity());
     // First search entity-specific actions (including those provided by extensions
     foreach ($includePaths as $path) {
-      $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Action/' . $this->getEntity();
+      $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Action/' . $this->getEntity();
       $this->scanDir($dir);
     }
     // Scan all generic actions unless this entity does not extend generic entity
     if ($entityReflection->getParentClass()) {
       foreach ($includePaths as $path) {
-        $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Action';
+        $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Action';
         $this->scanDir($dir);
       }
     }
