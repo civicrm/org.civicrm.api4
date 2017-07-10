@@ -28,4 +28,5 @@ return array(
   'partials' => array(
     'ang/api4',
   ),
+  'requires' => array('crmUi', 'crmUtil', 'ngRoute', 'crmRouteBinder'),
 );

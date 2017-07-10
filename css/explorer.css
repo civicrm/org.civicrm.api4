@@ -3,14 +3,17 @@
 #bootstrap-theme.api4-explorer-page .panel-heading {
   height: 50px;
 }
-#bootstrap-theme.api4-explorer-page form.panel .panel-heading {
+#bootstrap-theme.api4-explorer-page .explorer-params-panel .panel-heading {
   padding-top: 12px;
 }
-#bootstrap-theme.api4-explorer-page form.panel .panel-heading button {
+#bootstrap-theme.api4-explorer-page .explorer-params-panel .panel-heading button {
   position: relative;
   top: -5px;
 }
 #bootstrap-theme.api4-explorer-page .row .panel-body {
   height: 400px;
   overflow: auto;
+}
+#bootstrap-theme.api4-explorer-page .explorer-code-panel table td:first-child {
+  width: 25%;
 }

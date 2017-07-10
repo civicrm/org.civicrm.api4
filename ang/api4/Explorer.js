@@ -12,17 +12,49 @@
     }
   );
 
-  angular.module('api4').controller('Api4Explorer', function($scope, $routeParams, $location, crmStatus, crmUiHelp, crmApi4) {
+  angular.module('api4').controller('Api4Explorer', function($scope, $routeParams, $location, crmUiHelp, crmApi4) {
     var ts = $scope.ts = CRM.ts('api4');
     var hs = $scope.hs = crmUiHelp({file: 'CRM/Api4/Explorer'});
     $scope.entities = CRM.vars.api4.entities;
     $scope.actions = actions;
-
+    $scope.availableParams = [];
+    $scope.params = {};
     $scope.entity = $routeParams.entity;
     $scope.result = [];
+    $scope.code = {
+      php: '',
+      javascript: ''
+    };
+
+    function selectAction() {
+      $scope.action = $routeParams.action;
+      var actionInfo = _.findWhere(actions, {id: $scope.action});
+      _.each(actionInfo.params, function(param, name) {
+        var format;
+        switch (param.type[0]) {
+          case 'int':
+          case 'bool':
+            format = param.type[0];
+            break;
+
+          case 'array':
+          case 'object':
+            format = 'json';
+            break;
+
+          default:
+            format = 'raw';
+        }
+        $scope.$bindToRoute({
+          expr: 'params["' + name + '"]',
+          param: name,
+          format: format
+        });
+      });
+      $scope.availableParams = actionInfo.params;
+    }
 
     function writeCode() {
-
     }
 
     $scope.execute = function() {
@@ -46,11 +78,11 @@
             action.id = action.text = action.name;
             delete(action.name);
             actions.push(action);
-            $scope.action = $routeParams.action;
           });
+          selectAction();
         });
     } else {
-      $scope.action = $routeParams.action;
+      selectAction();
     }
 
     if ($scope.entity) {
