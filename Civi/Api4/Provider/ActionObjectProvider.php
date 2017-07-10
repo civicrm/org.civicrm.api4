@@ -29,7 +29,7 @@ namespace Civi\Api4\Provider;
 
 use Civi\API\Event\ResolveEvent;
 use Civi\API\Provider\ProviderInterface;
-use Civi\Api4\Action\AbstractAction;
+use Civi\Api4\AbstractAction;
 use Civi\API\Events;
 use Civi\Api4\Result;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

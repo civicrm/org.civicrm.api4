@@ -27,6 +27,7 @@
 
 namespace Civi\Api4\Action;
 
+use Civi\Api4\AbstractAction;
 use Civi\Api4\Query\Api4SelectQuery;
 use Civi\Api4\Result;
 

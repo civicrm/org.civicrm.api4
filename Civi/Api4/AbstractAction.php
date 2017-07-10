@@ -24,12 +24,11 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
-namespace Civi\Api4\Action;
+namespace Civi\Api4;
 
 use Civi\API\Exception\UnauthorizedException;
 use Civi\API\Kernel;
 use Civi\Api4\Utils\ReflectionUtils;
-use Civi\Api4\Result;
 
 /**
  * Base class for all api actions.

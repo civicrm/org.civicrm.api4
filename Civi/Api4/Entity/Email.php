@@ -2,6 +2,8 @@
 
 namespace Civi\Api4\Entity;
 
-class Email extends BaseEntity {
+use Civi\Api4\AbstractEntity;
+
+class Email extends AbstractEntity {
 
 }

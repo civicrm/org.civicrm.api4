@@ -27,6 +27,8 @@
 
 namespace Civi\Api4\Entity;
 
-class Contribution extends BaseEntity {
+use Civi\Api4\AbstractEntity;
+
+class Contribution extends AbstractEntity {
 
 }

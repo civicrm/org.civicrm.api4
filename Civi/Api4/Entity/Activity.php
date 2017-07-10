@@ -24,12 +24,15 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
+
 namespace Civi\Api4\Entity;
+
+use Civi\Api4\AbstractEntity;
 
 /**
  * Activity entity.
  *
  */
-class Activity extends BaseEntity {
+class Activity extends AbstractEntity {
 
 }

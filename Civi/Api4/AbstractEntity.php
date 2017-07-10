@@ -24,10 +24,9 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
-namespace Civi\Api4\Entity;
+namespace Civi\Api4;
 
 use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\Action\AbstractAction;
 use Civi\Api4\Action\Create;
 use Civi\Api4\Action\Delete;
 use Civi\Api4\Action\Get;
@@ -45,7 +44,7 @@ use Civi\Api4\Action\Update;
  * @method static Update update
  * @method static Delete delete
  */
-abstract class BaseEntity {
+abstract class AbstractEntity {
 
   /**
    * Magic method to return the action object for an api.

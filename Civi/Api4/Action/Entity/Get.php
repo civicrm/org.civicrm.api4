@@ -27,7 +27,7 @@
 
 namespace Civi\Api4\Action\Entity;
 
-use Civi\Api4\Action\AbstractAction;
+use Civi\Api4\AbstractAction;
 use Civi\Api4\Result;
 
 /**

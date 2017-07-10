@@ -2,6 +2,8 @@
 
 namespace Civi\Api4\Entity;
 
-class CustomGroup extends BaseEntity {
+use Civi\Api4\AbstractEntity;
+
+class CustomGroup extends AbstractEntity {
 
 }

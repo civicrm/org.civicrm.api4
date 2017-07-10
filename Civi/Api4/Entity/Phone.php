@@ -2,6 +2,8 @@
 
 namespace Civi\Api4\Entity;
 
-class Phone extends BaseEntity {
+use Civi\Api4\AbstractEntity;
+
+class Phone extends AbstractEntity {
 
 }

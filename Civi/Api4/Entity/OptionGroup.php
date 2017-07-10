@@ -2,6 +2,8 @@
 
 namespace Civi\Api4\Entity;
 
-class OptionGroup extends BaseEntity {
+use Civi\Api4\AbstractEntity;
+
+class OptionGroup extends AbstractEntity {
 
 }

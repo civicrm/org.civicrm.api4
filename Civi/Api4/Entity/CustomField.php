@@ -2,6 +2,8 @@
 
 namespace Civi\Api4\Entity;
 
-class CustomField extends BaseEntity {
+use Civi\Api4\AbstractEntity;
+
+class CustomField extends AbstractEntity {
 
 }
