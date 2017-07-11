@@ -6,9 +6,10 @@ services:
   - docker
 
 env:
-  - CIVICRM_UF=UnitTests
-  - BUILD_ROOT=/opt/buildkit/build/test-build
-  - EXTENSION_DIR=${BUILD_ROOT}/sites/all/modules/civicrm/tools/extensions
+  global:
+    - CIVICRM_UF=UnitTests
+    - BUILD_ROOT=/opt/buildkit/build/test-build
+    - EXTENSION_DIR=${BUILD_ROOT}/sites/all/modules/civicrm/tools/extensions
 
 before_install:
   - docker pull mickadoo/civicrm:master
