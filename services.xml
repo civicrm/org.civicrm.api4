@@ -21,7 +21,7 @@
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="activity_creation.spec_provider" class="Civi\Api4\Service\Spec\Provider\ContactCreationSpecProvider">
+        <service id="contact_creation.spec_provider" class="Civi\Api4\Service\Spec\Provider\ContactCreationSpecProvider">
             <tag name="spec_provider"/>
         </service>
 
