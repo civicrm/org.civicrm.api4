@@ -14,7 +14,7 @@ before_install:
   - docker pull mickadoo/civicrm:master
   - docker run -d --rm -v $PWD:${EXTENSION_DIR}/api4 --name=civicrm mickadoo/civicrm:master
   - docker ps -a
-  - echo "waiting for MySQL" && sleep 5
+  - echo "waiting for MySQL" && sleep 10
   - docker exec civicrm /bin/bash -c "cd ${BUILD_ROOT} && cv ext:enable api4"
   - docker exec civicrm /bin/bash -c "cd ${EXTENSION_DIR}/api4 && phpunit4 tests/phpunit/Utils/ArrayInsertionServiceTest.php"
   - docker exec civicrm /bin/bash -c "cd ${EXTENSION_DIR}/api4 && phpunit4"
