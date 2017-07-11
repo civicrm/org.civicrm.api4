@@ -55,6 +55,10 @@ function api4_civicrm_container($container) {
       array(new Reference($provider))
     );
   }
+
+  if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
+    $loader->load('tests/services.xml');
+  }
 }
 
 /**

@@ -32,9 +32,7 @@ class ConformanceTest extends UnitTestCase {
     $this->dropByPrefix('civicrm_value_myfavorite');
     $this->cleanup(array('tablesToTruncate' => $tablesToTruncate));
     $this->loadDataSet('ConformanceTest');
-    $this->creationParamProvider = new TestCreationParameterProvider(
-      \Civi::container()->get('spec_gatherer')
-    );
+    $this->creationParamProvider = \Civi::container()->get('test.param_provider');
     parent::setUp();
   }
 
