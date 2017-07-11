@@ -25,15 +25,15 @@
             <tag name="spec_provider"/>
         </service>
 
-        <service class="Civi\API\V4\Service\Spec\Provider\ActivityCreationSpecProvider">
+        <service class="Civi\Api4\Service\Spec\Provider\ActivityCreationSpecProvider">
             <tag name="spec_provider"/>
         </service>
 
-        <service class="Civi\API\V4\Service\Spec\Provider\ContributionCreationSpecProvider">
+        <service class="Civi\Api4\Service\Spec\Provider\ContributionCreationSpecProvider">
             <tag name="spec_provider"/>
         </service>
 
-        <service class="Civi\API\V4\Service\Spec\Provider\CustomGroupCreationSpecProvider">
+        <service class="Civi\Api4\Service\Spec\Provider\CustomGroupCreationSpecProvider">
             <tag name="spec_provider"/>
         </service>
 

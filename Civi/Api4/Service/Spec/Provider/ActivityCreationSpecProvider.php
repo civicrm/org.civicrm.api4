@@ -1,10 +1,10 @@
 <?php
 
-namespace Civi\API\V4\Service\Spec\Provider;
+namespace Civi\Api4\Service\Spec\Provider;
 
-use Civi\API\V4\Action\Actions;
-use Civi\API\V4\Service\Spec\FieldSpec;
-use Civi\API\V4\Service\Spec\RequestSpec;
+use Civi\Api4\Action\Actions;
+use Civi\Api4\Service\Spec\FieldSpec;
+use Civi\Api4\Service\Spec\RequestSpec;
 
 class ActivityCreationSpecProvider implements SpecProviderInterface {
   /**

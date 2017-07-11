@@ -1,9 +1,9 @@
 <?php
 
-namespace Civi\Test\API\V4\Service;
+namespace Civi\Test\Api4\Service;
 
-use Civi\API\V4\Service\Spec\FieldSpec;
-use Civi\API\V4\Service\Spec\SpecGatherer;
+use Civi\Api4\Service\Spec\FieldSpec;
+use Civi\Api4\Service\Spec\SpecGatherer;
 use \CRM_Utils_String as StringHelper;
 
 class TestCreationParameterProvider {

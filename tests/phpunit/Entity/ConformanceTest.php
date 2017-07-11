@@ -3,9 +3,9 @@
 namespace Civi\Test\Api4\Entity;
 
 use Civi\Api4\AbstractEntity;
-use Civi\API\V4\Entity\Entity;
-use Civi\Test\API\V4\Service\TestCreationParameterProvider;
-use Civi\Test\API\V4\Traits\TableDropperTrait;
+use Civi\Api4\Entity\Entity;
+use Civi\Test\Api4\Service\TestCreationParameterProvider;
+use Civi\Test\Api4\Traits\TableDropperTrait;
 use Civi\Test\Api4\UnitTestCase;
 
 /**
@@ -25,7 +25,6 @@ class ConformanceTest extends UnitTestCase {
    */
   public function setUp() {
     $tablesToTruncate = array(
-      'civicrm_contact',
       'civicrm_custom_group',
       'civicrm_custom_field',
       'civicrm_option_group',
@@ -46,8 +45,8 @@ class ConformanceTest extends UnitTestCase {
     $this->assertNotEmpty($entities->getArrayCopy());
 
     foreach ($entities as $entity) {
-      /** @var BaseEntity $entityClass */
-      $entityClass = 'Civi\API\V4\Entity\\' . $entity;
+      /** @var AbstractEntity $entityClass */
+      $entityClass = 'Civi\Api4\Entity\\' . $entity;
 
       if ($entity === 'Entity') {
         continue;
@@ -63,7 +62,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param BaseEntity $entityClass
+   * @param AbstractEntity $entityClass
    * @param $entity
    */
   protected function checkFields($entityClass, $entity) {
@@ -79,7 +78,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param BaseEntity $entityClass
+   * @param AbstractEntity $entityClass
    */
   protected function checkActions($entityClass) {
     $actions = $entityClass::getActions()
@@ -92,7 +91,7 @@ class ConformanceTest extends UnitTestCase {
 
   /**
    * @param string $entity
-   * @param BaseEntity $entityClass
+   * @param AbstractEntity $entityClass
    *
    * @return mixed
    */
@@ -112,7 +111,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param BaseEntity $entityClass
+   * @param AbstractEntity $entityClass
    * @param int $id
    * @param string $entity
    */
@@ -127,7 +126,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param BaseEntity $entityClass
+   * @param AbstractEntity $entityClass
    * @param int $id
    */
   protected function checkDeletion($entityClass, $id) {
@@ -141,7 +140,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param BaseEntity $entityClass
+   * @param AbstractEntity $entityClass
    * @param int $id
    * @param string $entity
    */
