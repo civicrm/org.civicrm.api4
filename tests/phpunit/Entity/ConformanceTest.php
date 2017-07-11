@@ -118,7 +118,7 @@ class ConformanceTest extends UnitTestCase {
   protected function checkGet($entityClass, $id, $entity) {
     $getResult = $entityClass::get()
       ->setCheckPermissions(FALSE)
-      ->addClause(array('id', '=', $id))
+      ->addWhere('id', '=', $id)
       ->execute();
 
     $errMsg = sprintf('Failed to fetch a %s after creation', $entity);
@@ -132,7 +132,7 @@ class ConformanceTest extends UnitTestCase {
   protected function checkDeletion($entityClass, $id) {
     $deleteResult = $entityClass::delete()
       ->setCheckPermissions(FALSE)
-      ->addClause(array('id', '=', $id))
+      ->addWhere('id', '=', $id)
       ->execute();
 
     // should get back an array of deleted id
@@ -147,7 +147,7 @@ class ConformanceTest extends UnitTestCase {
   protected function checkPostDelete($entityClass, $id, $entity) {
     $getDeletedResult = $entityClass::get()
       ->setCheckPermissions(FALSE)
-      ->addClause(array('id', '=', $id))
+      ->addWhere('id', '=', $id)
       ->execute();
 
     $errMsg = sprintf('Entity "%s" was not deleted', $entity);
