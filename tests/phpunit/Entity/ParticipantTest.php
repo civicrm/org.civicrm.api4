@@ -10,253 +10,175 @@ use Civi\Test\Api4\UnitTestCase;
  */
 class ParticipantTest extends UnitTestCase  {
 
- /**
-   * Set up baseline for testing
-   */
   public function setUp() {
     parent::setUp();
-    $cleanup_params = array(
-      'tablesToTruncate' => array(
-        'civicrm_participant',
-      ),
+    $truncateTables = array(
+      'civicrm_participant',
+      'civicrm_option_group',
+      'civicrm_option_value'
     );
-    $this->cleanup($cleanup_params);
-  }
-
- /**
-   * Tears down the fixture, for example, closes a network connection.
-   *
-   * This method is called after a test is executed.
-   */
-  public function tearDown() {
-    parent::tearDown();
+    $this->cleanup(array('tablesToTruncate' => $truncateTables));
+    $this->loadDataSet('ParticipantRoleOptionGroup');
   }
 
   public function testGetActions() {
-
-    $this->markTestSkipped('todo: fix me');
-
     $result = Participant::getActions()
       ->setCheckPermissions(FALSE)
       ->execute()
       ->indexBy('name');
 
-    // fixme - this should be FALSE ???
-    $this->assertEquals(TRUE, $result['get']['params']['checkPermissions']['default']);
-    $this->assertEquals('Array of conditions keyed by field.', $result['get']['params']['where']['description']);
+    $getParams = $result['get']['params'];
+    $whereDescription = 'Array of conditions keyed by field.';
+
+    $this->assertEquals(TRUE, $getParams['checkPermissions']['default']);
+    $this->assertEquals($whereDescription, $getParams['where']['description']);
   }
 
   public function testGet() {
 
-    $this->markTestSkipped('todo: fix me');
+    if ($this->getRowCount('civicrm_participant') > 0) {
+      $this->markTestSkipped('Participant table must be empty');
+    }
 
-    $sql_count = $this->countTable('civicrm_participant');
-    $this->assertEquals(0, $sql_count,
-      "baseline count using SQL shows records still in table");
+    // With no records:
+    $result = Participant::get()->setCheckPermissions(FALSE)->execute();
+    $this->assertEquals(0, $result->count(), "count of empty get is not 0");
 
-    /////////////////////////////////////////// empty result
-    // test behaviour with no records:
-    $call = Participant::get()
-      ->setCheckPermissions(FALSE)
-      ->setLimit(5);
-    $empty_result = $call->execute();
-    $this->assertEquals(0, count($empty_result),
-      "count of empty get is not 0");
+    // Check that the $result knows what the inputs were
+    $this->assertEquals('Participant', $result->entity);
+    $this->assertEquals('get', $result->action);
+    $this->assertEquals(4, $result->version);
 
-    // Check that the $empty_result arrayObject knows what the inputs were
-    $this->assertEquals('Participant', $empty_result->entity);
-    $this->assertEquals('get', $empty_result->action);
-
-    // Result object ought to know what version of the api we are using
-    $this->assertEquals(4, $empty_result->version);
-
-    // @todo test these:
-    //$paramInfo = Participant::get()->getParamInfo();
-    //    $paramInfo = Participant::get()->getParams();
-    //    $paramInfo = $call->getParams();
-
-    /////////////////////////////////////////// make dummy data
     // Create some test related records before proceeding
-    $participant_count = 20;
-    $contact_count = 7;
-    $event_count = 5;
-    // How many events in first event?
+    $participantCount = 20;
+    $contactCount = 7;
+    $eventCount = 5;
+
     // All events will either have this number or one less because of the
     // rotating participation creation method.
-    $expected_first_event_count = ceil($participant_count / $event_count);
+    $expectedFirstEventCount = ceil($participantCount / $eventCount);
 
     $dummy = array(
       'contacts' => $this->createEntity(array(
         'type' => 'Individual',
-        'count' => $contact_count,
+        'count' => $contactCount,
         'seq' => 1)),
       'events' => $this->createEntity(array(
         'type' => 'Event',
-        'count' => $event_count,
+        'count' => $eventCount,
         'seq' => 1)),
       'sources' => array('Paddington', 'Springfield', 'Central'),
     );
+
     // - create dummy participants record
-    for ($i = 0; $i < $participant_count; $i++) {
+    for ($i = 0; $i < $participantCount; $i++) {
       $dummy['participants'][$i] = $this->sample(array(
         'type' => 'Participant',
         'overrides' => array(
-          'event_id' => $dummy['events'][$i % $event_count]['id'],
-          'contact_id' => $dummy['contacts'][$i % $contact_count]['id'],
+          'event_id' => $dummy['events'][$i % $eventCount]['id'],
+          'contact_id' => $dummy['contacts'][$i % $contactCount]['id'],
           'source' => $dummy['sources'][$i % 3], // 3 = number of sources
       )))['sample_params'];
-      Participant::create()
+
+       Participant::create()
         ->setValues($dummy['participants'][$i])
         ->setCheckPermissions(FALSE)
         ->execute();
     }
-    $sql_count = $this->countTable('civicrm_participant');
-    $this->assertEquals($participant_count, $sql_count,
-      "count using SQL shows records not created");
+    $sqlCount = $this->getRowCount('civicrm_participant');
+    $this->assertEquals($participantCount, $sqlCount, "Unexpected count");
 
-    /////////////////////////////////////////// simple get
-    $call = Participant::get()
+    $firstEventId = $dummy['events'][0]['id'];
+    $secondEventId = $dummy['events'][1]['id'];
+    $firstContactId = $dummy['contacts'][0]['id'];
+
+    $firstOnlyResult = Participant::get()
       ->setCheckPermissions(FALSE)
-      ->setLimit(2);
-    $result = $call->execute();
-    $this->assertEquals(2, count($result),
-      "did not get back two records as expected");
-
-    // fixme - this is a bit brittle?
-    $firstResult = $result->first();
-    $this->assertEquals(1, $firstResult['id']);
-
-    // By default the $result arrayObject should be non-associative
-    $this->assertEquals([1, 2], array_keys((array)$result));
-
-    // test indexBy():
-    $result->indexBy('id');
-    // Array should still contain 2 items after re-index
-    $this->assertEquals(2, count($result));
-
-    // All values should now be keyed by id
-    foreach ($result as $key => $values) {
-      $this->assertEquals($values['id'], $key);
-    }
-
-    $first_event_id = $dummy['events'][0]['id'];
-    $second_event_id = $dummy['events'][1]['id'];
-    $first_contact_id = $dummy['contacts'][0]['id'];
-    $first_source = $dummy['sources'][0];
-
-    $first_only_result = Participant::get()
-      ->setCheckPermissions(FALSE)
-      ->addClause(array('event_id', '=', $first_event_id))
+      ->addClause(array('event_id', '=', $firstEventId))
       ->execute();
 
-    $this->assertEquals($expected_first_event_count, count($first_only_result),
-      "count of first event is not $expected_first_event_count");
+    $this->assertEquals($expectedFirstEventCount, count($firstOnlyResult),
+      "count of first event is not $expectedFirstEventCount");
 
-    /////////////////////////////////////////// simple Boolean
     // get first two events using different methods
-    $first_two_with_addWhere = Participant::get()
+    $firstTwo = Participant::get()
       ->setCheckPermissions(FALSE)
-      ->addWhere('event_id', 'IN', array($first_event_id, $second_event_id))
+      ->addWhere('event_id', 'IN', array($firstEventId, $secondEventId))
       ->execute();
-    $first_two_with_addClause = Participant::get()
-      ->setCheckPermissions(FALSE)
-      ->addClause(array('event_id', 'IN', array($first_event_id, $second_event_id)))
-      ->execute();
-    $first_two_with_or = Participant::get()
-      ->setCheckPermissions(FALSE)
-      ->addClause(array('OR', array(
-        array('event_id', '=', $first_event_id),
-        array('event_id', '=', $second_event_id))
-      ))
-      ->execute();
-    // verify counts ///
+
+    $firstResult = $result->first();
+
+    // verify counts
     // count should either twice the first event count or one less
     $this->assertLessThanOrEqual(
-      $expected_first_event_count * 2,
-      count($first_two_with_addWhere),
-      "first_two_with_addWhere is too high");
-    $this->assertGreaterThanOrEqual(
-      $expected_first_event_count * 2 -1,
-      count($first_two_with_addWhere),
-      "first_two_with_addWhere is too low");
-    // todo should probably get the id list and check they match
-    $this->assertEquals(
-      count($first_two_with_addClause),
-      count($first_two_with_addWhere),
-      "addWhere and addClause produce different counts");
-    $this->assertEquals(
-      count($first_two_with_addClause),
-      count($first_two_with_or),
-      "addWhere and addClause produce different counts");
+      $expectedFirstEventCount * 2,
+      count($firstTwo),
+      "count is too high"
+    );
 
-    $first_participant_result = Participant::get()
+    $this->assertGreaterThanOrEqual(
+      $expectedFirstEventCount * 2 - 1,
+      count($firstTwo),
+      "count is too low"
+    );
+
+    $firstParticipantResult = Participant::get()
       ->setCheckPermissions(FALSE)
-      ->addWhere('event_id', '=', $first_event_id)
-      ->addWhere('contact_id', '=', $first_contact_id)
+      ->addWhere('event_id', '=', $firstEventId)
+      ->addWhere('contact_id', '=', $firstContactId)
       ->execute();
-    $this->assertEquals(1, count($first_participant_result),
-      "more than one registration");
-    $first_participant = $first_participant_result->first()['id'];
+
+    $this->assertEquals(1, count($firstParticipantResult), "more than one registration");
+
+    $firstParticipantId = $firstParticipantResult->first()['id'];
+
     // get a result which excludes $first_participant
-    // using 2 different approaches
-    $not_first_participant_result = Participant::get()
+    $otherParticipantResult = Participant::get()
       ->setCheckPermissions(FALSE)
       ->setSelect(['id'])
       ->addClause(array('NOT',
         array('AND', array(
-          array('event_id', '=', $first_event_id),
-          array('contact_id', '=', $first_contact_id)))))
+          array('event_id', '=', $firstEventId),
+          array('contact_id', '=', $firstContactId)))))
       ->execute()
       ->indexBy('id');
-    $this->assertEquals($participant_count - 1,
-      count($not_first_participant_result),
-      "failed to exclude a single record on complex criteria");
-    // checke the record we have excluded is the right one:
-    $this->assertFalse(
-      $not_first_participant_result->offsetExists($first_participant),
-      'excluded wrong record');
-    $not_first_participant_result_via_or = Participant::get()
-      ->setCheckPermissions(FALSE)
-      ->setSelect(['id'])
-      ->addClause(array('OR', array(
-          array('event_id', '!=', $first_event_id),
-          array('contact_id', '!=', $first_contact_id))))
-      ->execute()
-      ->indexBy('id');
-    $this->assertEquals(
-      $not_first_participant_result,
-      $not_first_participant_result_via_or,
-      "logical mismatch");
 
-    /////////////////////////////////////////// patching
-    // - retrieve a participant record
-    // - update some records
-    $patch_record = array(
+    $this->assertEquals($participantCount - 1,
+      count($otherParticipantResult),
+      "failed to exclude a single record on complex criteria");
+    // check the record we have excluded is the right one:
+
+    $this->assertFalse(
+      $otherParticipantResult->offsetExists($firstParticipantId),
+      'excluded wrong record');
+
+    // retrieve a participant record and update some records
+    $patchRecord = array(
       'source' => "not " . $firstResult['source'],
     );
-    $call = Participant::update()
-      ->addWhere('event_id', '=', $first_event_id)
+
+    Participant::update()
+      ->addWhere('event_id', '=', $firstEventId)
       ->setCheckPermissions(FALSE)
       ->setLimit(20)
-      ->setValues($patch_record)
+      ->setValues($patchRecord)
       ->setCheckPermissions(FALSE)
       ->execute();
 
     // - delete some records
-    $second_event_id = $dummy['events'][1]['id'];
-    $delete_result = Participant::delete()
-      ->addWhere('event_id', '=', $second_event_id)
+    $secondEventId = $dummy['events'][1]['id'];
+    $deleteResult = Participant::delete()
+      ->addWhere('event_id', '=', $secondEventId)
       ->setCheckPermissions(FALSE)
       ->execute();
-    $expected_deletes = array(2,7,12,17);
-    $this->assertEquals($expected_deletes, (array)$delete_result,
+    $expectedDeletes = array(2,7,12,17);
+    $this->assertEquals($expectedDeletes, (array)$deleteResult,
       "didn't delete every second record as expected");
 
-    $sql_count = $this->countTable('civicrm_participant');
-    $this->assertEquals($participant_count - count($expected_deletes), $sql_count,
+    $sqlCount = $this->getRowCount('civicrm_participant');
+    $this->assertEquals(
+      $participantCount - count($expectedDeletes),
+      $sqlCount,
       "records not gone from database after delete");
-
-    // $this->markTestIncomplete();
   }
-
 }

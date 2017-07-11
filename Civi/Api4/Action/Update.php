@@ -30,8 +30,8 @@ use Civi\Api4\Result;
 /**
  * Here's an idea... if we use one action to extend another, "update" inherits all the abilities of "get"
  *
- * @method $this setValues(array)
- * @method $this addValues(array)
+ * @method $this setValues($values)
+ * @method $this addValues($array)
  */
 class Update extends Get {
 
