@@ -4,7 +4,7 @@
   var actions = [];
 
   angular.module('api4').config(function($routeProvider) {
-      $routeProvider.when('/api4/:entity?/:action?', {
+      $routeProvider.when('/api4/:api4entity?/:api4action?', {
         controller: 'Api4Explorer',
         templateUrl: '~/api4/Explorer.html',
         reloadOnSearch: false
@@ -19,7 +19,7 @@
     $scope.actions = actions;
     $scope.availableParams = [];
     $scope.params = {};
-    $scope.entity = $routeParams.entity;
+    $scope.entity = $routeParams.api4entity;
     $scope.result = [];
     $scope.status = 'default';
     $scope.loading = false;
@@ -29,7 +29,7 @@
     };
 
     function selectAction() {
-      $scope.action = $routeParams.action;
+      $scope.action = $routeParams.api4action;
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
         _.each(actionInfo.params, function (param, name) {
@@ -115,7 +115,7 @@
 
     // Update route when changing actions
     $scope.$watch('action', function(newVal, oldVal) {
-      if ($scope.entity && $routeParams.action !== newVal && !_.isUndefined(newVal)) {
+      if ($scope.entity && $routeParams.api4action !== newVal && !_.isUndefined(newVal)) {
         $location.url('/api4/' + $scope.entity + '/' + newVal);
       } else if (newVal) {
         $scope.helpTitle = $scope.entity + '::' + newVal;
