@@ -24,6 +24,9 @@
     },
     {
       "name": "event_type"
+    },
+    {
+      "name": "activity_type"
     }
   ],
   "OptionValue": [
@@ -43,6 +46,10 @@
     {
       "option_group": "event_type",
       "name": "major_historical_event"
+    },
+    {
+      "option_group": "activity_type",
+      "name": "Contribution"
     }
   ],
   "Event": [
