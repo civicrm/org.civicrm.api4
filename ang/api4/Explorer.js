@@ -21,6 +21,8 @@
     $scope.params = {};
     $scope.entity = $routeParams.entity;
     $scope.result = [];
+    $scope.status = 'default';
+    $scope.loading = false;
     $scope.code = {
       php: '',
       javascript: ''
@@ -62,13 +64,21 @@
     }
 
     $scope.execute = function() {
+      $scope.status = 'warning';
+      $scope.loading = true;
       crmApi4($scope.entity, $scope.action, $scope.params)
         .then(function(data) {
           var meta = {},
             result = JSON.stringify(data, null, 2);
           data.length = 0;
           _.assign(meta, data);
+          $scope.loading = false;
+          $scope.status = 'success';
           $scope.result = [JSON.stringify(meta).replace('{', '').replace(/}$/, ''), result];
+        }, function(data) {
+          $scope.loading = false;
+          $scope.status = 'danger';
+          $scope.result = [JSON.stringify(data, null, 2)];
         });
     };
 

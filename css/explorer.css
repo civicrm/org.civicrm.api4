@@ -14,6 +14,12 @@
   height: 400px;
   overflow: auto;
 }
+/* Fix weird shorditch style */
+#bootstrap-theme.api4-explorer-page .row .panel-heading {
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+  margin-bottom: 0;
+}
 #bootstrap-theme.api4-explorer-page .explorer-code-panel table td:first-child {
   width: 25%;
 }

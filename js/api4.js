@@ -11,6 +11,9 @@
         // Assign all the metadata properties to it, mirroring the results arrayObject in php
         _.assign(result, data);
         deferred.resolve(result);
+      })
+      .fail(function(data) {
+        deferred.reject(data.responseJSON);
       });
 
     return deferred;

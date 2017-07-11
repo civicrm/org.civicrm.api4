@@ -12,7 +12,7 @@
           <div class="form-inline">
             <input class="form-control" ng-model="entity" crm-ui-select="{placeholder: ts('Entity'), data: entities}" />
             <input class="form-control" ng-model="action" ng-disabled="!entity || !actions.length" ng-class="{loading: entity && !actions.length}" crm-ui-select="{placeholder: ts('Action'), data: actions}" />
-            <button class="btn btn-success pull-right" crm-icon="fa-bolt" ng-disabled="!entity || !action" ng-click="execute()">{{ ts('Execute') }}</button>
+            <button class="btn btn-success pull-right" crm-icon="fa-bolt" ng-disabled="!entity || !action || loading" ng-click="execute()">{{ ts('Execute') }}</button>
           </div>
         </div>
         <div class="panel-body">
@@ -21,7 +21,7 @@
       </form>
     </div>
     <div class="col-md-4">
-      <div class="panel panel-default explorer-help-panel">
+      <div class="panel panel-info explorer-help-panel">
         <div class="panel-heading">
           <h3 class="panel-title" crm-icon="fa-info-circle">{{ helpTitle }}</h3>
         </div>
@@ -33,7 +33,7 @@
   </div>
   <div class="row">
     <div class="col-md-6">
-      <div class="panel panel-default explorer-code-panel">
+      <div class="panel panel-primary explorer-code-panel">
         <div class="panel-heading">
           <h3 class="panel-title" crm-icon="fa-code">{{ ts('Code') }}</h3>
         </div>
@@ -48,9 +48,15 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="panel panel-default explorer-result-panel">
+      <div class="panel explorer-result-panel panel-{{ status }}" >
         <div class="panel-heading">
-          <h3 class="panel-title" crm-icon="fa-table">{{ ts('Result') }}</h3>
+          <h3 class="panel-title">
+            <i class="fa fa-circle-o" ng-if="status === 'default'"></i>
+            <i class="fa fa-check-circle" ng-if="status === 'success'"></i>
+            <i class="fa fa-minus-circle" ng-if="status === 'danger'"></i>
+            <i class="fa fa-spinner fa-pulse" ng-if="status === 'warning'"></i>
+            {{ ts('Result') }}
+          </h3>
         </div>
         <div class="panel-body">
           <pre ng-repeat="code in result">{{ code }}</pre>
