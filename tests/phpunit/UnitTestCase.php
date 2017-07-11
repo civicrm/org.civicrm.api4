@@ -63,7 +63,7 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
    * @param string $table_name
    * @returns int record count
    */
-  public function countTable($table_name) {
+  public function getRowCount($table_name) {
     $sql = "SELECT count(*) FROM $table_name";
     return (int) \CRM_Core_DAO::singleValueQuery($sql);
   }
