@@ -17,7 +17,6 @@ before_install:
   - echo "waiting for MySQL" && sleep 10
   - docker exec civicrm /bin/bash -c "cd ${BUILD_ROOT} && cv ext:enable api4"
   - docker exec civicrm /bin/bash -c "cd ${EXTENSION_DIR}/api4 && phpunit4 tests/phpunit/Utils/ArrayInsertionServiceTest.php"
-  - docker exec civicrm /bin/bash -c "cd ${EXTENSION_DIR}/api4 && phpunit4"
 
 script:
-  - phpunit4
+  - docker exec civicrm /bin/bash -c "cd ${EXTENSION_DIR}/api4 && phpunit4"
