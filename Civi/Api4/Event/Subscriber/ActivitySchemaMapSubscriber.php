@@ -34,6 +34,12 @@ class ActivitySchemaMapSubscriber implements EventSubscriberInterface {
     $bridge->setBaseTable('civicrm_activity_contact');
     $bridge->setJoinType(Joinable::JOIN_TYPE_ONE_TO_MANY);
 
+    // activity_type_id is a FK to option_value 'ID', not to 'value'
+    $activityTypeLink = $table->getLinkToAlias('activity_type');
+    if ($activityTypeLink) {
+      $activityTypeLink->setTargetColumn('id');
+    }
+
     $table->addTableLink('contact_id', $bridge);
   }
 }
