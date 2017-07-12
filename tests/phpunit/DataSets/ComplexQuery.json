@@ -1,0 +1,31 @@
+{
+  "OptionValue": [
+    {
+      "label": "Housing Support",
+      "name": "housing_support",
+      "option_group": "activity_type"
+    },
+    {
+      "label": "Another Activity Type",
+      "name": "another_activity_type",
+      "option_group": "activity_type"
+    }
+  ],
+  "Activity": [
+    {
+      "name": "Test Housing Support Activity",
+      "activity_type": "housing_support",
+      "source_contact_id": "@ref contact_1.id",
+      "@ref": "housing_support_activity_1"
+    },
+    {
+      "name": "Another Activity",
+      "activity_type": "another_activity_type",
+      "source_contact_id": "@ref contact_1.id",
+      "assignee_contact_id": [
+        "@ref contact_1.id",
+        "@ref contact_2.id"
+      ]
+    }
+  ]
+}

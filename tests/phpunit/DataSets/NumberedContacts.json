@@ -1,0 +1,16 @@
+{
+  "Contact": [
+    {
+      "first_name": "First",
+      "last_name": "Contact",
+      "contact_type": "Individual",
+      "@ref": "contact_1"
+    },
+    {
+      "first_name": "Second",
+      "last_name": "Contact",
+      "contact_type": "Individual",
+      "@ref": "contact_2"
+    }
+  ]
+}

@@ -20,9 +20,15 @@ class ComplexQueryTest extends UnitTestCase {
       'civicrm_option_value',
       'civicrm_activity',
       'civicrm_activity_contact',
+      'civicrm_tag'
     );
     $this->cleanup(array('tablesToTruncate' => $relatedTables));
-    $this->loadDataSet('DefaultDataSet');
+
+    $this->loadDataSet('NumberedContacts');
+    $this->loadDataSet('OptionGroups');
+    $this->loadDataSet('ActivityContactTypes');
+    $this->loadDataSet('ComplexQuery');
+    $this->loadDataSet('NumberedContactPhones');
 
     return parent::setUpHeadless();
   }
@@ -43,7 +49,7 @@ class ComplexQueryTest extends UnitTestCase {
   /**
    * Fetch all activities with a blue tag; and return all tags on the activities
    */
-  public function testGetAllTagsForBlueTaggedActivities() {
+  public function testGetAllActivitiesWithTagsForBlueTaggedActivities() {
 
   }
 
