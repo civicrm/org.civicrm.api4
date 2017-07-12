@@ -99,10 +99,7 @@ class Create extends AbstractAction {
     $entityId = \CRM_Utils_Array::value('id', $params);
     $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
 
-    $method = 'create';
-    if (!method_exists($this->bao, $method)) {
-      $method = 'add';
-    }
+    $method = $this->getCreationMethodName();
     $createResult = $this->bao->$method($params);
 
     if (!$createResult) {
@@ -177,6 +174,21 @@ class Create extends AbstractAction {
     }
 
     return $params;
+  }
+
+  /**
+   * Return the name of the method to be called for creation. Allows overriding
+   * for BAOs that behave a little odd
+   *
+   * @return string
+   */
+  protected function getCreationMethodName() {
+    $method = 'create';
+    if (!method_exists($this->bao, $method)) {
+      $method = 'add';
+    }
+
+    return $method;
   }
 
 }
