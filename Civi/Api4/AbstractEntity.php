@@ -58,8 +58,9 @@ abstract class AbstractEntity {
     // Get entity name from called class
     $entity = substr(static::class, strrpos(static::class, '\\') + 1);
     // Find class for this action
-    $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
-    $genericAction = '\Civi\Api4\Action\\' . ucfirst($action);
+    $namespace = '\Civi\Api4\Action';
+    $entityAction = sprintf('%s\%s\%s', $namespace, $entity, ucfirst($action));
+    $genericAction = sprintf('%s\%s', $namespace, ucfirst($action));
     if (class_exists($entityAction)) {
       return new $entityAction($entity);
     }
