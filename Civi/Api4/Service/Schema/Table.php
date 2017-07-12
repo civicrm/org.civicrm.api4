@@ -95,6 +95,22 @@ class Table {
   }
 
   /**
+   * @param $alias
+   *   The alias of the target table
+   *
+   * @return Joinable|null
+   */
+  public function getLinkToAlias($alias) {
+    foreach ($this->getExternalLinks() as $link) {
+      if ($link->getAlias() === $alias) {
+        return $link;
+      }
+    }
+
+    return NULL;
+  }
+
+  /**
    * @param $target
    * @param $targetCol
    * @param $alias
