@@ -1,8 +1,10 @@
 <?php
 
-namespace Civi\Api4\Service\Schema\Joinable;
+namespace Civi\Api4\Service\Schema\Joinable\Activity;
 
-class ActivityToActivityContactAssigneesJoinable extends Joinable {
+use Civi\Api4\Service\Schema\Joinable\Joinable;
+
+class ActivityContactAssigneesJoinable extends Joinable {
   /**
    * @var string
    */
