@@ -13,19 +13,42 @@
   ],
   "Activity": [
     {
-      "name": "Test Housing Support Activity",
+      "subject": "Test Housing Support Activity",
       "activity_type": "housing_support",
       "source_contact_id": "@ref contact_1.id",
       "@ref": "housing_support_activity_1"
     },
     {
-      "name": "Another Activity",
+      "subject": "Another Activity",
       "activity_type": "another_activity_type",
       "source_contact_id": "@ref contact_1.id",
       "assignee_contact_id": [
         "@ref contact_1.id",
         "@ref contact_2.id"
-      ]
+      ],
+      "@ref": "housing_support_activity_2"
+    }
+  ],
+  "EntityTag": [
+    {
+      "entity_id": "@ref housing_support_activity_1.id",
+      "entity_table": "civicrm_activity",
+      "tag_id": "@ref blue_tag.id"
+    },
+    {
+      "entity_id": "@ref housing_support_activity_1.id",
+      "entity_table": "civicrm_activity",
+      "tag_id": "@ref red_tag.id"
+    },
+    {
+      "entity_id": "@ref housing_support_activity_2.id",
+      "entity_table": "civicrm_activity",
+      "tag_id": "@ref blue_tag.id"
+    },
+    {
+      "entity_id": "@ref housing_support_activity_2.id",
+      "entity_table": "civicrm_activity",
+      "tag_id": "@ref green_tag.id"
     }
   ]
 }

@@ -71,7 +71,7 @@ class FkJoinTest extends UnitTestCase {
       ->first();
 
     $this->assertArrayHasKey('phones', $results);
-    $this->assertCount(1, $results['phones']);
+    $this->assertCount(2, $results['phones']);
     $firstPhone = array_shift($results['phones']);
     $this->assertEquals($testPhone['phone'], $firstPhone['phone']);
   }

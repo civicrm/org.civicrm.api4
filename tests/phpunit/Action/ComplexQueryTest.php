@@ -27,6 +27,7 @@ class ComplexQueryTest extends UnitTestCase {
     $this->loadDataSet('NumberedContacts');
     $this->loadDataSet('OptionGroups');
     $this->loadDataSet('ActivityContactTypes');
+    $this->loadDataSet('ColoredTags');
     $this->loadDataSet('ComplexQuery');
     $this->loadDataSet('NumberedContactPhones');
 
@@ -50,7 +51,19 @@ class ComplexQueryTest extends UnitTestCase {
    * Fetch all activities with a blue tag; and return all tags on the activities
    */
   public function testGetAllActivitiesWithTagsForBlueTaggedActivities() {
+    $results = Activity::get()
+      ->setCheckPermissions(FALSE)
+      ->addSelect('subject')
+      ->addSelect('activity_type.label')
+      ->addSelect('tags.name')
+      ->addWhere('tags.name', '=', 'blue')
+      ->execute();
 
+    $this->assertCount(1, $results);
+    $first = $results->first();
+    $this->assertCount(2, $first['tags']);
+    $tagNames = array_column($first['tags'], 'name');
+    $this->assertContains('blue', $tagNames);
   }
 
   /**
