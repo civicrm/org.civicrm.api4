@@ -6,6 +6,9 @@ use Civi\Api4\Query\QueryCopier;
 use Civi\Test\Api4\UnitTestCase;
 use \CRM_Utils_SQL_Select as SqlSelect;
 
+/**
+ * @group headless
+ */
 class QueryCopierTest extends UnitTestCase {
   public function testExactCopy() {
     $original = SqlSelect::from('civicrm_contact');
