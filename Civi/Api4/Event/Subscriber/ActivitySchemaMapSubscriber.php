@@ -32,13 +32,7 @@ class ActivitySchemaMapSubscriber implements EventSubscriberInterface {
     $this->addAssigneesBridge($table);
     $this->fixOptionValueJoin($table);
     $this->addEntityTagLink($table);
-
-    $middleAlias = StringHelper::createRandom(10, implode(range('a', 'z')));
-    $middleLink = new EntityTagJoinable($table->getName(), $middleAlias);
-    $bridge = new BridgeJoinable('civicrm_tag', 'id', 'tags', $middleLink);
-    $bridge->setBaseTable('civicrm_entity_tag');
-    $bridge->setJoinType(Joinable::JOIN_TYPE_ONE_TO_MANY);
-    $table->addTableLink('id', $bridge);
+    $this->addTagsBridge($table);
   }
 
   /**
@@ -70,5 +64,20 @@ class ActivitySchemaMapSubscriber implements EventSubscriberInterface {
    */
   private function addEntityTagLink(Table $table) {
     $table->addTableLink('id', new EntityTagJoinable($table->getName(), 'entityTags'));
+  }
+
+  /**
+   * @param $table
+   */
+  protected function addTagsBridge(Table $table) {
+    $middleAlias = StringHelper::createRandom(10, implode(range('a', 'z')));
+    $middleLink = new EntityTagJoinable($table->getName(), $middleAlias);
+
+    $bridge = new BridgeJoinable('civicrm_tag', 'id', 'tags', $middleLink);
+    $bridge->setBaseTable('civicrm_entity_tag');
+    $bridge->setBaseColumn('tag_id');
+    $bridge->setJoinType(Joinable::JOIN_TYPE_ONE_TO_MANY);
+
+    $table->addTableLink('id', $bridge);
   }
 }
