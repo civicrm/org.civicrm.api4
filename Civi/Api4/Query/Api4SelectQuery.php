@@ -70,8 +70,6 @@ class Api4SelectQuery extends SelectQuery {
   protected $joinedTables = array();
 
   /**
-   * Why walk when you can
-   *
    * @return array|int
    */
   public function run() {
@@ -109,7 +107,7 @@ class Api4SelectQuery extends SelectQuery {
     foreach ($groupedSelects as $finalAlias => $selects) {
       $path = $this->buildPath($selects[0]);
       $selects = $this->formatSelects($finalAlias, $selects);
-      $joinResults = $this->runWithNewSelects($selects);
+      $joinResults = $this->getJoinResults($primaryResults, $selects);
 
       foreach ($primaryResults as &$primaryResult) {
         $baseId = $primaryResult['id'];
@@ -277,7 +275,6 @@ class Api4SelectQuery extends SelectQuery {
     return TableHelper::getTableForClass(TableHelper::getFullName($this->entity));
   }
 
-
   /**
    * @param string $pathString
    *   Dot separated path to the field, e.g. emails.location_type.label
@@ -334,37 +331,6 @@ class Api4SelectQuery extends SelectQuery {
   }
 
   /**
-   * @param array $selects
-   *
-   * @return array
-   */
-  private function runWithNewSelects(array $selects) {
-    $aliasedSelects = array_map(function ($field, $alias) {
-      return sprintf('%s as "%s"', $field, $alias);
-    }, $selects, array_keys($selects));
-
-    $newSelect = sprintf('SELECT DISTINCT %s', implode(", ", $aliasedSelects));
-    $sql = str_replace("\n", ' ', $this->query->toSQL());
-    $originalSelect = substr($sql, 0, strpos($sql, ' FROM'));
-    $sql = str_replace($originalSelect, $newSelect, $sql);
-
-    $relatedResults = array();
-    $resultDAO = \CRM_Core_DAO::executeQuery($sql);
-    while ($resultDAO->fetch()) {
-      $relatedResults[$resultDAO->id] = array();
-      foreach ($selects as $alias => $column) {
-        $returnName = $alias;
-        $alias = str_replace('.', '_', $alias);
-        if (property_exists($resultDAO, $alias)) {
-          $relatedResults[$resultDAO->id][$returnName] = $resultDAO->$alias;
-        }
-      };
-    }
-
-    return $relatedResults;
-  }
-
-  /**
    * @return array
    */
   private function getJoinedDotSelects() {
@@ -390,4 +356,66 @@ class Api4SelectQuery extends SelectQuery {
     return $selects;
   }
 
+  /**
+   * @param array $primaryResults
+   *   The results from the original query
+   * @param $selects
+   *   The new values to be selected
+   *
+   * @return array
+   *   The results from the related entity
+   */
+  protected function getJoinResults($primaryResults, $selects) {
+    $baseIds = array_column($primaryResults, 'id');
+    $aliasedSelects = array_map(function ($field, $alias) {
+      return sprintf('%s as "%s"', $field, $alias);
+    }, $selects, array_keys($selects));
+    $subQuery = $this->getSubquery($aliasedSelects, $baseIds);
+
+    return $this->runSubquery($subQuery, $selects);
+  }
+
+  /**
+   * @param \CRM_Utils_SQL_Select $subQuery
+   * @param array $originalSelects
+   *
+   * @return array
+   */
+  protected function runSubquery($subQuery, $originalSelects) {
+    $results = array();
+    $dao = \CRM_Core_DAO::executeQuery($subQuery->toSQL());
+
+    while ($dao->fetch()) {
+      $results[$dao->id] = array();
+      foreach ($originalSelects as $alias => $column) {
+        // fetch() replaces periods in the select aliases so do the same here
+        $convertedName = str_replace('.', '_', $alias);
+        if (property_exists($dao, $convertedName)) {
+          $results[$dao->id][$alias] = $dao->$convertedName;
+        }
+      };
+    }
+
+    return $results;
+  }
+
+  /**
+   * Run a subquery using the original as a base, but replacing the SELECT and
+   * WHERE part of the query
+   *
+   * @param array $replacementSelects
+   * @param $baseIds
+   *
+   * @return \CRM_Utils_SQL_Select
+   */
+  protected function getSubquery($replacementSelects, $baseIds) {
+    $mainAlias = self::MAIN_TABLE_ALIAS;
+    $subQuery = QueryCopier::copy($this->query, array(
+      'selects' => $replacementSelects,
+      'limit' => array(NULL, $this->offset), // there's no limit
+      'wheres' => sprintf('%s.id IN (%s)', $mainAlias, implode(',', $baseIds))
+    ));
+
+    return $subQuery;
+  }
 }
