@@ -383,17 +383,19 @@ class Api4SelectQuery extends SelectQuery {
    */
   protected function runSubquery($subQuery, $originalSelects) {
     $results = array();
-    $dao = \CRM_Core_DAO::executeQuery($subQuery->toSQL());
+    $subQueryString = str_replace('SELECT', 'SELECT DISTINCT', $subQuery->toSQL());
+    $dao = \CRM_Core_DAO::executeQuery($subQueryString);
 
     while ($dao->fetch()) {
-      $results[$dao->id] = array();
+      $current = array();
       foreach ($originalSelects as $alias => $column) {
         // fetch() replaces periods in the select aliases so do the same here
         $convertedName = str_replace('.', '_', $alias);
         if (property_exists($dao, $convertedName)) {
-          $results[$dao->id][$alias] = $dao->$convertedName;
+          $current[$alias] = $dao->$convertedName;
         }
       };
+      $results[] = $current;
     }
 
     return $results;

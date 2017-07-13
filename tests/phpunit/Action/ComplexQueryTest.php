@@ -2,6 +2,7 @@
 
 namespace Civi\Test\Api4\Action;
 
+use Civi\Api4\Entity\Contact;
 use Civi\Test\Api4\UnitTestCase;
 use Civi\Api4\Entity\Activity;
 
@@ -20,6 +21,7 @@ class ComplexQueryTest extends UnitTestCase {
       'civicrm_option_value',
       'civicrm_activity',
       'civicrm_activity_contact',
+      'civicrm_entity_tag',
       'civicrm_tag'
     );
     $this->cleanup(array('tablesToTruncate' => $relatedTables));
@@ -70,7 +72,20 @@ class ComplexQueryTest extends UnitTestCase {
    * Fetch contacts named 'Bob' and all of their blue activities
    */
   public function testGetAllBlueActivitiesForBobs() {
+    $result = Contact::get()
+      ->setCheckPermissions(FALSE)
+      ->addSelect('first_name')
+      ->addSelect('last_name')
+      ->addSelect('source_activities.subject')
+      ->addSelect('source_activities.tags.name')
+      ->addWhere('first_name', '=', 'Bob')
+      ->addWhere('source_activities.tags.name', '=', 'blue')
+      ->execute();
 
+    $this->assertCount(1, $result);
+    $first = $result->first();
+    $this->assertEquals('Bob', $first['first_name']);
+    $this->assertCount(2, $first['source_activities']);
   }
 
   /**
