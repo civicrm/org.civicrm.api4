@@ -4,7 +4,7 @@ namespace Civi\Api4\Service\Schema\Joinable\Activity;
 
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 
-class ActivityContactAssigneesJoinable extends Joinable {
+class ActivityContactJoinable extends Joinable {
   /**
    * @var string
    */
@@ -16,9 +16,12 @@ class ActivityContactAssigneesJoinable extends Joinable {
   protected $baseColumn = 'id';
 
   /**
+   * @param $recordType
+   *   The type of the contact, e.g. 'Activity Assignees'
    * @param $alias
+   *   The join alias to be used
    */
-  public function __construct($alias) {
+  public function __construct($recordType, $alias) {
     $optionValueTable = 'civicrm_option_value';
     $optionGroupTable = 'civicrm_option_group';
 
@@ -31,7 +34,7 @@ class ActivityContactAssigneesJoinable extends Joinable {
     $subSelect = sprintf(
       'SELECT value FROM %s WHERE name = "%s" AND option_group_id = (%s)',
       $optionValueTable,
-      'Activity Assignees',
+      $recordType,
       $subSubSelect
     );
 

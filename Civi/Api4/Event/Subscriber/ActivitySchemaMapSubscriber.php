@@ -5,7 +5,7 @@ namespace Civi\Api4\Event\Subscriber;
 use Civi\Api4\Service\Schema\Joinable\EntityTagJoinable;
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\SchemaMapBuildEvent;
-use Civi\Api4\Service\Schema\Joinable\Activity\ActivityContactAssigneesJoinable;
+use Civi\Api4\Service\Schema\Joinable\Activity\ActivityContactJoinable;
 use Civi\Api4\Service\Schema\Joinable\BridgeJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Civi\Api4\Service\Schema\Table;
@@ -30,6 +30,7 @@ class ActivitySchemaMapSubscriber implements EventSubscriberInterface {
     $table = $schema->getTableByName('civicrm_activity');
 
     $this->addAssigneesBridge($table);
+    $this->addSourceBridge($table);
     $this->fixOptionValueJoin($table);
     $this->addEntityTagLink($table);
     $this->addTagsBridge($table);
@@ -40,11 +41,24 @@ class ActivitySchemaMapSubscriber implements EventSubscriberInterface {
    */
   private function addAssigneesBridge(Table $table) {
     $middleAlias = StringHelper::createRandom(10, implode(range('a', 'z')));
-    $middleLink = new ActivityContactAssigneesJoinable($middleAlias);
+    $middleLink = new ActivityContactJoinable('Activity Assignees', $middleAlias);
 
     $bridge = new BridgeJoinable('civicrm_contact', 'id', 'assignees', $middleLink);
     $bridge->setBaseTable('civicrm_activity_contact');
     $bridge->setJoinType(Joinable::JOIN_TYPE_ONE_TO_MANY);
+    $table->addTableLink('contact_id', $bridge);
+  }
+
+  /**
+   * @param $table
+   */
+  private function addSourceBridge(Table $table) {
+    $middleAlias = StringHelper::createRandom(10, implode(range('a', 'z')));
+    $middleLink = new ActivityContactJoinable('Activity Source', $middleAlias);
+
+    $bridge = new BridgeJoinable('civicrm_contact', 'id', 'source', $middleLink);
+    $bridge->setBaseTable('civicrm_activity_contact');
+    $bridge->setJoinType(Joinable::JOIN_TYPE_ONE_TO_ONE);
     $table->addTableLink('contact_id', $bridge);
   }
 
