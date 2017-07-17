@@ -3,6 +3,7 @@
     {
       "name": "home",
       "display_name": "Home",
+      "is_default": 1,
       "@ref": "location_type_home"
     },
     {
