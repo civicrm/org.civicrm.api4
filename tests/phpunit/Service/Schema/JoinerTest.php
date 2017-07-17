@@ -11,7 +11,7 @@ class JoinerTest extends UnitTestCase {
   public function testMaxJoinLimit() {
     $this->setExpectedException(
       \API_Exception::class,
-      'Cannot join more than 4 levels'
+      'Cannot join more than 5 levels'
     );
 
     $joiner = new Joiner(\Civi::service('schema_map'));
