@@ -4,7 +4,7 @@
       "first_name": "Bob",
       "last_name": "Bobberson",
       "contact_type": "Individual",
-      "@ref": "contact_bob"
+      "@ref": "bob"
     }
   ],
   "OptionValue": [
@@ -23,15 +23,15 @@
     {
       "subject": "Test Housing Support Activity (by Bob)",
       "activity_type": "housing_support",
-      "source_contact_id": "@ref contact_bob.id",
+      "source_contact_id": "@ref bob.id",
       "@ref": "housing_support_activity_1"
     },
     {
       "subject": "Another Bob's Activity",
       "activity_type": "another_activity_type",
-      "source_contact_id": "@ref contact_bob.id",
+      "source_contact_id": "@ref bob.id",
       "assignee_contact_id": [
-        "@ref contact_bob.id",
+        "@ref bob.id",
         "@ref contact_2.id"
       ],
       "@ref": "another_activity_1"
@@ -43,6 +43,14 @@
       "assignee_contact_id": [
         "@ref contact_1.id",
         "@ref contact_2.id"
+      ]
+    },
+    {
+      "subject": "Not Bob's Activity But He Is Assigned",
+      "activity_type": "another_activity_type",
+      "source_contact_id": "@ref contact_1.id",
+      "assignee_contact_id": [
+        "@ref bob.id"
       ]
     }
   ],

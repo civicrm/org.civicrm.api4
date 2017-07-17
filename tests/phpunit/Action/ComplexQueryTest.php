@@ -117,9 +117,31 @@ class ComplexQueryTest extends UnitTestCase {
 
   /**
    * Fetch all activities where Bob is the assignee or source
+   *
+   * ComplexQuery.json has 4 activities, bob is source for 2, assignee for 2,
+   * 1 of which he is also source for. So there is only 1 where he is neither
+   * source or assignee.
+   *
+   * For now this test is to show what is possible without using the OR operator
    */
   public function testGetActivitiesWithBobAsAssigneeOrSource() {
+    $asAssignee = Activity::get()
+      ->setCheckPermissions(FALSE)
+      ->addSelect('subject')
+      ->addWhere('assignees.first_name', '=', 'Bob')
+      ->execute()
+      ->indexBy('id');
 
+    $asSource = Activity::get()
+      ->setCheckPermissions(FALSE)
+      ->addSelect('subject')
+      ->addWhere('source.first_name', '=', 'Bob')
+      ->execute()
+      ->indexBy('id');
+
+    $this->assertEquals(4, $asAssignee->count() + $asSource->count());
+    $all = $asAssignee->getArrayCopy() + $asSource->getArrayCopy();
+    $this->assertCount(3, $all);
   }
 
   /**
