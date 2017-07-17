@@ -11,6 +11,12 @@
       "last_name": "Contact",
       "contact_type": "Individual",
       "@ref": "contact_2"
+    },
+    {
+      "first_name": "Third",
+      "last_name": "Contact",
+      "contact_type": "Individual",
+      "@ref": "contact_3"
     }
   ]
 }

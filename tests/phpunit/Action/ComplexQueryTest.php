@@ -22,16 +22,23 @@ class ComplexQueryTest extends UnitTestCase {
       'civicrm_activity',
       'civicrm_activity_contact',
       'civicrm_entity_tag',
-      'civicrm_tag'
+      'civicrm_email',
+      'civicrm_phone',
+      'civicrm_address',
+      'civicrm_tag',
+      'civicrm_location_type'
     );
     $this->cleanup(array('tablesToTruncate' => $relatedTables));
 
-    $this->loadDataSet('NumberedContacts');
+    $this->loadDataSet('LocationTypes');
     $this->loadDataSet('OptionGroups');
     $this->loadDataSet('ActivityContactTypes');
     $this->loadDataSet('ColoredTags');
-    $this->loadDataSet('ComplexQuery');
+    $this->loadDataSet('NumberedContacts');
     $this->loadDataSet('NumberedContactPhones');
+    $this->loadDataSet('NumberedContactAddresses');
+    $this->loadDataSet('NumberedContactsEmails');
+    $this->loadDataSet('ComplexQuery');
 
     return parent::setUpHeadless();
   }
@@ -71,7 +78,7 @@ class ComplexQueryTest extends UnitTestCase {
   /**
    * Fetch contacts named 'Bob' and all of their blue activities
    */
-  public function testGetAllBlueActivitiesForBobs() {
+  public function testGetActivitiesForBobsWithBlueActivities() {
     $result = Contact::get()
       ->setCheckPermissions(FALSE)
       ->addSelect('first_name')
@@ -91,8 +98,21 @@ class ComplexQueryTest extends UnitTestCase {
   /**
    * Get all contacts in a zipcode and return their Home or Work email addresses
    */
-  public function testGetHomeOrWorkEmailsForContactsWithZipcode() {
+  public function testEmailsForContactsWithZipcode() {
+    $contacts = Contact::get()
+      ->setCheckPermissions(FALSE)
+      ->addSelect('emails.email')
+      ->addSelect('addresses.postal_code')
+      ->addWhere('addresses.postal_code', '=', '11201')
+      ->execute();
 
+    $this->assertCount(1, $contacts);
+    $firstContact = $contacts->first();
+    $firstAddress = array_shift($firstContact['addresses']);
+    $this->assertEquals('11201', $firstAddress['postal_code']);
+    $this->assertCount(1, $firstContact['emails']);
+    $firstEmail = array_shift($firstContact['emails']);
+    $this->assertEquals('contact2_home@fakedomain.com', $firstEmail['email']);
   }
 
   /**
