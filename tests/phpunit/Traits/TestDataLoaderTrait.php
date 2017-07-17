@@ -66,6 +66,11 @@ trait TestDataLoaderTrait {
       } else if (substr($value, 0, 4) === '@ref') {
         $referenceName = substr($value, 5);
         list ($reference, $property) = explode('.', $referenceName);
+
+        if (!isset($this->references[$reference])) {
+          throw new \Exception(sprintf('Undefined reference "%s"', $reference));
+        }
+
         $entityValues[$name] =  $this->references[$reference][$property];
       }
     }
