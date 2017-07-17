@@ -3,6 +3,7 @@
 namespace Civi\Test\Api4\Action;
 
 use Civi\Api4\Entity\Contact;
+use Civi\Test\Api4\Traits\TableDropperTrait;
 use Civi\Test\Api4\UnitTestCase;
 use Civi\Api4\Entity\Activity;
 
@@ -13,6 +14,8 @@ use Civi\Api4\Entity\Activity;
  * initial APIv4 specification
  */
 class ComplexQueryTest extends UnitTestCase {
+
+  use TableDropperTrait;
 
   public function setUpHeadless() {
     $relatedTables = array(
@@ -26,10 +29,15 @@ class ComplexQueryTest extends UnitTestCase {
       'civicrm_phone',
       'civicrm_address',
       'civicrm_tag',
-      'civicrm_location_type'
+      'civicrm_location_type',
+      'civicrm_custom_group',
+      'civicrm_custom_field',
     );
     $this->cleanup(array('tablesToTruncate' => $relatedTables));
 
+    $this->dropByPrefix('civicrm_value_mycontactfields');
+
+    $this->loadDataSet('ContactCustomFields');
     $this->loadDataSet('LocationTypes');
     $this->loadDataSet('OptionGroups');
     $this->loadDataSet('ActivityContactTypes');
@@ -41,6 +49,10 @@ class ComplexQueryTest extends UnitTestCase {
     $this->loadDataSet('ComplexQuery');
 
     return parent::setUpHeadless();
+  }
+
+  public function tearDown() {
+    $this->dropByPrefix('civicrm_value_mycontactfields');
   }
 
   /**
@@ -152,7 +164,29 @@ class ComplexQueryTest extends UnitTestCase {
    * (c) have a custom-field "most_important_issue=Environment".
    */
   public function testAWholeLotOfConditions() {
+    $byZipcode = Contact::get()
+      ->setCheckPermissions(FALSE)
+      ->addSelect('MyContactFields.MostImportantIssue')
+      ->addWhere('is_deceased', '=', FALSE)
+      ->addWhere('MyContactFields.MostImportantIssue', '=', 'Environment')
+      ->addWhere('addresses.postal_code', 'IN', array('94117', '94118'))
+      ->execute()
+      ->indexBy('id');
 
+    $byCity = Contact::get()
+      ->setCheckPermissions(FALSE)
+      ->addSelect('MyContactFields.MostImportantIssue')
+      ->addWhere('is_deceased', '=', FALSE)
+      ->addWhere('MyContactFields.MostImportantIssue', '=', 'Environment')
+      ->addWhere('addresses.city', '=', 'San Francisco')
+      ->execute()
+      ->indexBy('id');
+
+    $this->assertEquals(2, $byCity->count() + $byZipcode->count());
+    $all = $byZipcode->getArrayCopy() + $byCity->getArrayCopy();
+    foreach ($all as $contact) {
+      $this->assertEquals('Environment', $contact['MyContactFields']['MostImportantIssue']);
+    }
   }
 
   /**

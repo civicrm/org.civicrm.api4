@@ -1,0 +1,17 @@
+{
+  "CustomGroup": [
+    {
+      "name": "MyContactFields",
+      "extends": "Contact",
+      "@ref": "custom_group_contact_fields"
+    }
+  ],
+  "CustomField": [
+    {
+      "label": "MostImportantIssue",
+      "custom_group_id": "@ref custom_group_contact_fields.id",
+      "html_type": "Text",
+      "data_type": "String"
+    }
+  ]
+}

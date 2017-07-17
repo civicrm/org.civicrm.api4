@@ -4,7 +4,62 @@
       "first_name": "Bob",
       "last_name": "Bobberson",
       "contact_type": "Individual",
-      "@ref": "bob"
+      "@ref": "contact_bob"
+    },
+    {
+      "first_name": "Captain",
+      "last_name": "Planet",
+      "contact_type": "Individual",
+      "MyContactFields.MostImportantIssue": "Environment",
+      "@ref": "contact_captain_planet"
+    },
+    {
+      "first_name": "Deceased",
+      "last_name": "Person",
+      "MyContactFields.MostImportantIssue": "Environment",
+      "is_deceased": "1",
+      "contact_type": "Individual",
+      "@ref": "contact_dead"
+    },
+    {
+      "first_name": "Looten",
+      "last_name": "Plunder",
+      "contact_type": "Individual",
+      "MyContactFields.MostImportantIssue": "Money",
+      "@ref": "contact_looten_plunder"
+    },
+    {
+      "first_name": "Ma",
+      "last_name": "Ti",
+      "contact_type": "Individual",
+      "MyContactFields.MostImportantIssue": "Environment",
+      "@ref": "contact_ma_ti"
+    }
+  ],
+  "Address": [
+    {
+      "contact_id": "@ref contact_captain_planet.id",
+      "location_type_id": "@ref location_type_home.id",
+      "city": "San Francisco",
+      "postal_code": "88888"
+    },
+    {
+      "contact_id": "@ref contact_dead.id",
+      "location_type_id": "@ref location_type_home.id",
+      "city": "Some City",
+      "postal_code": "94117"
+    },
+    {
+      "contact_id": "@ref contact_looten_plunder.id",
+      "location_type_id": "@ref location_type_home.id",
+      "city": "Some City",
+      "postal_code": "94118"
+    },
+    {
+      "contact_id": "@ref contact_ma_ti.id",
+      "location_type_id": "@ref location_type_home.id",
+      "city": "Some City",
+      "postal_code": "94118"
     }
   ],
   "OptionValue": [
@@ -23,15 +78,15 @@
     {
       "subject": "Test Housing Support Activity (by Bob)",
       "activity_type": "housing_support",
-      "source_contact_id": "@ref bob.id",
+      "source_contact_id": "@ref contact_bob.id",
       "@ref": "housing_support_activity_1"
     },
     {
       "subject": "Another Bob's Activity",
       "activity_type": "another_activity_type",
-      "source_contact_id": "@ref bob.id",
+      "source_contact_id": "@ref contact_bob.id",
       "assignee_contact_id": [
-        "@ref bob.id",
+        "@ref contact_bob.id",
         "@ref contact_2.id"
       ],
       "@ref": "another_activity_1"
@@ -50,7 +105,7 @@
       "activity_type": "another_activity_type",
       "source_contact_id": "@ref contact_1.id",
       "assignee_contact_id": [
-        "@ref bob.id"
+        "@ref contact_bob.id"
       ]
     }
   ],
