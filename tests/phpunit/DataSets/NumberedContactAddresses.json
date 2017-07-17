@@ -1,0 +1,10 @@
+{
+  "Address": [
+    {
+      "contact_id": "@ref contact_1.id",
+      "location_type_id": "@ref location_type_home.id",
+      "street_address": "Across 110th Street",
+      "postal_code": "10075"
+    }
+  ]
+}

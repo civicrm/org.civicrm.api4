@@ -1,0 +1,14 @@
+{
+  "LocationType": [
+    {
+      "name": "home",
+      "display_name": "Home",
+      "@ref": "location_type_home"
+    },
+    {
+      "name": "work",
+      "display_name": "Work",
+      "@ref": "location_type_work"
+    }
+  ]
+}
