@@ -7,7 +7,11 @@ use Civi\Api4\Service\Schema\Joinable\Joinable;
 
 class SchemaMap {
 
-  const MAX_JOIN_DEPTH = 3;
+  /**
+   * Determines how many jumps are allowed before finding the target alias.
+   * If 0 then only allow direct table links.
+   */
+  const MAX_JOIN_DEPTH = 0;
 
   /**
    * @var Table[]
@@ -29,7 +33,7 @@ class SchemaMap {
       return $path;
     }
 
-    $this->findPaths($table, $targetTableAlias, 1, $path);
+    $this->findPaths($table, $targetTableAlias, 0, $path);
 
     foreach ($path as $index => $pathLink) {
       if ($pathLink instanceof BridgeJoinable) {
@@ -108,7 +112,7 @@ class SchemaMap {
     static $visited = array();
 
     // reset if new call
-    if ($depth === 1) {
+    if ($depth === 0) {
       $visited = array();
     }
 

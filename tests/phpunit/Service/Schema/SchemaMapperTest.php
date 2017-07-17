@@ -29,7 +29,7 @@ class SchemaMapperTest extends UnitTestCase {
     $this->assertNotEmpty($map->getPath('civicrm_phone', 'location'));
   }
 
-  public function testWillHavePathWithDoubleJump() {
+  public function testCannotGoOverJoinLimit() {
     $activity = new Table('activity');
     $activityContact = new Table('activity_contact');
     $middleLink = new Joinable('activity_contact', 'activity_id');
@@ -40,21 +40,7 @@ class SchemaMapperTest extends UnitTestCase {
     $map = new SchemaMap();
     $map->addTables(array($activity, $activityContact));
 
-    $this->assertNotEmpty($map->getPath('activity', 'contact'));
-  }
-
-  public function testPathWithTripleJoin() {
-    $first = new Table('first');
-    $second = new Table('second');
-    $third = new Table('third');
-    $first->addTableLink('id', new Joinable('second', 'id'));
-    $second->addTableLink('id', new Joinable('third', 'id'));
-    $third->addTableLink('id', new Joinable('fourth', 'id'));
-
-    $map = new SchemaMap();
-    $map->addTables(array($first, $second, $third));
-
-    $this->assertNotEmpty($map->getPath('first', 'fourth'));
+    $this->assertEmpty($map->getPath('activity', 'contact'));
   }
 
   public function testCircularReferenceWillNotBreakIt() {
@@ -69,21 +55,5 @@ class SchemaMapperTest extends UnitTestCase {
     $map->addTables(array($contactTable, $carTable));
 
     $this->assertEmpty($map->getPath('contact', 'foo'));
-  }
-
-  public function testCannotGoOverJoinLimit() {
-    $first = new Table('first');
-    $second = new Table('second');
-    $third = new Table('third');
-    $fourth = new Table('fourth');
-    $first->addTableLink('id', new Joinable('second', 'id'));
-    $second->addTableLink('id', new Joinable('third', 'id'));
-    $third->addTableLink('id', new Joinable('fourth', 'id'));
-    $fourth->addTableLink('id', new Joinable('fifth', 'id'));
-
-    $map = new SchemaMap();
-    $map->addTables(array($first, $second, $third, $fourth));
-
-    $this->assertEmpty($map->getPath('first', 'fifth'));
   }
 }
