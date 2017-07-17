@@ -8,7 +8,7 @@ class Create extends BaseCreate {
   /**
    * @inheritdoc
    */
-  protected function getCreationMethodName() {
-    return 'add';
+  protected function create($params) {
+    return $this->bao->add($params);
   }
 }

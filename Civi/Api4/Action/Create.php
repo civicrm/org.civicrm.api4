@@ -99,8 +99,7 @@ class Create extends AbstractAction {
     $entityId = \CRM_Utils_Array::value('id', $params);
     $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
 
-    $method = $this->getCreationMethodName();
-    $createResult = $this->bao->$method($params);
+    $createResult = $this->create($params);
 
     if (!$createResult) {
       $errMessage = sprintf('%s creation failed', $this->getEntity());
@@ -177,8 +176,22 @@ class Create extends AbstractAction {
   }
 
   /**
+   * Allow overriding for BAOs that use a different creation signature.
+   *
+   * @param $params
+   *
+   * @return mixed
+   */
+  protected function create($params) {
+    $method = $this->getCreationMethodName();
+    $createResult = $this->bao->$method($params);
+
+    return $createResult;
+  }
+
+  /**
    * Return the name of the method to be called for creation. Allows overriding
-   * for BAOs that behave a little odd
+   * for BAOs that use a different method name
    *
    * @return string
    */
@@ -190,5 +203,4 @@ class Create extends AbstractAction {
 
     return $method;
   }
-
 }
