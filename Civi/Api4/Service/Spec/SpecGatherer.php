@@ -95,9 +95,7 @@ class SpecGatherer {
         continue;
       }
 
-      foreach ($options as $option) {
-        $field->addOption($option);
-      }
+      $field->setOptions($options);
     }
   }
 

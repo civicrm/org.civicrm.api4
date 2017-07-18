@@ -33,7 +33,7 @@ use Civi\Api4\Result;
 /**
  * Base class for all create actions.
  *
- * @method $this setValues(array) Set all field values.
+ * @method $this setValues($values) Set all field values.
  */
 class Create extends AbstractAction {
 

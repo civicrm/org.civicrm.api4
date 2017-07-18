@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Test\Api4\Service;
+namespace Civi\Test\Api4\Utils;
 
 use Civi\Api4\Utils\ArrayInsertionUtil;
 use Civi\Test\Api4\UnitTestCase;

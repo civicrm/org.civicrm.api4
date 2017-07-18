@@ -3,6 +3,7 @@
 namespace Civi\Api4\Service\Spec;
 
 use CRM_Utils_Array as ArrayHelper;
+use CRM_Core_DAO_AllCoreTables as TableHelper;
 
 class SpecFormatter {
   /**
@@ -23,7 +24,8 @@ class SpecFormatter {
         'data_type' => $field->getDataType(),
         'default_value' => $field->getDefaultValue(),
         'description' => $field->getDescription(),
-        'options' => $field->getOptions()
+        'options' => $field->getOptions(),
+        'required' => $field->isRequired(),
       );
     }
 
@@ -47,9 +49,15 @@ class SpecFormatter {
       $field = new FieldSpec($name, $dataTypeName);
     }
 
+    $field->setDefaultValue(ArrayHelper::value('default', $data));
     $field->setDescription(ArrayHelper::value('description', $data));
     $field->setTitle(ArrayHelper::value('title', $data));
     $field->setRequired((bool) ArrayHelper::value('required', $data, FALSE));
+
+    $fkClassName = ArrayHelper::value('FKClassName', $data);
+    $fkAPIName = ArrayHelper::value('FKApiName', $data);
+    $fkEntity = $fkAPIName ?: TableHelper::getBriefName($fkClassName);
+    $field->setFKEntity($fkEntity);
 
     return $field;
   }
