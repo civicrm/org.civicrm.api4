@@ -27,20 +27,21 @@
 
 namespace Civi\Api4\Action\Entity;
 
-use Civi\Api4\AbstractAction;
-use Civi\Api4\Result;
+use Civi\Api4\Request;
+use Civi\Api4\RequestHandler;
+use Civi\Api4\Response;
 
 /**
  * Get entities
  */
-class Get extends AbstractAction {
+class Get extends RequestHandler {
 
   /**
    * Scan all api directories to discover entities
    *
-   * @param Result $result
+   * @param Response $request
    */
-  public function _run(Result $result) {
+  public function handle(Request $request) {
     $entities = array();
     foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
       $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Entity';
@@ -56,7 +57,7 @@ class Get extends AbstractAction {
     if (in_array('BaseEntity', $entities)) {
       unset($entities[array_search('BaseEntity', $entities)]);
     }
-    $result->exchangeArray($entities);
+    $request->exchangeArray($entities);
   }
 
 }

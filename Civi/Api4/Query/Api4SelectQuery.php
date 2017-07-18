@@ -28,6 +28,7 @@
 namespace Civi\Api4\Query;
 
 use Civi\API\SelectQuery;
+use Civi\Api4\Service\Spec\SpecFormatter;
 use Civi\Api4\Utils\ArrayInsertionUtil;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
@@ -204,8 +205,10 @@ class Api4SelectQuery extends SelectQuery {
    * @inheritDoc
    */
   protected function getFields() {
-    $fields = civicrm_api4($this->entity, 'getFields')->indexBy('name');
-    return (array) $fields;
+    $spec = \Civi::container()->get('spec_gatherer')->getSpec($this->entity, 'get');
+    $spec = SpecFormatter::specToArray($spec);
+
+    return $spec['fields'];
   }
 
   /**

@@ -2,10 +2,9 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\Contact;
 use Civi\Test\Api4\Traits\TableDropperTrait;
 use Civi\Test\Api4\UnitTestCase;
-use Civi\Api4\Entity\Activity;
+use Civi\Api4\Api\ActivityApi;
 
 /**
  * @group headless
@@ -60,7 +59,7 @@ class ComplexQueryTest extends UnitTestCase {
    * loaded from the data set.
    */
   public function testGetAllHousingSupportActivities() {
-    $results = Activity::get()
+    $results = ActivityApi::get()
       ->setCheckPermissions(FALSE)
       ->addWhere('activity_type.name', '=', 'housing_support')
       ->execute();
@@ -72,7 +71,7 @@ class ComplexQueryTest extends UnitTestCase {
    * Fetch all activities with a blue tag; and return all tags on the activities
    */
   public function testGetAllActivitiesWithTagsForBlueTaggedActivities() {
-    $results = Activity::get()
+    $results = ActivityApi::get()
       ->setCheckPermissions(FALSE)
       ->addSelect('subject')
       ->addSelect('activity_type.label')
@@ -137,14 +136,14 @@ class ComplexQueryTest extends UnitTestCase {
    * For now this test is to show what is possible without using the OR operator
    */
   public function testGetActivitiesWithBobAsAssigneeOrSource() {
-    $asAssignee = Activity::get()
+    $asAssignee = ActivityApi::get()
       ->setCheckPermissions(FALSE)
       ->addSelect('subject')
       ->addWhere('assignees.first_name', '=', 'Bob')
       ->execute()
       ->indexBy('id');
 
-    $asSource = Activity::get()
+    $asSource = ActivityApi::get()
       ->setCheckPermissions(FALSE)
       ->addSelect('subject')
       ->addWhere('source.first_name', '=', 'Bob')

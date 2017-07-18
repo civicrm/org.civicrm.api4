@@ -2,37 +2,37 @@
 
 namespace Civi\Api4\Event\Subscriber;
 
-use Civi\Api4\Action\Create;
-use Civi\Api4\Entity\OptionGroup;
+use Civi\Api4\Api\OptionGroupApi;
+use Civi\Api4\Request;
 
 class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
 
   /**
-   * @param Create $request
+   * @inheritdoc
    */
-  protected function modify(Create $request) {
+  protected function modify(Request $request) {
     $this->setOptionGroupId($request);
   }
 
   /**
-   * @param Create $request
-   *
-   * @return bool
+   * @inheritdoc
    */
-  protected function applies(Create $request) {
+  protected function applies(Request $request) {
     return $request->getEntity() === 'OptionValue';
   }
 
   /**
-   * @param Create $request
+   * @param Request $request
+   *
+   * @throws \Exception
    */
-  private function setOptionGroupId(Create $request) {
-    $optionGroupName = $request->getValue('option_group');
-    if (!$optionGroupName || $request->getValue('option_group_id')) {
+  private function setOptionGroupId(Request $request) {
+    $optionGroupName = $request->get('option_group');
+    if (!$optionGroupName || $request->get('option_group_id')) {
       return;
     }
 
-    $optionGroup = OptionGroup::get()
+    $optionGroup = OptionGroupApi::get() // todo make dependency
       ->setCheckPermissions(FALSE)
       ->addSelect('id')
       ->addWhere('name', '=', $optionGroupName)
@@ -42,6 +42,6 @@ class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
       throw new \Exception('Option group name must match only a single group');
     }
 
-    $request->setValue('option_group_id', $optionGroup->first()['id']);
+    $request->set('option_group_id', $optionGroup->first()['id']);
   }
 }

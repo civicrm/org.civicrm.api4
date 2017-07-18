@@ -17,10 +17,6 @@
             <argument type="service" id="schema_map"/>
         </service>
 
-        <service id="action_object_provider" class="Civi\Api4\Provider\ActionObjectProvider">
-            <tag name="event_subscriber"/>
-        </service>
-
         <service id="contact_creation.spec_provider" class="Civi\Api4\Service\Spec\Provider\ContactCreationSpecProvider">
             <tag name="spec_provider"/>
         </service>
@@ -73,5 +69,10 @@
             <tag name="event_subscriber"/>
         </service>
 
+        <service id="api4.kernel" class="Civi\Api4\ApiKernel">
+            <argument type="service" id="dispatcher"/>
+        </service>
+
     </services>
+
 </container>

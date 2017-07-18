@@ -2,9 +2,8 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\Contact;
-use Civi\Api4\Entity\CustomField;
-use Civi\Api4\Entity\CustomGroup;
+use Civi\Api4\GetParameterBag;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 /**
  * @group headless
@@ -13,39 +12,39 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
 
   public function testWithSingleField() {
 
-    $customGroup = CustomGroup::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('name', 'MyContactFields')
-      ->setValue('extends', 'Contact')
-      ->execute()
-      ->getArrayCopy();
+    $container = \Civi::container();
+    $customGroupApi = $container->get('custom_group.api');
+    $customFieldApi = $container->get('custom_field.api');
+    $contactApi = $container->get('contact.api');
 
-    CustomField::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('custom_group_id', $customGroup['id'])
-      ->setValue('html_type', 'Text')
-      ->setValue('data_type', 'String')
-      ->execute();
+    $params = new ParameterBag();
+    $params->set('name', 'MyContactFields');
+    $params->set('extends', 'Contact');
+    $customGroup = $customGroupApi->create($params);
 
-    $contactId = Contact::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Johann')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('MyContactFields.FavColor', 'Red')
-      ->execute()
-      ->getArrayCopy()['id'];
+    $params = new ParameterBag();
+    $params->set('label', 'FavColor');
+    $params->set('custom_group_id', $customGroup['id']);
+    $params->set('html_type', 'Text');
+    $params->set('data_type', 'String');
+    $customFieldApi->create($params);
 
-    $contact = Contact::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('first_name')
-      ->addSelect('MyContactFields.FavColor')
-      ->addWhere('id', '=', $contactId)
-      ->addWhere('MyContactFields.FavColor', '=', 'Red')
-      ->execute()
-      ->first();
+    $params = new ParameterBag();
+    $params->set('first_name', 'Johann');
+    $params->set('last_name', 'Tester');
+    $params->set('contact_type', 'Individual');
+    $params->set('MyContactFields.FavColor', 'Red');
+    $contactId = $contactApi->create($params)['id'];
 
+    $params = new GetParameterBag();
+    $params->addSelect('first_name');
+    $params->addSelect('MyContactFields.FavColor');
+    $params->addWhere('id', '=', $contactId);
+    $params->addWhere('MyContactFields.FavColor', '=', 'Red');
+    $result = $contactApi->get($params);
+
+    $this->assertCount(1, $result);
+    $contact = $result->first();
     $this->assertArrayHasKey('MyContactFields', $contact);
     $contactFields = $contact['MyContactFields'];
     $this->assertArrayHasKey('FavColor', $contactFields);

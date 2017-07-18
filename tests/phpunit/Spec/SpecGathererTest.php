@@ -7,8 +7,8 @@ use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
 use Civi\Api4\Service\Spec\RequestSpec;
 use Civi\Api4\Service\Spec\SpecGatherer;
 use Civi\Test\Api4\UnitTestCase;
-use Civi\Api4\Entity\CustomField;
-use Civi\Api4\Entity\CustomGroup;
+use Civi\Api4\Api\CustomFieldApi;
+use Civi\Api4\Api\CustomGroupApi;
 use Civi\Test\Api4\Traits\TableDropperTrait;
 use Prophecy\Argument;
 
@@ -62,7 +62,7 @@ class SpecGathererTest extends UnitTestCase {
   }
 
   public function testPseudoConstantOptionsWillBeAdded() {
-    $customGroupId = CustomGroup::create()
+    $customGroupId = CustomGroupApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'FavoriteThings')
       ->setValue('extends', 'Contact')
@@ -70,7 +70,7 @@ class SpecGathererTest extends UnitTestCase {
 
     $options = array('Red', 'Green', 'Pink');
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavColor')
       ->setValue('custom_group_id', $customGroupId)

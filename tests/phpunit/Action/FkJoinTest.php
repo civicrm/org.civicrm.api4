@@ -3,8 +3,7 @@
 namespace Civi\Test\Api4\Action;
 
 use Civi\Test\Api4\UnitTestCase;
-use Civi\Api4\Entity\Activity;
-use Civi\Api4\Entity\Contact;
+use Civi\Api4\Api\ActivityApi;
 
 /**
  * @group headless
@@ -31,7 +30,7 @@ class FkJoinTest extends UnitTestCase {
    * loaded from the data set.
    */
   public function testThreeLevelJoin() {
-    $results = Activity::get()
+    $results = ActivityApi::get()
       ->setCheckPermissions(FALSE)
       ->addWhere('activity_type.name', '=', 'housing_support')
       ->execute();
@@ -41,7 +40,7 @@ class FkJoinTest extends UnitTestCase {
   }
 
   public function testActivityContactJoin() {
-    $results = Activity::get()
+    $results = ActivityApi::get()
       ->setCheckPermissions(FALSE)
       ->addSelect('assignees.id')
       ->addSelect('assignees.first_name')

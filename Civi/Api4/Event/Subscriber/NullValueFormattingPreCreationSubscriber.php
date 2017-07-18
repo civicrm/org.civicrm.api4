@@ -2,13 +2,14 @@
 
 namespace Civi\Api4\Event\Subscriber;
 
-use Civi\Api4\Action\Create;
+use Civi\Api4\Request;
 
 class NullValueFormattingPreCreationSubscriber extends PreCreationSubscriber {
+
   /**
-   * @param Create $request
+   * @inheritdoc
    */
-  protected function modify(Create $request) {
+  protected function modify(Request $request) {
     $this->formalNullInput($request);
   }
 
@@ -27,25 +28,25 @@ class NullValueFormattingPreCreationSubscriber extends PreCreationSubscriber {
    * @see \DB_DataObject::update() for how true null is ignored
    * @see \DB_DataObject::insert() for how string null is used to unset values
    *
-   * @param Create $request
+   * @param Request $request
    */
-  private function formalNullInput(Create $request) {
-    foreach ($request->getValues() as $key => $value) {
+  private function formalNullInput(Request $request) {
+    foreach ($request->getAll() as $key => $value) {
       if ('null' === $value) {
-        $request->setValue($key, 'Null');
+        $request->set($key, 'Null');
       }
       elseif (NULL === $value) {
-        $request->setValue($key, 'null');
+        $request->set($key, 'null');
       }
     }
   }
 
   /**
-   * @param Create $request
+   * @inheritdoc
    *
    * @return TRUE as it should apply to all pre-creation requests
    */
-  protected function applies(Create $request) {
+  protected function applies(Request $request) {
     return TRUE;
   }
 

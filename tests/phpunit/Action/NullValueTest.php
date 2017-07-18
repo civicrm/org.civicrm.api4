@@ -2,7 +2,6 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\Contact;
 use Civi\Test\Api4\UnitTestCase;
 
 /**

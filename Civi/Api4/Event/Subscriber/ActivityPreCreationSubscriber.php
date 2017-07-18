@@ -2,17 +2,17 @@
 
 namespace Civi\Api4\Event\Subscriber;
 
-use Civi\Api4\Action\Create;
-use Civi\Api4\Entity\OptionValue;
+use Civi\Api4\Api\OptionValueApi;
+use Civi\Api4\Request;
 
 class ActivityPreCreationSubscriber extends PreCreationSubscriber {
   /**
-   * @param Create $request
+   * @inheritdoc
    */
-  protected function modify(Create $request) {
-    $activityType = $request->getValue('activity_type');
+  protected function modify(Request $request) {
+    $activityType = $request->get('activity_type');
     if ($activityType) {
-      $result = OptionValue::get()
+      $result = OptionValueApi::get() // todo make dependency
         ->setCheckPermissions(FALSE)
         ->addWhere('name', '=' ,$activityType)
         ->addWhere('option_group.name', '=', 'activity_type')
@@ -22,16 +22,14 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber {
         throw new \Exception('Activity type must match a *single* type');
       }
 
-      $request->setValue('activity_type_id', $result->first()['id']);
+      $request->set('activity_type_id', $result->first()['id']);
     }
   }
 
   /**
-   * @param Create $request
-   *
-   * @return bool
+   * @inheritdoc
    */
-  protected function applies(Create $request) {
+  protected function applies(Request $request) {
     return $request->getEntity() === 'Activity';
   }
 

@@ -3,50 +3,51 @@
 namespace Civi\Api4\Event\Subscriber;
 
 use Civi\API\Event\PrepareEvent;
-use Civi\Api4\Action\Create;
+use Civi\Api4\Action\CreationHandler;
+use Civi\Api4\Request;
 
 abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
    * @param PrepareEvent $event
    */
   public function onApiPrepare(PrepareEvent $event) {
-    $apiRequest = $event->getApiRequest();
-    if (!$apiRequest instanceof Create) {
+    $request = $event->getApiRequest();
+    if (!$request instanceof Request || !$request->getAction() instanceof CreationHandler) {
       return;
     }
 
-    $this->addDefaultCreationValues($apiRequest);
-    if ($this->applies($apiRequest)) {
-      $this->modify($apiRequest);
+    $this->addDefaultCreationValues($request);
+    if ($this->applies($request)) {
+      $this->modify($request);
     }
   }
 
   /**
    * Modify the request
    *
-   * @param Create $request
+   * @param Request $request
    *
    * @return void
    */
-  abstract protected function modify(Create $request);
+  abstract protected function modify(Request $request);
 
   /**
    * Check if this subscriber should be applied to the request
    *
-   * @param Create $request
+   * @param Request $request
    *
    * @return bool
    */
-  abstract protected function applies(Create $request);
+  abstract protected function applies(Request $request);
 
   /**
    * Sets default values common to all creation requests
    *
-   * @param Create $request
+   * @param Request $request
    */
-  protected function addDefaultCreationValues(Create $request) {
-    if (NULL === $request->getValue('is_active')) {
-      $request->setValue('is_active', 1);
+  protected function addDefaultCreationValues(Request $request) {
+    if (NULL === $request->get('is_active')) {
+      $request->set('is_active', 1);
     }
   }
 

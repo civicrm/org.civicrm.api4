@@ -2,40 +2,38 @@
 
 namespace Civi\Api4\Event\Subscriber;
 
-use Civi\Api4\Action\Create;
+use Civi\Api4\Request;
 
 class ContactPreUpdateSubscriber extends PreCreationSubscriber {
   /**
-   * @param Create $request
+   * @inheritdoc
    */
-  protected function modify(Create $request) {
+  protected function modify(Request $request) {
     $this->addDefaultUpdateValues($request);
   }
 
   /**
-   * @param Create $request
-   *
-   * @return bool
+   * @inheritdoc
    */
-  protected function applies(Create $request) {
-    return $request->getEntity() === 'Contact' && $request->getValue('id');
+  protected function applies(Request $request) {
+    return $request->getEntity() === 'Contact' && $request->get('id');
   }
 
   /**
-   * @param Create $request
+   * @inheritdoc
    */
-  protected function addDefaultUpdateValues(Create $request) {
-    $id = $request->getValue('id');
-    $contactType = $request->getValue('contact_type');
-    $contactId = $request->getValue('contact_id');
+  protected function addDefaultUpdateValues(Request $request) {
+    $id = $request->get('id');
+    $contactType = $request->get('contact_type');
+    $contactId = $request->get('contact_id');
 
     if ($id && !$contactType) {
       $contactType = \CRM_Contact_BAO_Contact::getContactType($id);
-      $request->setValue('contact_type', $contactType);
+      $request->set('contact_type', $contactType);
     }
 
     if ($id && !$contactId) {
-      $request->setValue('contact_id', $id);
+      $request->set('contact_id', $id);
     }
   }
 }

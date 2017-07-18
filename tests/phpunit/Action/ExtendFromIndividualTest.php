@@ -2,9 +2,8 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\Contact;
-use Civi\Api4\Entity\CustomField;
-use Civi\Api4\Entity\CustomGroup;
+use Civi\Api4\Api\CustomFieldApi;
+use Civi\Api4\Api\CustomGroupApi;
 
 /**
  * @group headless
@@ -13,14 +12,14 @@ class ExtendFromIndividualTest extends BaseCustomValueTest {
 
   public function testGetWithNonStandardExtends() {
 
-    $customGroup = CustomGroup::create()
+    $customGroup = CustomGroupApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'MyContactFields')
       ->setValue('extends', 'Individual') // not Contact
       ->execute()
       ->getArrayCopy();
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavColor')
       ->setValue('custom_group_id', $customGroup['id'])

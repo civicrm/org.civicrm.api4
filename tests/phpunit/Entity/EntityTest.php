@@ -2,7 +2,7 @@
 
 namespace Civi\Test\Api4\Entity;
 
-use Civi\Api4\Entity\Entity;
+use Civi\Api4\Api\EntityApi;
 use Civi\Test\Api4\UnitTestCase;
 
 /**
@@ -11,7 +11,7 @@ use Civi\Test\Api4\UnitTestCase;
 class EntityTest extends UnitTestCase  {
 
   public function testEntityGet() {
-    $result = Entity::get()
+    $result = EntityApi::get()
       ->setCheckPermissions(FALSE)
       ->execute();
     $this->assertContains('Entity', $result,
@@ -21,7 +21,7 @@ class EntityTest extends UnitTestCase  {
   }
 
   public function testEntity() {
-    $result = Entity::getActions()
+    $result = EntityApi::getActions()
       ->setCheckPermissions(FALSE)
       ->execute()
       ->indexBy('name');

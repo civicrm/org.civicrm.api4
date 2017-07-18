@@ -2,8 +2,7 @@
 
 namespace Civi\Test\Api4\Entity;
 
-use Civi\Api4\AbstractEntity;
-use Civi\Api4\Entity\Entity;
+use Civi\Api4\Api\EntityApi;
 use Civi\Test\Api4\Service\TestCreationParameterProvider;
 use Civi\Test\Api4\Traits\TableDropperTrait;
 use Civi\Test\Api4\UnitTestCase;
@@ -38,7 +37,7 @@ class ConformanceTest extends UnitTestCase {
 
   public function testConformance() {
 
-    $entities = Entity::get()->setCheckPermissions(FALSE)->execute();
+    $entities = EntityApi::get()->setCheckPermissions(FALSE)->execute();
 
     $this->assertNotEmpty($entities->getArrayCopy());
 

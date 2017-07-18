@@ -1,0 +1,31 @@
+<container xmlns="http://symfony.com/schema/dic/services"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+
+        <!-- Base Actions -->
+        <service id = "api.get_handler" class="Civi\Api4\Action\Get"/>
+        <service id = "api.create_handler" class="Civi\Api4\Action\Create"/>
+
+        <!-- API Entities -->
+
+        <service abstract="true" id="abstract.api" class="Civi\Api4\AbstractApi">
+            <argument type="service" id="api4.kernel"/>
+        </service>
+
+        <service id="contact.api" class="Civi\Api4\Api\ContactApi" parent="abstract.api">
+            <tag name="api.crud_entity"/>
+        </service>
+
+        <service id="custom_group.api" class="Civi\Api4\Api\CustomGroupApi" parent="abstract.api">
+            <tag name="api.crud_entity"/>
+        </service>
+
+        <service id="custom_field.api" class="Civi\Api4\Api\CustomFieldApi" parent="abstract.api">
+            <tag name="api.crud_entity"/>
+        </service>
+
+    </services>
+
+</container>

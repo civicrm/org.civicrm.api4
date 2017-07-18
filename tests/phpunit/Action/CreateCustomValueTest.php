@@ -2,10 +2,9 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\CustomField;
-use Civi\Api4\Entity\CustomGroup;
-use Civi\Api4\Entity\OptionGroup;
-use Civi\Api4\Entity\OptionValue;
+use Civi\Api4\Api\CustomGroupApi;
+use Civi\Api4\Api\OptionGroupApi;
+use Civi\Api4\Api\OptionValueApi;
 
 /**
  * @group headless
@@ -15,7 +14,7 @@ class CreateCustomValueTest extends BaseCustomValueTest {
   public function testGetWithCustomData() {
     $optionValues = ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'];
 
-    $customGroup = CustomGroup::create()
+    $customGroup = CustomGroupApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'MyContactFields')
       ->setValue('extends', 'Contact')
@@ -39,7 +38,7 @@ class CreateCustomValueTest extends BaseCustomValueTest {
     $this->assertNotNull($customField['option_group_id']);
     $optionGroupId = $customField['option_group_id'];
 
-    $optionGroup = OptionGroup::get()
+    $optionGroup = OptionGroupApi::get()
       ->setCheckPermissions(FALSE)
       ->addWhere('id', '=', $optionGroupId)
       ->execute()
@@ -47,7 +46,7 @@ class CreateCustomValueTest extends BaseCustomValueTest {
 
     $this->assertEquals('Color', $optionGroup['title']);
 
-    $createdOptionValues = OptionValue::get()
+    $createdOptionValues = OptionValueApi::get()
       ->setCheckPermissions(FALSE)
       ->addWhere('option_group_id', '=', $optionGroupId)
       ->execute()

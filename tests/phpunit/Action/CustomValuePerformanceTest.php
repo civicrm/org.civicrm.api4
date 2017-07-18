@@ -2,9 +2,8 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\Contact;
-use Civi\Api4\Entity\CustomField;
-use Civi\Api4\Entity\CustomGroup;
+use Civi\Api4\Api\CustomFieldApi;
+use Civi\Api4\Api\CustomGroupApi;
 use Civi\Test\Api4\Traits\QueryCounterTrait;
 
 /**
@@ -16,7 +15,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
 
   public function testQueryCount() {
 
-    $customGroup = CustomGroup::create()
+    $customGroup = CustomGroupApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'MyContactFields')
       ->setValue('title', 'MyContactFields')
@@ -25,7 +24,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavColor')
       ->setValue('custom_group_id', $customGroupId)
@@ -34,7 +33,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
       ->setValue('data_type', 'String')
       ->execute();
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavAnimal')
       ->setValue('custom_group_id', $customGroupId)
@@ -42,7 +41,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
       ->setValue('data_type', 'String')
       ->execute();
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavLetter')
       ->setValue('custom_group_id', $customGroupId)
@@ -50,7 +49,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
       ->setValue('data_type', 'String')
       ->execute();
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavFood')
       ->setValue('custom_group_id', $customGroupId)

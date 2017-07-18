@@ -2,9 +2,8 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\CustomField;
-use Civi\Api4\Entity\CustomGroup;
-use Civi\Api4\Entity\Contact;
+use Civi\Api4\Api\CustomFieldApi;
+use Civi\Api4\Api\CustomGroupApi;
 
 /**
  * @group headless
@@ -21,7 +20,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
   }
 
   public function testGetWithCustomData() {
-    $customGroup = CustomGroup::create()
+    $customGroup = CustomGroupApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'FavoriteThings')
       ->setValue('extends', 'Contact')
@@ -29,7 +28,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavColor')
       ->setValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
@@ -38,7 +37,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       ->setValue('data_type', 'String')
       ->execute();
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavFood')
       ->setValue('options', ['1' => 'Corn', '2' => 'Potatoes', '3' => 'Cheese'])
@@ -47,7 +46,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       ->setValue('data_type', 'String')
       ->execute();
 
-    $customGroup = CustomGroup::create()
+    $customGroup = CustomGroupApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'FinancialStuff')
       ->setValue('extends', 'Contact')
@@ -55,7 +54,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'Salary')
       ->setValue('custom_group_id', $customGroupId)
@@ -95,7 +94,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
   }
 
   public function testWithCustomDataForMultipleContacts() {
-    $customGroup = CustomGroup::create()
+    $customGroup = CustomGroupApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'FavoriteThings')
       ->setValue('extends', 'Contact')
@@ -103,7 +102,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavColor')
       ->setValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
@@ -112,7 +111,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       ->setValue('data_type', 'String')
       ->execute();
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'FavFood')
       ->setValue('options', ['1' => 'Corn', '2' => 'Potatoes', '3' => 'Cheese'])
@@ -121,7 +120,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       ->setValue('data_type', 'String')
       ->execute();
 
-    $customGroup = CustomGroup::create()
+    $customGroup = CustomGroupApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('name', 'FinancialStuff')
       ->setValue('extends', 'Contact')
@@ -129,7 +128,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
-    CustomField::create()
+    CustomFieldApi::create()
       ->setCheckPermissions(FALSE)
       ->setValue('label', 'Salary')
       ->setValue('custom_group_id', $customGroupId)

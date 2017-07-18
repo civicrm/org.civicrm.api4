@@ -2,7 +2,7 @@
 
 namespace Civi\Test\Api4\Entity;
 
-use Civi\Api4\Entity\Participant;
+use Civi\Api4\Api\ParticipantApi;
 use Civi\Test\Api4\UnitTestCase;
 
 /**
@@ -24,7 +24,7 @@ class ParticipantTest extends UnitTestCase  {
   }
 
   public function testGetActions() {
-    $result = Participant::getActions()
+    $result = ParticipantApi::getActions()
       ->setCheckPermissions(FALSE)
       ->execute()
       ->indexBy('name');
@@ -43,7 +43,7 @@ class ParticipantTest extends UnitTestCase  {
     }
 
     // With no records:
-    $result = Participant::get()->setCheckPermissions(FALSE)->execute();
+    $result = ParticipantApi::get()->setCheckPermissions(FALSE)->execute();
     $this->assertEquals(0, $result->count(), "count of empty get is not 0");
 
     // Check that the $result knows what the inputs were
@@ -82,7 +82,7 @@ class ParticipantTest extends UnitTestCase  {
           'source' => $dummy['sources'][$i % 3], // 3 = number of sources
       )))['sample_params'];
 
-       Participant::create()
+       ParticipantApi::create()
         ->setValues($dummy['participants'][$i])
         ->setCheckPermissions(FALSE)
         ->execute();
@@ -94,7 +94,7 @@ class ParticipantTest extends UnitTestCase  {
     $secondEventId = $dummy['events'][1]['id'];
     $firstContactId = $dummy['contacts'][0]['id'];
 
-    $firstOnlyResult = Participant::get()
+    $firstOnlyResult = ParticipantApi::get()
       ->setCheckPermissions(FALSE)
       ->addClause(array('event_id', '=', $firstEventId))
       ->execute();
@@ -103,7 +103,7 @@ class ParticipantTest extends UnitTestCase  {
       "count of first event is not $expectedFirstEventCount");
 
     // get first two events using different methods
-    $firstTwo = Participant::get()
+    $firstTwo = ParticipantApi::get()
       ->setCheckPermissions(FALSE)
       ->addWhere('event_id', 'IN', array($firstEventId, $secondEventId))
       ->execute();
@@ -124,7 +124,7 @@ class ParticipantTest extends UnitTestCase  {
       "count is too low"
     );
 
-    $firstParticipantResult = Participant::get()
+    $firstParticipantResult = ParticipantApi::get()
       ->setCheckPermissions(FALSE)
       ->addWhere('event_id', '=', $firstEventId)
       ->addWhere('contact_id', '=', $firstContactId)
@@ -135,7 +135,7 @@ class ParticipantTest extends UnitTestCase  {
     $firstParticipantId = $firstParticipantResult->first()['id'];
 
     // get a result which excludes $first_participant
-    $otherParticipantResult = Participant::get()
+    $otherParticipantResult = ParticipantApi::get()
       ->setCheckPermissions(FALSE)
       ->setSelect(['id'])
       ->addClause(array('NOT',
@@ -159,7 +159,7 @@ class ParticipantTest extends UnitTestCase  {
       'source' => "not " . $firstResult['source'],
     );
 
-    Participant::update()
+    ParticipantApi::update()
       ->addWhere('event_id', '=', $firstEventId)
       ->setCheckPermissions(FALSE)
       ->setLimit(20)
@@ -169,7 +169,7 @@ class ParticipantTest extends UnitTestCase  {
 
     // - delete some records
     $secondEventId = $dummy['events'][1]['id'];
-    $deleteResult = Participant::delete()
+    $deleteResult = ParticipantApi::delete()
       ->addWhere('event_id', '=', $secondEventId)
       ->setCheckPermissions(FALSE)
       ->execute();

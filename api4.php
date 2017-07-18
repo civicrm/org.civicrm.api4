@@ -14,7 +14,7 @@ use Symfony\Component\Config\FileLocator;
  * @param $action
  * @param array $params
  *
- * @return \Civi\Api4\Result
+ * @return \Civi\Api4\Response
  */
 function civicrm_api4($entity, $action, $params = array()) {
   $params['version'] = 4;
@@ -28,13 +28,9 @@ function civicrm_api4($entity, $action, $params = array()) {
 function api4_civicrm_container($container) {
   $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
   $loader->load('services.xml');
+  $loader->load('api_services.xml');
 
-  $container->getDefinition('civi_api_kernel')->addMethodCall(
-    'registerApiProvider',
-    array(new Reference('action_object_provider'))
-  );
-
-  // add event subscribers$container->get(
+  // add event subscribers(
   $dispatcher = $container->getDefinition('dispatcher');
   $subscribers = $container->findTaggedServiceIds('event_subscriber');
 
@@ -54,6 +50,19 @@ function api4_civicrm_container($container) {
       'addSpecProvider',
       array(new Reference($provider))
     );
+  }
+
+  // add API actions
+  // todo allow overriding
+  $apiEntities = $container->findTaggedServiceIds('api.crud_entity');
+
+  $defaultGet = $container->getDefinition('api.get_handler');
+  $defaultCreate = $container->getDefinition('api.create_handler');
+
+  foreach (array_keys($apiEntities) as $serviceId) {
+    $definition = $container->getDefinition($serviceId);
+    $definition->addMethodCall('addHandler', array($defaultGet));
+    $definition->addMethodCall('addHandler', array($defaultCreate));
   }
 
   if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
