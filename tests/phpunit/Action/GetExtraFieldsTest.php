@@ -33,8 +33,4 @@ class GetExtraFieldsTest extends UnitTestCase {
 
     $this->assertContains('dupe_check', $returnedFieldNames);
   }
-
-  public function testCustomFieldsWillBeAdded() {
-    // todo
-  }
 }
