@@ -15,15 +15,47 @@
         </service>
 
         <service id="contact.api" class="Civi\Api4\Api\ContactApi" parent="abstract.api">
-            <tag name="api.crud_entity"/>
+            <tag name="api.standard_entity"/>
         </service>
 
         <service id="custom_group.api" class="Civi\Api4\Api\CustomGroupApi" parent="abstract.api">
-            <tag name="api.crud_entity"/>
+            <tag name="api.standard_entity"/>
         </service>
 
         <service id="custom_field.api" class="Civi\Api4\Api\CustomFieldApi" parent="abstract.api">
-            <tag name="api.crud_entity"/>
+            <tag name="api.standard_entity"/>
+        </service>
+
+        <service id="activity.api" class="Civi\Api4\Api\ActivityApi" parent="abstract.api">
+            <tag name="api.standard_entity"/>
+        </service>
+
+        <service id="location_type.api" class="Civi\Api4\Api\LocationTypeApi" parent="abstract.api">
+            <tag name="api.standard_entity"/>
+        </service>
+
+        <service id="option_group.api" class="Civi\Api4\Api\OptionGroupApi" parent="abstract.api">
+            <tag name="api.standard_entity"/>
+        </service>
+
+        <service id="option_value.api" class="Civi\Api4\Api\OptionValueApi" parent="abstract.api">
+            <tag name="api.standard_entity"/>
+        </service>
+
+        <service id="tag.api" class="Civi\Api4\Api\TagApi" parent="abstract.api">
+            <tag name="api.standard_entity"/>
+        </service>
+
+        <service id="phone.api" class="Civi\Api4\Api\PhoneApi" parent="abstract.api">
+            <tag name="api.standard_entity"/>
+        </service>
+
+        <service id="entity_tag.api" class="Civi\Api4\Api\EntityTagApi" parent="abstract.api">
+            <tag name="api.standard_entity"/>
+        </service>
+
+        <service id="address.api" class="Civi\Api4\Api\AddressApi" parent="abstract.api">
+            <tag name="api.standard_entity"/>
         </service>
 
     </services>
