@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Handler;
 
 use Civi\Api4\Request;
 

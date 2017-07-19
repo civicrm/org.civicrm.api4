@@ -3,9 +3,9 @@
 namespace Civi\Test\Api4\Api;
 
 use Civi\API\Event\AuthorizeEvent;
-use Civi\Api4\Action\GetHandler;
-use Civi\Api4\Api\ContactApi;
+use Civi\Api4\Api;
 use Civi\Api4\ApiKernel;
+use Civi\Api4\Handler\GetHandler;
 use Civi\Test\Api4\UnitTestCase;
 use Prophecy\Argument;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -19,9 +19,10 @@ class ContactApiTest extends UnitTestCase {
       $args[1] instanceof AuthorizeEvent ? $args[1]->authorize() : NULL;
     });
 
-    $contactApi = new ContactApi(new ApiKernel($dispatcher->reveal()));
-    $contactApi->addHandler('get', new GetHandler('Contact'));
+    // todo this test depends on contact data being in the database
+    $contactApi = new Api(new ApiKernel($dispatcher->reveal()), 'Contact');
+    $contactApi->addHandler(new GetHandler('Contact'));
 
-    $this->assertNotEmpty($contactApi->get()->getArrayCopy());
+    $this->assertNotEmpty($contactApi->request('get')->getArrayCopy());
   }
 }

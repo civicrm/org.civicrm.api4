@@ -25,9 +25,9 @@
  +--------------------------------------------------------------------+
  */
 
-namespace Civi\Api4\Action\Participant;
+namespace Civi\Api4\Handler\Participant;
 
-use Civi\Api4\Action\GetHandler as DefaultGet;
+use Civi\Api4\Handler\GetHandler as DefaultGet;
 
 /**
  * Base class for all get actions.

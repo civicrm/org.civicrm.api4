@@ -25,7 +25,7 @@
  +--------------------------------------------------------------------+
  */
 
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Handler;
 
 use Civi\Api4\Request;
 use Civi\Api4\RequestHandler;

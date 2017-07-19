@@ -5,57 +5,69 @@
     <services>
 
         <!-- Base Actions -->
-        <service id = "api.get_handler" class="Civi\Api4\Action\GetHandler"/>
-        <service id = "api.create_handler" class="Civi\Api4\Action\CreationHandler"/>
+        <service id = "api.get_handler" class="Civi\Api4\Handler\GetHandler"/>
+        <service id = "api.create_handler" class="Civi\Api4\Handler\CreationHandler"/>
 
         <!-- API Entities -->
 
-        <service abstract="true" id="abstract.api" class="Civi\Api4\AbstractApi">
+        <service abstract="true" id="abstract.api" class="Civi\Api4\Api">
             <argument type="service" id="api4.kernel"/>
+            <argument type="string">AbstractApi</argument>
         </service>
 
-        <service id="contact.api" class="Civi\Api4\Api\ContactApi" parent="abstract.api">
+        <service id="contact.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">Contact</argument>
         </service>
 
-        <service id="custom_group.api" class="Civi\Api4\Api\CustomGroupApi" parent="abstract.api">
+        <service id="custom_group.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">CustomGroup</argument>
         </service>
 
-        <service id="custom_field.api" class="Civi\Api4\Api\CustomFieldApi" parent="abstract.api">
+        <service id="custom_field.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">CustomField</argument>
         </service>
 
-        <service id="activity.api" class="Civi\Api4\Api\ActivityApi" parent="abstract.api">
+        <service id="activity.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">Activity</argument>
         </service>
 
-        <service id="location_type.api" class="Civi\Api4\Api\LocationTypeApi" parent="abstract.api">
+        <service id="location_type.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">LocationType</argument>
         </service>
 
-        <service id="option_group.api" class="Civi\Api4\Api\OptionGroupApi" parent="abstract.api">
+        <service id="option_group.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">OptionGroup</argument>
         </service>
 
-        <service id="option_value.api" class="Civi\Api4\Api\OptionValueApi" parent="abstract.api">
+        <service id="option_value.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">OptionValue</argument>
         </service>
 
-        <service id="tag.api" class="Civi\Api4\Api\TagApi" parent="abstract.api">
+        <service id="tag.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">Tag</argument>
         </service>
 
-        <service id="phone.api" class="Civi\Api4\Api\PhoneApi" parent="abstract.api">
+        <service id="phone.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">Phone</argument>
         </service>
 
-        <service id="entity_tag.api" class="Civi\Api4\Api\EntityTagApi" parent="abstract.api">
+        <service id="entity_tag.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">EntityTag</argument>
         </service>
 
-        <service id="address.api" class="Civi\Api4\Api\AddressApi" parent="abstract.api">
+        <service id="address.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
+            <argument index="1">Address</argument>
         </service>
 
     </services>

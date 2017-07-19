@@ -26,10 +26,11 @@ function civicrm_api4($entity, $action, $params = array()) {
     throw new Api4Exception(sprintf('The "%s" API is not defined.', $entity));
   }
 
+  /** @var \Civi\Api4\ApiInterface $api */
   $api = $container->get($serviceId);
   $params = new ParameterBag($params);
 
-  return $api->$action($params);
+  return $api->request($action, $params);
 }
 
 /**

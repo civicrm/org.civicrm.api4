@@ -2,7 +2,6 @@
 
 namespace Civi\Test\Api4\Entity;
 
-use Civi\Api4\Api\ParticipantApi;
 use Civi\Test\Api4\UnitTestCase;
 
 /**
@@ -24,7 +23,7 @@ class ParticipantTest extends UnitTestCase  {
   }
 
   public function testGetActions() {
-    $result = ParticipantApi::getActions()
+    $result = ParticipantApi::getHandlers()
       ->setCheckPermissions(FALSE)
       ->execute()
       ->indexBy('name');

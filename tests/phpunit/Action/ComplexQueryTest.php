@@ -2,9 +2,9 @@
 
 namespace Civi\Test\Api4\Action;
 
+use Civi\Api4\GetParameterBag;
 use Civi\Test\Api4\Traits\TableDropperTrait;
 use Civi\Test\Api4\UnitTestCase;
-use Civi\Api4\Api\ActivityApi;
 
 /**
  * @group headless
@@ -59,10 +59,10 @@ class ComplexQueryTest extends UnitTestCase {
    * loaded from the data set.
    */
   public function testGetAllHousingSupportActivities() {
-    $results = ActivityApi::get()
-      ->setCheckPermissions(FALSE)
-      ->addWhere('activity_type.name', '=', 'housing_support')
-      ->execute();
+    $activityApi = \Civi::container()->get('activity.api');
+    $params = new GetParameterBag();
+    $params->addWhere('activity_type.name', '=', 'housing_support');
+    $results = $activityApi->get($params);
 
     $this->assertCount(1, $results);
   }

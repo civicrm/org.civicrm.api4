@@ -20,28 +20,28 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
     $params = new ParameterBag();
     $params->set('name', 'MyContactFields');
     $params->set('extends', 'Contact');
-    $customGroup = $customGroupApi->create($params);
+    $customGroup = $customGroupApi->request('create', $params);
 
     $params = new ParameterBag();
     $params->set('label', 'FavColor');
     $params->set('custom_group_id', $customGroup['id']);
     $params->set('html_type', 'Text');
     $params->set('data_type', 'String');
-    $customFieldApi->create($params);
+    $customFieldApi->request('create', $params);
 
     $params = new ParameterBag();
     $params->set('first_name', 'Johann');
     $params->set('last_name', 'Tester');
     $params->set('contact_type', 'Individual');
     $params->set('MyContactFields.FavColor', 'Red');
-    $contactId = $contactApi->create($params)['id'];
+    $contactId = $contactApi->request('create', $params)['id'];
 
     $params = new GetParameterBag();
     $params->addSelect('first_name');
     $params->addSelect('MyContactFields.FavColor');
     $params->addWhere('id', '=', $contactId);
     $params->addWhere('MyContactFields.FavColor', '=', 'Red');
-    $result = $contactApi->get($params);
+    $result = $contactApi->request('get', $params);
 
     $this->assertCount(1, $result);
     $contact = $result->first();

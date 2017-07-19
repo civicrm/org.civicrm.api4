@@ -21,7 +21,7 @@ class EntityTest extends UnitTestCase  {
   }
 
   public function testEntity() {
-    $result = EntityApi::getActions()
+    $result = EntityApi::getHandlers()
       ->setCheckPermissions(FALSE)
       ->execute()
       ->indexBy('name');

@@ -2,7 +2,7 @@
 
 namespace Civi\Api4\Service\Spec\Provider;
 
-use Civi\Api4\Action\Actions;
+use Civi\Api4\Handler\Actions;
 use Civi\Api4\Service\Spec\RequestSpec;
 
 class CustomGroupCreationSpecProvider implements SpecProviderInterface {

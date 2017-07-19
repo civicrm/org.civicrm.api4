@@ -25,39 +25,36 @@
  +--------------------------------------------------------------------+
  */
 
-namespace Civi\Api4\Action\Entity;
+namespace Civi\Api4\Handler;
 
 use Civi\Api4\Request;
 use Civi\Api4\RequestHandler;
+use Civi\Api4\Query\Api4SelectQuery;
 use Civi\Api4\Response;
 
-/**
- * Get entities
- */
-class Get extends RequestHandler {
-
+class GetHandler extends RequestHandler {
   /**
-   * Scan all api directories to discover entities
+   * @param Request $request
    *
-   * @param Response $request
+   * @return Response
    */
   public function handle(Request $request) {
-    $entities = array();
-    foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
-      $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Entity';
-      if (is_dir($dir)) {
-        foreach (glob("$dir/*.php") as $file) {
-          $matches = array();
-          preg_match('/(\w*).php/', $file, $matches);
-          $entities[$matches[1]] = $matches[1];
-        }
-      }
-    }
-    $entities = array_values($entities);
-    if (in_array('BaseEntity', $entities)) {
-      unset($entities[array_search('BaseEntity', $entities)]);
-    }
-    $request->exchangeArray($entities);
+    $query = new Api4SelectQuery($request->getEntity(), TRUE); // todo permission
+
+    $query->select = $request->get('select', array());
+    $query->where = $request->get('where', array());
+    $query->orderBy = $request->get('orderBy', array());
+    $query->limit = $request->get('limit', 0);
+    $query->offset = $request->get('offset', 0);
+
+    return new Response($query->run());
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getAction() {
+    return 'get';
   }
 
 }

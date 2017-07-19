@@ -5,19 +5,16 @@ namespace Civi\Api4;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 interface ApiInterface {
-  /**
-   * @param ParameterBag $params
-   *
-   * @return Response
-   */
-  public function get(ParameterBag $params = NULL);
 
   /**
+   * @param $action
+   *   The name of the action
    * @param ParameterBag $params
+   *   Parameters to be used in thr request
    *
    * @return Response
    */
-  public function create(ParameterBag $params);
+  public function request($action, ParameterBag $params);
 
   /**
    * @param RequestHandler $handler
@@ -27,7 +24,8 @@ interface ApiInterface {
   public function addHandler(RequestHandler $handler);
 
   /**
-   * @return RequestHandler[]
+   * @return string[]
+   *   An array of available actions for this API
    */
   public function getActions();
 

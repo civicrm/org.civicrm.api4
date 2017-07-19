@@ -3,7 +3,7 @@
 namespace Civi\Api4\Event\Subscriber;
 
 use Civi\API\Event\PrepareEvent;
-use Civi\Api4\Action\CreationHandler;
+use Civi\Api4\Handler\CreationHandler;
 use Civi\Api4\Request;
 
 abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {

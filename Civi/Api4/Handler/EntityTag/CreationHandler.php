@@ -1,8 +1,8 @@
 <?php
 
-namespace Civi\Api4\Action\EntityTag;
+namespace Civi\Api4\Handler\EntityTag;
 
-use Civi\Api4\Action\CreationHandler as BaseCreate;
+use Civi\Api4\Handler\CreationHandler as BaseCreate;
 
 class CreationHandler extends BaseCreate {
   /**

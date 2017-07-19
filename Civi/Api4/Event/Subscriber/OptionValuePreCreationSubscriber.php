@@ -2,21 +2,21 @@
 
 namespace Civi\Api4\Event\Subscriber;
 
-use Civi\Api4\Api\OptionGroupApi;
+use Civi\Api4\ApiInterface;
 use Civi\Api4\GetParameterBag;
 use Civi\Api4\Request;
 
 class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
 
   /**
-   * @var OptionGroupApi
+   * @var ApiInterface
    */
   protected $optionGroupApi;
 
   /**
-   * @param OptionGroupApi $optionGroupApi
+   * @param ApiInterface $optionGroupApi
    */
-  public function __construct(OptionGroupApi $optionGroupApi) {
+  public function __construct(ApiInterface $optionGroupApi) {
     $this->optionGroupApi = $optionGroupApi;
   }
 
@@ -48,7 +48,7 @@ class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
     $params = new GetParameterBag();
     $params->addSelect('id');
     $params->addWhere('name', '=', $optionGroupName);
-    $optionGroup = $this->optionGroupApi->get($params);
+    $optionGroup = $this->optionGroupApi->request('get', $params);
 
     if ($optionGroup->count() !== 1) {
       throw new \Exception('Option group name must match only a single group');

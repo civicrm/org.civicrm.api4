@@ -2,7 +2,7 @@
 
 namespace Civi\Api4;
 
-use Civi\Api4\Action\RequestHandlerInterface;
+use Civi\Api4\Handler\RequestHandlerInterface;
 
 /**
  * Base handler for API actions.
