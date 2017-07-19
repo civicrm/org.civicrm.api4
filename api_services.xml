@@ -5,8 +5,8 @@
     <services>
 
         <!-- Base Actions -->
-        <service id = "api.get_handler" class="Civi\Api4\Action\Get"/>
-        <service id = "api.create_handler" class="Civi\Api4\Action\Create"/>
+        <service id = "api.get_handler" class="Civi\Api4\Action\GetHandler"/>
+        <service id = "api.create_handler" class="Civi\Api4\Action\CreationHandler"/>
 
         <!-- API Entities -->
 

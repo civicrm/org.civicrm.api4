@@ -50,4 +50,11 @@ class GetHandler extends RequestHandler {
     return new Response($query->run());
   }
 
+  /**
+   * @inheritdoc
+   */
+  public function getAction() {
+    return 'get';
+  }
+
 }

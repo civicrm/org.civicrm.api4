@@ -12,17 +12,15 @@ use Civi\Api4\Utils\ReflectionUtils;
  */
 class GetActionsHandler extends RequestHandler {
 
-  // over-ride default to allow open access
-  protected $checkPermissions = FALSE;
-
-  private $_actions = array();
+  private $actions = array();
 
   public function handle(Request $request) {
+    $this->actions = array(); // todo check if actions property is necessary
     $includePaths = array_unique(explode(PATH_SEPARATOR, get_include_path()));
-    $entityReflection = new \ReflectionClass('\Civi\Api4\Entity\\' . $this->getEntity());
+    $entityReflection = new \ReflectionClass('\Civi\Api4\Entity\\' . $request->getEntity());
     // First search entity-specific actions (including those provided by extensions
     foreach ($includePaths as $path) {
-      $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Action/' . $this->getEntity();
+      $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Action/' . $request->getEntity();
       $this->scanDir($dir);
     }
     // Scan all generic actions unless this entity does not extend generic entity
@@ -38,7 +36,14 @@ class GetActionsHandler extends RequestHandler {
         $this->loadAction($method->getName());
       }
     }
-    $request->exchangeArray(array_values($this->_actions));
+    $request->exchangeArray(array_values($this->actions));
+  }
+
+  /**
+   * @inheritdoc
+   */
+  public function getAction() {
+    return 'getActions';
   }
 
   /**
@@ -62,14 +67,14 @@ class GetActionsHandler extends RequestHandler {
    */
   private function loadAction($actionName) {
     try {
-      if (!isset($this->_actions[$actionName])) {
+      if (!isset($this->actions[$actionName])) {
         /* @var RequestHandler $action */
         $action = call_user_func(array("\\Civi\\Api4\\Entity\\" . $this->getEntity(), $actionName));
         $actionReflection = new \ReflectionClass($action);
         $actionInfo = ReflectionUtils::getCodeDocs($actionReflection);
         unset($actionInfo['method']);
-        $this->_actions[$actionName] = array('name' => $actionName) + $actionInfo;
-        $this->_actions[$actionName]['params'] = $action->getParamInfo();
+        $this->actions[$actionName] = array('name' => $actionName) + $actionInfo;
+        $this->actions[$actionName]['params'] = $action->getParamInfo();
       }
     }
     catch (NotImplementedException $e) {

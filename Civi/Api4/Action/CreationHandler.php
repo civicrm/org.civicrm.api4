@@ -53,6 +53,13 @@ class CreationHandler extends RequestHandler {
   }
 
   /**
+   * @return string
+   */
+  public function getAction() {
+    return 'create';
+  }
+
+  /**
    * @param $params
    * @param $entity
    * @param $entityId

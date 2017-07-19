@@ -37,38 +37,23 @@ use Civi\Api4\Service\Spec\SpecFormatter;
  */
 class GetFieldsHandler extends RequestHandler {
 
-  // over-ride default to allow open access
-  protected $checkPermissions = FALSE;
-
   /**
-   * @var string
+   * @inheritdoc
    */
-  protected $action;
-
   public function handle(Request $request) {
     $gatherer = \Civi::container()->get('spec_gatherer');
-    $spec = $gatherer->getSpec($request->getEntity(), $this->getAction());
+    $action = $request->get('action');
+    $spec = $gatherer->getSpec($request->getEntity(), $action);
     $specArray = SpecFormatter::specToArray($spec);
 
     return new Response($specArray['fields']);
   }
 
   /**
-   * @return string
+   * @inheritdoc
    */
   public function getAction() {
-    return $this->action;
-  }
-
-  /**
-   * @param string $action
-   *
-   * @return $this
-   */
-  public function setAction($action) {
-    $this->action = $action;
-
-    return $this;
+    return 'getFields';
   }
 
 }

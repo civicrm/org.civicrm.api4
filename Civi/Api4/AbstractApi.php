@@ -7,11 +7,6 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 abstract class AbstractApi implements ApiInterface {
 
   /**
-   * @var string
-   */
-  protected $entity;
-
-  /**
    * @var RequestHandler[]
    */
   protected $actions;
@@ -58,9 +53,12 @@ abstract class AbstractApi implements ApiInterface {
   private function doRequest($action, ParameterBag $params = NULL) {
 
     if (!isset($this->actions[$action])) {
-      throw new \Exception(sprintf('%s:%s is not implemented', $this->entity, $action));
+      $err = sprintf('%s::%s is not implemented', $this->getEntity(), $action);
+      throw new \Exception($err);
     }
 
+    // todo I'm not sure if the Request should be aware of the handler
+    // seems more like a job for the Kernel
     $request = new Request($this->getEntity(), $this->actions[$action], $params);
 
     return $this->kernel->run($request);

@@ -10,20 +10,14 @@ use Civi\Api4\Action\RequestHandlerInterface;
 abstract class RequestHandler implements RequestHandlerInterface {
 
   /**
-   * @param Request $request
-   *
-   * @return mixed
+   * @inheritdoc
    */
   abstract public function handle(Request $request);
 
   /**
-   *
-   * @return string
+   * @inheritdoc
    */
-  public function getAction() {
-    $name = get_class($this);
-    return lcfirst(substr($name, strrpos($name, '\\') + 1));
-  }
+  abstract public function getAction();
 
   /**
    * @param $entity

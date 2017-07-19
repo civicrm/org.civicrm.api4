@@ -13,4 +13,10 @@ interface RequestHandlerInterface {
    * @return Response
    */
   public function handle(Request $request);
+
+  /**
+   * @return string
+   *   The name of the action
+   */
+  public function getAction();
 }

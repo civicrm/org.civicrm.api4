@@ -41,4 +41,11 @@ class DeletionHandler extends GetHandler {
     return $request;
   }
 
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return 'delete';
+  }
+
 }
