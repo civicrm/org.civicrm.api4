@@ -55,6 +55,7 @@
 
         <service id="option_value.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\OptionValuePreCreationSubscriber">
             <tag name="event_subscriber"/>
+            <argument type="service" id="option_group.api"/>
         </service>
 
         <service id="activity.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\ActivityPreCreationSubscriber">
