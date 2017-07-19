@@ -68,8 +68,8 @@ function api4_civicrm_container($container) {
   // todo allow overriding
   $apiEntities = $container->findTaggedServiceIds('api.standard_entity');
 
-  $defaultGet = $container->getDefinition('api.get_handler');
-  $defaultCreate = $container->getDefinition('api.create_handler');
+  $defaultGet = $container->getDefinition('base.get_handler');
+  $defaultCreate = $container->getDefinition('base.create_handler');
 
   foreach (array_keys($apiEntities) as $serviceId) {
     $definition = $container->getDefinition($serviceId);

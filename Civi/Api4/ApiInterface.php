@@ -2,6 +2,7 @@
 
 namespace Civi\Api4;
 
+use Civi\Api4\Handler\RequestHandlerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 interface ApiInterface {
@@ -9,19 +10,19 @@ interface ApiInterface {
   /**
    * @param $action
    *   The name of the action
-   * @param ParameterBag $params
+   * @param ParameterBag|array|NULL $params
    *   Parameters to be used in thr request
    *
    * @return Response
    */
-  public function request($action, ParameterBag $params);
+  public function request($action, $params = NULL);
 
   /**
-   * @param RequestHandler $handler
+   * @param RequestHandlerInterface $handler
    *
    * @return void
    */
-  public function addHandler(RequestHandler $handler);
+  public function addHandler(RequestHandlerInterface $handler);
 
   /**
    * @return string[]

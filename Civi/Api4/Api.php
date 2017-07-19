@@ -29,19 +29,24 @@ class Api implements ApiInterface {
    * @param string $entity
    * @param RequestHandlerInterface[] $handlers
    */
-  public function __construct(ApiKernel $kernel, $entity, $handlers = array()) {
+  public function __construct(ApiKernel $kernel, $entity, $handlers) {
     $this->kernel = $kernel;
     $this->entity = $entity;
-    $this->handlers = $handlers;
+    foreach ($handlers as $handler) {
+      $this->addHandler($handler);
+    }
   }
 
   /**
    * @param $action
-   * @param ParameterBag|NULL $params
+   * @param ParameterBag|array|NULL $params
    *
    * @return Response
    */
-  public function request($action, ParameterBag $params = NULL) {
+  public function request($action, $params = NULL) {
+    if (is_array($params)) {
+      $params = new ParameterBag($params);
+    }
 
     if (!isset($this->handlers[$action])) {
       $err = sprintf(
@@ -71,8 +76,12 @@ class Api implements ApiInterface {
   /**
    * @inheritdoc
    */
-  public function addHandler(RequestHandler $handler) {
-    $this->handlers[$handler->getAction()] = $handler;
+  public function addHandler(RequestHandlerInterface $handler) {
+    $action = $handler->getAction();
+
+    if (!isset($this->handlers[$action])) {
+      $this->handlers[$action] = $handler;
+    }
   }
 
   /**

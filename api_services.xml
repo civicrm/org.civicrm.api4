@@ -5,14 +5,18 @@
     <services>
 
         <!-- Base Actions -->
-        <service id = "api.get_handler" class="Civi\Api4\Handler\GetHandler"/>
-        <service id = "api.create_handler" class="Civi\Api4\Handler\CreationHandler"/>
+        <service id = "base.get_handler" class="Civi\Api4\Handler\GetHandler"/>
+        <service id = "base.create_handler" class="Civi\Api4\Handler\CreationHandler"/>
+
+        <!-- Override Actions -->
+        <service id="address.creation_handler" class="Civi\Api4\Handler\Address\AddressCreationHandler"/>
+        <service id="entity_tag.creation_handler" class="Civi\Api4\Handler\EntityTag\EntityTagCreationHandler"/>
 
         <!-- API Entities -->
-
         <service abstract="true" id="abstract.api" class="Civi\Api4\Api">
             <argument type="service" id="api4.kernel"/>
             <argument type="string">AbstractApi</argument>
+            <argument type="collection"/>
         </service>
 
         <service id="contact.api" class="Civi\Api4\Api" parent="abstract.api">
@@ -63,11 +67,17 @@
         <service id="entity_tag.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
             <argument index="1">EntityTag</argument>
+            <argument index="2" type="collection">
+                <argument type="service" id="entity_tag.creation_handler"/>
+            </argument>
         </service>
 
         <service id="address.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
             <argument index="1">Address</argument>
+            <argument index="2" type="collection">
+                <argument type="service" id="address.creation_handler"/>
+            </argument>
         </service>
 
         <service id="email.api" class="Civi\Api4\Api" parent="abstract.api">

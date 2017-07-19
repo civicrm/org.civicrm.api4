@@ -27,19 +27,19 @@
 
 namespace Civi\Api4\Handler\Entity;
 
+use Civi\Api4\Handler\GetHandler;
 use Civi\Api4\Request;
-use Civi\Api4\RequestHandler;
 use Civi\Api4\Response;
 
 /**
  * Get entities
  */
-class Get extends RequestHandler {
+class EntityGetHandler extends GetHandler {
 
   /**
    * Scan all api directories to discover entities
    *
-   * @param Response $request
+   * @inheritdoc
    */
   public function handle(Request $request) {
     $entities = array();
@@ -57,7 +57,8 @@ class Get extends RequestHandler {
     if (in_array('BaseEntity', $entities)) {
       unset($entities[array_search('BaseEntity', $entities)]);
     }
-    $request->exchangeArray($entities);
+
+    return new Response($entities);
   }
 
 }

@@ -2,9 +2,10 @@
 
 namespace Civi\Api4\Handler\Address;
 
-use Civi\Api4\Handler\CreationHandler as BaseCreate;
+use Civi\Api4\Handler\CreationHandler;
 
-class CreationHandler extends BaseCreate {
+class AddressCreationHandler extends CreationHandler {
+
   /**
    * @inheritdoc
    */

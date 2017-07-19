@@ -33,6 +33,52 @@ namespace Civi\Api4;
 class Response extends \ArrayObject {
 
   /**
+   * @var int
+   */
+  protected $statusCode = 200;
+
+  /**
+   * @var string[]
+   */
+  protected $headers = array();
+
+  /**
+   * @return int
+   */
+  public function getStatusCode() {
+    return $this->statusCode;
+  }
+
+  /**
+   * @param int $statusCode
+   *
+   * @return $this
+   */
+  public function setStatusCode($statusCode) {
+    $this->statusCode = $statusCode;
+
+    return $this;
+  }
+
+  /**
+   * @return \string[]
+   */
+  public function getHeaders() {
+    return $this->headers;
+  }
+
+  /**
+   * @param string $header
+   *
+   * @return $this
+   */
+  public function addHeaders($header) {
+    $this->headers[] = $header;
+
+    return $this;
+  }
+
+  /**
    * Return first result.
    * @return array|null
    */

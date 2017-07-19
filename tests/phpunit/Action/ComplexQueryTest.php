@@ -59,10 +59,10 @@ class ComplexQueryTest extends UnitTestCase {
    * loaded from the data set.
    */
   public function testGetAllHousingSupportActivities() {
-    $activityApi = \Civi::container()->get('activity.api');
+    $activityApi = \Civi::service('activity.api');
     $params = new GetParameterBag();
     $params->addWhere('activity_type.name', '=', 'housing_support');
-    $results = $activityApi->get($params);
+    $results = $activityApi->request('get', $params);
 
     $this->assertCount(1, $results);
   }
@@ -71,13 +71,15 @@ class ComplexQueryTest extends UnitTestCase {
    * Fetch all activities with a blue tag; and return all tags on the activities
    */
   public function testGetAllActivitiesWithTagsForBlueTaggedActivities() {
-    $results = ActivityApi::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('subject')
-      ->addSelect('activity_type.label')
-      ->addSelect('tags.name')
-      ->addWhere('tags.name', '=', 'blue')
-      ->execute();
+    $activityApi = \Civi::service('activity.api');
+
+    $params = new GetParameterBag();
+    $params->addSelect('subject');
+    $params->addSelect('activity_type.label');
+    $params->addSelect('tags.name');
+    $params->addWhere('tags.name', '=', 'blue');
+
+    $results = $activityApi->request('get', $params);
 
     $this->assertCount(1, $results);
     $first = $results->first();
@@ -90,15 +92,17 @@ class ComplexQueryTest extends UnitTestCase {
    * Fetch contacts named 'Bob' and all of their blue activities
    */
   public function testGetActivitiesForBobsWithBlueActivities() {
-    $result = Contact::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('first_name')
-      ->addSelect('last_name')
-      ->addSelect('source_activities.subject')
-      ->addSelect('source_activities.tags.name')
-      ->addWhere('first_name', '=', 'Bob')
-      ->addWhere('source_activities.tags.name', '=', 'blue')
-      ->execute();
+    $contactApi = \Civi::container()->get('contact.api');
+
+    $params = new GetParameterBag();
+    $params->addSelect('first_name');
+    $params->addSelect('last_name');
+    $params->addSelect('source_activities.subject');
+    $params->addSelect('source_activities.tags.name');
+    $params->addWhere('first_name', '=', 'Bob');
+    $params->addWhere('source_activities.tags.name', '=', 'blue');
+
+    $result = $contactApi->request('get', $params);
 
     $this->assertCount(1, $result);
     $first = $result->first();
@@ -110,12 +114,14 @@ class ComplexQueryTest extends UnitTestCase {
    * Get all contacts in a zipcode and return their Home or Work email addresses
    */
   public function testEmailsForContactsWithZipcode() {
-    $contacts = Contact::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('emails.email')
-      ->addSelect('addresses.postal_code')
-      ->addWhere('addresses.postal_code', '=', '11201')
-      ->execute();
+    $contactApi = \Civi::container()->get('contact.api');
+
+    $params = new GetParameterBag();
+    $params->addSelect('emails.email');
+    $params->addSelect('addresses.postal_code');
+    $params->addWhere('addresses.postal_code', '=', '11201');
+
+    $contacts = $contactApi->request('get', $params);
 
     $this->assertCount(1, $contacts);
     $firstContact = $contacts->first();
@@ -136,19 +142,17 @@ class ComplexQueryTest extends UnitTestCase {
    * For now this test is to show what is possible without using the OR operator
    */
   public function testGetActivitiesWithBobAsAssigneeOrSource() {
-    $asAssignee = ActivityApi::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('subject')
-      ->addWhere('assignees.first_name', '=', 'Bob')
-      ->execute()
-      ->indexBy('id');
+    $activityApi = \Civi::container()->get('activity.api');
 
-    $asSource = ActivityApi::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('subject')
-      ->addWhere('source.first_name', '=', 'Bob')
-      ->execute()
-      ->indexBy('id');
+    $params = new GetParameterBag();
+    $params->addSelect('subject');
+    $params->addWhere('assignees.first_name', '=', 'Bob');
+    $asAssignee = $activityApi->request('get', $params)->indexBy('id');
+
+    $params = new GetParameterBag();
+    $params->addSelect('subject');
+    $params->addWhere('source.first_name', '=', 'Bob');
+    $asSource = $activityApi->request('get', $params)->indexBy('id');
 
     $this->assertEquals(4, $asAssignee->count() + $asSource->count());
     $all = $asAssignee->getArrayCopy() + $asSource->getArrayCopy();
@@ -163,23 +167,23 @@ class ComplexQueryTest extends UnitTestCase {
    * (c) have a custom-field "most_important_issue=Environment".
    */
   public function testAWholeLotOfConditions() {
-    $byZipcode = Contact::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('MyContactFields.MostImportantIssue')
-      ->addWhere('is_deceased', '=', FALSE)
-      ->addWhere('MyContactFields.MostImportantIssue', '=', 'Environment')
-      ->addWhere('addresses.postal_code', 'IN', array('94117', '94118'))
-      ->execute()
-      ->indexBy('id');
 
-    $byCity = Contact::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('MyContactFields.MostImportantIssue')
-      ->addWhere('is_deceased', '=', FALSE)
-      ->addWhere('MyContactFields.MostImportantIssue', '=', 'Environment')
-      ->addWhere('addresses.city', '=', 'San Francisco')
-      ->execute()
-      ->indexBy('id');
+    $contactApi = \Civi::container()->get('contact.api');
+
+    $params = new GetParameterBag();
+    $params->addSelect('MyContactFields.MostImportantIssue');
+    $params->addWhere('is_deceased', '=', FALSE);
+    $params->addWhere('MyContactFields.MostImportantIssue', '=', 'Environment');
+    $params->addWhere('addresses.postal_code', 'IN', array('94117', '94118'));
+    $byZipcode = $contactApi->request('get', $params)->indexBy('id');
+
+
+    $params = new GetParameterBag();
+    $params->addSelect('MyContactFields.MostImportantIssue');
+    $params->addWhere('is_deceased', '=', FALSE);
+    $params->addWhere('MyContactFields.MostImportantIssue', '=', 'Environment');
+    $params->addWhere('addresses.city', '=', 'San Francisco');
+    $byCity = $contactApi->request('get', $params)->indexBy('id');
 
     $this->assertEquals(2, $byCity->count() + $byZipcode->count());
     $all = $byZipcode->getArrayCopy() + $byCity->getArrayCopy();
