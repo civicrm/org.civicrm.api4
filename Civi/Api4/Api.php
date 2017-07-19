@@ -2,6 +2,7 @@
 
 namespace Civi\Api4;
 
+use Civi\Api4\Handler\Actions;
 use Civi\Api4\Handler\RequestHandlerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
@@ -29,7 +30,7 @@ class Api implements ApiInterface {
    * @param string $entity
    * @param RequestHandlerInterface[] $handlers
    */
-  public function __construct(ApiKernel $kernel, $entity, $handlers) {
+  public function __construct(ApiKernel $kernel, $entity, $handlers = array()) {
     $this->kernel = $kernel;
     $this->entity = $entity;
     foreach ($handlers as $handler) {
@@ -46,6 +47,10 @@ class Api implements ApiInterface {
   public function request($action, $params = NULL) {
     if (is_array($params)) {
       $params = new ParameterBag($params);
+    }
+
+    if ($action === Actions::GET_ACTIONS) {
+      return new Response($this->getActions());
     }
 
     if (!isset($this->handlers[$action])) {
@@ -68,9 +73,12 @@ class Api implements ApiInterface {
    * @inheritdoc
    */
   public function getActions() {
-    return array_map(function (RequestHandlerInterface $handler) {
+    $internalActions = array(Actions::GET_ACTIONS); // handled by this class
+    $handlerActions = array_map(function (RequestHandlerInterface $handler) {
       return $handler->getAction();
     }, $this->handlers);
+
+    return array_values(array_merge($internalActions, $handlerActions));
   }
 
   /**

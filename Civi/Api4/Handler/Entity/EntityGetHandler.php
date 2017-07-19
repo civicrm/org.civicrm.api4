@@ -37,28 +37,12 @@ use Civi\Api4\Response;
 class EntityGetHandler extends GetHandler {
 
   /**
-   * Scan all api directories to discover entities
-   *
    * @inheritdoc
    */
   public function handle(Request $request) {
-    $entities = array();
-    foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
-      $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Entity';
-      if (is_dir($dir)) {
-        foreach (glob("$dir/*.php") as $file) {
-          $matches = array();
-          preg_match('/(\w*).php/', $file, $matches);
-          $entities[$matches[1]] = $matches[1];
-        }
-      }
-    }
-    $entities = array_values($entities);
-    if (in_array('BaseEntity', $entities)) {
-      unset($entities[array_search('BaseEntity', $entities)]);
-    }
+    // todo
 
-    return new Response($entities);
+    return new Response();
   }
 
 }

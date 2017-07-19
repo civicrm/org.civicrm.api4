@@ -3,7 +3,6 @@
 namespace Civi\Test\Api4\Action;
 
 use Civi\Test\Api4\UnitTestCase;
-use Civi\Api4\Api\Contact;
 
 /**
  * @group headless
@@ -11,9 +10,8 @@ use Civi\Api4\Api\Contact;
 class GetExtraFieldsTest extends UnitTestCase {
 
   public function testBAOFieldsWillBeReturned() {
-    $returnedFields = Contact::getFields()
-      ->execute()
-      ->getArrayCopy();
+    $contactApi = \Civi::container()->get('contact.api');
+    $returnedFields = $contactApi->request('getFields')->getArrayCopy();
 
     $baseFields = \CRM_Contact_BAO_Contact::fields();
     $baseFieldNames = array_column($baseFields, 'name');
@@ -24,10 +22,10 @@ class GetExtraFieldsTest extends UnitTestCase {
   }
 
   public function testExtraFieldsWillBeAddedFromSpec() {
-    $returnedFields = Contact::getFields()
-      ->setAction('create')
-      ->execute()
-      ->getArrayCopy();
+    $contactApi = \Civi::container()->get('contact.api');
+    $returnedFields = $contactApi->request('getFields', array(
+      'action' => 'create'
+    ))->getArrayCopy();
 
     $returnedFieldNames = array_column($returnedFields, 'name');
 

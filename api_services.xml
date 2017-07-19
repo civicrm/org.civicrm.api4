@@ -5,12 +5,18 @@
     <services>
 
         <!-- Base Actions -->
-        <service id = "base.get_handler" class="Civi\Api4\Handler\GetHandler"/>
-        <service id = "base.create_handler" class="Civi\Api4\Handler\CreationHandler"/>
+        <service id="base.get_handler" class="Civi\Api4\Handler\GetHandler"/>
+        <service id="base.create_handler" class="Civi\Api4\Handler\CreationHandler"/>
+        <service id="base.delete_handler" class="Civi\Api4\Handler\DeletionHandler"/>
+        <service id="base.get_fields_handler" class="Civi\Api4\Handler\GetFieldsHandler">
+            <argument type="service" id="spec_gatherer"/>
+        </service>
 
         <!-- Override Actions -->
         <service id="address.creation_handler" class="Civi\Api4\Handler\Address\AddressCreationHandler"/>
         <service id="entity_tag.creation_handler" class="Civi\Api4\Handler\EntityTag\EntityTagCreationHandler"/>
+        <service id="entity.get_handler" class="Civi\Api4\Handler\Entity\EntityGetHandler"/>
+
 
         <!-- API Entities -->
         <service abstract="true" id="abstract.api" class="Civi\Api4\Api">
@@ -83,6 +89,14 @@
         <service id="email.api" class="Civi\Api4\Api" parent="abstract.api">
             <tag name="api.standard_entity"/>
             <argument index="1">Email</argument>
+        </service>
+
+        <!-- Non-standard API with only "get" action -->
+        <service id="entity.api" class="Civi\Api4\Api" parent="abstract.api">
+            <argument index="1">Entity</argument>
+            <argument index="2" type="collection">
+                <argument type="service" id="entity.get_handler"/>
+            </argument>
         </service>
 
     </services>

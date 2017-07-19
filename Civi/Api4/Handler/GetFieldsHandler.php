@@ -31,6 +31,7 @@ use Civi\Api4\Request;
 use Civi\Api4\RequestHandler;
 use Civi\Api4\Response;
 use Civi\Api4\Service\Spec\SpecFormatter;
+use Civi\Api4\Service\Spec\SpecGatherer;
 
 /**
  * Get fields for an entity
@@ -38,15 +39,26 @@ use Civi\Api4\Service\Spec\SpecFormatter;
 class GetFieldsHandler extends RequestHandler {
 
   /**
+   * @var SpecGatherer
+   */
+  protected $specGatherer;
+
+  /**
+   * @param SpecGatherer $specGatherer
+   */
+  public function __construct(SpecGatherer $specGatherer) {
+    $this->specGatherer = $specGatherer;
+  }
+
+  /**
    * @inheritdoc
    */
   public function handle(Request $request) {
-    $gatherer = \Civi::container()->get('spec_gatherer');
     $action = $request->get('action');
-    $spec = $gatherer->getSpec($request->getEntity(), $action);
-    $specArray = SpecFormatter::specToArray($spec);
+    $spec = $this->specGatherer->getSpec($request->getEntity(), $action);
+    $fields = SpecFormatter::specToArray($spec)['fields'];
 
-    return new Response($specArray['fields']);
+    return new Response($fields);
   }
 
   /**

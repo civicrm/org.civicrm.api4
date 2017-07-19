@@ -2,7 +2,6 @@
 
 namespace Civi\Test\Api4\Entity;
 
-use Civi\Api4\Api\EntityApi;
 use Civi\Test\Api4\UnitTestCase;
 
 /**
@@ -11,9 +10,9 @@ use Civi\Test\Api4\UnitTestCase;
 class EntityTest extends UnitTestCase  {
 
   public function testEntityGet() {
-    $result = EntityApi::get()
-      ->setCheckPermissions(FALSE)
-      ->execute();
+    $entityApi = \Civi::container()->get('entity.api');
+    $result = $entityApi->request('get');
+
     $this->assertContains('Entity', $result,
       "Entity::get missing itself");
     $this->assertContains('Participant', $result,
@@ -21,14 +20,14 @@ class EntityTest extends UnitTestCase  {
   }
 
   public function testEntity() {
-    $result = EntityApi::getHandlers()
-      ->setCheckPermissions(FALSE)
-      ->execute()
-      ->indexBy('name');
+    $entityApi = \Civi::container()->get('entity.api');
+    $result = $entityApi->request('getActions');
+
     $this->assertEquals(
       array('get', 'getActions'),
-      array_keys((array)$result),
-      "Entity entity has more that basic actions");
+      (array) $result,
+      "Entity entity has more that basic actions"
+    );
   }
 
 }

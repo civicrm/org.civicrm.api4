@@ -65,16 +65,19 @@ function api4_civicrm_container($container) {
   }
 
   // add API actions
-  // todo allow overriding
   $apiEntities = $container->findTaggedServiceIds('api.standard_entity');
 
   $defaultGet = $container->getDefinition('base.get_handler');
   $defaultCreate = $container->getDefinition('base.create_handler');
+  $defaultDelete = $container->getDefinition('base.delete_handler');
+  $defaultGetFields = $container->getDefinition('base.get_fields_handler');
 
   foreach (array_keys($apiEntities) as $serviceId) {
     $definition = $container->getDefinition($serviceId);
     $definition->addMethodCall('addHandler', array($defaultGet));
     $definition->addMethodCall('addHandler', array($defaultCreate));
+    $definition->addMethodCall('addHandler', array($defaultDelete));
+    $definition->addMethodCall('addHandler', array($defaultGetFields));
   }
 
   if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
