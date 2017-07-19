@@ -53,7 +53,11 @@ abstract class AbstractApi implements ApiInterface {
   private function doRequest($action, ParameterBag $params = NULL) {
 
     if (!isset($this->actions[$action])) {
-      $err = sprintf('%s::%s is not implemented', $this->getEntity(), $action);
+      $err = sprintf(
+        '%s::%s is not implemented. Join the team and implement it!',
+        $this->getEntity(),
+        $action
+      );
       throw new \Exception($err);
     }
 

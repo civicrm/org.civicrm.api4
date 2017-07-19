@@ -33,11 +33,10 @@ trait TestDataLoaderTrait {
 
     foreach ($dataSet as $entityName => $entities) {
       foreach ($entities as $entityValues) {
-
         $entityValues = $this->replaceReferences($entityValues);
 
-        $params = array('values' => $entityValues, 'checkPermissions' => FALSE);
-        $result = civicrm_api4($entityName, 'create', $params);
+        $result = civicrm_api4($entityName, 'create', $entityValues);
+
         if (isset($entityValues['@ref'])) {
           $this->references[$entityValues['@ref']] = $result->getArrayCopy();
         }

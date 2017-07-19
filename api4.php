@@ -2,10 +2,12 @@
 
 require_once 'api4.civix.php';
 
+use Civi\Api4\Exception\Api4Exception;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 /**
  * Procedural wrapper for the OO api version 4.
@@ -17,9 +19,17 @@ use Symfony\Component\Config\FileLocator;
  * @return \Civi\Api4\Response
  */
 function civicrm_api4($entity, $action, $params = array()) {
-  $params['version'] = 4;
-  $request = \Civi\API\Request::create($entity, $action, $params);
-  return \Civi::service('civi_api_kernel')->runRequest($request);
+  $serviceId = sprintf('%s.api', strtolower($entity));
+  $container = Civi::container();
+
+  if (!$container->has($serviceId)) {
+    throw new Api4Exception(sprintf('The "%s" API is not defined.', $entity));
+  }
+
+  $api = $container->get($serviceId);
+  $params = new ParameterBag($params);
+
+  return $api->$action($params);
 }
 
 /**
@@ -54,7 +64,7 @@ function api4_civicrm_container($container) {
 
   // add API actions
   // todo allow overriding
-  $apiEntities = $container->findTaggedServiceIds('api.crud_entity');
+  $apiEntities = $container->findTaggedServiceIds('api.standard_entity');
 
   $defaultGet = $container->getDefinition('api.get_handler');
   $defaultCreate = $container->getDefinition('api.create_handler');
