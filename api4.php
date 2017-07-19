@@ -23,7 +23,8 @@ function civicrm_api4($entity, $action, $params = array()) {
   $container = Civi::container();
 
   if (!$container->has($serviceId)) {
-    throw new Api4Exception(sprintf('The "%s" API is not defined.', $entity));
+    $err = sprintf('The "%s" API was not found. Join the team and implement it!', $entity);
+    throw new Api4Exception($err);
   }
 
   /** @var \Civi\Api4\ApiInterface $api */

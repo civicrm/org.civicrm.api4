@@ -60,7 +60,7 @@
 
         <service id="activity.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\ActivityPreCreationSubscriber">
             <tag name="event_subscriber"/>
-            <argument type="service" id="option_group.api"/>
+            <argument type="service" id="option_value.api"/>
         </service>
 
         <service id="contact.schema_map.subscriber" class="Civi\Api4\Event\Subscriber\ContactSchemaMapSubscriber">
