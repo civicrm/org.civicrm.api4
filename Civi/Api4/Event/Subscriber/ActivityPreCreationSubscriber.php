@@ -14,6 +14,13 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber {
   protected $optionValueApi;
 
   /**
+   * @param ApiInterface $optionValueApi
+   */
+  public function __construct(ApiInterface $optionValueApi) {
+    $this->optionValueApi = $optionValueApi;
+  }
+
+  /**
    * @inheritdoc
    */
   protected function modify(Request $request) {
