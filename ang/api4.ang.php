@@ -2,9 +2,7 @@
 // This file declares an Angular module which can be autoloaded
 // in CiviCRM. See also:
 // http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_angularModules
-$result = Civi\Api4\Entity\Entity::get()
-  ->setCheckPermissions(FALSE)
-  ->execute();
+$result = Civi::container()->get('entity.api')->request('get');
 $entities = array();
 foreach ($result as $entity) {
   $entities[] = array(
