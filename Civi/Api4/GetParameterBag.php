@@ -73,4 +73,18 @@ class GetParameterBag extends ParameterBag {
 
     return $this;
   }
+
+  /**
+   * @param int $limit
+   */
+  public function setLimit($limit) {
+    $this->set('limit', $limit);
+  }
+
+  /**
+   * @param $offset
+   */
+  public function setOffset($offset) {
+    $this->set('offset', $offset);
+  }
 }
