@@ -4,14 +4,14 @@ namespace Civi\Api4\Handler;
 
 use Civi\Api4\Exception\Api4Exception;
 use Civi\Api4\GetParameterBag;
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 use Civi\Api4\Response;
 
 class UpdateHandler extends GetHandler {
   /**
    * @inheritdoc
    */
-  public function handle(Request $request) {
+  public function handle(ApiRequest $request) {
     $targetIds = $this->getTargetIds($request);
     $updated = array();
 
@@ -31,12 +31,12 @@ class UpdateHandler extends GetHandler {
   }
 
   /**
-   * @param Request $request
+   * @param ApiRequest $request
    *
    * @return array
    *   An array of IDs to be updated
    */
-  protected function getTargetIds(Request $request) {
+  protected function getTargetIds(ApiRequest $request) {
     $wheres = $request->get('where', array());
 
     if (empty($wheres)) {
@@ -50,7 +50,7 @@ class UpdateHandler extends GetHandler {
       $getParams->addClause($where);
     }
 
-    $subRequest = new Request($request->getEntity(), $this, $getParams);
+    $subRequest = new ApiRequest($request->getEntity(), $this, $getParams);
     $response = parent::handle($subRequest);
 
     return array_column($response->getArrayCopy(), 'id');
@@ -59,12 +59,12 @@ class UpdateHandler extends GetHandler {
   /**
    * Run the update. Override for non-conforming BAOs.
    *
-   * @param Request $request
+   * @param ApiRequest $request
    * @param $id
    *
    * @return \CRM_Core_DAO
    */
-  protected function update(Request $request, $id) {
+  protected function update(ApiRequest $request, $id) {
     $bao = $this->getBAOForEntity($request->getEntity());
     $params = array_merge(array('id' => $id), $request->getAll());
 

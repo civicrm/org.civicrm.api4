@@ -27,18 +27,18 @@
 
 namespace Civi\Api4\Handler;
 
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 use Civi\Api4\RequestHandler;
 use Civi\Api4\Query\Api4SelectQuery;
 use Civi\Api4\Response;
 
 class GetHandler extends RequestHandler {
   /**
-   * @param Request $request
+   * @param ApiRequest $request
    *
    * @return Response
    */
-  public function handle(Request $request) {
+  public function handle(ApiRequest $request) {
     $query = new Api4SelectQuery($request->getEntity(), TRUE); // todo permission
 
     $query->select = $request->get('select', array());

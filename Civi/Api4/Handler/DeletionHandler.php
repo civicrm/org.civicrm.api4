@@ -3,7 +3,7 @@
 namespace Civi\Api4\Handler;
 
 use Civi\Api4\Exception\Api4Exception;
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 use Civi\Api4\Response;
 
 class DeletionHandler extends GetHandler {
@@ -13,7 +13,7 @@ class DeletionHandler extends GetHandler {
    *
    * @inheritdoc
    */
-  public function handle(Request $request) {
+  public function handle(ApiRequest $request) {
     if (empty($request->get('where'))) {
       throw new Api4Exception("Cannot delete without criteria");
     }

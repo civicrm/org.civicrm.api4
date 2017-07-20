@@ -64,7 +64,7 @@ class Api implements ApiInterface {
 
     // todo I'm not sure if the Request should be aware of the handler
     // seems more like a job for the Kernel
-    $request = new Request($this->getEntity(), $this->handlers[$action], $params);
+    $request = new ApiRequest($this->getEntity(), $this->handlers[$action], $params);
 
     return $this->kernel->run($request);
   }

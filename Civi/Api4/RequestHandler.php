@@ -12,7 +12,7 @@ abstract class RequestHandler implements RequestHandlerInterface {
   /**
    * @inheritdoc
    */
-  abstract public function handle(Request $request);
+  abstract public function handle(ApiRequest $request);
 
   /**
    * @inheritdoc

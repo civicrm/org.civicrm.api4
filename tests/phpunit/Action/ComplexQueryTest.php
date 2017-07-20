@@ -177,7 +177,6 @@ class ComplexQueryTest extends UnitTestCase {
     $params->addWhere('addresses.postal_code', 'IN', array('94117', '94118'));
     $byZipcode = $contactApi->request('get', $params)->indexBy('id');
 
-
     $params = new GetParameterBag();
     $params->addSelect('MyContactFields.MostImportantIssue');
     $params->addWhere('is_deceased', '=', FALSE);

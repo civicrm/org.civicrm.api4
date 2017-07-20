@@ -27,7 +27,7 @@
 
 namespace Civi\Api4\Handler;
 
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 use Civi\Api4\RequestHandler;
 use Civi\Api4\Response;
 use Civi\Api4\Service\Spec\SpecFormatter;
@@ -53,7 +53,7 @@ class GetFieldsHandler extends RequestHandler {
   /**
    * @inheritdoc
    */
-  public function handle(Request $request) {
+  public function handle(ApiRequest $request) {
     $action = $request->get('action');
     $spec = $this->specGatherer->getSpec($request->getEntity(), $action);
     $fields = SpecFormatter::specToArray($spec)['fields'];

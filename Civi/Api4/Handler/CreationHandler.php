@@ -27,7 +27,7 @@
 
 namespace Civi\Api4\Handler;
 
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 use Civi\Api4\RequestHandler;
 use Civi\Api4\Response;
 
@@ -36,7 +36,7 @@ class CreationHandler extends RequestHandler {
   /**
    * @inheritDoc
    */
-  public function handle(Request $request) {
+  public function handle(ApiRequest $request) {
     $entityId = $request->get('id');
     $params = $request->getAll();
     $entity = $request->getEntity();

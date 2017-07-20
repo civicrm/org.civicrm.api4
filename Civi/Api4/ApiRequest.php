@@ -5,7 +5,7 @@ namespace Civi\Api4;
 use Civi\Api4\Handler\RequestHandlerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
-class Request implements \ArrayAccess {
+class ApiRequest implements \ArrayAccess {
   /**
    * @var string
    */
@@ -24,7 +24,7 @@ class Request implements \ArrayAccess {
   /**
    * @var bool
    */
-  protected $checkPermission = TRUE;
+  protected $checkPermissions = TRUE;
 
   /**
    * @param $entity
@@ -95,17 +95,17 @@ class Request implements \ArrayAccess {
   /**
    * @return bool
    */
-  public function isCheckPermission() {
-    return $this->checkPermission;
+  public function getCheckPermissions() {
+    return $this->checkPermissions;
   }
 
   /**
-   * @param bool $checkPermission
+   * @param bool $checkPermissions
    *
    * @return $this
    */
-  public function setCheckPermission($checkPermission) {
-    $this->checkPermission = $checkPermission;
+  public function setCheckPermissions($checkPermissions) {
+    $this->checkPermissions = $checkPermissions;
 
     return $this;
   }

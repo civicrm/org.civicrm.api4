@@ -3,7 +3,7 @@
 namespace Civi\Api4\Handler\Entity;
 
 use Civi\Api4\Handler\GetHandler;
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 use Civi\Api4\Response;
 use Civi\Api4\Service\EntityRegister;
 
@@ -24,7 +24,7 @@ class EntityGetHandler extends GetHandler {
   /**
    * @inheritdoc
    */
-  public function handle(Request $request) {
+  public function handle(ApiRequest $request) {
     return new Response($this->entityRegister->getAll());
   }
 

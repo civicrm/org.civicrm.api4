@@ -26,12 +26,12 @@
  */
 namespace Civi\Api4;
 
-use Civi\API\Event\AuthorizeEvent;
-use Civi\API\Event\PrepareEvent;
-use Civi\API\Event\ExceptionEvent;
-use Civi\API\Event\RespondEvent;
-use Civi\API\Events;
 use Civi\API\Exception\UnauthorizedException;
+use Civi\Api4\Event\AuthorizeEvent;
+use Civi\Api4\Event\Events;
+use Civi\Api4\Event\ExceptionEvent;
+use Civi\Api4\Event\PrepareEvent;
+use Civi\Api4\Event\RespondEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -58,17 +58,17 @@ class ApiKernel {
   /**
    * Parse and execute an API request
    *
-   * @param Request $apiRequest
+   * @param ApiRequest $apiRequest
    *
    * @return Response
    * @throws \API_Exception
    */
-  public function run(Request $apiRequest) {
+  public function run(ApiRequest $apiRequest) {
     try {
       return $this->runRequest($apiRequest);
     }
     catch (\Exception $e) {
-      $event = new ExceptionEvent($e, NULL, $apiRequest, NULL);
+      $event = new ExceptionEvent($e);
       $this->dispatcher->dispatch(Events::EXCEPTION, $event);
       $err = $this->errorFormatter->formatError($e, $apiRequest);
 
@@ -82,14 +82,15 @@ class ApiKernel {
    *
    * The request must be in canonical format. Exceptions will be propagated out.
    *
-   * @param Request $apiRequest
+   * @param ApiRequest $apiRequest
+   *
    * @return Response
    */
-  protected function runRequest(Request $apiRequest) {
+  protected function runRequest(ApiRequest $apiRequest) {
     $this->authorize($apiRequest); // todo authorization
     $this->prepare($apiRequest);
     $result = $apiRequest->getHandler()->handle($apiRequest);
-    $this->respond($apiRequest, $result);
+    $this->respond($result);
 
     return $result;
   }
@@ -97,39 +98,36 @@ class ApiKernel {
   /**
    * Determine if the API request is allowed (under current policy)
    *
-   * @param Request $apiRequest
+   * @param ApiRequest $apiRequest
    *   The full description of the API request.
+   *
    * @throws UnauthorizedException
    */
-  public function authorize(Request $apiRequest) {
-    $event = new AuthorizeEvent(NULL, $apiRequest, NULL); // todo replace event
+  public function authorize(ApiRequest $apiRequest) {
+    $event = new AuthorizeEvent($apiRequest);
     $this->dispatcher->dispatch(Events::AUTHORIZE, $event);
     if (!$event->isAuthorized()) {
-      // throw new UnauthorizedException("Authorization failed"); todo authorization
+       throw new UnauthorizedException("Authorization failed");
     }
   }
 
   /**
    * Allow third-party code to manipulate the API request before execution.
    *
-   * @param Request $apiRequest
+   * @param ApiRequest $apiRequest
    *   The full description of the API request.
    */
-  public function prepare(Request $apiRequest) {
-    $event = new PrepareEvent(NULL, $apiRequest, NULL); // todo replace event
-    $this->dispatcher->dispatch(Events::PREPARE, $event);
+  public function prepare(ApiRequest $apiRequest) {
+    $this->dispatcher->dispatch(Events::PREPARE, new PrepareEvent($apiRequest));
   }
 
   /**
    * Allow third-party code to manipulate the API response after execution.
    *
-   * @param Request $apiRequest
-   *   The full description of the API request.
-   * @param array $result
+   * @param Response $result
    *   The response to return to the client.
    */
-  public function respond(Request $apiRequest, $result) {
-    $event = new RespondEvent(NULL, $apiRequest, $result, NULL); // todo replace event
-    $this->dispatcher->dispatch(Events::RESPOND, $event);
+  public function respond($result) {
+    $this->dispatcher->dispatch(Events::RESPOND, new RespondEvent($result));
   }
 }
