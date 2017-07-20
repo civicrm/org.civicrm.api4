@@ -63,6 +63,10 @@
             <argument type="service" id="option_value.api"/>
         </service>
 
+        <service id="participant.pre_get.subscriber" class="Civi\Api4\Event\Subscriber\ParticipantPreGetSubscriber">
+            <tag name="event_subscriber"/>
+        </service>
+
         <service id="contact.schema_map.subscriber" class="Civi\Api4\Event\Subscriber\ContactSchemaMapSubscriber">
             <tag name="event_subscriber"/>
         </service>
@@ -74,6 +78,8 @@
         <service id="api4.kernel" class="Civi\Api4\ApiKernel">
             <argument type="service" id="dispatcher"/>
         </service>
+
+        <service id="entity_register" class="Civi\Api4\Service\EntityRegister"/>
 
     </services>
 

@@ -3,6 +3,7 @@
 require_once 'api4.civix.php';
 
 use Civi\Api4\Exception\Api4Exception;
+use CRM_Utils_Array as ArrayHelper;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
@@ -65,19 +66,34 @@ function api4_civicrm_container($container) {
   }
 
   // add API actions
-  $apiEntities = $container->findTaggedServiceIds('api.standard_entity');
+  $apiEntities = $container->findTaggedServiceIds('api');
+  $entityRegister = $container->getDefinition('entity_register');
 
-  $defaultGet = $container->getDefinition('base.get_handler');
-  $defaultCreate = $container->getDefinition('base.create_handler');
-  $defaultDelete = $container->getDefinition('base.delete_handler');
-  $defaultGetFields = $container->getDefinition('base.get_fields_handler');
+  // standard API actions
+  $standardGet = $container->getDefinition('standard.get_handler');
+  $standardCreate = $container->getDefinition('standard.create_handler');
+  $standardDelete = $container->getDefinition('standard.delete_handler');
+  $standardGetFields = $container->getDefinition('standard.get_fields_handler');
 
-  foreach (array_keys($apiEntities) as $serviceId) {
+  foreach ($apiEntities as $serviceId => $attributes) {
     $definition = $container->getDefinition($serviceId);
-    $definition->addMethodCall('addHandler', array($defaultGet));
-    $definition->addMethodCall('addHandler', array($defaultCreate));
-    $definition->addMethodCall('addHandler', array($defaultDelete));
-    $definition->addMethodCall('addHandler', array($defaultGetFields));
+
+    // check for standard attribute on tag
+    $isStandard = array_reduce($attributes, function($carry, $attribute) {
+      return ArrayHelper::value('standard', $attribute, $carry);
+    }, FALSE);
+
+    // add standard actions
+    if ($isStandard) {
+      $definition->addMethodCall('addHandler', array($standardGet));
+      $definition->addMethodCall('addHandler', array($standardCreate));
+      $definition->addMethodCall('addHandler', array($standardDelete));
+      $definition->addMethodCall('addHandler', array($standardGetFields));
+    }
+
+    // register Entity API
+    $entityName = $definition->getArgument(1);
+    $entityRegister->addMethodCall('register', array($entityName));
   }
 
   if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
