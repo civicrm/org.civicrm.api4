@@ -83,7 +83,8 @@ class Api4SelectQuery extends SelectQuery {
    * Gets all FK fields and does the required joins
    */
   protected function preRun() {
-    $whereFields = array_column($this->where, 0);
+    $whereFields = array();
+    $this->getWhereFields($this->where, $whereFields);
     $allFields = array_merge($whereFields, $this->select, $this->orderBy);
     $dotFields = array_unique(array_filter($allFields, function ($field) {
       return strpos($field, '.') !== false;
@@ -422,5 +423,23 @@ class Api4SelectQuery extends SelectQuery {
     ));
 
     return $subQuery;
+  }
+
+  /**
+   * Gets all where fields, including those in the complex nested AND|OR|NOT
+   * structures.
+   *
+   * @param $where
+   * @param $whereFields
+   */
+  private function getWhereFields($where, &$whereFields) {
+      $isNested = is_array($where) && count(array_filter($where,'is_array')) > 0;
+      if ($isNested) {
+        foreach ($where as $subWhere) {
+          $this->getWhereFields($subWhere, $whereFields);
+        }
+      } elseif (is_array($where)) {
+        $whereFields[] = $where[0];
+      }
   }
 }
