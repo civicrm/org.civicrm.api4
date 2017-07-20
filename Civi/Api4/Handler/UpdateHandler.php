@@ -2,31 +2,25 @@
 
 namespace Civi\Api4\Handler;
 
+use Civi\Api4\Exception\Api4Exception;
+use Civi\Api4\GetParameterBag;
 use Civi\Api4\Request;
+use Civi\Api4\Response;
 
 class UpdateHandler extends GetHandler {
-
   /**
    * @inheritdoc
    */
   public function handle(Request $request) {
-    $bao_name = $this->getBaoName($request->getEntity());
-    // First run the parent action (get)
-    $this->select = array('id');
-    $patch_values = $this->getParams()['values'];
-    parent::handle($request);
-    // Then act on the result
-    $updated_results = array();
-    foreach ($request as $item) {
-      // todo confirm we need a new object
-      $bao = new $bao_name();
-      $patch = $item + $patch_values;
-      // update it
-      $update_result_bao = $this->getBAOForEntity($request->getEntity())->create($patch);
-      // trim back the junk and just get the array:
-      $updated_results[] = $this->baoToArray($update_result_bao);
+    $targetIds = $this->getTargetIds($request);
+    $updated = array();
+
+    foreach ($targetIds as $id) {
+      $updateResult = $this->update($request, $id);
+      $updated[] = $this->baoToArray($updateResult);
     }
-    $request->exchangeArray($updated_results);
+
+    return new Response($updated);
   }
 
   /**
@@ -34,5 +28,46 @@ class UpdateHandler extends GetHandler {
    */
   public function getAction() {
     return 'update';
+  }
+
+  /**
+   * @param Request $request
+   *
+   * @return array
+   *   An array of IDs to be updated
+   */
+  protected function getTargetIds(Request $request) {
+    $wheres = $request->get('where', array());
+
+    if (empty($wheres)) {
+      throw new Api4Exception('Update request must have criteria');
+    }
+
+    $getParams = new GetParameterBag();
+    $getParams->addSelect('id');
+    // copy where values
+    foreach ($wheres as $where) {
+      $getParams->addClause($where);
+    }
+
+    $subRequest = new Request($request->getEntity(), $this, $getParams);
+    $response = parent::handle($subRequest);
+
+    return array_column($response->getArrayCopy(), 'id');
+  }
+
+  /**
+   * Run the update. Override for non-conforming BAOs.
+   *
+   * @param Request $request
+   * @param $id
+   *
+   * @return \CRM_Core_DAO
+   */
+  protected function update(Request $request, $id) {
+    $bao = $this->getBAOForEntity($request->getEntity());
+    $params = array_merge(array('id' => $id), $request->getAll());
+
+    return $bao->create($params);
   }
 }

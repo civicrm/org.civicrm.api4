@@ -5,8 +5,9 @@
     <services>
 
         <!-- Base Actions -->
-        <service id="standard.get_handler" class="Civi\Api4\Handler\GetHandler"/>
         <service id="standard.create_handler" class="Civi\Api4\Handler\CreationHandler"/>
+        <service id="standard.get_handler" class="Civi\Api4\Handler\GetHandler"/>
+        <service id="standard.update_handler" class="Civi\Api4\Handler\UpdateHandler"/>
         <service id="standard.delete_handler" class="Civi\Api4\Handler\DeletionHandler"/>
         <service id="standard.get_fields_handler" class="Civi\Api4\Handler\GetFieldsHandler">
             <argument type="service" id="spec_gatherer"/>

@@ -70,8 +70,9 @@ function api4_civicrm_container($container) {
   $entityRegister = $container->getDefinition('entity_register');
 
   // standard API actions
-  $standardGet = $container->getDefinition('standard.get_handler');
   $standardCreate = $container->getDefinition('standard.create_handler');
+  $standardGet = $container->getDefinition('standard.get_handler');
+  $standardUpdate = $container->getDefinition('standard.update_handler');
   $standardDelete = $container->getDefinition('standard.delete_handler');
   $standardGetFields = $container->getDefinition('standard.get_fields_handler');
 
@@ -89,6 +90,7 @@ function api4_civicrm_container($container) {
       $definition->addMethodCall('addHandler', array($standardCreate));
       $definition->addMethodCall('addHandler', array($standardDelete));
       $definition->addMethodCall('addHandler', array($standardGetFields));
+      $definition->addMethodCall('addHandler', array($standardUpdate));
     }
 
     // register Entity API
