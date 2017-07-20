@@ -433,13 +433,14 @@ class Api4SelectQuery extends SelectQuery {
    * @param $whereFields
    */
   private function getWhereFields($where, &$whereFields) {
-      $isNested = is_array($where) && count(array_filter($where,'is_array')) > 0;
-      if ($isNested) {
-        foreach ($where as $subWhere) {
-          $this->getWhereFields($subWhere, $whereFields);
-        }
-      } elseif (is_array($where)) {
-        $whereFields[] = $where[0];
+    $operators = \CRM_Core_DAO::acceptedSQLOperators();
+    $isClause = isset($where[1]) && in_array($where[1], $operators);
+    if ($isClause) {
+      $whereFields[] = $where[0];
+    } elseif (is_array($where)) {
+      foreach ($where as $subWhere) {
+        $this->getWhereFields($subWhere, $whereFields);
       }
+    }
   }
 }
