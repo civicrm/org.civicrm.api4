@@ -11,7 +11,7 @@ class EntityTest extends UnitTestCase  {
 
   public function testEntityGet() {
     $entityApi = \Civi::container()->get('entity.api');
-    $result = $entityApi->request('get');
+    $result = $entityApi->request('get')->getArrayCopy();
 
     $this->assertContains('Entity', $result,
       "Entity::get missing itself");
@@ -19,15 +19,15 @@ class EntityTest extends UnitTestCase  {
       "Entity::get missing Participant");
   }
 
-  public function testEntity() {
+  public function testEntityWillHaveOnlyBasicActions() {
     $entityApi = \Civi::container()->get('entity.api');
-    $result = $entityApi->request('getActions');
+    $result = $entityApi->request('getActions')->getArrayCopy();
 
-    $this->assertEquals(
-      array('get', 'getActions'),
-      (array) $result,
-      "Entity entity has more that basic actions"
-    );
+    $expected = array('get', 'getActions');
+    sort($result);
+    sort($expected);
+
+    $this->assertEquals($expected, $result);
   }
 
 }
