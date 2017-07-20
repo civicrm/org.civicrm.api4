@@ -2,43 +2,35 @@
 
 namespace Civi\Api4\Handler;
 
+use Civi\Api4\Exception\Api4Exception;
 use Civi\Api4\Request;
+use Civi\Api4\Response;
 
-/**
- * "delete" inherits all the abilities of "get"
- */
 class DeletionHandler extends GetHandler {
 
   /**
    * Batch delete function
-   * @todo much of this should be abstracted out to a generic batch handler
+   *
+   * @inheritdoc
    */
   public function handle(Request $request) {
-    $bao_name = $this->getBaoName($request->getEntity());
-    $this->select = array('id');
-    $defaults = $this->getParamDefaults();
-    if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
-      throw new \API_Exception('Cannot delete with no "where" paramater specified');
+    if (empty($request->get('where'))) {
+      throw new Api4Exception("Cannot delete without criteria");
     }
+
     // run the parent action (get) to get the list
-    parent::handle($request);
-    // Then act on the result
-    $ids = array();
-    foreach ($request as $item) {
+    $request->set('select', array('id'));
+    $getResponse = parent::handle($request)->getArrayCopy();
+
+    foreach ($getResponse as $item) {
       // todo confirm we need a new object
-      $bao = new $bao_name();
+      $bao = $this->getBAOForEntity($request->getEntity());
       $bao->id = $item['id'];
-      // delete it
-      $action_result = $bao->delete();
-      if ($action_result) {
-        $ids[] = $item['id'];
-      }
-      else {
-        // fixme - what happens here???
-      }
+      $bao->delete();
     }
-    $request->exchangeArray($ids);
-    return $request;
+
+    $ids = array_column($getResponse, 'id');
+    return new Response($ids);
   }
 
   /**
