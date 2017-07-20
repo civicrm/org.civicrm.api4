@@ -9,13 +9,15 @@ interface ApiInterface {
 
   /**
    * @param $action
-   *   The name of the action
+   *   The action to be performed. @see Actions
    * @param ParameterBag|array|NULL $params
-   *   Parameters to be used in thr request
+   *   The parameters to use in the request.
+   * @param bool $checkPermission
+   *   Whether to check permission or not.
    *
    * @return Response
    */
-  public function request($action, $params = NULL);
+  public function request($action, $params = NULL, $checkPermission = TRUE);
 
   /**
    * @param RequestHandlerInterface $handler

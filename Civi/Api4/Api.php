@@ -2,6 +2,7 @@
 
 namespace Civi\Api4;
 
+use Civi\Api4\Exception\Api4Exception;
 use Civi\Api4\Handler\Actions;
 use Civi\Api4\Handler\RequestHandlerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
@@ -39,12 +40,9 @@ class Api implements ApiInterface {
   }
 
   /**
-   * @param $action
-   * @param ParameterBag|array|NULL $params
-   *
-   * @return Response
+   * @inheritdoc
    */
-  public function request($action, $params = NULL) {
+  public function request($action, $params = NULL, $checkPermission = TRUE) {
     if (is_array($params)) {
       $params = new ParameterBag($params);
     }
@@ -59,12 +57,12 @@ class Api implements ApiInterface {
         $this->getEntity(),
         $action
       );
-      throw new \Exception($err);
+      throw new Api4Exception($err);
     }
 
-    // todo I'm not sure if the Request should be aware of the handler
-    // seems more like a job for the Kernel
-    $request = new ApiRequest($this->getEntity(), $this->handlers[$action], $params);
+    $handler = $this->handlers[$action];
+    $request = new ApiRequest($this->getEntity(), $handler, $params);
+    $request->setCheckPermissions($checkPermission);
 
     return $this->kernel->run($request);
   }
