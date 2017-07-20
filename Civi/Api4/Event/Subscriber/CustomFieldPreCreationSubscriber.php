@@ -4,7 +4,7 @@ namespace Civi\Api4\Event\Subscriber;
 
 use Civi\Api4\Request;
 
-class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
+class CustomFieldPreCreationSubscriber extends AbstractPreCreationSubscriber {
 
   const OPTION_TYPE_NEW = 1;
   const OPTION_STATUS_ACTIVE = 1;

@@ -6,13 +6,13 @@ use Civi\API\Event\PrepareEvent;
 use Civi\Api4\Handler\CreationHandler;
 use Civi\Api4\Request;
 
-abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
+abstract class AbstractPreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
    * @param PrepareEvent $event
    */
   public function onApiPrepare(PrepareEvent $event) {
     $request = $event->getApiRequest();
-    if (!$request instanceof Request || !$request->getAction() instanceof CreationHandler) {
+    if (!$request instanceof Request || !$request->getHandler() instanceof CreationHandler) {
       return;
     }
 

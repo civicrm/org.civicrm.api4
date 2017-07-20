@@ -4,7 +4,7 @@ namespace Civi\Api4\Event\Subscriber;
 
 use Civi\Api4\Request;
 
-class CustomGroupPreCreationSubscriber extends PreCreationSubscriber {
+class CustomGroupPreCreationSubscriber extends AbstractPreCreationSubscriber {
   /**
    * @param Request $request
    */

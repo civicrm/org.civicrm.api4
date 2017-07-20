@@ -4,7 +4,7 @@ namespace Civi\Api4\Event\Subscriber;
 
 use Civi\Api4\Request;
 
-class NullValueFormattingPreCreationSubscriber extends PreCreationSubscriber {
+class NullValueFormattingPreCreationSubscriber extends AbstractPreCreationSubscriber {
 
   /**
    * @inheritdoc

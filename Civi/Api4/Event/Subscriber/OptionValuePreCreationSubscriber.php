@@ -6,7 +6,7 @@ use Civi\Api4\ApiInterface;
 use Civi\Api4\GetParameterBag;
 use Civi\Api4\Request;
 
-class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
+class OptionValuePreCreationSubscriber extends AbstractPreCreationSubscriber {
 
   /**
    * @var ApiInterface
