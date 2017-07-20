@@ -4,6 +4,7 @@ namespace Civi\Api4\Event\Subscriber\Authorize;
 
 use Civi\Api4\Event\AuthorizeEvent;
 use Civi\Api4\Event\Events;
+use Civi\Api4\Handler\Actions;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class AuthorizationSubscriber implements EventSubscriberInterface {
@@ -21,6 +22,16 @@ class AuthorizationSubscriber implements EventSubscriberInterface {
    * @param AuthorizeEvent $event
    */
   public function onApiAuthorize(AuthorizeEvent $event) {
-    $event->authorize(); // todo authorization
+
+    $apiRequest = $event->getApiRequest();
+
+    if (FALSE === $apiRequest->getCheckPermissions()) {
+      $event->authorize();
+    }
+
+    $publicActions = array(Actions::GET_FIELDS);
+    if (in_array($apiRequest->getAction(), $publicActions)) {
+      $event->authorize();
+    }
   }
 }
