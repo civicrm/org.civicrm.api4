@@ -2,6 +2,7 @@
 
 namespace Civi\Api4;
 
+use Civi\Api4\Handler\RequestHandlerInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
 class Request implements \ArrayAccess {
@@ -11,9 +12,9 @@ class Request implements \ArrayAccess {
   protected $entity;
 
   /**
-   * @var RequestHandler
+   * @var RequestHandlerInterface
    */
-  protected $action;
+  protected $handler;
 
   /**
    * @var ParameterBag
@@ -27,16 +28,16 @@ class Request implements \ArrayAccess {
 
   /**
    * @param $entity
-   * @param $action
+   * @param RequestHandlerInterface $handler
    * @param ParameterBag|NULL $params
    */
   public function __construct(
     $entity,
-    RequestHandler $action,
+    $handler,
     ParameterBag $params = NULL
   ) {
     $this->entity = $entity;
-    $this->action = $action;
+    $this->handler = $handler;
     $this->params = $params ?: new ParameterBag();
     $this->set('version', 4);
   }
@@ -49,10 +50,17 @@ class Request implements \ArrayAccess {
   }
 
   /**
-   * @return RequestHandler
+   * @return RequestHandlerInterface
+   */
+  public function getHandler() {
+    return $this->handler;
+  }
+
+  /**
+   * @return string
    */
   public function getAction() {
-    return $this->action;
+    return $this->handler->getAction();
   }
 
   /**
