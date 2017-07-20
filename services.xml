@@ -37,41 +37,45 @@
             <tag name="spec_provider"/>
         </service>
 
-        <service id="custom_group.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\CustomGroupPreCreationSubscriber">
+        <service id="custom_group.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\Prepare\CustomGroupPreCreationSubscriber">
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="custom_field.pre_creation.subsciber" class="Civi\Api4\Event\Subscriber\CustomFieldPreCreationSubscriber">
+        <service id="custom_field.pre_creation.subsciber" class="Civi\Api4\Event\Subscriber\Prepare\CustomFieldPreCreationSubscriber">
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="null_value.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\NullValueFormattingPreCreationSubscriber">
+        <service id="null_value.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\Prepare\NullValueFormattingPreCreationSubscriber">
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="contact.pre_update.subscriber" class="Civi\Api4\Event\Subscriber\ContactPreUpdateSubscriber">
+        <service id="contact.pre_update.subscriber" class="Civi\Api4\Event\Subscriber\Prepare\ContactPreUpdateSubscriber">
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="option_value.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\OptionValuePreCreationSubscriber">
+        <service id="option_value.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\Prepare\OptionValuePreCreationSubscriber">
             <tag name="event_subscriber"/>
             <argument type="service" id="option_group.api"/>
         </service>
 
-        <service id="activity.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\ActivityPreCreationSubscriber">
+        <service id="activity.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\Prepare\ActivityPreCreationSubscriber">
             <tag name="event_subscriber"/>
             <argument type="service" id="option_value.api"/>
         </service>
 
-        <service id="participant.pre_get.subscriber" class="Civi\Api4\Event\Subscriber\ParticipantPreGetSubscriber">
+        <service id="participant.pre_get.subscriber" class="Civi\Api4\Event\Subscriber\Prepare\ParticipantPreGetSubscriber">
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="contact.schema_map.subscriber" class="Civi\Api4\Event\Subscriber\ContactSchemaMapSubscriber">
+        <service id="contact.schema_map.subscriber" class="Civi\Api4\Event\Subscriber\Schema\ContactSchemaMapSubscriber">
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="activity.schema_map.subscriber" class="Civi\Api4\Event\Subscriber\ActivitySchemaMapSubscriber">
+        <service id="activity.schema_map.subscriber" class="Civi\Api4\Event\Subscriber\Schema\ActivitySchemaMapSubscriber">
+            <tag name="event_subscriber"/>
+        </service>
+
+        <service id="api4.authorization.subscriber" class="Civi\Api4\Event\Subscriber\Authorize\AuthorizationSubscriber">
             <tag name="event_subscriber"/>
         </service>
 
