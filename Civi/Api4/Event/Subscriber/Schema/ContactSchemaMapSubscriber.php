@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Event\Subscriber;
+namespace Civi\Api4\Event\Subscriber\Schema;
 
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\SchemaMapBuildEvent;

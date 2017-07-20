@@ -1,9 +1,9 @@
 <?php
 
-namespace Civi\Api4\Event\Subscriber;
+namespace Civi\Api4\Event\Subscriber\Prepare;
 
-use Civi\API\Event\PrepareEvent;
-use Civi\API\Events;
+use Civi\Api4\Event\Events;
+use Civi\Api4\Event\PrepareEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 abstract class AbstractPrepareSubscriber implements EventSubscriberInterface {

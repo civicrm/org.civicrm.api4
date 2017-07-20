@@ -1,28 +1,28 @@
 <?php
 
-namespace Civi\Api4\Event\Subscriber;
+namespace Civi\Api4\Event\Subscriber\Prepare;
 
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 
 class ContactPreUpdateSubscriber extends AbstractPreCreationSubscriber {
   /**
    * @inheritdoc
    */
-  protected function modify(Request $request) {
+  public function modify(ApiRequest $request) {
     $this->addDefaultUpdateValues($request);
   }
 
   /**
    * @inheritdoc
    */
-  protected function applies(Request $request) {
+  public function applies(ApiRequest $request) {
     return $request->getEntity() === 'Contact' && $request->get('id');
   }
 
   /**
    * @inheritdoc
    */
-  protected function addDefaultUpdateValues(Request $request) {
+  protected function addDefaultUpdateValues(ApiRequest $request) {
     $id = $request->get('id');
     $contactType = $request->get('contact_type');
     $contactId = $request->get('contact_id');

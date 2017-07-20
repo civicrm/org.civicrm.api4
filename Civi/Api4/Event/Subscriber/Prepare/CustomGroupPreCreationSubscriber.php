@@ -1,14 +1,14 @@
 <?php
 
-namespace Civi\Api4\Event\Subscriber;
+namespace Civi\Api4\Event\Subscriber\Prepare;
 
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 
 class CustomGroupPreCreationSubscriber extends AbstractPreCreationSubscriber {
   /**
-   * @param Request $request
+   * @param ApiRequest $request
    */
-  protected function modify(Request $request) {
+  public function modify(ApiRequest $request) {
     $extends = $request->get('extends');
     $title = $request->get('title');
     $name = $request->get('name');
@@ -22,7 +22,7 @@ class CustomGroupPreCreationSubscriber extends AbstractPreCreationSubscriber {
     }
   }
 
-  protected function applies(Request $request) {
+  public function applies(ApiRequest $request) {
     return $request->getEntity() === 'CustomGroup';
   }
 

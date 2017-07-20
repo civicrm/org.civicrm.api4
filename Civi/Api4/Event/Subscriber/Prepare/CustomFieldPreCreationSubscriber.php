@@ -1,8 +1,8 @@
 <?php
 
-namespace Civi\Api4\Event\Subscriber;
+namespace Civi\Api4\Event\Subscriber\Prepare;
 
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 
 class CustomFieldPreCreationSubscriber extends AbstractPreCreationSubscriber {
 
@@ -12,7 +12,7 @@ class CustomFieldPreCreationSubscriber extends AbstractPreCreationSubscriber {
   /**
    * @inheritdoc
    */
-  public function modify(Request $request) {
+  public function modify(ApiRequest $request) {
     $this->formatOptionParams($request);
     $this->setDefaults($request);
   }
@@ -20,7 +20,7 @@ class CustomFieldPreCreationSubscriber extends AbstractPreCreationSubscriber {
   /**
    * @inheritdoc
    */
-  protected function applies(Request $request) {
+  public function applies(ApiRequest $request) {
     return $request->getEntity() === 'CustomField';
   }
 
@@ -28,9 +28,9 @@ class CustomFieldPreCreationSubscriber extends AbstractPreCreationSubscriber {
    * Sets defaults required for option group and value creation
    * @see CRM_Core_BAO_CustomField::create()
    *
-   * @param Request $request
+   * @param ApiRequest $request
    */
-  protected function formatOptionParams(Request $request) {
+  protected function formatOptionParams(ApiRequest $request) {
     $options = $request->get('options');
 
     if (!is_array($options)) {
@@ -78,9 +78,9 @@ class CustomFieldPreCreationSubscriber extends AbstractPreCreationSubscriber {
   }
 
   /**
-   * @param Request $request
+   * @param ApiRequest $request
    */
-  private function setDefaults(Request $request) {
+  private function setDefaults(ApiRequest $request) {
     if (!$request->get('option_type')) {
       $request->set('option_type', NULL);
     }

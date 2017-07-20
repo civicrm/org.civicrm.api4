@@ -1,10 +1,10 @@
 <?php
 
-namespace Civi\Api4\Event\Subscriber;
+namespace Civi\Api4\Event\Subscriber\Prepare;
 
 use Civi\Api4\ApiInterface;
 use Civi\Api4\GetParameterBag;
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 
 class ActivityPreCreationSubscriber extends AbstractPreCreationSubscriber {
 
@@ -23,7 +23,7 @@ class ActivityPreCreationSubscriber extends AbstractPreCreationSubscriber {
   /**
    * @inheritdoc
    */
-  protected function modify(Request $request) {
+  public function modify(ApiRequest $request) {
     $activityType = $request->get('activity_type');
     if ($activityType) {
       $params = new GetParameterBag();
@@ -42,7 +42,7 @@ class ActivityPreCreationSubscriber extends AbstractPreCreationSubscriber {
   /**
    * @inheritdoc
    */
-  protected function applies(Request $request) {
+  public function applies(ApiRequest $request) {
     return $request->getEntity() === 'Activity';
   }
 

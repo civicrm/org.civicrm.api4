@@ -1,15 +1,15 @@
 <?php
 
-namespace Civi\Api4\Event\Subscriber;
+namespace Civi\Api4\Event\Subscriber\Prepare;
 
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 
 class NullValueFormattingPreCreationSubscriber extends AbstractPreCreationSubscriber {
 
   /**
    * @inheritdoc
    */
-  protected function modify(Request $request) {
+  public function modify(ApiRequest $request) {
     $this->formalNullInput($request);
   }
 
@@ -28,9 +28,9 @@ class NullValueFormattingPreCreationSubscriber extends AbstractPreCreationSubscr
    * @see \DB_DataObject::update() for how true null is ignored
    * @see \DB_DataObject::insert() for how string null is used to unset values
    *
-   * @param Request $request
+   * @param ApiRequest $request
    */
-  private function formalNullInput(Request $request) {
+  private function formalNullInput(ApiRequest $request) {
     foreach ($request->getAll() as $key => $value) {
       if ('null' === $value) {
         $request->set($key, 'Null');
@@ -46,7 +46,7 @@ class NullValueFormattingPreCreationSubscriber extends AbstractPreCreationSubscr
    *
    * @return TRUE as it should apply to all pre-creation requests
    */
-  protected function applies(Request $request) {
+  public function applies(ApiRequest $request) {
     return TRUE;
   }
 

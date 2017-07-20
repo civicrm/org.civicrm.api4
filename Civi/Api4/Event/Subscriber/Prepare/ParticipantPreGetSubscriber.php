@@ -1,14 +1,14 @@
 <?php
 
-namespace Civi\Api4\Event\Subscriber;
+namespace Civi\Api4\Event\Subscriber\Prepare;
 
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 
 class ParticipantPreGetSubscriber extends AbstractPreGetSubscriber {
   /**
    * @inheritdoc
    */
-  protected function modify(Request $request) {
+  public function modify(ApiRequest $request) {
     $wheres = $request->get('where', array());
     $whereFields = array_column($wheres, 0);
 
@@ -21,7 +21,7 @@ class ParticipantPreGetSubscriber extends AbstractPreGetSubscriber {
   /**
    * @inheritdoc
    */
-  protected function applies(Request $request) {
+  public function applies(ApiRequest $request) {
     return $request->getEntity() === 'Participant';
   }
 }

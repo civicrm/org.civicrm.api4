@@ -1,10 +1,10 @@
 <?php
 
-namespace Civi\Api4\Event\Subscriber;
+namespace Civi\Api4\Event\Subscriber\Prepare;
 
 use Civi\Api4\ApiInterface;
 use Civi\Api4\GetParameterBag;
-use Civi\Api4\Request;
+use Civi\Api4\ApiRequest;
 
 class OptionValuePreCreationSubscriber extends AbstractPreCreationSubscriber {
 
@@ -23,23 +23,23 @@ class OptionValuePreCreationSubscriber extends AbstractPreCreationSubscriber {
   /**
    * @inheritdoc
    */
-  protected function modify(Request $request) {
+  public function modify(ApiRequest $request) {
     $this->setOptionGroupId($request);
   }
 
   /**
    * @inheritdoc
    */
-  protected function applies(Request $request) {
+  public function applies(ApiRequest $request) {
     return $request->getEntity() === 'OptionValue';
   }
 
   /**
-   * @param Request $request
+   * @param ApiRequest $request
    *
    * @throws \Exception
    */
-  private function setOptionGroupId(Request $request) {
+  private function setOptionGroupId(ApiRequest $request) {
     $optionGroupName = $request->get('option_group');
     if (!$optionGroupName || $request->get('option_group_id')) {
       return;
