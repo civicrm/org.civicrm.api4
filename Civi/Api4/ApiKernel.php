@@ -44,11 +44,6 @@ class ApiKernel {
   protected $dispatcher;
 
   /**
-   * @var ErrorFormatter
-   */
-  private $errorFormatter;
-
-  /**
    * @param EventDispatcherInterface $dispatcher
    */
   public function __construct(EventDispatcherInterface $dispatcher) {
@@ -68,12 +63,15 @@ class ApiKernel {
       return $this->runRequest($apiRequest);
     }
     catch (\Exception $e) {
-      $event = new ExceptionEvent($e);
+      $event = new ExceptionEvent($e, $apiRequest->get('debug'));
       $this->dispatcher->dispatch(Events::EXCEPTION, $event);
-      $err = $this->errorFormatter->formatError($e, $apiRequest);
 
-      // todo format result
-      return $this->formatResult($apiRequest, $err);
+      if ($event->hasResponse()) {
+        return $event->getResponse();
+      }
+
+      // exception was not handled by response formatter
+      throw $e;
     }
   }
 
