@@ -9,17 +9,21 @@ use Civi\Api4\ApiRequest;
 use Civi\Api4\Response;
 use Civi\Test\Api4\UnitTestCase;
 use Prophecy\Argument;
+use Prophecy\Argument\Token\TypeToken;
 
 class ContactApiTest extends UnitTestCase {
 
   public function testGet() {
     $mockKernel = $this->prophesize(ApiKernel::class);
     $response = new Response(['some contact']);
-    $mockKernel->run(Argument::type(ApiRequest::class))->willReturn($response);
+    /** @var TypeToken|ApiRequest $argument */
+    $argument = Argument::type(ApiRequest::class);
+    $mockKernel->run($argument)->willReturn($response);
 
     $contactApi = new Api($mockKernel->reveal(), 'Contact');
     $contactApi->addHandler(new GetHandler('Contact'));
+    $result = $contactApi->request('get', NULL, FALSE);
 
-    $this->assertNotEmpty($contactApi->request('get')->getArrayCopy());
+    $this->assertNotEmpty($result->getArrayCopy());
   }
 }

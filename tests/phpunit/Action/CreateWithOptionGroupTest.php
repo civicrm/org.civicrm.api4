@@ -26,7 +26,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
     $customGroup = $customGroupApi->request('create', array(
       'name' => 'FavoriteThings',
       'extends' => 'Contact'
-    ));
+    ), FALSE);
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
@@ -36,7 +36,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       'custom_group_id' => $customGroupId,
       'html_type' => 'Select',
       'data_type' => 'String'
-    ));
+    ), FALSE);
 
     $customFieldApi->request('create', array(
       'label' => 'FavFood',
@@ -44,12 +44,12 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       'custom_group_id' => $customGroupId,
       'html_type' => 'Select',
       'data_type' => 'String'
-    ));
+    ), FALSE);
 
     $customGroup = $customGroupApi->request('create', array(
       'name' => 'FinancialStuff',
       'extends' => 'Contact'
-    ));
+    ), FALSE);
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
@@ -59,7 +59,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       'custom_group_id' => $customGroupId,
       'html_type' => 'Number',
       'data_type' => 'Money'
-    ));
+    ), FALSE);
 
     $contactApi->request('create', array(
       'first_name' => 'Jerome',
@@ -68,7 +68,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       'FavoriteThings.FavColor' => 'r',
       'FavoriteThings.FavFood' => '1',
       'FinancialStuff.Salary' => 50000
-    ));
+    ), FALSE);
 
     $params = new GetParameterBag();
     $params->addSelect('first_name');
@@ -78,7 +78,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
     $params->addWhere('FavoriteThings.FavFood.label', 'IN', ['Corn', 'Potatoes']);
     $params->addWhere('FinancialStuff.Salary', '>', '10000');
 
-    $result = $contactApi->request('get', $params)->first();
+    $result = $contactApi->request('get', $params, FALSE)->first();
 
     $this->assertArrayHasKey('FavoriteThings', $result);
     $favoriteThings = $result['FavoriteThings'];
@@ -98,7 +98,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
     $customGroup = $customGroupApi->request('create', array(
       'name' => 'FavoriteThings',
       'extends' => 'Contact',
-    ));
+    ), FALSE);
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
@@ -108,7 +108,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       'custom_group_id' => $customGroupId,
       'html_type' => 'Select',
       'data_type' => 'String',
-    ));
+    ), FALSE);
 
     $customFieldApi->request('create', array(
       'label' => 'FavFood',
@@ -116,12 +116,12 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       'custom_group_id' => $customGroupId,
       'html_type' => 'Select',
       'data_type' => 'String',
-    ));
+    ), FALSE);
 
     $customGroup = $customGroupApi->request('create', array(
       'name' => 'FinancialStuff',
       'extends' => 'Contact',
-    ));
+    ), FALSE);
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
@@ -130,7 +130,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       'custom_group_id' => $customGroupId,
       'html_type' => 'Number',
       'data_type' => 'Money',
-    ));
+    ), FALSE);
 
     $contactApi->request('create', array(
       'first_name' => 'Red',
@@ -139,7 +139,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       'FavoriteThings.FavColor' => 'r',
       'FavoriteThings.FavFood' => '1',
       'FinancialStuff.Salary' => 10000
-    ));
+    ), FALSE);
 
     $contactApi->request('create', array(
       'first_name' => 'Blue',
@@ -148,7 +148,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       'FavoriteThings.FavColor' => 'b',
       'FavoriteThings.FavFood' => '3',
       'FinancialStuff.Salary' => 500000
-    ));
+    ), FALSE);
 
     $params = new GetParameterBag();
     $params->addSelect('first_name');
@@ -157,7 +157,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
     $params->addSelect('FavoriteThings.FavFood.label');
     $params->addSelect('FinancialStuff.Salary');
     $params->addWhere('FavoriteThings.FavFood.label', 'IN', ['Corn', 'Cheese']);
-    $result = $contactApi->request('get', $params);
+    $result = $contactApi->request('get', $params, FALSE);
 
     $blueCheese = null;
     foreach ($result as $contact) {

@@ -18,21 +18,21 @@ class UpdateCustomValueTest extends BaseCustomValueTest {
     $customGroup = $customGroupApi->request('create', array(
       'name' => 'MyContactFields',
       'extends' => 'Contact',
-    ));
+    ), FALSE);
 
     $customFieldApi->request('create', array(
       'label' => 'FavColor',
       'custom_group_id' => $customGroup['id'],
       'html_type' => 'Text',
       'data_type' => 'String',
-    ));
+    ), FALSE);
 
     $contactId = $contactApi->request('create', array(
       'first_name' => 'Red',
       'last_name' => 'Tester',
       'contact_type' => 'Individual',
       'MyContactFields.FavColor' => 'Red',
-    ))['id'];
+    ), FALSE)['id'];
 
     $contactApi->request('create', array(
       'id' => $contactId,
@@ -40,7 +40,7 @@ class UpdateCustomValueTest extends BaseCustomValueTest {
       'last_name' => 'Tester',
       'contact_type' => 'Individual',
       'MyContactFields.FavColor' => 'Blue',
-    ));
+    ), FALSE);
 
     $result = CustomValueTable::getEntityValues($contactId, 'Contact');
 

@@ -18,7 +18,7 @@ class CreateCustomValueTest extends BaseCustomValueTest {
     $customGroup = $customGroupApi->request('create', array(
       'name' => 'MyContactFields',
       'extends' => 'Contact'
-    ));
+    ), FALSE);
 
     $customFieldApi->request('create', array(
       'label' => 'Color',
@@ -26,24 +26,24 @@ class CreateCustomValueTest extends BaseCustomValueTest {
       'custom_group_id' => $customGroup->getArrayCopy()['id'],
       'html_type' => 'Select',
       'data_type' => 'String'
-    ));
+    ), FALSE);
 
     $customField = $customFieldApi->request('get', array(
       array('label', '=', 'Color')
-    ))->first();
+    ), FALSE)->first();
 
     $this->assertNotNull($customField['option_group_id']);
     $optionGroupId = $customField['option_group_id'];
 
     $optionGroup = $optionGroupApi->request('get', array(
       array('id', '=', $optionGroupId)
-    ))->first();
+    ), FALSE)->first();
 
     $this->assertEquals('Color', $optionGroup['title']);
 
     $createdOptionValues = $optionValueApi->request('get', array(
       array('option_group_id', '=', $optionGroupId)
-    ))->getArrayCopy();
+    ), FALSE)->getArrayCopy();
 
     $values = array_column($createdOptionValues, 'value');
     $labels = array_column($createdOptionValues, 'label');

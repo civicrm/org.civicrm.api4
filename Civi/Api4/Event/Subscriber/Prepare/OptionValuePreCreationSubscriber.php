@@ -48,7 +48,7 @@ class OptionValuePreCreationSubscriber extends AbstractPreCreationSubscriber {
     $params = new GetParameterBag();
     $params->addSelect('id');
     $params->addWhere('name', '=', $optionGroupName);
-    $optionGroup = $this->optionGroupApi->request('get', $params);
+    $optionGroup = $this->optionGroupApi->request('get', $params, FALSE);
 
     if ($optionGroup->count() !== 1) {
       throw new \Exception('Option group name must match only a single group');

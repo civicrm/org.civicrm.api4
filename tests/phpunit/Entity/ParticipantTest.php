@@ -31,7 +31,7 @@ class ParticipantTest extends UnitTestCase  {
     $participantApi = \Civi::container()->get('participant.api');
 
     // With no records:
-    $result = $participantApi->request('get');
+    $result = $participantApi->request('get', NULL, FALSE);
     $this->assertEquals(0, $result->count(), "count of empty get is not 0");
 
     // Create some test related records before proceeding
@@ -65,7 +65,7 @@ class ParticipantTest extends UnitTestCase  {
           'source' => $dummy['sources'][$i % 3], // 3 = number of sources
       )))['sample_params'];
 
-       $participantApi->request('create', $dummy['participants'][$i]);
+       $participantApi->request('create', $dummy['participants'][$i], FALSE);
     }
     $sqlCount = $this->getRowCount('civicrm_participant');
     $this->assertEquals($participantCount, $sqlCount, "Unexpected count");
@@ -76,7 +76,7 @@ class ParticipantTest extends UnitTestCase  {
 
     $params = new GetParameterBag();
     $params->addClause(array('event_id', '=', $firstEventId));
-    $firstOnlyResult = $participantApi->request('get', $params);
+    $firstOnlyResult = $participantApi->request('get', $params, FALSE);
 
     $this->assertEquals($expectedFirstEventCount, count($firstOnlyResult),
       "count of first event is not $expectedFirstEventCount");
@@ -85,7 +85,7 @@ class ParticipantTest extends UnitTestCase  {
 
     $params = new GetParameterBag();
     $params->addWhere('event_id', 'IN', array($firstEventId, $secondEventId));
-    $firstTwo = $participantApi->request('get', $params);
+    $firstTwo = $participantApi->request('get', $params, FALSE);
 
     $firstResult = $result->first();
 
@@ -106,7 +106,7 @@ class ParticipantTest extends UnitTestCase  {
     $params = new GetParameterBag();
     $params->addWhere('event_id', '=', $firstEventId);
     $params->addWhere('contact_id', '=', $firstContactId);
-    $firstParticipantResult = $participantApi->request('get', $params);
+    $firstParticipantResult = $participantApi->request('get', $params, FALSE);
 
     $this->assertEquals(1, count($firstParticipantResult), "more than one registration");
 
@@ -125,7 +125,7 @@ class ParticipantTest extends UnitTestCase  {
         )
       )
     );
-    $otherParticipantResult = $participantApi->request('get', $params);
+    $otherParticipantResult = $participantApi->request('get', $params, FALSE);
     $otherParticipantResult->indexBy('id');
 
     $this->assertEquals($participantCount - 1,
@@ -142,13 +142,13 @@ class ParticipantTest extends UnitTestCase  {
     $params->addWhere('event_id', '=', $firstEventId);
     $params->setLimit(20);
     $params->set('source', "not " . $firstResult['source']);
-    $participantApi->request('update', $params);
+    $participantApi->request('update', $params, FALSE);
 
     // - delete some records
     $secondEventId = $dummy['events'][1]['id'];
     $params = new GetParameterBag();
     $params->addWhere('event_id', '=', $secondEventId);
-    $deleteResult = $participantApi->request('delete', $params);
+    $deleteResult = $participantApi->request('delete', $params, FALSE);
 
     $expectedDeletes = array(2,7,12,17);
     $this->assertEquals($expectedDeletes, (array)$deleteResult,

@@ -29,7 +29,7 @@ class ActivityPreCreationSubscriber extends AbstractPreCreationSubscriber {
       $params = new GetParameterBag();
       $params->addWhere('name', '=' ,$activityType);
       $params->addWhere('option_group.name', '=', 'activity_type');
-      $result = $this->optionValueApi->request('get', $params);
+      $result = $this->optionValueApi->request('get', $params, FALSE);
 
       if ($result->count() !== 1) {
         throw new \Exception('Activity type must match a *single* type');

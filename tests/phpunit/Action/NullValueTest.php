@@ -21,7 +21,7 @@ class NullValueTest extends UnitTestCase {
       'first_name' => 'Joseph',
       'last_name' => 'null',
       'contact_type' => 'Individual',
-    ));
+    ), FALSE);
 
     $this->assertSame('Null', $contact['last_name']);
     $this->assertSame('Joseph Null', $contact['display_name']);
@@ -33,12 +33,12 @@ class NullValueTest extends UnitTestCase {
       'first_name' => 'ILoveMy',
       'last_name' => 'LastName',
       'contact_type' => 'Individual',
-    ))['id'];
+    ), FALSE)['id'];
 
     $contact = $contactApi->request('create', array(
       'id' => $contactId,
       'last_name' => NULL
-    ));
+    ), FALSE);
 
     $this->assertSame(NULL, $contact['last_name']);
     $this->assertSame('ILoveMy', $contact['display_name']);

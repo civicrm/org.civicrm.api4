@@ -15,12 +15,12 @@ class UpdateContactTest extends UnitTestCase {
       'first_name' => 'Johann',
       'last_name' => 'Tester',
       'contact_type' => 'Individual'
-    ))['id'];
+    ), FALSE)['id'];
 
     $contact = $contactApi->request('create', array(
       'id' => $contactId,
       'first_name' => 'Testy',
-    ));
+    ), FALSE);
 
     $this->assertEquals('Testy', $contact['first_name']);
   }

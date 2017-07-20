@@ -9,6 +9,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Civi\Api4\Response;
+use Civi\Api4\ApiInterface;
 
 /**
  * Procedural wrapper for the OO api version 4.
@@ -16,23 +18,27 @@ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
  * @param $entity
  * @param $action
  * @param array $params
+ * @param bool $checkPermission
  *
- * @return \Civi\Api4\Response
+ * @return Response
  */
-function civicrm_api4($entity, $action, $params = array()) {
+function civicrm_api4($entity, $action, $params = array(), $checkPermission = TRUE) {
   $serviceId = sprintf('%s.api', strtolower($entity));
   $container = Civi::container();
 
   if (!$container->has($serviceId)) {
-    $err = sprintf('The "%s" API was not found. Join the team and implement it!', $entity);
+    $err = sprintf(
+      'The "%s" API was not found. Join the team and implement it!',
+      $entity
+    );
     throw new Api4Exception($err);
   }
 
-  /** @var \Civi\Api4\ApiInterface $api */
+  /** @var ApiInterface $api */
   $api = $container->get($serviceId);
   $params = new ParameterBag($params);
 
-  return $api->request($action, $params);
+  return $api->request($action, $params, $checkPermission);
 }
 
 /**

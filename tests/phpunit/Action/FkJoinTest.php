@@ -33,7 +33,7 @@ class FkJoinTest extends UnitTestCase {
     $activityApi = \Civi::container()->get('activity.api');
     $params = new GetParameterBag();
     $params->addWhere('activity_type.name', '=', 'housing_support');
-    $results = $activityApi->request('get', $params);
+    $results = $activityApi->request('get', $params, FALSE);
 
     $this->assertCount(1, $results);
   }
@@ -45,7 +45,7 @@ class FkJoinTest extends UnitTestCase {
     $params->addSelect('assignees.first_name');
     $params->addSelect('assignees.display_name');
     $params->addWhere('assignees.first_name', '=', 'Test');
-    $results = $activityApi->request('get', $params);
+    $results = $activityApi->request('get', $params, FALSE);
 
     $firstResult = $results->first();
 
@@ -66,7 +66,7 @@ class FkJoinTest extends UnitTestCase {
     $params->addSelect('phones.phone');
     $params->addWhere('id', '=', $testContact['id']);
     $params->addWhere('phones.location_type.name', '=', 'Home');
-    $results = $contactApi->request('get', $params)->first();
+    $results = $contactApi->request('get', $params, FALSE)->first();
 
     $this->assertArrayHasKey('phones', $results);
     $this->assertCount(2, $results['phones']);

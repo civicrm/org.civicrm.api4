@@ -41,7 +41,7 @@ class ConformanceTest extends UnitTestCase {
     $container = \Civi::container();
     $entityApi = $container->get('entity.api');
 
-    $entities = $entityApi->request('get')->getArrayCopy();
+    $entities = $entityApi->request('get', NULL, FALSE)->getArrayCopy();
     $this->assertNotEmpty($entities);
 
     foreach ($entities as $entityName) {
@@ -65,7 +65,7 @@ class ConformanceTest extends UnitTestCase {
    * @param ApiInterface $api
    */
   protected function checkFields(ApiInterface $api) {
-    $fields = $api->request('getFields')->indexBy('name');
+    $fields = $api->request('getFields', NULL, FALSE)->indexBy('name');
 
     $errMsg = sprintf('%s is missing required ID field', $api->getEntity());
     $subset = array('data_type' => 'Integer');
@@ -77,7 +77,7 @@ class ConformanceTest extends UnitTestCase {
    * @param ApiInterface $api
    */
   protected function checkActions($api) {
-    $actions = $api->request('getActions')->getArrayCopy();
+    $actions = $api->request('getActions', NULL, FALSE)->getArrayCopy();
 
     $basicActions = array('getActions', 'create', 'get', 'delete', 'getFields');
     $missing = array_diff($basicActions, $actions);
@@ -94,7 +94,7 @@ class ConformanceTest extends UnitTestCase {
     $entity = $api->getEntity();
     $requiredParams = $this->creationParamProvider->getRequired($entity);
 
-    $createResult = $api->request('create', $requiredParams);
+    $createResult = $api->request('create', $requiredParams, FALSE);
     $id = $createResult['id'];
 
     $this->assertArrayHasKey('id', $createResult, "create missing ID");
@@ -110,7 +110,7 @@ class ConformanceTest extends UnitTestCase {
   protected function checkGet(ApiInterface $api, $id) {
     $params = new GetParameterBag();
     $params->addWhere('id', '=', $id);
-    $getResult = $api->request('get', $params);
+    $getResult = $api->request('get', $params, FALSE);
 
     $errMsg = sprintf('Failed to fetch a %s after creation', $api->getEntity());
     $this->assertEquals(1, count($getResult), $errMsg);
@@ -123,7 +123,7 @@ class ConformanceTest extends UnitTestCase {
   protected function checkDeletion(ApiInterface $api, $id) {
     $params = new GetParameterBag();
     $params->addWhere('id', '=', $id);
-    $deleteResult = $api->request('delete', $params);
+    $deleteResult = $api->request('delete', $params, FALSE);
 
     // should get back an array of deleted id
     $this->assertEquals(array($id), (array)$deleteResult);
@@ -136,7 +136,7 @@ class ConformanceTest extends UnitTestCase {
   protected function checkPostDelete(ApiInterface $api, $id) {
     $params = new GetParameterBag();
     $params->addWhere('id', '=', $id);
-    $getDeletedResult = $api->request('get', $params);
+    $getDeletedResult = $api->request('get', $params, FALSE);
 
     $errMsg = sprintf('Entity "%s" was not deleted', $api->getEntity());
     $this->assertEquals(0, count($getDeletedResult), $errMsg);

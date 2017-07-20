@@ -25,7 +25,7 @@ class GetExtraFieldsTest extends UnitTestCase {
     $contactApi = \Civi::container()->get('contact.api');
     $returnedFields = $contactApi->request('getFields', array(
       'action' => 'create'
-    ))->getArrayCopy();
+    ), FALSE)->getArrayCopy();
 
     $returnedFieldNames = array_column($returnedFields, 'name');
 

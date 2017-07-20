@@ -62,7 +62,7 @@ class ComplexQueryTest extends UnitTestCase {
     $activityApi = \Civi::service('activity.api');
     $params = new GetParameterBag();
     $params->addWhere('activity_type.name', '=', 'housing_support');
-    $results = $activityApi->request('get', $params);
+    $results = $activityApi->request('get', $params, FALSE);
 
     $this->assertCount(1, $results);
   }
@@ -71,7 +71,7 @@ class ComplexQueryTest extends UnitTestCase {
    * Fetch all activities with a blue tag; and return all tags on the activities
    */
   public function testGetAllActivitiesWithTagsForBlueTaggedActivities() {
-    $activityApi = \Civi::service('activity.api');
+    $activityApi = \Civi::container()->get('activity.api');
 
     $params = new GetParameterBag();
     $params->addSelect('subject');
@@ -79,7 +79,7 @@ class ComplexQueryTest extends UnitTestCase {
     $params->addSelect('tags.name');
     $params->addWhere('tags.name', '=', 'blue');
 
-    $results = $activityApi->request('get', $params);
+    $results = $activityApi->request('get', $params, FALSE);
 
     $this->assertCount(1, $results);
     $first = $results->first();
@@ -102,7 +102,7 @@ class ComplexQueryTest extends UnitTestCase {
     $params->addWhere('first_name', '=', 'Bob');
     $params->addWhere('source_activities.tags.name', '=', 'blue');
 
-    $result = $contactApi->request('get', $params);
+    $result = $contactApi->request('get', $params, FALSE);
 
     $this->assertCount(1, $result);
     $first = $result->first();
@@ -121,7 +121,7 @@ class ComplexQueryTest extends UnitTestCase {
     $params->addSelect('addresses.postal_code');
     $params->addWhere('addresses.postal_code', '=', '11201');
 
-    $contacts = $contactApi->request('get', $params);
+    $contacts = $contactApi->request('get', $params, FALSE);
 
     $this->assertCount(1, $contacts);
     $firstContact = $contacts->first();
@@ -147,12 +147,12 @@ class ComplexQueryTest extends UnitTestCase {
     $params = new GetParameterBag();
     $params->addSelect('subject');
     $params->addWhere('assignees.first_name', '=', 'Bob');
-    $asAssignee = $activityApi->request('get', $params)->indexBy('id');
+    $asAssignee = $activityApi->request('get', $params, FALSE)->indexBy('id');
 
     $params = new GetParameterBag();
     $params->addSelect('subject');
     $params->addWhere('source.first_name', '=', 'Bob');
-    $asSource = $activityApi->request('get', $params)->indexBy('id');
+    $asSource = $activityApi->request('get', $params, FALSE)->indexBy('id');
 
     $this->assertEquals(4, $asAssignee->count() + $asSource->count());
     $all = $asAssignee->getArrayCopy() + $asSource->getArrayCopy();
@@ -175,14 +175,14 @@ class ComplexQueryTest extends UnitTestCase {
     $params->addWhere('is_deceased', '=', FALSE);
     $params->addWhere('MyContactFields.MostImportantIssue', '=', 'Environment');
     $params->addWhere('addresses.postal_code', 'IN', array('94117', '94118'));
-    $byZipcode = $contactApi->request('get', $params)->indexBy('id');
+    $byZipcode = $contactApi->request('get', $params, FALSE)->indexBy('id');
 
     $params = new GetParameterBag();
     $params->addSelect('MyContactFields.MostImportantIssue');
     $params->addWhere('is_deceased', '=', FALSE);
     $params->addWhere('MyContactFields.MostImportantIssue', '=', 'Environment');
     $params->addWhere('addresses.city', '=', 'San Francisco');
-    $byCity = $contactApi->request('get', $params)->indexBy('id');
+    $byCity = $contactApi->request('get', $params, FALSE)->indexBy('id');
 
     $this->assertEquals(2, $byCity->count() + $byZipcode->count());
     $all = $byZipcode->getArrayCopy() + $byCity->getArrayCopy();

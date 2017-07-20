@@ -22,7 +22,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
       'name' => 'MyContactFields',
       'title' => 'MyContactFields',
       'extends' => 'Contact',
-    ));
+    ), FALSE);
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
@@ -32,28 +32,28 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
       'options' => array('r' => 'Red', 'g' => 'Green', 'b' => 'Blue'),
       'html_type' => 'Select',
       'data_type' => 'String',
-    ));
+    ), FALSE);
 
     $customFieldApi->request('create', array(
       'label' => 'FavAnimal',
       'custom_group_id' => $customGroupId,
       'html_type' => 'Text',
       'data_type' => 'String'
-    ));
+    ), FALSE);
 
     $customFieldApi->request('create', array(
       'label' => 'FavLetter',
       'custom_group_id' => $customGroupId,
       'html_type' => 'Text',
       'data_type' => 'String',
-    ));
+    ), FALSE);
 
     $customFieldApi->request('create', array(
       'label' => 'FavFood',
       'custom_group_id' => $customGroupId,
       'html_type' => 'Text',
       'data_type' => 'String',
-    ));
+    ), FALSE);
 
     $this->beginQueryCount();
 
@@ -65,7 +65,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
       'MyContactFields.FavAnimal' => 'Sheep',
       'MyContactFields.FavLetter' => 'z',
       'MyContactFields.FavFood' => 'Coconuts',
-    ));
+    ), FALSE);
 
     $params = new GetParameterBag();
     $params->addSelect('display_name');
@@ -79,7 +79,7 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
     $params->addWhere('MyContactFields.FavAnimal', '=', 'Sheep');
     $params->addWhere('MyContactFields.FavLetter', '=', 'z');
 
-    $contactApi->request('get', $params)->first();
+    $contactApi->request('get', $params, FALSE)->first();
 
     // this is intentionally high since, but performance should be addressed
     $this->assertLessThan(400, $this->getQueryCount());
