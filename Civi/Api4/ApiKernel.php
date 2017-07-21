@@ -101,7 +101,7 @@ class ApiKernel {
    *
    * @throws UnauthorizedException
    */
-  public function authorize(ApiRequest $apiRequest) {
+  protected function authorize(ApiRequest $apiRequest) {
     $event = new AuthorizeEvent($apiRequest);
     $this->dispatcher->dispatch(Events::AUTHORIZE, $event);
     if (!$event->isAuthorized()) {
@@ -115,7 +115,7 @@ class ApiKernel {
    * @param ApiRequest $apiRequest
    *   The full description of the API request.
    */
-  public function prepare(ApiRequest $apiRequest) {
+  protected function prepare(ApiRequest $apiRequest) {
     $this->dispatcher->dispatch(Events::PREPARE, new PrepareEvent($apiRequest));
   }
 
@@ -125,7 +125,7 @@ class ApiKernel {
    * @param Response $result
    *   The response to return to the client.
    */
-  public function respond($result) {
+  protected function respond($result) {
     $this->dispatcher->dispatch(Events::RESPOND, new RespondEvent($result));
   }
 }
