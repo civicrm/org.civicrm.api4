@@ -21,7 +21,7 @@ class ContactApiTest extends UnitTestCase {
     $mockKernel->run($argument)->willReturn($response);
 
     $contactApi = new Api($mockKernel->reveal(), 'Contact');
-    $contactApi->addHandler(new GetHandler('Contact'));
+    $contactApi->addHandler(new GetHandler());
     $result = $contactApi->request('get', NULL, FALSE);
 
     $this->assertNotEmpty($result->getArrayCopy());
