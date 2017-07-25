@@ -102,8 +102,7 @@ class CreationHandler extends RequestHandler {
         'name'
       );
 
-      // todo are we sure we don't want to allow setting to NULL? need to test
-      if ($customFieldId && NULL !== $value) {
+      if ($customFieldId) {
 
         if ($customFieldType == 'CheckBox') {
           // this function should be part of a class
@@ -115,7 +114,7 @@ class CreationHandler extends RequestHandler {
           $customParams,
           $value,
           $customFieldExtends,
-          NULL, // todo check when this is needed
+          NULL,
           $entityId,
           FALSE,
           FALSE,
