@@ -85,7 +85,7 @@ class ApiKernel {
    * @return Response
    */
   protected function runRequest(ApiRequest $apiRequest) {
-    $this->authorize($apiRequest); // todo authorization
+    $this->authorize($apiRequest);
     $this->prepare($apiRequest);
     $result = $apiRequest->getHandler()->handle($apiRequest);
     $this->respond($result);

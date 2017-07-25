@@ -39,7 +39,10 @@ class GetHandler extends RequestHandler {
    * @return Response
    */
   public function handle(ApiRequest $request) {
-    $query = new Api4SelectQuery($request->getEntity(), TRUE); // todo permission
+    $query = new Api4SelectQuery(
+      $request->getEntity(),
+      $request->getCheckPermissions()
+    );
 
     $query->select = $request->get('select', array());
     $query->where = $request->get('where', array());
