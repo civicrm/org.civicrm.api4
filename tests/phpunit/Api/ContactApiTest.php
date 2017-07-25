@@ -11,6 +11,9 @@ use Civi\Test\Api4\UnitTestCase;
 use Prophecy\Argument;
 use Prophecy\Argument\Token\TypeToken;
 
+/**
+ * @group headless
+ */
 class ContactApiTest extends UnitTestCase {
 
   public function testGet() {

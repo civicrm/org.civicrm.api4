@@ -7,6 +7,9 @@ use Civi\Api4\Query\Api4SelectQuery;
 use Civi\Api4\Service\Schema\Joiner;
 use Civi\Test\Api4\UnitTestCase;
 
+/**
+ * @group headless
+ */
 class JoinerTest extends UnitTestCase {
 
   public function testMaxJoinLimit() {
