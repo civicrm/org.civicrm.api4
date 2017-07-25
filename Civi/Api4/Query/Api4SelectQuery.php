@@ -28,12 +28,14 @@
 namespace Civi\Api4\Query;
 
 use Civi\API\SelectQuery;
+use Civi\Api4\Exception\Api4Exception;
 use Civi\Api4\Service\Spec\SpecFormatter;
 use Civi\Api4\Utils\ArrayInsertionUtil;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
 use CRM_Core_DAO_CustomField as CustomFieldDAO;
+use CRM_Utils_Array as ArrayHelper;
 
 /**
  * A query `node` may be in one of three formats:
@@ -110,6 +112,10 @@ class Api4SelectQuery extends SelectQuery {
       $path = $this->buildPath($selects[0]);
       $selects = $this->formatSelects($finalAlias, $selects);
       $joinResults = $this->getJoinResults($primaryResults, $selects);
+
+      if (empty($joinResults)) {
+        continue;
+      }
 
       foreach ($primaryResults as &$primaryResult) {
         $baseId = $primaryResult['id'];
@@ -256,6 +262,10 @@ class Api4SelectQuery extends SelectQuery {
         'column_name',
         'name'
       );
+
+      if (NULL === $field) {
+        throw new Api4Exception('Could not find custom field with that name');
+      }
     }
 
     $this->fkSelectAliases[$key] = sprintf('%s.%s', $lastLink->getAlias(), $field);
@@ -376,7 +386,11 @@ class Api4SelectQuery extends SelectQuery {
     }, $selects, array_keys($selects));
     $subQuery = $this->getSubquery($aliasedSelects, $baseIds);
 
-    return $this->runSubquery($subQuery, $selects);
+    $results = $this->runSubquery($subQuery, $selects);
+
+    return array_filter($results, function ($result) {
+      return NULL !== ArrayHelper::value('id', $result);
+    });
   }
 
   /**
