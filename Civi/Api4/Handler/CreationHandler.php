@@ -28,8 +28,10 @@
 namespace Civi\Api4\Handler;
 
 use Civi\Api4\ApiRequest;
+use Civi\Api4\Exception\Api4Exception;
 use Civi\Api4\RequestHandler;
 use Civi\Api4\Response;
+use Civi\Api4\Utils\BAOFinder;
 
 class CreationHandler extends RequestHandler {
 
@@ -46,7 +48,7 @@ class CreationHandler extends RequestHandler {
 
     if (!$createResult) {
       $errMessage = sprintf('%s creation failed', $request->getEntity());
-      throw new \API_Exception($errMessage);
+      throw new Api4Exception($errMessage);
     }
 
     return new Response($this->baoToArray($createResult));
@@ -138,7 +140,7 @@ class CreationHandler extends RequestHandler {
    * @return mixed
    */
   protected function create($entity, $params) {
-    $bao = $this->getBAOForEntity($entity);
+    $bao = BAOFinder::getBAOForEntity($entity);
     $method = $this->getCreationMethodName($bao);
     $createResult = $bao->$method($params);
 

@@ -3,6 +3,7 @@
 namespace Civi\Api4\Handler\EntityTag;
 
 use Civi\Api4\Handler\CreationHandler;
+use Civi\Api4\Utils\BAOFinder;
 
 class EntityTagCreationHandler extends CreationHandler {
   /**
@@ -10,7 +11,7 @@ class EntityTagCreationHandler extends CreationHandler {
    */
   protected function create($entity, $params) {
     /** @var \CRM_Core_BAO_EntityTag $bao */
-    $bao = $this->getBAOForEntity($entity);
+    $bao = BAOFinder::getBAOForEntity($entity);
 
     return $bao::add($params);
   }

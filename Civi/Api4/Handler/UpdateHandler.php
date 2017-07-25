@@ -6,6 +6,7 @@ use Civi\Api4\Exception\Api4Exception;
 use Civi\Api4\GetParameterBag;
 use Civi\Api4\ApiRequest;
 use Civi\Api4\Response;
+use Civi\Api4\Utils\BAOFinder;
 
 class UpdateHandler extends GetHandler {
   /**
@@ -65,7 +66,7 @@ class UpdateHandler extends GetHandler {
    * @return \CRM_Core_DAO
    */
   protected function update(ApiRequest $request, $id) {
-    $bao = $this->getBAOForEntity($request->getEntity());
+    $bao = BAOFinder::getBAOForEntity($request->getEntity());
     $params = array_merge(array('id' => $id), $request->getAll());
 
     return $bao->create($params);

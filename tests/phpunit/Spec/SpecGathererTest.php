@@ -6,6 +6,7 @@ use Civi\Api4\Service\Spec\FieldSpec;
 use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
 use Civi\Api4\Service\Spec\RequestSpec;
 use Civi\Api4\Service\Spec\SpecGatherer;
+use Civi\Api4\Utils\DAOFinder;
 use Civi\Test\Api4\UnitTestCase;
 use Civi\Test\Api4\Traits\TableDropperTrait;
 use Prophecy\Argument;
@@ -33,7 +34,7 @@ class SpecGathererTest extends UnitTestCase {
   public function testBasicFieldsGathering() {
     $gatherer = new SpecGatherer();
     $specs = $gatherer->getSpec('Contact', 'create');
-    $contactDAO = _civicrm_api3_get_DAO('Contact');
+    $contactDAO = DAOFinder::getDaoNameForEntity('Contact');
     $contactFields = $contactDAO::fields();
     $specFieldNames = $specs->getFieldNames();
     $contactFieldNames = array_column($contactFields, 'name');

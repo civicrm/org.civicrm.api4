@@ -20,28 +20,6 @@ abstract class RequestHandler implements RequestHandlerInterface {
   abstract public function getAction();
 
   /**
-   * @param $entity
-   *
-   * @return \CRM_Core_DAO
-   */
-  protected function getBAOForEntity($entity) {
-    $className = $this->getBaoName($entity);
-
-    return new $className();
-  }
-
-  /**
-   * todo replace api3 code
-   *
-   * @return null|string
-   */
-  protected function getBaoName($entity) {
-    require_once 'api/v3/utils.php';
-
-    return \_civicrm_api3_get_BAO($entity);
-  }
-
-  /**
    * Extract the true fields from a BAO
    *
    * (Used by create and update actions)

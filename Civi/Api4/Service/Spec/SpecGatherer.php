@@ -3,6 +3,7 @@
 namespace Civi\Api4\Service\Spec;
 
 use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
+use Civi\Api4\Utils\DAOFinder;
 
 class SpecGatherer {
 
@@ -10,13 +11,6 @@ class SpecGatherer {
    * @var SpecProviderInterface[]
    */
   protected $specProviders = array();
-
-  /**
-   * A cache of DAOs based on entity
-   *
-   * @var \CRM_Core_DAO[]
-   */
-  protected $DAONames;
 
   /**
    * Returns a RequestSpec with all the fields available. Uses spec providers
@@ -70,16 +64,16 @@ class SpecGatherer {
    * @return array
    */
   private function getDAOFields($entityName) {
-    $dao = $this->getDAO($entityName);
+    $daoName = DAOFinder::getDaoNameForEntity($entityName);
 
-    return $dao::fields();
+    return $daoName::fields();
   }
 
   /**
    * @param RequestSpec $spec
    */
   private function addFieldOptions(RequestSpec $spec) {
-    $dao = $this->getDAO($spec->getEntity());
+    $dao = DAOFinder::getDaoNameForEntity($spec->getEntity());
 
     foreach ($spec->getFields() as $field) {
       $fieldName = $field->getName();
@@ -97,24 +91,5 @@ class SpecGatherer {
 
       $field->setOptions($options);
     }
-  }
-
-  /**
-   * todo this class should not rely on api3 code
-   *
-   * @param $entityName
-   *
-   * @return \CRM_Core_DAO|string
-   *   The DAO name for use in static calls. Return doc block is hacked to allow
-   *   auto-completion of static methods
-   */
-  private function getDAO($entityName) {
-    if (!isset($this->DAONames[$entityName])) {
-      require_once 'api/v3/utils.php';
-      $daoName = \_civicrm_api3_get_DAO($entityName);
-      $this->DAONames[$entityName] = $daoName;
-    }
-
-    return $this->DAONames[$entityName];
   }
 }

@@ -5,6 +5,7 @@ namespace Civi\Api4\Handler;
 use Civi\Api4\Exception\Api4Exception;
 use Civi\Api4\ApiRequest;
 use Civi\Api4\Response;
+use Civi\Api4\Utils\BAOFinder;
 
 class DeletionHandler extends GetHandler {
 
@@ -23,8 +24,7 @@ class DeletionHandler extends GetHandler {
     $getResponse = parent::handle($request)->getArrayCopy();
 
     foreach ($getResponse as $item) {
-      // todo confirm we need a new object
-      $bao = $this->getBAOForEntity($request->getEntity());
+      $bao = BAOFinder::getBAOForEntity($request->getEntity());
       $bao->id = $item['id'];
       $bao->delete();
     }
