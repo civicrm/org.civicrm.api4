@@ -12,7 +12,7 @@ use CRM_Utils_Array as ArrayHelper;
 class BasicCustomFieldTest extends BaseCustomValueTest {
 
   public function setUp() {
-    $this->dropTables(array(
+    $this->truncateTables(array(
       'civicrm_custom_group',
       'civicrm_custom_field'
     ));

@@ -25,7 +25,7 @@ class ConformanceTest extends UnitTestCase {
    */
   public function setUp() {
     $this->dropByPrefix('civicrm_value_myfavorite');
-    $this->dropTables(array(
+    $this->truncateTables(array(
       'civicrm_custom_group',
       'civicrm_custom_field',
       'civicrm_option_group',

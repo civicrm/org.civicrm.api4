@@ -44,7 +44,7 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
    *
    * @param array $tables
    */
-  public function dropTables($tables) {
+  public function truncateTables($tables) {
     \CRM_Core_DAO::executeQuery("SET FOREIGN_KEY_CHECKS = 0;");
     foreach ($tables as $table) {
       \Civi::log()->info('truncating: ' . $table);

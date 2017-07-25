@@ -14,7 +14,7 @@ abstract class BaseCustomValueTest extends UnitTestCase {
    */
   public function setUp() {
     $this->dropByPrefix('civicrm_value_mycontact');
-    $this->dropTables(array(
+    $this->truncateTables(array(
       'civicrm_custom_group',
       'civicrm_custom_field',
       'civicrm_contact',
