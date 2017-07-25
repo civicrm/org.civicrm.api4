@@ -42,14 +42,11 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
   /**
    * Quick clean by emptying tables created for the test.
    *
-   * @param array $params
+   * @param array $tables
    */
-  public function cleanup($params) {
-    $params += array(
-      'tablesToTruncate' => array(),
-    );
+  public function dropTables($tables) {
     \CRM_Core_DAO::executeQuery("SET FOREIGN_KEY_CHECKS = 0;");
-    foreach ($params['tablesToTruncate'] as $table) {
+    foreach ($tables as $table) {
       \Civi::log()->info('truncating: ' . $table);
       $sql = "TRUNCATE TABLE $table";
       \CRM_Core_DAO::executeQuery($sql);

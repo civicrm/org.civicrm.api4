@@ -17,7 +17,7 @@ class ComplexQueryTest extends UnitTestCase {
   use TableDropperTrait;
 
   public function setUpHeadless() {
-    $relatedTables = array(
+    $this->dropTables(array(
       'civicrm_contact',
       'civicrm_option_group',
       'civicrm_option_value',
@@ -31,8 +31,7 @@ class ComplexQueryTest extends UnitTestCase {
       'civicrm_location_type',
       'civicrm_custom_group',
       'civicrm_custom_field',
-    );
-    $this->cleanup(array('tablesToTruncate' => $relatedTables));
+    ));
 
     $this->dropByPrefix('civicrm_value_mycontactfields');
 

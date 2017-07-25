@@ -18,7 +18,7 @@ class ParticipantTest extends UnitTestCase  {
       'civicrm_option_value',
       'civicrm_location_type'
     );
-    $this->cleanup(array('tablesToTruncate' => $truncateTables));
+    $this->dropTables(array('tablesToTruncate' => $truncateTables));
     $this->loadDataSet('ParticipantRoleOptionGroup');
     $this->loadDataSet('LocationTypes');
   }

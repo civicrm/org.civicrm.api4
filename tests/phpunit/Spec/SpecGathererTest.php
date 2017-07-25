@@ -20,14 +20,10 @@ class SpecGathererTest extends UnitTestCase {
 
   public function setUpHeadless() {
     $this->dropByPrefix('civicrm_value_favorite');
-    $this->cleanup(
-      array(
-        'tablesToTruncate' => array(
-          'civicrm_custom_group',
-          'civicrm_custom_field'
-        )
-      )
-    );
+    $this->dropTables(array(
+      'civicrm_custom_group',
+      'civicrm_custom_field'
+    ));
     return parent::setUpHeadless();
   }
 

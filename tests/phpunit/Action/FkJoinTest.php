@@ -11,15 +11,14 @@ use Civi\Test\Api4\UnitTestCase;
 class FkJoinTest extends UnitTestCase {
 
   public function setUpHeadless() {
-    $relatedTables = array(
+    $this->dropTables(array(
       'civicrm_contact',
       'civicrm_option_group',
       'civicrm_option_value',
       'civicrm_activity',
       'civicrm_phone',
       'civicrm_activity_contact',
-    );
-    $this->cleanup(array('tablesToTruncate' => $relatedTables));
+    ));
     $this->loadDataSet('DefaultDataSet');
 
     return parent::setUpHeadless();

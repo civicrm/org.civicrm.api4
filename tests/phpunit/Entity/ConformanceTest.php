@@ -24,13 +24,12 @@ class ConformanceTest extends UnitTestCase {
    * Set up baseline for testing
    */
   public function setUp() {
-    $tablesToTruncate = array(
+    $this->dropByPrefix('civicrm_value_myfavorite');
+    $this->dropTables(array(
       'civicrm_custom_group',
       'civicrm_custom_field',
       'civicrm_option_group',
-    );
-    $this->dropByPrefix('civicrm_value_myfavorite');
-    $this->cleanup(array('tablesToTruncate' => $tablesToTruncate));
+    ));
     $this->loadDataSet('ConformanceTest');
     $this->creationParamProvider = \Civi::container()->get('test.param_provider');
     parent::setUp();

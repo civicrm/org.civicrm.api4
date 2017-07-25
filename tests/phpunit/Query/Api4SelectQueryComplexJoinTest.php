@@ -11,7 +11,7 @@ use Civi\Test\Api4\UnitTestCase;
 class Api4SelectQueryComplexJoinTest extends UnitTestCase {
 
   public function setUpHeadless() {
-    $relatedTables = array(
+    $this->dropTables(array(
       'civicrm_contact',
       'civicrm_option_group',
       'civicrm_option_value',
@@ -20,8 +20,7 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
       'civicrm_location_type',
       'civicrm_activity',
       'civicrm_activity_contact',
-    );
-    $this->cleanup(array('tablesToTruncate' => $relatedTables));
+    ));
     $this->loadDataSet('LocationTypes');
     $this->loadDataSet('SingleContact');
     return parent::setUpHeadless();

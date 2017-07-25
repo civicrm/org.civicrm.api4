@@ -11,13 +11,11 @@ use Civi\Test\Api4\UnitTestCase;
 class OptionValueJoinTest extends UnitTestCase {
 
   public function setUpHeadless() {
-    $relatedTables = array(
+    $this->dropTables(array(
       'civicrm_contact',
       'civicrm_option_group',
       'civicrm_option_value',
-    );
-
-    $this->cleanup(array('tablesToTruncate' => $relatedTables));
+    ));
     $this->loadDataSet('SingleContact');
 
     return parent::setUpHeadless();
