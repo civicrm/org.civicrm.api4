@@ -12,13 +12,12 @@ class ParticipantTest extends UnitTestCase  {
 
   public function setUp() {
     parent::setUp();
-    $truncateTables = array(
+    $this->dropTables(array(
       'civicrm_participant',
       'civicrm_option_group',
       'civicrm_option_value',
       'civicrm_location_type'
-    );
-    $this->dropTables(array('tablesToTruncate' => $truncateTables));
+    ));
     $this->loadDataSet('ParticipantRoleOptionGroup');
     $this->loadDataSet('LocationTypes');
   }
