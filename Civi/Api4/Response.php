@@ -43,6 +43,15 @@ class Response extends \ArrayObject {
   protected $headers = array();
 
   /**
+   * @param array $input
+   * @param int $statusCode
+   */
+  public function __construct($input = array(), $statusCode = 200) {
+    parent::__construct($input);
+    $this->statusCode = $statusCode;
+  }
+
+  /**
    * @return int
    */
   public function getStatusCode() {
