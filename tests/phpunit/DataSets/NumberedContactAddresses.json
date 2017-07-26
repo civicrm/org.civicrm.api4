@@ -1,0 +1,22 @@
+{
+  "Address": [
+    {
+      "contact_id": "@ref contact_1.id",
+      "location_type_id": "@ref location_type_home.id",
+      "street_address": "Across 110th Street",
+      "postal_code": "10075"
+    },
+    {
+      "contact_id": "@ref contact_1.id",
+      "location_type_id": "@ref location_type_work.id",
+      "street_address": "770 Broadway",
+      "postal_code": "10003"
+    },
+    {
+      "contact_id": "@ref contact_2.id",
+      "location_type_id": "@ref location_type_work.id",
+      "street_address": "117 Adams St",
+      "postal_code": "11201"
+    }
+  ]
+}

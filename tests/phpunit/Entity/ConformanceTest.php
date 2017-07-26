@@ -2,8 +2,8 @@
 
 namespace Civi\Test\Api4\Entity;
 
-use Civi\Api4\AbstractEntity;
-use Civi\Api4\Entity\Entity;
+use Civi\Api4\ApiInterface;
+use Civi\Api4\GetParameterBag;
 use Civi\Test\Api4\Service\TestCreationParameterProvider;
 use Civi\Test\Api4\Traits\TableDropperTrait;
 use Civi\Test\Api4\UnitTestCase;
@@ -24,13 +24,12 @@ class ConformanceTest extends UnitTestCase {
    * Set up baseline for testing
    */
   public function setUp() {
-    $tablesToTruncate = array(
+    $this->dropByPrefix('civicrm_value_myfavorite');
+    $this->truncateTables(array(
       'civicrm_custom_group',
       'civicrm_custom_field',
       'civicrm_option_group',
-    );
-    $this->dropByPrefix('civicrm_value_myfavorite');
-    $this->cleanup(array('tablesToTruncate' => $tablesToTruncate));
+    ));
     $this->loadDataSet('ConformanceTest');
     $this->creationParamProvider = \Civi::container()->get('test.param_provider');
     parent::setUp();
@@ -38,117 +37,107 @@ class ConformanceTest extends UnitTestCase {
 
   public function testConformance() {
 
-    $entities = Entity::get()->setCheckPermissions(FALSE)->execute();
+    $container = \Civi::container();
+    $entityApi = $container->get('entity.api');
 
-    $this->assertNotEmpty($entities->getArrayCopy());
+    $entities = $entityApi->request('get', NULL, FALSE)->getArrayCopy();
+    $this->assertNotEmpty($entities);
 
-    foreach ($entities as $entity) {
-      /** @var AbstractEntity $entityClass */
-      $entityClass = 'Civi\Api4\Entity\\' . $entity;
+    foreach ($entities as $entityName) {
+      /** @var ApiInterface $api */
+      $api = $container->get(sprintf('%s.api', strtolower($entityName)));
 
-      if ($entity === 'Entity') {
+      if ($entityName === 'Entity') {
         continue;
       }
 
-      $this->checkActions($entityClass);
-      $this->checkFields($entityClass, $entity);
-      $id = $this->checkCreation($entity, $entityClass);
-      $this->checkGet($entityClass, $id, $entity);
-      $this->checkDeletion($entityClass, $id);
-      $this->checkPostDelete($entityClass, $id, $entity);
+      $this->checkActions($api);
+      $this->checkFields($api);
+      $id = $this->checkCreation($api);
+      $this->checkGet($api, $id);
+      $this->checkDeletion($api, $id);
+      $this->checkPostDelete($api, $id);
     }
   }
 
   /**
-   * @param AbstractEntity $entityClass
-   * @param $entity
+   * @param ApiInterface $api
    */
-  protected function checkFields($entityClass, $entity) {
-    $fields = $entityClass::getFields()
-      ->setCheckPermissions(FALSE)
-      ->execute()
-      ->indexBy('name');
+  protected function checkFields(ApiInterface $api) {
+    $fields = $api->request('getFields', NULL, FALSE)->indexBy('name');
 
-    $errMsg = sprintf('%s is missing required ID field', $entity);
+    $errMsg = sprintf('%s is missing required ID field', $api->getEntity());
     $subset = array('data_type' => 'Integer');
 
     $this->assertArraySubset($subset, $fields['id'], $errMsg);
   }
 
   /**
-   * @param AbstractEntity $entityClass
+   * @param ApiInterface $api
    */
-  protected function checkActions($entityClass) {
-    $actions = $entityClass::getActions()
-      ->setCheckPermissions(FALSE)
-      ->execute()
-      ->indexBy('name');
+  protected function checkActions($api) {
+    $actions = $api->request('getActions', NULL, FALSE)->getArrayCopy();
 
-    $this->assertNotEmpty($actions->getArrayCopy());
+    $basicActions = array('getActions', 'create', 'get', 'delete', 'getFields');
+    $missing = array_diff($basicActions, $actions);
+
+    $this->assertEmpty($missing);
   }
 
   /**
-   * @param string $entity
-   * @param AbstractEntity $entityClass
+   * @param ApiInterface $api
    *
    * @return mixed
    */
-  protected function checkCreation($entity, $entityClass) {
+  protected function checkCreation($api) {
+    $entity = $api->getEntity();
     $requiredParams = $this->creationParamProvider->getRequired($entity);
-    $createResult = $entityClass::create()
-      ->setValues($requiredParams)
-      ->setCheckPermissions(FALSE)
-      ->execute();
 
-    $this->assertArrayHasKey('id', $createResult, "create missing ID");
+    $createResult = $api->request('create', $requiredParams, FALSE);
     $id = $createResult['id'];
 
+    $this->assertArrayHasKey('id', $createResult, "create missing ID");
     $this->assertGreaterThanOrEqual(1, $id, "$entity ID not positive");
 
     return $id;
   }
 
   /**
-   * @param AbstractEntity $entityClass
-   * @param int $id
-   * @param string $entity
+   * @param ApiInterface $api
+   * @param $id
    */
-  protected function checkGet($entityClass, $id, $entity) {
-    $getResult = $entityClass::get()
-      ->setCheckPermissions(FALSE)
-      ->addWhere('id', '=', $id)
-      ->execute();
+  protected function checkGet(ApiInterface $api, $id) {
+    $params = new GetParameterBag();
+    $params->addWhere('id', '=', $id);
+    $getResult = $api->request('get', $params, FALSE);
 
-    $errMsg = sprintf('Failed to fetch a %s after creation', $entity);
+    $errMsg = sprintf('Failed to fetch a %s after creation', $api->getEntity());
     $this->assertEquals(1, count($getResult), $errMsg);
   }
 
   /**
-   * @param AbstractEntity $entityClass
-   * @param int $id
+   * @param ApiInterface $api
+   * @param $id
    */
-  protected function checkDeletion($entityClass, $id) {
-    $deleteResult = $entityClass::delete()
-      ->setCheckPermissions(FALSE)
-      ->addWhere('id', '=', $id)
-      ->execute();
+  protected function checkDeletion(ApiInterface $api, $id) {
+    $params = new GetParameterBag();
+    $params->addWhere('id', '=', $id);
+    $deleteResult = $api->request('delete', $params, FALSE);
 
     // should get back an array of deleted id
     $this->assertEquals(array($id), (array)$deleteResult);
   }
 
   /**
-   * @param AbstractEntity $entityClass
+   * @param ApiInterface $api
    * @param int $id
-   * @param string $entity
    */
-  protected function checkPostDelete($entityClass, $id, $entity) {
-    $getDeletedResult = $entityClass::get()
-      ->setCheckPermissions(FALSE)
-      ->addWhere('id', '=', $id)
-      ->execute();
+  protected function checkPostDelete(ApiInterface $api, $id) {
+    $params = new GetParameterBag();
+    $params->addWhere('id', '=', $id);
+    $getDeletedResult = $api->request('get', $params, FALSE);
 
-    $errMsg = sprintf('Entity "%s" was not deleted', $entity);
+    $errMsg = sprintf('Entity "%s" was not deleted', $api->getEntity());
     $this->assertEquals(0, count($getDeletedResult), $errMsg);
   }
 

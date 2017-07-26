@@ -1,0 +1,20 @@
+{
+  "Phone": [
+    {
+      "contact_id": "@ref contact_1.id",
+      "phone": "+111111111111",
+      "location_type_id": "1",
+      "@ref": "test_phone_1"
+    },
+    {
+      "contact_id": "@ref contact_1.id",
+      "phone": "+111111111112",
+      "location_type_id": "2"
+    },
+    {
+      "contact_id": "@ref contact_2.id",
+      "phone": "+222222222222",
+      "location_type_id": "1"
+    }
+  ]
+}

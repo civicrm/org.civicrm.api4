@@ -2,9 +2,6 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\Contact;
-use Civi\Api4\Entity\CustomField;
-use Civi\Api4\Entity\CustomGroup;
 use \CRM_Core_BAO_CustomValueTable as CustomValueTable;
 
 /**
@@ -14,38 +11,36 @@ class UpdateCustomValueTest extends BaseCustomValueTest {
 
   public function testGetWithCustomData() {
 
-    $customGroup = CustomGroup::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('name', 'MyContactFields')
-      ->setValue('extends', 'Contact')
-      ->execute()
-      ->getArrayCopy();
+    $customGroupApi = \Civi::container()->get('custom_group.api');
+    $customFieldApi = \Civi::container()->get('custom_field.api');
+    $contactApi = \Civi::container()->get('contact.api');
 
-    CustomField::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('custom_group_id', $customGroup['id'])
-      ->setValue('html_type', 'Text')
-      ->setValue('data_type', 'String')
-      ->execute();
+    $customGroup = $customGroupApi->request('create', array(
+      'name' => 'MyContactFields',
+      'extends' => 'Contact',
+    ), FALSE);
 
-    $contactId = Contact::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Red')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('MyContactFields.FavColor', 'Red')
-      ->execute()
-      ->getArrayCopy()['id'];
+    $customFieldApi->request('create', array(
+      'label' => 'FavColor',
+      'custom_group_id' => $customGroup['id'],
+      'html_type' => 'Text',
+      'data_type' => 'String',
+    ), FALSE);
 
-    Contact::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('id', $contactId)
-      ->setValue('first_name', 'Red')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('MyContactFields.FavColor', 'Blue')
-      ->execute();
+    $contactId = $contactApi->request('create', array(
+      'first_name' => 'Red',
+      'last_name' => 'Tester',
+      'contact_type' => 'Individual',
+      'MyContactFields.FavColor' => 'Red',
+    ), FALSE)['id'];
+
+    $contactApi->request('create', array(
+      'id' => $contactId,
+      'first_name' => 'Red',
+      'last_name' => 'Tester',
+      'contact_type' => 'Individual',
+      'MyContactFields.FavColor' => 'Blue',
+    ), FALSE);
 
     $result = CustomValueTable::getEntityValues($contactId, 'Contact');
 

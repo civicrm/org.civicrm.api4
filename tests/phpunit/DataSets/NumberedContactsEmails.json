@@ -1,0 +1,19 @@
+{
+  "Email": [
+    {
+      "contact_id": "@ref contact_1.id",
+      "email": "contact1_home@fakedomain.com",
+      "location_type_id": "@ref location_type_home.id"
+    },
+    {
+      "contact_id": "@ref contact_1.id",
+      "email": "contact1_work@fakedomain.com",
+      "location_type_id": "@ref location_type_work.id"
+    },
+    {
+      "contact_id": "@ref contact_2.id",
+      "email": "contact2_home@fakedomain.com",
+      "location_type_id": "@ref location_type_home.id"
+    }
+  ]
+}

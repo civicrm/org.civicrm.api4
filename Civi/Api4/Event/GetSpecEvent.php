@@ -2,24 +2,24 @@
 
 namespace Civi\Api4\Event;
 
-use Civi\Api4\AbstractAction;
+use Civi\Api4\RequestHandler;
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
 class GetSpecEvent extends BaseEvent {
   /**
-   * @var AbstractAction
+   * @var RequestHandler
    */
   protected $request;
 
   /**
-   * @param AbstractAction $request
+   * @param RequestHandler $request
    */
-  public function __construct(AbstractAction $request) {
+  public function __construct(RequestHandler $request) {
     $this->request = $request;
   }
 
   /**
-   * @return AbstractAction
+   * @return RequestHandler
    */
   public function getRequest() {
     return $this->request;
@@ -28,7 +28,7 @@ class GetSpecEvent extends BaseEvent {
   /**
    * @param $request
    */
-  public function setRequest(AbstractAction $request) {
+  public function setRequest(RequestHandler $request) {
     $this->request = $request;
   }
 }

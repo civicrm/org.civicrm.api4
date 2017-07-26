@@ -64,7 +64,10 @@ class ArrayInsertionUtil {
 
     if (!$isMulti) {
       $values = array_shift($values);
+    } else {
+      $values = array_values($values);
     }
+
     return $values;
   }
 }

@@ -28,11 +28,14 @@
 namespace Civi\Api4\Query;
 
 use Civi\API\SelectQuery;
+use Civi\Api4\Exception\Api4Exception;
+use Civi\Api4\Service\Spec\SpecFormatter;
 use Civi\Api4\Utils\ArrayInsertionUtil;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
 use CRM_Core_DAO_CustomField as CustomFieldDAO;
+use CRM_Utils_Array as ArrayHelper;
 
 /**
  * A query `node` may be in one of three formats:
@@ -70,8 +73,6 @@ class Api4SelectQuery extends SelectQuery {
   protected $joinedTables = array();
 
   /**
-   * Why walk when you can
-   *
    * @return array|int
    */
   public function run() {
@@ -84,7 +85,8 @@ class Api4SelectQuery extends SelectQuery {
    * Gets all FK fields and does the required joins
    */
   protected function preRun() {
-    $whereFields = array_column($this->where, 0);
+    $whereFields = array();
+    $this->getWhereFields($this->where, $whereFields);
     $allFields = array_merge($whereFields, $this->select, $this->orderBy);
     $dotFields = array_unique(array_filter($allFields, function ($field) {
       return strpos($field, '.') !== false;
@@ -109,7 +111,11 @@ class Api4SelectQuery extends SelectQuery {
     foreach ($groupedSelects as $finalAlias => $selects) {
       $path = $this->buildPath($selects[0]);
       $selects = $this->formatSelects($finalAlias, $selects);
-      $joinResults = $this->runWithNewSelects($selects);
+      $joinResults = $this->getJoinResults($primaryResults, $selects);
+
+      if (empty($joinResults)) {
+        continue;
+      }
 
       foreach ($primaryResults as &$primaryResult) {
         $baseId = $primaryResult['id'];
@@ -206,8 +212,10 @@ class Api4SelectQuery extends SelectQuery {
    * @inheritDoc
    */
   protected function getFields() {
-    $fields = civicrm_api4($this->entity, 'getFields')->indexBy('name');
-    return (array) $fields;
+    $spec = \Civi::container()->get('spec_gatherer')->getSpec($this->entity, 'get');
+    $spec = SpecFormatter::specToArray($spec);
+
+    return $spec['fields'];
   }
 
   /**
@@ -254,6 +262,10 @@ class Api4SelectQuery extends SelectQuery {
         'column_name',
         'name'
       );
+
+      if (NULL === $field) {
+        throw new Api4Exception('Could not find custom field with that name');
+      }
     }
 
     $this->fkSelectAliases[$key] = sprintf('%s.%s', $lastLink->getAlias(), $field);
@@ -276,7 +288,6 @@ class Api4SelectQuery extends SelectQuery {
   public function getFrom() {
     return TableHelper::getTableForClass(TableHelper::getFullName($this->entity));
   }
-
 
   /**
    * @param string $pathString
@@ -334,37 +345,6 @@ class Api4SelectQuery extends SelectQuery {
   }
 
   /**
-   * @param array $selects
-   *
-   * @return array
-   */
-  private function runWithNewSelects(array $selects) {
-    $aliasedSelects = array_map(function ($field, $alias) {
-      return sprintf('%s as "%s"', $field, $alias);
-    }, $selects, array_keys($selects));
-
-    $newSelect = sprintf('SELECT DISTINCT %s', implode(", ", $aliasedSelects));
-    $sql = str_replace("\n", ' ', $this->query->toSQL());
-    $originalSelect = substr($sql, 0, strpos($sql, ' FROM'));
-    $sql = str_replace($originalSelect, $newSelect, $sql);
-
-    $relatedResults = array();
-    $resultDAO = \CRM_Core_DAO::executeQuery($sql);
-    while ($resultDAO->fetch()) {
-      $relatedResults[$resultDAO->id] = array();
-      foreach ($selects as $alias => $column) {
-        $returnName = $alias;
-        $alias = str_replace('.', '_', $alias);
-        if (property_exists($resultDAO, $alias)) {
-          $relatedResults[$resultDAO->id][$returnName] = $resultDAO->$alias;
-        }
-      };
-    }
-
-    return $relatedResults;
-  }
-
-  /**
    * @return array
    */
   private function getJoinedDotSelects() {
@@ -390,4 +370,91 @@ class Api4SelectQuery extends SelectQuery {
     return $selects;
   }
 
+  /**
+   * @param array $primaryResults
+   *   The results from the original query
+   * @param $selects
+   *   The new values to be selected
+   *
+   * @return array
+   *   The results from the related entity
+   */
+  protected function getJoinResults($primaryResults, $selects) {
+    $baseIds = array_column($primaryResults, 'id');
+    $aliasedSelects = array_map(function ($field, $alias) {
+      return sprintf('%s as "%s"', $field, $alias);
+    }, $selects, array_keys($selects));
+    $subQuery = $this->getSubquery($aliasedSelects, $baseIds);
+
+    $results = $this->runSubquery($subQuery, $selects);
+
+    return array_filter($results, function ($result) {
+      return NULL !== ArrayHelper::value('id', $result);
+    });
+  }
+
+  /**
+   * @param \CRM_Utils_SQL_Select $subQuery
+   * @param array $originalSelects
+   *
+   * @return array
+   */
+  protected function runSubquery($subQuery, $originalSelects) {
+    $results = array();
+    $subQueryString = str_replace('SELECT', 'SELECT DISTINCT', $subQuery->toSQL());
+    $dao = \CRM_Core_DAO::executeQuery($subQueryString);
+
+    while ($dao->fetch()) {
+      $current = array();
+      foreach ($originalSelects as $alias => $column) {
+        // fetch() replaces periods in the select aliases so do the same here
+        $convertedName = str_replace('.', '_', $alias);
+        if (property_exists($dao, $convertedName)) {
+          $current[$alias] = $dao->$convertedName;
+        }
+      };
+      $results[] = $current;
+    }
+
+    return $results;
+  }
+
+  /**
+   * Run a subquery using the original as a base, but replacing the SELECT and
+   * WHERE part of the query
+   *
+   * @param array $replacementSelects
+   * @param $baseIds
+   *
+   * @return \CRM_Utils_SQL_Select
+   */
+  protected function getSubquery($replacementSelects, $baseIds) {
+    $mainAlias = self::MAIN_TABLE_ALIAS;
+    $subQuery = QueryCopier::copy($this->query, array(
+      'selects' => $replacementSelects,
+      'limit' => array(NULL, $this->offset), // there's no limit
+      'wheres' => sprintf('%s.id IN (%s)', $mainAlias, implode(',', $baseIds))
+    ));
+
+    return $subQuery;
+  }
+
+  /**
+   * Gets all where fields, including those in the complex nested AND|OR|NOT
+   * structures.
+   *
+   * @param $where
+   * @param $whereFields
+   */
+  private function getWhereFields($where, &$whereFields) {
+    $operators = \CRM_Core_DAO::acceptedSQLOperators();
+    $isClause = isset($where[1]) && in_array($where[1], $operators);
+    if ($isClause) {
+      $whereFields[] = $where[0];
+    } elseif (is_array($where)) {
+      foreach ($where as $subWhere) {
+        $this->getWhereFields($subWhere, $whereFields);
+      }
+    }
+  }
 }

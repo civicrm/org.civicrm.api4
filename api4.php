@@ -2,10 +2,15 @@
 
 require_once 'api4.civix.php';
 
+use Civi\Api4\Exception\Api4Exception;
+use CRM_Utils_Array as ArrayHelper;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+use Civi\Api4\Response;
+use Civi\Api4\ApiInterface;
 
 /**
  * Procedural wrapper for the OO api version 4.
@@ -13,13 +18,27 @@ use Symfony\Component\Config\FileLocator;
  * @param $entity
  * @param $action
  * @param array $params
+ * @param bool $checkPermission
  *
- * @return \Civi\Api4\Result
+ * @return Response
  */
-function civicrm_api4($entity, $action, $params = array()) {
-  $params['version'] = 4;
-  $request = \Civi\API\Request::create($entity, $action, $params);
-  return \Civi::service('civi_api_kernel')->runRequest($request);
+function civicrm_api4($entity, $action, $params = array(), $checkPermission = TRUE) {
+  $serviceId = sprintf('%s.api', strtolower($entity));
+  $container = Civi::container();
+
+  if (!$container->has($serviceId)) {
+    $err = sprintf(
+      'The "%s" API was not found. Join the team and implement it!',
+      $entity
+    );
+    throw new Api4Exception($err);
+  }
+
+  /** @var ApiInterface $api */
+  $api = $container->get($serviceId);
+  $params = new ParameterBag($params);
+
+  return $api->request($action, $params, $checkPermission);
 }
 
 /**
@@ -28,13 +47,9 @@ function civicrm_api4($entity, $action, $params = array()) {
 function api4_civicrm_container($container) {
   $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
   $loader->load('services.xml');
+  $loader->load('api_services.xml');
 
-  $container->getDefinition('civi_api_kernel')->addMethodCall(
-    'registerApiProvider',
-    array(new Reference('action_object_provider'))
-  );
-
-  // add event subscribers$container->get(
+  // add event subscribers(
   $dispatcher = $container->getDefinition('dispatcher');
   $subscribers = $container->findTaggedServiceIds('event_subscriber');
 
@@ -54,6 +69,39 @@ function api4_civicrm_container($container) {
       'addSpecProvider',
       array(new Reference($provider))
     );
+  }
+
+  // add API actions
+  $apiEntities = $container->findTaggedServiceIds('api');
+  $entityRegister = $container->getDefinition('entity_register');
+
+  // standard API actions
+  $standardCreate = $container->getDefinition('standard.create_handler');
+  $standardGet = $container->getDefinition('standard.get_handler');
+  $standardUpdate = $container->getDefinition('standard.update_handler');
+  $standardDelete = $container->getDefinition('standard.delete_handler');
+  $standardGetFields = $container->getDefinition('standard.get_fields_handler');
+
+  foreach ($apiEntities as $serviceId => $attributes) {
+    $definition = $container->getDefinition($serviceId);
+
+    // check for standard attribute on tag
+    $isStandard = array_reduce($attributes, function($carry, $attribute) {
+      return ArrayHelper::value('standard', $attribute, $carry);
+    }, FALSE);
+
+    // add standard actions
+    if ($isStandard) {
+      $definition->addMethodCall('addHandler', array($standardGet));
+      $definition->addMethodCall('addHandler', array($standardCreate));
+      $definition->addMethodCall('addHandler', array($standardDelete));
+      $definition->addMethodCall('addHandler', array($standardGetFields));
+      $definition->addMethodCall('addHandler', array($standardUpdate));
+    }
+
+    // register Entity API
+    $entityName = $definition->getArgument(1);
+    $entityRegister->addMethodCall('register', array($entityName));
   }
 
   if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {

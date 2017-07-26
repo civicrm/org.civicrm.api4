@@ -11,7 +11,7 @@ use Civi\Test\Api4\UnitTestCase;
 class Api4SelectQueryTest extends UnitTestCase {
 
   public function setUpHeadless() {
-    $relatedTables = array(
+    $this->truncateTables(array(
       'civicrm_contact',
       'civicrm_contact',
       'civicrm_phone',
@@ -19,8 +19,7 @@ class Api4SelectQueryTest extends UnitTestCase {
       'civicrm_option_value',
       'civicrm_activity',
       'civicrm_activity_contact',
-    );
-    $this->cleanup(array('tablesToTruncate' => $relatedTables));
+    ));
     $this->loadDataSet('DefaultDataSet');
     $displayNameFormat = '{contact.first_name}{ }{contact.last_name}';
     \Civi::settings()->set('display_name_format', $displayNameFormat);

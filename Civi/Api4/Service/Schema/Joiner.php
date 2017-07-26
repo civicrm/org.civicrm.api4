@@ -2,10 +2,20 @@
 
 namespace Civi\Api4\Service\Schema;
 
+use Civi\Api4\Exception\Api4Exception;
 use Civi\Api4\Query\Api4SelectQuery;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 
+/**
+ * Used to join tables to an Api4SelectQuery.
+ */
 class Joiner {
+
+  /**
+   * Max number of links between tables.
+   */
+  const MAX_JOIN_DEPTH = 5;
+
   /**
    * @var SchemaMap
    */
@@ -38,6 +48,11 @@ class Joiner {
   public function join(Api4SelectQuery $query, $joinPath, $side = 'LEFT') {
     $fullPath = $this->getPath($query->getFrom(), $joinPath);
     $baseTable = $query::MAIN_TABLE_ALIAS;
+
+    if (count($fullPath) >= self::MAX_JOIN_DEPTH) {
+      $err = sprintf('Cannot join more than %d levels', self::MAX_JOIN_DEPTH);
+      throw new Api4Exception($err);
+    }
 
     foreach ($fullPath as $link) {
       $target = $link->getTargetTable();

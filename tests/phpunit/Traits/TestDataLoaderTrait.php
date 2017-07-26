@@ -16,21 +16,27 @@ trait TestDataLoaderTrait {
   /**
    * Creates entities from a JSON data set
    *
-   * @param $path
+   * @param $name
+   *   Can be the name of a data set inside the DataSets directory or the full
+   *   path to any JSON data set file
    */
-  protected function loadDataSet($path) {
-    if (!file_exists($path)) {
-      $path = __DIR__ . '/../DataSets/' . $path . '.json';
+  protected function loadDataSet($name) {
+    if (!file_exists($name)) {
+      $name = __DIR__ . '/../DataSets/' . $name . '.json';
     }
 
-    $dataSet = json_decode(file_get_contents($path), TRUE);
+    $dataSet = json_decode(file_get_contents($name), TRUE);
+
+    if (NULL === $dataSet) {
+      throw new \Exception(sprintf('Invalid JSON in %s', $name));
+    }
+
     foreach ($dataSet as $entityName => $entities) {
       foreach ($entities as $entityValues) {
-
         $entityValues = $this->replaceReferences($entityValues);
 
-        $params = array('values' => $entityValues, 'checkPermissions' => FALSE);
-        $result = civicrm_api4($entityName, 'create', $params);
+        $result = civicrm_api4($entityName, 'create', $entityValues, FALSE);
+
         if (isset($entityValues['@ref'])) {
           $this->references[$entityValues['@ref']] = $result->getArrayCopy();
         }
@@ -59,6 +65,11 @@ trait TestDataLoaderTrait {
       } else if (substr($value, 0, 4) === '@ref') {
         $referenceName = substr($value, 5);
         list ($reference, $property) = explode('.', $referenceName);
+
+        if (!isset($this->references[$reference])) {
+          throw new \Exception(sprintf('Undefined reference "%s"', $reference));
+        }
+
         $entityValues[$name] =  $this->references[$reference][$property];
       }
     }

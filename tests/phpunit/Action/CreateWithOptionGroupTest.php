@@ -2,9 +2,7 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\CustomField;
-use Civi\Api4\Entity\CustomGroup;
-use Civi\Api4\Entity\Contact;
+use Civi\Api4\GetParameterBag;
 
 /**
  * @group headless
@@ -21,68 +19,66 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
   }
 
   public function testGetWithCustomData() {
-    $customGroup = CustomGroup::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('name', 'FavoriteThings')
-      ->setValue('extends', 'Contact')
-      ->execute();
+    $customGroupApi = \Civi::container()->get('custom_group.api');
+    $customFieldApi = \Civi::container()->get('custom_field.api');
+    $contactApi = \Civi::container()->get('contact.api');
+
+    $customGroup = $customGroupApi->request('create', array(
+      'name' => 'FavoriteThings',
+      'extends' => 'Contact'
+    ), FALSE);
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
-    CustomField::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
-      ->execute();
+    $customFieldApi->request('create', array(
+      'label' => 'FavColor',
+      'options' => array('r' => 'Red', 'g' => 'Green', 'b' => 'Blue'),
+      'custom_group_id' => $customGroupId,
+      'html_type' => 'Select',
+      'data_type' => 'String'
+    ), FALSE);
 
-    CustomField::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavFood')
-      ->setValue('options', ['1' => 'Corn', '2' => 'Potatoes', '3' => 'Cheese'])
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
-      ->execute();
+    $customFieldApi->request('create', array(
+      'label' => 'FavFood',
+      'options' => array('1' => 'Corn', '2' => 'Potatoes', '3' => 'Cheese'),
+      'custom_group_id' => $customGroupId,
+      'html_type' => 'Select',
+      'data_type' => 'String'
+    ), FALSE);
 
-    $customGroup = CustomGroup::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('name', 'FinancialStuff')
-      ->setValue('extends', 'Contact')
-      ->execute();
+    $customGroup = $customGroupApi->request('create', array(
+      'name' => 'FinancialStuff',
+      'extends' => 'Contact'
+    ), FALSE);
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
-    CustomField::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('label', 'Salary')
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Number')
-      ->setValue('data_type', 'Money')
-      ->execute();
 
-    Contact::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Jerome')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('FavoriteThings.FavColor', 'r')
-      ->setValue('FavoriteThings.FavFood', '1')
-      ->setValue('FinancialStuff.Salary', 50000)
-      ->execute();
+    $customFieldApi->request('create', array(
+      'label' => 'Salary',
+      'custom_group_id' => $customGroupId,
+      'html_type' => 'Number',
+      'data_type' => 'Money'
+    ), FALSE);
 
-    $result = Contact::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('first_name')
-      ->addSelect('FavoriteThings.FavColor.label')
-      ->addSelect('FavoriteThings.FavFood.label')
-      ->addSelect('FinancialStuff.Salary')
-      ->addWhere('FavoriteThings.FavFood.label', 'IN', ['Corn', 'Potatoes'])
-      ->addWhere('FinancialStuff.Salary', '>', '10000')
-      ->execute()
-      ->first();
+    $contactApi->request('create', array(
+      'first_name' => 'Jerome',
+      'last_name' => 'Tester',
+      'contact_type' => 'Individual',
+      'FavoriteThings.FavColor' => 'r',
+      'FavoriteThings.FavFood' => '1',
+      'FinancialStuff.Salary' => 50000
+    ), FALSE);
+
+    $params = new GetParameterBag();
+    $params->addSelect('first_name');
+    $params->addSelect('FavoriteThings.FavColor.label');
+    $params->addSelect('FavoriteThings.FavFood.label');
+    $params->addSelect('FinancialStuff.Salary');
+    $params->addWhere('FavoriteThings.FavFood.label', 'IN', ['Corn', 'Potatoes']);
+    $params->addWhere('FinancialStuff.Salary', '>', '10000');
+
+    $result = $contactApi->request('get', $params, FALSE)->first();
 
     $this->assertArrayHasKey('FavoriteThings', $result);
     $favoriteThings = $result['FavoriteThings'];
@@ -95,77 +91,73 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
   }
 
   public function testWithCustomDataForMultipleContacts() {
-    $customGroup = CustomGroup::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('name', 'FavoriteThings')
-      ->setValue('extends', 'Contact')
-      ->execute();
+    $customGroupApi = \Civi::container()->get('custom_group.api');
+    $customFieldApi = \Civi::container()->get('custom_field.api');
+    $contactApi = \Civi::container()->get('contact.api');
+
+    $customGroup = $customGroupApi->request('create', array(
+      'name' => 'FavoriteThings',
+      'extends' => 'Contact',
+    ), FALSE);
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
-    CustomField::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
-      ->execute();
+    $customFieldApi->request('create', array(
+      'label' => 'FavColor',
+      'options' => ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'],
+      'custom_group_id' => $customGroupId,
+      'html_type' => 'Select',
+      'data_type' => 'String',
+    ), FALSE);
 
-    CustomField::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavFood')
-      ->setValue('options', ['1' => 'Corn', '2' => 'Potatoes', '3' => 'Cheese'])
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
-      ->execute();
+    $customFieldApi->request('create', array(
+      'label' => 'FavFood',
+      'options' => ['1' => 'Corn', '2' => 'Potatoes', '3' => 'Cheese'],
+      'custom_group_id' => $customGroupId,
+      'html_type' => 'Select',
+      'data_type' => 'String',
+    ), FALSE);
 
-    $customGroup = CustomGroup::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('name', 'FinancialStuff')
-      ->setValue('extends', 'Contact')
-      ->execute();
+    $customGroup = $customGroupApi->request('create', array(
+      'name' => 'FinancialStuff',
+      'extends' => 'Contact',
+    ), FALSE);
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
-    CustomField::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('label', 'Salary')
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Number')
-      ->setValue('data_type', 'Money')
-      ->execute();
+    $customFieldApi->request('create', array(
+      'label' => 'Salary',
+      'custom_group_id' => $customGroupId,
+      'html_type' => 'Number',
+      'data_type' => 'Money',
+    ), FALSE);
 
-    Contact::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Red')
-      ->setValue('last_name', 'Corn')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('FavoriteThings.FavColor', 'r')
-      ->setValue('FavoriteThings.FavFood', '1')
-      ->setValue('FinancialStuff.Salary', 10000)
-      ->execute();
+    $contactApi->request('create', array(
+      'first_name' => 'Red',
+      'last_name' => 'Corn',
+      'contact_type' => 'Individual',
+      'FavoriteThings.FavColor' => 'r',
+      'FavoriteThings.FavFood' => '1',
+      'FinancialStuff.Salary' => 10000
+    ), FALSE);
 
-    Contact::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Blue')
-      ->setValue('last_name', 'Cheese')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('FavoriteThings.FavColor', 'b')
-      ->setValue('FavoriteThings.FavFood', '3')
-      ->setValue('FinancialStuff.Salary', 500000)
-      ->execute();
+    $contactApi->request('create', array(
+      'first_name' => 'Blue',
+      'last_name' => 'Cheese',
+      'contact_type' => 'Individual',
+      'FavoriteThings.FavColor' => 'b',
+      'FavoriteThings.FavFood' => '3',
+      'FinancialStuff.Salary' => 500000
+    ), FALSE);
 
-    $result = Contact::get()
-      ->setCheckPermissions(FALSE)
-      ->addSelect('first_name')
-      ->addSelect('last_name')
-      ->addSelect('FavoriteThings.FavColor.label')
-      ->addSelect('FavoriteThings.FavFood.label')
-      ->addSelect('FinancialStuff.Salary')
-      ->addWhere('FavoriteThings.FavFood.label', 'IN', ['Corn', 'Cheese'])
-      ->execute();
+    $params = new GetParameterBag();
+    $params->addSelect('first_name');
+    $params->addSelect('last_name');
+    $params->addSelect('FavoriteThings.FavColor.label');
+    $params->addSelect('FavoriteThings.FavFood.label');
+    $params->addSelect('FinancialStuff.Salary');
+    $params->addWhere('FavoriteThings.FavFood.label', 'IN', ['Corn', 'Cheese']);
+    $result = $contactApi->request('get', $params, FALSE);
 
     $blueCheese = null;
     foreach ($result as $contact) {

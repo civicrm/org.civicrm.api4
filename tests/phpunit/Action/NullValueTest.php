@@ -2,7 +2,6 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\Contact;
 use Civi\Test\Api4\UnitTestCase;
 
 /**
@@ -17,30 +16,29 @@ class NullValueTest extends UnitTestCase {
   }
 
   public function testStringNull() {
-    $contact = Contact::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Joseph')
-      ->setValue('last_name', 'null')
-      ->setValue('contact_type', 'Individual')
-      ->execute();
+    $contactApi = \Civi::container()->get('contact.api');
+    $contact = $contactApi->request('create', array(
+      'first_name' => 'Joseph',
+      'last_name' => 'null',
+      'contact_type' => 'Individual',
+    ), FALSE);
 
     $this->assertSame('Null', $contact['last_name']);
     $this->assertSame('Joseph Null', $contact['display_name']);
   }
 
   public function testSettingToNullA() {
-    $contactId = Contact::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'ILoveMy')
-      ->setValue('last_name', 'LastName')
-      ->setValue('contact_type', 'Individual')
-      ->execute()['id'];
+    $contactApi = \Civi::container()->get('contact.api');
+    $contactId = $contactApi->request('create', array(
+      'first_name' => 'ILoveMy',
+      'last_name' => 'LastName',
+      'contact_type' => 'Individual',
+    ), FALSE)['id'];
 
-    $contact = Contact::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('id', $contactId)
-      ->setValue('last_name', NULL)
-      ->execute();
+    $contact = $contactApi->request('create', array(
+      'id' => $contactId,
+      'last_name' => NULL
+    ), FALSE);
 
     $this->assertSame(NULL, $contact['last_name']);
     $this->assertSame('ILoveMy', $contact['display_name']);

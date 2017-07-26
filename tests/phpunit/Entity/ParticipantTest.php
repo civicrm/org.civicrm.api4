@@ -2,7 +2,7 @@
 
 namespace Civi\Test\Api4\Entity;
 
-use Civi\Api4\Entity\Participant;
+use Civi\Api4\GetParameterBag;
 use Civi\Test\Api4\UnitTestCase;
 
 /**
@@ -12,42 +12,26 @@ class ParticipantTest extends UnitTestCase  {
 
   public function setUp() {
     parent::setUp();
-    $truncateTables = array(
+    $this->truncateTables(array(
       'civicrm_participant',
       'civicrm_option_group',
-      'civicrm_option_value'
-    );
-    $this->cleanup(array('tablesToTruncate' => $truncateTables));
+      'civicrm_option_value',
+      'civicrm_location_type'
+    ));
     $this->loadDataSet('ParticipantRoleOptionGroup');
-  }
-
-  public function testGetActions() {
-    $result = Participant::getActions()
-      ->setCheckPermissions(FALSE)
-      ->execute()
-      ->indexBy('name');
-
-    $getParams = $result['get']['params'];
-    $whereDescription = 'Array of conditions keyed by field.';
-
-    $this->assertEquals(TRUE, $getParams['checkPermissions']['default']);
-    $this->assertEquals($whereDescription, $getParams['where']['description']);
+    $this->loadDataSet('LocationTypes');
   }
 
   public function testGet() {
-
     if ($this->getRowCount('civicrm_participant') > 0) {
       $this->markTestSkipped('Participant table must be empty');
     }
 
-    // With no records:
-    $result = Participant::get()->setCheckPermissions(FALSE)->execute();
-    $this->assertEquals(0, $result->count(), "count of empty get is not 0");
+    $participantApi = \Civi::container()->get('participant.api');
 
-    // Check that the $result knows what the inputs were
-    $this->assertEquals('Participant', $result->entity);
-    $this->assertEquals('get', $result->action);
-    $this->assertEquals(4, $result->version);
+    // With no records:
+    $result = $participantApi->request('get', NULL, FALSE);
+    $this->assertEquals(0, $result->count(), "count of empty get is not 0");
 
     // Create some test related records before proceeding
     $participantCount = 20;
@@ -80,10 +64,7 @@ class ParticipantTest extends UnitTestCase  {
           'source' => $dummy['sources'][$i % 3], // 3 = number of sources
       )))['sample_params'];
 
-       Participant::create()
-        ->setValues($dummy['participants'][$i])
-        ->setCheckPermissions(FALSE)
-        ->execute();
+       $participantApi->request('create', $dummy['participants'][$i], FALSE);
     }
     $sqlCount = $this->getRowCount('civicrm_participant');
     $this->assertEquals($participantCount, $sqlCount, "Unexpected count");
@@ -92,19 +73,18 @@ class ParticipantTest extends UnitTestCase  {
     $secondEventId = $dummy['events'][1]['id'];
     $firstContactId = $dummy['contacts'][0]['id'];
 
-    $firstOnlyResult = Participant::get()
-      ->setCheckPermissions(FALSE)
-      ->addClause(array('event_id', '=', $firstEventId))
-      ->execute();
+    $params = new GetParameterBag();
+    $params->addClause(array('event_id', '=', $firstEventId));
+    $firstOnlyResult = $participantApi->request('get', $params, FALSE);
 
     $this->assertEquals($expectedFirstEventCount, count($firstOnlyResult),
       "count of first event is not $expectedFirstEventCount");
 
     // get first two events using different methods
-    $firstTwo = Participant::get()
-      ->setCheckPermissions(FALSE)
-      ->addWhere('event_id', 'IN', array($firstEventId, $secondEventId))
-      ->execute();
+
+    $params = new GetParameterBag();
+    $params->addWhere('event_id', 'IN', array($firstEventId, $secondEventId));
+    $firstTwo = $participantApi->request('get', $params, FALSE);
 
     $firstResult = $result->first();
 
@@ -122,26 +102,30 @@ class ParticipantTest extends UnitTestCase  {
       "count is too low"
     );
 
-    $firstParticipantResult = Participant::get()
-      ->setCheckPermissions(FALSE)
-      ->addWhere('event_id', '=', $firstEventId)
-      ->addWhere('contact_id', '=', $firstContactId)
-      ->execute();
+    $params = new GetParameterBag();
+    $params->addWhere('event_id', '=', $firstEventId);
+    $params->addWhere('contact_id', '=', $firstContactId);
+    $firstParticipantResult = $participantApi->request('get', $params, FALSE);
 
     $this->assertEquals(1, count($firstParticipantResult), "more than one registration");
 
     $firstParticipantId = $firstParticipantResult->first()['id'];
 
     // get a result which excludes $first_participant
-    $otherParticipantResult = Participant::get()
-      ->setCheckPermissions(FALSE)
-      ->setSelect(['id'])
-      ->addClause(array('NOT',
-        array('AND', array(
-          array('event_id', '=', $firstEventId),
-          array('contact_id', '=', $firstContactId)))))
-      ->execute()
-      ->indexBy('id');
+    $params = new GetParameterBag();
+    $params->addSelect('id');
+    $params->addClause(
+      array('NOT',
+        array('AND',
+          array(
+            array('event_id', '=', $firstEventId),
+            array('contact_id', '=', $firstContactId)
+          )
+        )
+      )
+    );
+    $otherParticipantResult = $participantApi->request('get', $params, FALSE);
+    $otherParticipantResult->indexBy('id');
 
     $this->assertEquals($participantCount - 1,
       count($otherParticipantResult),
@@ -153,24 +137,18 @@ class ParticipantTest extends UnitTestCase  {
       'excluded wrong record');
 
     // retrieve a participant record and update some records
-    $patchRecord = array(
-      'source' => "not " . $firstResult['source'],
-    );
-
-    Participant::update()
-      ->addWhere('event_id', '=', $firstEventId)
-      ->setCheckPermissions(FALSE)
-      ->setLimit(20)
-      ->setValues($patchRecord)
-      ->setCheckPermissions(FALSE)
-      ->execute();
+    $params = new GetParameterBag();
+    $params->addWhere('event_id', '=', $firstEventId);
+    $params->setLimit(20);
+    $params->set('source', "not " . $firstResult['source']);
+    $participantApi->request('update', $params, FALSE);
 
     // - delete some records
     $secondEventId = $dummy['events'][1]['id'];
-    $deleteResult = Participant::delete()
-      ->addWhere('event_id', '=', $secondEventId)
-      ->setCheckPermissions(FALSE)
-      ->execute();
+    $params = new GetParameterBag();
+    $params->addWhere('event_id', '=', $secondEventId);
+    $deleteResult = $participantApi->request('delete', $params, FALSE);
+
     $expectedDeletes = array(2,7,12,17);
     $this->assertEquals($expectedDeletes, (array)$deleteResult,
       "didn't delete every second record as expected");

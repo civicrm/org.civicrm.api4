@@ -1,0 +1,17 @@
+{
+  "CustomGroup": [
+    {
+      "name": "MyContactFields",
+      "extends": "Contact",
+      "@ref": "custom_group_mycontactfields"
+    }
+  ],
+  "CustomField": [
+    {
+      "label": "FavColor",
+      "custom_group_id": "@ref custom_group_mycontactfields.id",
+      "html_type": "Text",
+      "data_type": "String"
+    }
+  ]
+}

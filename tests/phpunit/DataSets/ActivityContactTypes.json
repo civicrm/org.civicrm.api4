@@ -1,0 +1,19 @@
+{
+  "OptionValue": [
+    {
+      "label": "Activity Source",
+      "name": "Activity Source",
+      "option_group": "activity_contacts"
+    },
+    {
+      "label": "Activity Assignees",
+      "name": "Activity Assignees",
+      "option_group": "activity_contacts"
+    },
+    {
+      "label": "Activity Targets",
+      "name": "Activity Targets",
+      "option_group": "activity_contacts"
+    }
+  ]
+}

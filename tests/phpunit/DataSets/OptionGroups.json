@@ -1,0 +1,10 @@
+{
+  "OptionGroup": [
+    {
+      "name": "activity_type"
+    },
+    {
+      "name": "activity_contacts"
+    }
+  ]
+}

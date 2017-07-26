@@ -1,0 +1,16 @@
+{
+  "Tag": [
+    {
+      "name": "blue",
+      "@ref": "blue_tag"
+    },
+    {
+      "name": "red",
+      "@ref": "red_tag"
+    },
+    {
+      "name": "green",
+      "@ref": "green_tag"
+    }
+  ]
+}

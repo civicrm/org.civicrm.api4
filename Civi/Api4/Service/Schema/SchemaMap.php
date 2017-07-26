@@ -5,9 +5,16 @@ namespace Civi\Api4\Service\Schema;
 use Civi\Api4\Service\Schema\Joinable\BridgeJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 
+/**
+ * Contains a map of all database tables and finds paths between them.
+ */
 class SchemaMap {
 
-  const MAX_JOIN_DEPTH = 3;
+  /**
+   * Determines how many jumps are allowed before finding the target alias.
+   * Use to limit recursive call depth. If 0 then only allow direct table links.
+   */
+  const AUTO_JOIN_LIMIT = 0;
 
   /**
    * @var Table[]
@@ -29,10 +36,11 @@ class SchemaMap {
       return $path;
     }
 
-    $this->findPaths($table, $targetTableAlias, 1, $path);
+    $this->findPaths($table, $targetTableAlias, 0, $path);
 
     foreach ($path as $index => $pathLink) {
       if ($pathLink instanceof BridgeJoinable) {
+        // Insert the middle link from the BridgeJoinable
         $start = array_slice($path, 0, $index);
         $middle = array($pathLink->getMiddleLink());
         $end = array_slice($path, $index, count($path) - $index);
@@ -108,12 +116,12 @@ class SchemaMap {
     static $visited = array();
 
     // reset if new call
-    if ($depth === 1) {
+    if ($depth === 0) {
       $visited = array();
     }
 
     $canBeShorter = empty($path) || count($currentPath) + 1 < count($path);
-    $tooFar = $depth > self::MAX_JOIN_DEPTH;
+    $tooFar = $depth > self::AUTO_JOIN_LIMIT;
     $beenHere = in_array($table->getName(), $visited);
 
     if ($tooFar || $beenHere || !$canBeShorter) {
