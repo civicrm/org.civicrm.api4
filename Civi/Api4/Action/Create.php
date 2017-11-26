@@ -45,23 +45,6 @@ class Create extends AbstractAction {
   protected $values = array();
 
   /**
-   * Bao object based on the entity
-   *
-   * @var object
-   */
-  protected $bao;
-
-  /**
-   * Action constructor.
-   * @param string $entity
-   */
-  public function __construct($entity) {
-    parent::__construct($entity);
-    $bao_name = $this->getBaoName();
-    $this->bao = new $bao_name();
-  }
-
-  /**
    * Set a field value for the created object.
    *
    * @param string $key
@@ -70,7 +53,7 @@ class Create extends AbstractAction {
    */
   public function setValue($key, $value) {
     $this->values[$key] = $value;
-    \Civi::log()->debug('setting $key: '.json_encode($key,JSON_PRETTY_PRINT));
+    \Civi::log()->debug('setting $key: ' . json_encode($key, JSON_PRETTY_PRINT));
     return $this;
   }
 
@@ -99,11 +82,14 @@ class Create extends AbstractAction {
     $entityId = \CRM_Utils_Array::value('id', $params);
     $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
 
+    $bao_name = $this->getBaoName();
+    $bao = new $bao_name();
+
     $method = 'create';
-    if (!method_exists($this->bao, $method)) {
+    if (!method_exists($bao, $method)) {
       $method = 'add';
     }
-    $createResult = $this->bao->$method($params);
+    $createResult = $bao->$method($params);
 
     if (!$createResult) {
       $errMessage = sprintf('%s creation failed', $this->getEntity());
@@ -116,6 +102,12 @@ class Create extends AbstractAction {
     $result->exchangeArray($resultAsArray);
   }
 
+  /**
+   * @param $params
+   * @param $entity
+   * @param $entityId
+   * @return mixed
+   */
   private function formatCustomParams($params, $entity, $entityId) {
 
     $params['custom'] = array();

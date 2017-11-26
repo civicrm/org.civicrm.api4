@@ -195,8 +195,10 @@ abstract class AbstractAction implements \ArrayAccess {
       $defaults = $this->getParamDefaults();
       foreach ($this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
         $name = $property->getName();
-        $this->thisParamInfo[$name] = ReflectionUtils::getCodeDocs($property, 'Property');
-        $this->thisParamInfo[$name]['default'] = $defaults[$name];
+        if ($name != 'version') {
+          $this->thisParamInfo[$name] = ReflectionUtils::getCodeDocs($property, 'Property');
+          $this->thisParamInfo[$name]['default'] = $defaults[$name];
+        }
       }
     }
     return $param ? $this->thisParamInfo[$param] : $this->thisParamInfo;
