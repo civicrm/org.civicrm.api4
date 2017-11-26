@@ -6,7 +6,6 @@ class CRM_Api4_Page_AJAX extends CRM_Core_Page {
     $entity = $this->urlPath[3];
     $action = $this->urlPath[4];
     $params = CRM_Utils_Request::retrieve('params', 'String');
-    $debug = CRM_Core_Permission::check('view debug output');
     if ($params) {
       $params = json_decode($params, TRUE);
     }
@@ -23,7 +22,7 @@ class CRM_Api4_Page_AJAX extends CRM_Core_Page {
         'error_code' => $e->getCode(),
         'error_message' => $e->getMessage(),
       );
-      if ($debug) {
+      if (CRM_Core_Permission::check('view debug output')) {
         $response['backtrace'] = $e->getTrace();
       }
     }
@@ -32,7 +31,7 @@ class CRM_Api4_Page_AJAX extends CRM_Core_Page {
   }
 
   protected function execute($entity, $action, $params) {
-    $params['checkPermissions'] = FALSE; // FIXME!
+    $params['checkPermissions'] = TRUE;
     $result = civicrm_api4($entity, $action, $params);
     // Convert arrayObject into something more suitable for json
     $vals = array('values' => (array) $result);

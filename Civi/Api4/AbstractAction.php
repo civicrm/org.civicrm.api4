@@ -35,6 +35,7 @@ use Civi\Api4\Utils\ReflectionUtils;
  *
  * @method $this addChain(AbstractAction $apiCall)
  * @method $this setCheckPermissions(bool $value)
+ * @method bool getCheckPermissions()
  */
 abstract class AbstractAction implements \ArrayAccess {
 
@@ -312,5 +313,15 @@ abstract class AbstractAction implements \ArrayAccess {
     return $values;
   }
 
+  /**
+   * Is this api call permitted?
+   *
+   * This function is called if checkPermissions is set to true.
+   *
+   * @return bool
+   */
+  public function isAuthorized() {
+    return TRUE;
+  }
 
 }

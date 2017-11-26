@@ -69,5 +69,9 @@
             <tag name="event_subscriber"/>
         </service>
 
+        <service id="api4.permission_check.subscriber" class="Civi\Api4\Event\Subscriber\PermissionCheckSubscriber">
+            <tag name="event_subscriber"/>
+        </service>
+
     </services>
 </container>
