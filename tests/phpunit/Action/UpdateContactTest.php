@@ -5,6 +5,11 @@ namespace Civi\Test\Api4\Action;
 use Civi\Api4\Entity\Contact;
 use Civi\Test\Api4\UnitTestCase;
 
+/**
+ * Class UpdateContactTest
+ * @package Civi\Test\Api4\Action
+ * @group headless
+ */
 class UpdateContactTest extends UnitTestCase {
 
   public function testUpdateWillWork() {
