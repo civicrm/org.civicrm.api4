@@ -60,7 +60,8 @@
             $scope.$bindToRoute({
               expr: 'params["' + name + '"]',
               param: name,
-              format: format
+              format: format,
+              default: param.default
             });
           }
         });
