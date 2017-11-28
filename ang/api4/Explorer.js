@@ -3,6 +3,14 @@
   // Cache list of actions
   var actions = [];
 
+  function ucfirst(str) {
+    return str[0].toUpperCase() + str.slice(1);
+  }
+
+  function lcfirst(str) {
+    return str[0].toLowerCase() + str.slice(1);
+  }
+
   angular.module('api4').config(function($routeProvider) {
       $routeProvider.when('/api4/:api4entity?/:api4action?', {
         controller: 'Api4Explorer',
@@ -58,9 +66,29 @@
         });
         $scope.availableParams = actionInfo.params;
       }
+      writeCode();
     }
 
     function writeCode() {
+      var code = {
+        php: ts('Select an entity and action'),
+        javascript: ''
+      },
+        entity = $scope.entity,
+        action = $scope.action,
+        params = $scope.params;
+      if ($scope.entity && $scope.action) {
+        var varName = lcfirst(entity) + 's';
+        code.javascript = "CRM.api4('" + entity + "', '" + action + "', " +
+            JSON.stringify(params, null, 2) +
+            ").done(function(" + varName + ") {\n  // do something with " + varName + " array\n});";
+        code.php = '$' + varName + " = \\Civi\\Api4\\" + entity + '::' + action + '()';
+        _.each(params, function(param, key) {
+          code.php += "\n  ->set" + ucfirst(key) + '(' + param + ')';
+        });
+        code.php += "\n  ->execute();";
+      }
+      $scope.code = code;
     }
 
     $scope.execute = function() {
@@ -122,6 +150,9 @@
         $scope.helpText = [_.findWhere(actions, {id: newVal}).description];
       }
     });
+
+    $scope.$watchCollection('params', writeCode);
+    writeCode();
 
   });
 
