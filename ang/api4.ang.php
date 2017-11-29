@@ -14,6 +14,7 @@ foreach ($result as $entity) {
 }
 $vars = array(
   'entities' => $entities,
+  'operators' => \CRM_Core_DAO::acceptedSQLOperators(),
 );
 \Civi::resources()->addVars('api4', $vars);
 return array(

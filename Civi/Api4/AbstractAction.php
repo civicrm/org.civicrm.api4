@@ -59,10 +59,9 @@ abstract class AbstractAction implements \ArrayAccess {
    * Setting to FALSE will disable permission checks and override ACLs.
    * In REST/javascript this cannot be disabled.
    *
-   * @var bool|string|int
+   * @var bool
    */
   protected $checkPermissions = TRUE;
-
 
   /**
    * Rarely used options.

@@ -28,7 +28,7 @@ namespace Civi\Api4\Action;
 use Civi\Api4\Result;
 
 /**
- * Here's an idea... if we use one action to extend another, "update" inherits all the abilities of "get"
+ * Update one or more records with new values. Use the where clause to select them.
  *
  * @method $this setValues($values)
  * @method $this addValues($array)

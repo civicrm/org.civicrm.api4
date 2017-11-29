@@ -74,6 +74,13 @@ class Get extends AbstractAction {
    * @var int
    */
   protected $limit = 0;
+  /**
+   * Zero-based index of first result to return.
+   *
+   * Defaults to "0" - first record.
+   *
+   * @var int
+   */
   protected $offset = 0;
 
   /**
