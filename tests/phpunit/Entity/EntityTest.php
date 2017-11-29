@@ -26,7 +26,7 @@ class EntityTest extends UnitTestCase  {
       ->execute()
       ->indexBy('name');
     $this->assertEquals(
-      array('get', 'getActions'),
+      array('get', 'getFields', 'getActions'),
       array_keys((array)$result),
       "Entity entity has more that basic actions");
   }

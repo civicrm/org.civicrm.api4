@@ -25,36 +25,18 @@
  +--------------------------------------------------------------------+
  */
 
-namespace Civi\Api4\Entity;
+namespace Civi\Api4\Action\Entity;
 
-use Civi\Api4\Action\Entity\Get;
-use Civi\Api4\Action\Entity\GetFields;
-use Civi\Api4\Action\GetActions;
+use Civi\Api4\Result;
+use \Civi\Api4\Action\GetFields as GenericGetFields;
 
 /**
- * Meta entity.
+ * Get fields for an entity
  */
-class Entity {
+class GetFields extends GenericGetFields {
 
-  /**
-   * @return Get
-   */
-  static function get() {
-    return new Get('Entity');
-  }
-
-  /**
-   * @return GetActions
-   */
-  static function getActions() {
-    return new GetActions('Entity');
-  }
-
-  /**
-   * @return GetFields
-   */
-  static function getFields() {
-    return new GetFields('Entity');
+  public function _run(Result $result) {
+    return $result;
   }
 
 }
