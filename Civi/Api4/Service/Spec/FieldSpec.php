@@ -232,4 +232,14 @@ class FieldSpec {
 
     return $this;
   }
+
+  public function toArray() {
+    $ret = array();
+    foreach (get_object_vars($this) as $key => $val) {
+      $key = strtolower(preg_replace('/(?=[A-Z])/', '_$0', $key));
+      $ret[$key] = $val;
+    }
+    return $ret;
+  }
+
 }

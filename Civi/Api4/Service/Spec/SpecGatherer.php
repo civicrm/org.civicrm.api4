@@ -2,6 +2,7 @@
 
 namespace Civi\Api4\Service\Spec;
 
+use Civi\Api4\Entity\CustomField;
 use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
 
 class SpecGatherer {
@@ -32,6 +33,10 @@ class SpecGatherer {
     $specification = new RequestSpec($entity, $action);
 
     $this->addDAOFields($entity, $specification);
+    // TODO
+    if (0) {
+      $this->addCustomFields($entity, $specification);
+    }
 
     foreach ($this->specProviders as $provider) {
       if ($provider->applies($entity, $action)) {
@@ -60,6 +65,25 @@ class SpecGatherer {
 
     foreach ($DAOFields as $DAOField) {
       $field = SpecFormatter::arrayToField($DAOField);
+      $specification->addFieldSpec($field);
+    }
+  }
+
+  /**
+   * @param string $entity
+   * @param RequestSpec $specification
+   */
+  private function addCustomFields($entity, RequestSpec $specification) {
+    if ($entity == 'Contact') {
+      $entity = array('Contact', 'Individual', 'Organization', 'Household');
+    }
+    $customFields = CustomField::get()
+      ->addWhere('custom_group.extends', 'IN', $entity)
+      ->setSelect(array('custom_group.name', 'custom_group_id', 'name', 'label', 'data_type', 'html_type', 'is_required', 'is_searchable', 'is_search_range', 'weight', 'is_active', 'is_view', 'option_group_id', 'default_value'))
+      ->execute();
+
+    foreach ($customFields as $fieldArray) {
+      $field = SpecFormatter::arrayToField($fieldArray);
       $specification->addFieldSpec($field);
     }
   }

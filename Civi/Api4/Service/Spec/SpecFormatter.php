@@ -18,15 +18,7 @@ class SpecFormatter {
     $specArray['fields'] = array();
 
     foreach ($spec->getFields() as $field) {
-      $specArray['fields'][$field->getName()] = array(
-        'name' => $field->getName(),
-        'title' => $field->getTitle(),
-        'data_type' => $field->getDataType(),
-        'default_value' => $field->getDefaultValue(),
-        'description' => $field->getDescription(),
-        'options' => $field->getOptions(),
-        'required' => $field->isRequired(),
-      );
+      $specArray['fields'][$field->getName()] = $field->toArray();
     }
 
     return $specArray;
@@ -38,21 +30,24 @@ class SpecFormatter {
    * @return FieldSpec
    */
   public static function arrayToField(array $data) {
-    $name = ArrayHelper::value('name', $data);
     $dataTypeName = self::getDataType($data);
 
-    if (isset($data['custom_group_id'])) {
+    if (!empty($data['custom_group_id'])) {
+      $name = $data['custom_group']['name'] . '.' . $data['name'];
       $field = new CustomFieldSpec($name, $dataTypeName);
       $field->setCustomFieldId(ArrayHelper::value('id', $data));
       $field->setCustomGroupId($data['custom_group_id']);
+      $field->setRequired((bool) ArrayHelper::value('is_required', $data, FALSE));
+      $field->setTitle(ArrayHelper::value('label', $data));
     } else {
+      $name = ArrayHelper::value('name', $data);
       $field = new FieldSpec($name, $dataTypeName);
+      $field->setRequired((bool) ArrayHelper::value('required', $data, FALSE));
+      $field->setTitle(ArrayHelper::value('title', $data));
     }
 
     $field->setDefaultValue(ArrayHelper::value('default', $data));
     $field->setDescription(ArrayHelper::value('description', $data));
-    $field->setTitle(ArrayHelper::value('title', $data));
-    $field->setRequired((bool) ArrayHelper::value('required', $data, FALSE));
 
     $fkClassName = ArrayHelper::value('FKClassName', $data);
     $fkAPIName = ArrayHelper::value('FKApiName', $data);
