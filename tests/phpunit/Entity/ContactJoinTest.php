@@ -33,13 +33,14 @@ class ContactJoinTest extends UnitTestCase {
   public function testContactJoin() {
     $contact = $this->getReference('test_contact_1');
     foreach (array('Address', 'Email', 'Phone', 'OpenID', 'IM', 'Website') as $entity) {
-      $result = civicrm_api4($entity, 'get', array(
+      $results = civicrm_api4($entity, 'get', array(
         'where' => array(array('contact_id', '=', $contact['id'])),
         'select' => array('contact.display_name', 'contact.id'),
-        'limit' => 1,
-      ))->first();
-      $this->assertEquals($contact['id'], $result['contact']['id']);
-      $this->assertEquals($contact['display_name'], $result['contact']['display_name']);
+      ));
+      foreach ($results as $result) {
+        $this->assertEquals($contact['id'], $result['contact']['id']);
+        $this->assertEquals($contact['display_name'], $result['contact']['display_name']);
+      }
     }
   }
 }
