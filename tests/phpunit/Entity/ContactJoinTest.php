@@ -2,6 +2,7 @@
 
 namespace phpunit\Entity;
 
+use Civi\Api4\Entity\Contact;
 use Civi\Test\Api4\UnitTestCase;
 
 /**
@@ -42,5 +43,21 @@ class ContactJoinTest extends UnitTestCase {
         $this->assertEquals($contact['display_name'], $result['contact']['display_name']);
       }
     }
+  }
+
+  public function testJoinToPCM() {
+    $contact = Contact::create()
+      ->setValues(array("preferred_communication_method" => array(1,2,3), 'contact_type' => 'Individual', 'first_name' => 'Test', 'last_name' => 'PCM'))
+      ->execute();
+
+    $fetchedContact = Contact::get()
+      ->addWhere('id', '=', $contact['id'])
+      ->addSelect('preferred_communication_method.label')
+      ->execute()
+      ->first();
+
+    // Todo: this test is failing due to a bug in the join code,
+    // but it also needs pcm option values populated in order to pass.
+    $this->assertEquals(3, count($fetchedContact["preferred_communication_method"]));
   }
 }
