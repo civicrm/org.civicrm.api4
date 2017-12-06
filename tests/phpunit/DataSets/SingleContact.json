@@ -88,5 +88,33 @@
       "email": "test_contact_work@fakedomain.com",
       "location_type_id": 2
     }
+  ],
+  "Address": [
+    {
+      "contact_id": "@ref test_contact_1.id",
+      "street_address": "123 Sesame St.",
+      "location_type_id": 1
+    }
+  ],
+  "Website": [
+    {
+      "contact_id": "@ref test_contact_1.id",
+      "url": "http://test.com",
+      "website_id": 1
+    }
+  ],
+  "OpenID": [
+    {
+      "contact_id": "@ref test_contact_1.id",
+      "openid": "123",
+      "location_type_id": 1
+    }
+  ],
+  "IM": [
+    {
+      "contact_id": "@ref test_contact_1.id",
+      "name": "123",
+      "location_type_id": 1
+    }
   ]
 }

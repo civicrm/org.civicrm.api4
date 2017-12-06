@@ -18,7 +18,7 @@
         <div class="panel-body">
           <div class="api4-input" ng-if="availableParams.select">
             <label for="api4-param-select">select</label>
-            <input class="form-control" ng-list crm-ui-select="{data: fields, multiple: true}" id="api4-param-select" ng-model="params.select"/>
+            <input class="form-control" ng-list crm-ui-select="{tags: fields, multiple: true}" id="api4-param-select" ng-model="params.select"/>
           </div>
           <div class="api4-input" ng-repeat="(name, param) in availableParams" ng-if="param.type[0] === 'bool'">
             <label for="api4-param-{{ name }}">{{ name }}</label>
@@ -32,7 +32,7 @@
             <legend>where</legend>
             <div class="api4-input row" ng-repeat="(index, clause) in params.where">
               <div class="col-md-4">
-                <input class="form-control" ng-model="clause[0]" crm-ui-select="{data: fields, allowClear: true, placeholder: 'Field'}" />
+                <input class="form-control" ng-model="clause[0]" crm-ui-select="{tags: fields, allowClear: true, placeholder: 'Field'}" />
               </div>
               <div class="col-md-2">
                 <input class="form-control" ng-model="clause[1]" crm-ui-select="{data: operators}" />
@@ -43,7 +43,7 @@
             </div>
             <div class="api4-input row">
               <div class="col-md-4">
-                <input class="form-control" ng-model="controls.where" crm-ui-select="{data: fields}" placeholder="Add where" />
+                <input class="form-control" ng-model="controls.where" crm-ui-select="{tags: fields}" placeholder="Add where" />
               </div>
             </div>
           </fieldset>
@@ -51,7 +51,7 @@
             <legend>values</legend>
             <div class="api4-input row" ng-repeat="(index, clause) in params.values">
               <div class="col-md-4">
-                <input class="form-control" ng-model="clause[0]" crm-ui-select="{data: fields, allowClear: true, placeholder: 'Field'}" />
+                <input class="form-control" ng-model="clause[0]" crm-ui-select="{tags: fields, allowClear: true, placeholder: 'Field'}" />
               </div>
               <div class="col-md-6">
                 <input class="form-control" ng-model="clause[1]" />
@@ -59,7 +59,7 @@
             </div>
             <div class="api4-input row">
               <div class="col-md-4">
-                <input class="form-control" ng-model="controls.values" crm-ui-select="{data: fields}" placeholder="Add value" />
+                <input class="form-control" ng-model="controls.values" crm-ui-select="{tags: fields}" placeholder="Add value" />
               </div>
             </div>
           </fieldset>
@@ -67,7 +67,7 @@
             <legend>orderBy</legend>
             <div class="api4-input row" ng-repeat="(index, clause) in params.orderBy">
               <div class="col-md-4">
-                <input class="form-control" ng-model="clause[0]" crm-ui-select="{data: fields, allowClear: true, placeholder: 'Field'}" />
+                <input class="form-control" ng-model="clause[0]" crm-ui-select="{tags: fields, allowClear: true, placeholder: 'Field'}" />
               </div>
               <div class="col-md-2">
                 <select class="form-control" ng-model="clause[1]">
@@ -78,7 +78,7 @@
             </div>
             <div class="api4-input row">
               <div class="col-md-4">
-                <input class="form-control" ng-model="controls.orderBy" crm-ui-select="{data: fields}" placeholder="Add orderBy" />
+                <input class="form-control" ng-model="controls.orderBy" crm-ui-select="{tags: fields}" placeholder="Add orderBy" />
               </div>
             </div>
           </fieldset>

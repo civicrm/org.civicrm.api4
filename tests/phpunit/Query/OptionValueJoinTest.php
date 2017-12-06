@@ -13,8 +13,16 @@ class OptionValueJoinTest extends UnitTestCase {
   public function setUpHeadless() {
     $relatedTables = array(
       'civicrm_contact',
+      'civicrm_address',
+      'civicrm_email',
+      'civicrm_phone',
+      'civicrm_openid',
+      'civicrm_im',
+      'civicrm_website',
       'civicrm_option_group',
       'civicrm_option_value',
+      'civicrm_activity',
+      'civicrm_activity_contact',
     );
 
     $this->cleanup(array('tablesToTruncate' => $relatedTables));

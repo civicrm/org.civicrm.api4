@@ -42,6 +42,17 @@
       return str[0].toLowerCase() + str.slice(1);
     }
 
+    function pluralize(str) {
+      switch (str[str.length-1]) {
+        case 's':
+          return str + 'es';
+        case 'y':
+          return str.slice(0, -1) + 'ies';
+        default:
+          return str + 's';
+      }
+    }
+
     // Turn a flat array into a select2 array
     function arrayToSelect2(array) {
       var out = [];
@@ -138,11 +149,7 @@
         action = $scope.action,
         params = getParams();
       if ($scope.entity && $scope.action) {
-        // Attempt to pluralize in a grammatically correct-ish way
-        var varName = lcfirst(entity) + 's';
-        if (entity[entity.length-1] === 'y') {
-          varName = varName.slice(0, -2) + 'ies';
-        }
+        var varName = lcfirst(pluralize(entity));
         code.javascript = "CRM.api4('" + entity + "', '" + action + "', {";
         _.each(params, function(param, key) {
           code.javascript += "\n  " + key + ': ' + JSON.stringify(param);

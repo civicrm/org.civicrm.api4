@@ -85,7 +85,12 @@ class Create extends AbstractAction {
     $bao_name = $this->getBaoName();
     $bao = new $bao_name();
 
-    $method = 'create';
+    // Some BAOs are weird and don't support a straightforward "create" method.
+    $oddballs = array(
+      'Website' => 'add',
+      'Address' => 'add',
+    );
+    $method = \CRM_Utils_Array::value($this->getEntity(), $oddballs, 'create');
     if (!method_exists($bao, $method)) {
       $method = 'add';
     }
