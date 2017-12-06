@@ -25,10 +25,10 @@ class EntityTest extends UnitTestCase  {
       ->setCheckPermissions(FALSE)
       ->execute()
       ->indexBy('name');
-    $this->assertEquals(
-      array('get', 'getFields', 'getActions'),
-      array_keys((array)$result),
-      "Entity entity has more that basic actions");
+    $this->assertNotContains(
+      'create',
+      array_keys((array) $result),
+      "Entity entity has more than basic actions");
   }
 
 }

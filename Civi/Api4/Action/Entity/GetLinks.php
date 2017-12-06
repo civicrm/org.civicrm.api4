@@ -25,44 +25,38 @@
  +--------------------------------------------------------------------+
  */
 
-namespace Civi\Api4\Entity;
+namespace Civi\Api4\Action\Entity;
 
-use Civi\Api4\Action\Entity\Get;
-use Civi\Api4\Action\Entity\GetFields;
-use Civi\Api4\Action\Entity\GetLinks;
-use Civi\Api4\Action\GetActions;
+use Civi\Api4\AbstractAction;
+use \CRM_Core_DAO_AllCoreTables as AllTables;
+use Civi\Api4\Result;
 
 /**
- * Meta entity.
+ * Get a list of FK links between entities
  */
-class Entity {
+class GetLinks extends AbstractAction {
 
-  /**
-   * @return Get
-   */
-  static function get() {
-    return new Get('Entity');
-  }
-
-  /**
-   * @return GetActions
-   */
-  static function getActions() {
-    return new GetActions('Entity');
-  }
-
-  /**
-   * @return GetFields
-   */
-  static function getFields() {
-    return new GetFields('Entity');
-  }
-
-  /**
-   * @return GetFields
-   */
-  static function GetLinks() {
-    return new GetLinks('Entity');
+  public function _run(Result $result) {
+    /** @var \Civi\Api4\Service\Schema\SchemaMap $schema */
+    $schema = \Civi::container()->get('schema_map');
+    foreach ($schema->getTables() as $table) {
+      $entity = AllTables::getBriefName(AllTables::getClassForTable($table->getName()));
+      // Since this is an api function, exclude tables that don't have an api
+      if (class_exists('\Civi\Api4\Entity\\' . $entity)) {
+        $item = array(
+          'entity' => $entity,
+          'table' => $table->getName(),
+          'links' => array(),
+        );
+        foreach ($table->getTableLinks() as $link) {
+          $link = $link->toArray();
+          $link['entity'] = AllTables::getBriefName(AllTables::getClassForTable($link['targetTable']));
+          $item['links'][] = $link;
+        }
+        $result[] = $item;
+      }
+    }
+    return $result;
   }
 
 }

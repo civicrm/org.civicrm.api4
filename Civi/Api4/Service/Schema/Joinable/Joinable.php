@@ -7,9 +7,9 @@ class Joinable {
   const JOIN_SIDE_LEFT = 'LEFT';
   const JOIN_SIDE_INNER = 'INNER';
 
-  const JOIN_TYPE_ONE_TO_ONE = 1;
-  const JOIN_TYPE_MANY_TO_ONE = 2;
-  const JOIN_TYPE_ONE_TO_MANY = 3;
+  const JOIN_TYPE_ONE_TO_ONE = '1_to_1';
+  const JOIN_TYPE_MANY_TO_ONE = 'n_to_1';
+  const JOIN_TYPE_ONE_TO_MANY = '1_to_n';
 
   /**
    * @var string
@@ -205,5 +205,12 @@ class Joinable {
     $this->joinType = $joinType;
 
     return $this;
+  }
+
+  /**
+   * @return array
+   */
+  public function toArray() {
+    return get_object_vars($this);
   }
 }
