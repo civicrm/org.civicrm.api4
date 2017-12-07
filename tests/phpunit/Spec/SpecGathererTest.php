@@ -34,7 +34,7 @@ class SpecGathererTest extends UnitTestCase {
 
   public function testBasicFieldsGathering() {
     $gatherer = new SpecGatherer();
-    $specs = $gatherer->getSpec('Contact', 'create');
+    $specs = $gatherer->getSpec('Contact', 'create', FALSE);
     $contactDAO = _civicrm_api3_get_DAO('Contact');
     $contactFields = $contactDAO::fields();
     $specFieldNames = $specs->getFieldNames();
@@ -55,7 +55,7 @@ class SpecGathererTest extends UnitTestCase {
     });
     $gather->addSpecProvider($provider->reveal());
 
-    $spec = $gather->getSpec('Contact', 'create');
+    $spec = $gather->getSpec('Contact', 'create', FALSE);
     $fieldNames = $spec->getFieldNames();
 
     $this->assertContains('foo', $fieldNames);
@@ -80,7 +80,7 @@ class SpecGathererTest extends UnitTestCase {
       ->execute();
 
     $gatherer = new SpecGatherer();
-    $spec = $gatherer->getSpec('Contact', 'get');
+    $spec = $gatherer->getSpec('Contact', 'get', FALSE);
 
     $regularField = $spec->getFieldByName('contact_type');
 

@@ -29,12 +29,11 @@ class SpecGatherer {
    *
    * @return RequestSpec
    */
-  public function getSpec($entity, $action) {
+  public function getSpec($entity, $action, $includeCustom) {
     $specification = new RequestSpec($entity, $action);
 
     $this->addDAOFields($entity, $specification);
-    // TODO
-    if (0) {
+    if ($includeCustom) {
       $this->addCustomFields($entity, $specification);
     }
 

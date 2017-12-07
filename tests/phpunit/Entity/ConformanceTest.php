@@ -66,6 +66,7 @@ class ConformanceTest extends UnitTestCase {
   protected function checkFields($entityClass, $entity) {
     $fields = $entityClass::getFields()
       ->setCheckPermissions(FALSE)
+      ->setIncludeCustom(FALSE)
       ->execute()
       ->indexBy('name');
 

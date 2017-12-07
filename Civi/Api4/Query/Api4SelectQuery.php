@@ -49,9 +49,6 @@ use CRM_Core_DAO_CustomField as CustomFieldDAO;
  */
 class Api4SelectQuery extends SelectQuery {
 
-  const JOIN_ONE_TO_MANY = 1;
-  const JOIN_ONE_TO_ONE = 2;
-
   /**
    * @var int
    */
@@ -136,6 +133,20 @@ class Api4SelectQuery extends SelectQuery {
   }
 
   /**
+   * @inheritDoc
+   */
+  protected function buildOrderBy() {
+    foreach ($this->orderBy as $field => $dir) {
+      if ($dir !== 'ASC' && $dir !== 'DESC') {
+        throw new \API_Exception("Invalid sort direction. Cannot order by $field $dir");
+      }
+      // TODO: Handle joins
+      if ($this->getField())
+      $this->query->orderBy(self::MAIN_TABLE_ALIAS . '.' . $field . " $dir");
+    }
+  }
+
+  /**
    * Recursively validate and transform a branch or leaf clause array to SQL.
    *
    * @param array $clause
@@ -206,7 +217,7 @@ class Api4SelectQuery extends SelectQuery {
    * @inheritDoc
    */
   protected function getFields() {
-    $fields = civicrm_api4($this->entity, 'getFields')->indexBy('name');
+    $fields = civicrm_api4($this->entity, 'getFields', array('action' => 'get', 'includeCustom' => FALSE))->indexBy('name');
     return (array) $fields;
   }
 

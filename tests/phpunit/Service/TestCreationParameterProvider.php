@@ -26,7 +26,7 @@ class TestCreationParameterProvider {
    * @return array
    */
   public function getRequired($entity) {
-    $createSpec = $this->gatherer->getSpec($entity, 'create');
+    $createSpec = $this->gatherer->getSpec($entity, 'create', FALSE);
     $requiredFields = $createSpec->getRequiredFields();
 
     if ($entity === 'Contact') {

@@ -34,11 +34,15 @@ use Civi\Api4\Service\Spec\SpecFormatter;
 
 /**
  * Get fields for an entity
+ *
+ * @method $this setIncludeCustom(bool $value)
  */
 class GetFields extends AbstractAction {
 
   // over-ride default to allow open access
   protected $checkPermissions = FALSE;
+
+  protected $includeCustom = TRUE;
 
   /**
    * @var string
@@ -48,7 +52,7 @@ class GetFields extends AbstractAction {
   public function _run(Result $result) {
     /** @var SpecGatherer $gatherer */
     $gatherer = \Civi::container()->get('spec_gatherer');
-    $spec = $gatherer->getSpec($this->getEntity(), $this->getAction());
+    $spec = $gatherer->getSpec($this->getEntity(), $this->getAction(), $this->includeCustom);
     $specArray = SpecFormatter::specToArray($spec);
     // Fixme - $this->action ought to already be set. Might be a name conflict upstream causing it to be nullified?
     $result->action = 'getFields';

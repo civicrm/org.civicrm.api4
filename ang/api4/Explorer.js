@@ -23,7 +23,7 @@
     $scope.fields = fields;
     $scope.availableParams = [];
     $scope.params = {};
-    var fancyParams = $scope.fancyParams = ['where', 'values', 'orderBy'];
+    var richParams = {where: 'array', values: 'object', orderBy: 'object'};
     $scope.entity = $routeParams.api4entity;
     $scope.result = [];
     $scope.status = 'default';
@@ -79,6 +79,15 @@
           params[key] = param;
         }
       });
+      _.each(richParams, function(type, key) {
+        if (params[key] && type === 'object') {
+          var newParam = {};
+          _.each(params[key], function(item) {
+            newParam[item[0]] = item[1];
+          });
+          params[key] = newParam;
+        }
+      });
       return params;
     }
 
@@ -110,7 +119,7 @@
               deep: name === 'where'
             });
           }
-          if (fancyParams.indexOf(name) > -1) {
+          if (richParams[name]) {
             $scope.$watch('params.' + name, function(values) {
               // Remove empty values
               _.each(values, function(clause, index) {
@@ -160,12 +169,16 @@
         code.javascript += "\n}).done(function(" + varName + ") {\n  // do something with " + varName + " array\n});";
         code.php = '$' + varName + " = \\Civi\\Api4\\" + entity + '::' + action + '()';
         _.each(params, function(param, key) {
-          if (fancyParams.indexOf(key) > -1) {
-            _.each(param, function(item) {
+          if (richParams[key]) {
+            _.each(param, function(item, index) {
               var val = '';
-              _.each(item, function(it) {
-                val += ((val.length ? ', ' : '') + JSON.stringify(it));
-              });
+              if (richParams[key] === 'array') {
+                _.each(item, function (it) {
+                  val += ((val.length ? ', ' : '') + JSON.stringify(it));
+                });
+              } else {
+                val = JSON.stringify(index) + ', ' + JSON.stringify(item);
+              }
               code.php += "\n  ->add" + ucfirst(key).replace(/s$/, '') + '(' + val + ')';
             })
           } else {

@@ -61,7 +61,7 @@ class Entity {
   /**
    * @return GetFields
    */
-  static function GetLinks() {
+  static function getLinks() {
     return new GetLinks('Entity');
   }
 
