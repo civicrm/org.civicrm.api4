@@ -31,10 +31,12 @@ class OptionValueJoinable extends Joinable {
       $subSelect = 'SELECT id FROM civicrm_option_group WHERE name = "%s"';
       $subQuery = sprintf($subSelect, $optionGroup);
       $condition = sprintf('%s.option_group_id = (%s)', $alias, $subQuery);
-    } else {
+    }
+    else {
       $condition = sprintf('%s.option_group_id = %d', $alias, $optionGroup);
     }
 
     $this->addCondition($condition);
   }
+
 }

@@ -84,7 +84,7 @@ class Api4SelectQuery extends SelectQuery {
     $whereFields = array_column($this->where, 0);
     $allFields = array_merge($whereFields, $this->select, $this->orderBy);
     $dotFields = array_unique(array_filter($allFields, function ($field) {
-      return strpos($field, '.') !== false;
+      return strpos($field, '.') !== FALSE;
     }));
 
     foreach ($dotFields as $dotField) {
@@ -140,9 +140,13 @@ class Api4SelectQuery extends SelectQuery {
       if ($dir !== 'ASC' && $dir !== 'DESC') {
         throw new \API_Exception("Invalid sort direction. Cannot order by $field $dir");
       }
-      // TODO: Handle joins
-      if ($this->getField())
-      $this->query->orderBy(self::MAIN_TABLE_ALIAS . '.' . $field . " $dir");
+      if ($this->getField($field)) {
+        $this->query->orderBy(self::MAIN_TABLE_ALIAS . '.' . $field . " $dir");
+      }
+      // TODO: Handle joined fields, custom fields, etc.
+      else {
+        throw new \API_Exception("Invalid sort field. Cannot order by $field $dir");
+      }
     }
   }
 
@@ -158,27 +162,27 @@ class Api4SelectQuery extends SelectQuery {
    */
   protected function treeWalkWhereClause($clause) {
     switch ($clause[0]) {
-    case 'OR':
-    case 'AND':
-      // handle branches
-      if (count($clause[1]) === 1) {
-        // a single set so AND|OR is immaterial
-        return $this->treeWalkWhereClause($clause[1][0]);
-      }
-      else {
-        $sql_subclauses = [];
-        foreach ($clause[1] as $subclause) {
-          $sql_subclauses[] = $this->treeWalkWhereClause($subclause);
+      case 'OR':
+      case 'AND':
+        // handle branches
+        if (count($clause[1]) === 1) {
+          // a single set so AND|OR is immaterial
+          return $this->treeWalkWhereClause($clause[1][0]);
         }
-        return '(' . implode("\n" . $clause[0], $sql_subclauses) . ')';
-      }
-    case 'NOT':
-      // possibly these brackets are redundant
-      return 'NOT ('
-        . $this->treeWalkWhereClause($clause[1]) . ')';
-      break;
-    default:
-      return $this->validateClauseAndComposeSql($clause);
+        else {
+          $sql_subclauses = [];
+          foreach ($clause[1] as $subclause) {
+            $sql_subclauses[] = $this->treeWalkWhereClause($subclause);
+          }
+          return '(' . implode("\n" . $clause[0], $sql_subclauses) . ')';
+        }
+
+      case 'NOT':
+        // possibly these brackets are redundant
+        return 'NOT (' . $this->treeWalkWhereClause($clause[1]) . ')';
+
+      default:
+        return $this->validateClauseAndComposeSql($clause);
     }
   }
 
@@ -186,6 +190,8 @@ class Api4SelectQuery extends SelectQuery {
    * Validate and transform a leaf clause array to SQL.
    * @param array $clause [$fieldName, $operator, $criteria]
    * @return string SQL
+   * @throws \API_Exception
+   * @throws \Exception
    */
   protected function validateClauseAndComposeSql($clause) {
     list($key, $operator, $criteria) = $clause;
@@ -237,7 +243,7 @@ class Api4SelectQuery extends SelectQuery {
 
   /**
    * @param $key
-   **/
+   */
   protected function joinFK($key) {
     $stack = explode('.', $key);
 
@@ -306,7 +312,7 @@ class Api4SelectQuery extends SelectQuery {
           return $table->getJoinType() === Joinable::JOIN_TYPE_ONE_TO_MANY;
         }
       }
-      return false;
+      return FALSE;
     };
 
     foreach ($pathParts as $part) {

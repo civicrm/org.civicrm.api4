@@ -31,4 +31,5 @@ class GetSpecEvent extends BaseEvent {
   public function setRequest(AbstractAction $request) {
     $this->request = $request;
   }
+
 }

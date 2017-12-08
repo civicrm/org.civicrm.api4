@@ -14,11 +14,10 @@ class CustomGroupJoinable extends Joinable {
    * @param $alias
    * @param bool $isMultiRecord
    */
-  public function __construct($targetTable, $alias, $isMultiRecord = false) {
+  public function __construct($targetTable, $alias, $isMultiRecord = FALSE) {
     parent::__construct($targetTable, 'entity_id', $alias);
     $this->joinType = $isMultiRecord ?
       self::JOIN_TYPE_ONE_TO_MANY : self::JOIN_TYPE_ONE_TO_ONE;
   }
+
 }
-
-

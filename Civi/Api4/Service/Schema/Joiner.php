@@ -80,7 +80,8 @@ class Joiner {
 
         if (empty($links)) {
           throw new \Exception(sprintf('Cannot join %s to %s', $baseTable, $targetAlias));
-        } else {
+        }
+        else {
           $fullPath = array_merge($fullPath, $links);
           $lastLink = end($links);
           $baseTable = $lastLink->getTargetTable();
@@ -92,4 +93,5 @@ class Joiner {
 
     return $this->cache[$joinPath];
   }
+
 }

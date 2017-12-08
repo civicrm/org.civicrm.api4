@@ -48,4 +48,5 @@ class CustomFieldSpec extends FieldSpec {
 
     return $this;
   }
+
 }

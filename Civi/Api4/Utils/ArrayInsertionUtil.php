@@ -26,12 +26,14 @@ class ArrayInsertionUtil {
     if (empty($parts)) {
       $values = self::filterValues($array, $isMulti, $values);
       $array[$key] = $values;
-    } else {
+    }
+    else {
       if ($isMulti) {
         foreach ($array[$key] as &$subArray) {
           self::insert($subArray, $parts, $values);
         }
-      } else {
+      }
+      else {
         self::insert($array[$key], $parts, $values);
       }
     }
@@ -67,4 +69,5 @@ class ArrayInsertionUtil {
     }
     return $values;
   }
+
 }

@@ -66,7 +66,7 @@ class Table {
    * @return $this
    */
   public function addTableLink($baseColumn, Joinable $joinable) {
-    $target= $joinable->getTargetTable();
+    $target = $joinable->getTargetTable();
     $targetCol = $joinable->getTargetColumn();
     $alias = $joinable->getAlias();
 
@@ -113,4 +113,5 @@ class Table {
 
     return FALSE;
   }
+
 }

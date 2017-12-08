@@ -19,4 +19,5 @@ interface SpecProviderInterface {
    * @return bool
    */
   public function applies($entity, $action);
+
 }

@@ -10,7 +10,7 @@ class CustomGroupCreationSpecProvider implements SpecProviderInterface {
    * @inheritdoc
    */
   public function modifySpec(RequestSpec $spec) {
-    return $spec->getFieldByName('extends')->setRequired(true);
+    return $spec->getFieldByName('extends')->setRequired(TRUE);
   }
 
   /**
@@ -19,4 +19,5 @@ class CustomGroupCreationSpecProvider implements SpecProviderInterface {
   public function applies($entity, $action) {
     return $entity === 'CustomGroup' && $action === Actions::CREATE;
   }
+
 }

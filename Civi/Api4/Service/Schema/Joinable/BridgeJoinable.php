@@ -19,4 +19,5 @@ class BridgeJoinable extends Joinable {
   public function getMiddleLink() {
     return $this->middleLink;
   }
+
 }

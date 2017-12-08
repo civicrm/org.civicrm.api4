@@ -20,11 +20,15 @@
             <label for="api4-param-select">select</label>
             <input class="form-control" ng-list crm-ui-select="{tags: fields, multiple: true}" id="api4-param-select" ng-model="params.select"/>
           </div>
+          <div class="api4-input" ng-if="availableParams.action">
+            <label for="api4-param-action">action</label>
+            <input class="form-control" crm-ui-select="{data: actions}" id="api4-param-action" ng-model="params.action"/>
+          </div>
           <div class="api4-input" ng-repeat="(name, param) in availableParams" ng-if="param.type[0] === 'bool'">
             <label for="api4-param-{{ name }}">{{ name }}</label>
             <input type="checkbox" id="api4-param-{{ name }}" ng-model="params[name]"/>
           </div>
-          <div class="api4-input" ng-repeat="(name, param) in availableParams" ng-if="param.type[0] === 'str' || param.type[0] === 'int'">
+          <div class="api4-input" ng-repeat="(name, param) in availableParams" ng-if="name !== 'action' && (param.type[0] === 'string' || param.type[0] === 'int')">
             <label for="api4-param-{{ name }}">{{ name }}</label>
             <input class="form-control" type="{{ param.type[0] === 'int' ? 'number' : 'text' }}" id="api4-param-{{ name }}" ng-model="params[name]"/>
           </div>

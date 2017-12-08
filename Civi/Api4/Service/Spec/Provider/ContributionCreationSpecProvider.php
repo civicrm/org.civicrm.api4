@@ -10,7 +10,7 @@ class ContributionCreationSpecProvider implements SpecProviderInterface {
    * @inheritdoc
    */
   public function modifySpec(RequestSpec $spec) {
-    $spec->getFieldByName('financial_type_id')->setRequired(true);
+    $spec->getFieldByName('financial_type_id')->setRequired(TRUE);
   }
 
   /**
@@ -19,4 +19,5 @@ class ContributionCreationSpecProvider implements SpecProviderInterface {
   public function applies($entity, $action) {
     return $entity === 'Contribution' && $action === Actions::CREATE;
   }
+
 }

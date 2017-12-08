@@ -38,4 +38,5 @@ class ContactPreUpdateSubscriber extends PreCreationSubscriber {
       $request->setValue('contact_id', $id);
     }
   }
+
 }

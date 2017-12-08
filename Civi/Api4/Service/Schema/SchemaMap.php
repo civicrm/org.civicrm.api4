@@ -126,7 +126,8 @@ class SchemaMap {
     foreach ($table->getExternalLinks() as $link) {
       if ($link->getAlias() === $target) {
         $path = array_merge($currentPath, array($link));
-      } else {
+      }
+      else {
         $linkTable = $this->getTableByName($link->getTargetTable());
         if ($linkTable) {
           $nextStep = array_merge($currentPath, array($link));
@@ -135,4 +136,5 @@ class SchemaMap {
       }
     }
   }
+
 }

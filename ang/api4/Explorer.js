@@ -156,18 +156,22 @@
       },
         entity = $scope.entity,
         action = $scope.action,
-        params = getParams();
+        params = getParams(),
+        result = 'result';
       if ($scope.entity && $scope.action) {
-        var varName = lcfirst(pluralize(entity));
+        if (action.slice(0, 3) === 'get') {
+          result = lcfirst(action.replace(/s$/, '').slice(3) || entity);
+        }
+        var results = lcfirst(pluralize(result));
         code.javascript = "CRM.api4('" + entity + "', '" + action + "', {";
         _.each(params, function(param, key) {
-          code.javascript += "\n  " + key + ': ' + JSON.stringify(param);
+          code.javascript += "\n  " + key + ': ' + JSON.stringify(param) + ',';
           if (key === 'checkPermissions') {
             code.javascript += ' // IGNORED: permissions are always enforced from client-side requests';
           }
         });
-        code.javascript += "\n}).done(function(" + varName + ") {\n  // do something with " + varName + " array\n});";
-        code.php = '$' + varName + " = \\Civi\\Api4\\" + entity + '::' + action + '()';
+        code.javascript += "\n}).done(function(" + results + ") {\n  // do something with " + results + " array\n});";
+        code.php = '$' + results + " = \\Civi\\Api4\\" + entity + '::' + action + '()';
         _.each(params, function(param, key) {
           if (richParams[key]) {
             _.each(param, function(item, index) {
@@ -180,12 +184,12 @@
                 val = JSON.stringify(index) + ', ' + JSON.stringify(item);
               }
               code.php += "\n  ->add" + ucfirst(key).replace(/s$/, '') + '(' + val + ')';
-            })
+            });
           } else {
             code.php += "\n  ->set" + ucfirst(key) + '(' + JSON.stringify(param) + ')';
           }
         });
-        code.php += "\n  ->execute();\nforeach ($" + varName + ' as $' + lcfirst(entity) + ') {\n  // do something\n}';
+        code.php += "\n  ->execute();\nforeach ($" + results + ' as $' + result + ') {\n  // do something\n}';
       }
       $scope.code = code;
     }

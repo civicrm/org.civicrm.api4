@@ -25,6 +25,8 @@ class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
 
   /**
    * @param Create $request
+   * @throws \API_Exception
+   * @throws \Exception
    */
   private function setOptionGroupId(Create $request) {
     $optionGroupName = $request->getValue('option_group');
@@ -44,4 +46,5 @@ class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
 
     $request->setValue('option_group_id', $optionGroup->first()['id']);
   }
+
 }

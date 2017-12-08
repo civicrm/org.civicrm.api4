@@ -36,12 +36,16 @@ use Civi\Api4\Service\Spec\SpecFormatter;
  * Get fields for an entity
  *
  * @method $this setIncludeCustom(bool $value)
+ * @method $this setAction(string $value)
  */
 class GetFields extends AbstractAction {
 
   // over-ride default to allow open access
   protected $checkPermissions = FALSE;
 
+  /**
+   * @var bool
+   */
   protected $includeCustom = TRUE;
 
   /**
@@ -64,17 +68,6 @@ class GetFields extends AbstractAction {
    */
   public function getAction() {
     return $this->action;
-  }
-
-  /**
-   * @param string $action
-   *
-   * @return $this
-   */
-  public function setAction($action) {
-    $this->action = $action;
-
-    return $this;
   }
 
 }

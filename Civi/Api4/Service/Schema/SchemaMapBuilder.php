@@ -73,7 +73,8 @@ class SchemaMapBuilder {
       $joinable = new Joinable($tableName, $fkKey);
       $joinable->setJoinType($joinable::JOIN_TYPE_MANY_TO_ONE);
       $table->addTableLink($field, $joinable);
-    } else if ($pseudoConstant) {
+    }
+    elseif ($pseudoConstant) {
       $this->addPseudoConstantJoin($table, $field, $pseudoConstant);
     }
   }
@@ -96,7 +97,8 @@ class SchemaMapBuilder {
         $joinable->addCondition($condition);
       }
       $table->addTableLink($field, $joinable);
-    } elseif ($optionGroupName) {
+    }
+    elseif ($optionGroupName) {
       $joinable = new OptionValueJoinable($optionGroupName);
       $table->addTableLink($field, $joinable);
     }
@@ -135,11 +137,13 @@ class SchemaMapBuilder {
    */
   private function getPlural($singular) {
     $last_letter = substr($singular, -1);
-    switch($last_letter) {
+    switch ($last_letter) {
       case 'y':
-        return substr($singular,0,-1) . 'ies';
+        return substr($singular, 0, -1) . 'ies';
+
       case 's':
         return $singular . 'es';
+
       default:
         return $singular . 's';
     }
@@ -152,7 +156,7 @@ class SchemaMapBuilder {
       $entityName = $parentTypes;
     }
 
-    $customFields = CustomFieldBAO::getFields($entityName, true);
+    $customFields = CustomFieldBAO::getFields($entityName, TRUE);
 
     foreach ($customFields as $fieldData) {
       $tableName = ArrayHelper::value('table_name', $fieldData);
@@ -177,4 +181,5 @@ class SchemaMapBuilder {
       $baseTable->addTableLink('id', $joinable);
     }
   }
+
 }

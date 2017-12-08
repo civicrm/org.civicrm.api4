@@ -49,7 +49,7 @@ class FieldSpec {
    * @var array
    */
   public static $typeAliases = array(
-    'Int' => 'Integer'
+    'Int' => 'Integer',
   );
 
   /**
@@ -169,9 +169,9 @@ class FieldSpec {
       $dataType = self::$typeAliases[$dataType];
     }
 
-     if (!in_array($dataType, $this->getValidDataTypes())) {
-       throw new \Exception(sprintf('Invalid data type "%s', $dataType));
-     }
+    if (!in_array($dataType, $this->getValidDataTypes())) {
+      throw new \Exception(sprintf('Invalid data type "%s', $dataType));
+    }
 
     $this->dataType = $dataType;
 

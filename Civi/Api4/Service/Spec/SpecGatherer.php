@@ -24,10 +24,11 @@ class SpecGatherer {
    * to add or modify field specifications.
    * For an example @see CustomFieldSpecProvider.
    *
-   * @param string $action
    * @param string $entity
+   * @param string $action
+   * @param $includeCustom
    *
-   * @return RequestSpec
+   * @return \Civi\Api4\Service\Spec\RequestSpec
    */
   public function getSpec($entity, $action, $includeCustom) {
     $specification = new RequestSpec($entity, $action);
@@ -140,4 +141,5 @@ class SpecGatherer {
 
     return $this->DAONames[$entityName];
   }
+
 }

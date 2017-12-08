@@ -35,4 +35,5 @@ class SchemaMapBuildEvent extends BaseEvent {
 
     return $this;
   }
+
 }

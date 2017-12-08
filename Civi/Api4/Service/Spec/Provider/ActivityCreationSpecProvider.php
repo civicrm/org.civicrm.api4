@@ -11,10 +11,10 @@ class ActivityCreationSpecProvider implements SpecProviderInterface {
    * @inheritdoc
    */
   public function modifySpec(RequestSpec $spec) {
-    $spec->getFieldByName('subject')->setRequired(true);
+    $spec->getFieldByName('subject')->setRequired(TRUE);
 
     $sourceContactField = new FieldSpec('source_contact_id', 'Integer');
-    $sourceContactField->setRequired(true);
+    $sourceContactField->setRequired(TRUE);
     $sourceContactField->setFkEntity('Contact');
 
     $spec->addFieldSpec($sourceContactField);

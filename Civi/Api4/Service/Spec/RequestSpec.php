@@ -86,4 +86,5 @@ class RequestSpec {
   public function getAction() {
     return $this->action;
   }
+
 }

@@ -36,4 +36,5 @@ class ActivityToActivityContactAssigneesJoinable extends Joinable {
     $this->addCondition(sprintf('%s.record_type_id = (%s)', $alias, $subSelect));
     parent::__construct('civicrm_activity_contact', 'activity_id', $alias);
   }
+
 }

@@ -16,7 +16,7 @@ class ActivitySchemaMapSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return array(
-      Events::SCHEMA_MAP_BUILD => 'onSchemaBuild'
+      Events::SCHEMA_MAP_BUILD => 'onSchemaBuild',
     );
   }
 
@@ -36,4 +36,5 @@ class ActivitySchemaMapSubscriber implements EventSubscriberInterface {
 
     $table->addTableLink('contact_id', $bridge);
   }
+
 }

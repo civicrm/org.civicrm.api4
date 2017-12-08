@@ -39,7 +39,8 @@ class SpecFormatter {
       $field->setCustomGroupId($data['custom_group_id']);
       $field->setRequired((bool) ArrayHelper::value('is_required', $data, FALSE));
       $field->setTitle(ArrayHelper::value('label', $data));
-    } else {
+    }
+    else {
       $name = ArrayHelper::value('name', $data);
       $field = new FieldSpec($name, $dataTypeName);
       $field->setRequired((bool) ArrayHelper::value('required', $data, FALSE));
@@ -75,4 +76,5 @@ class SpecFormatter {
 
     return $dataTypeName;
   }
+
 }

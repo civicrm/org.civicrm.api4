@@ -40,28 +40,28 @@ class Entity {
   /**
    * @return Get
    */
-  static function get() {
+  public static function get() {
     return new Get('Entity');
   }
 
   /**
    * @return GetActions
    */
-  static function getActions() {
+  public static function getActions() {
     return new GetActions('Entity');
   }
 
   /**
    * @return GetFields
    */
-  static function getFields() {
+  public static function getFields() {
     return new GetFields('Entity');
   }
 
   /**
    * @return GetFields
    */
-  static function getLinks() {
+  public static function getLinks() {
     return new GetLinks('Entity');
   }
 

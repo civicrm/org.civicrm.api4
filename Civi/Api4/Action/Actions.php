@@ -7,4 +7,5 @@ interface Actions {
   const GET = 'get';
   const GET_FIELDS = 'getFields';
   const DELETE = 'delete';
+
 }

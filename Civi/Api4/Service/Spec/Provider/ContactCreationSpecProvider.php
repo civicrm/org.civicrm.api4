@@ -14,7 +14,7 @@ class ContactCreationSpecProvider implements SpecProviderInterface {
   public function modifySpec(RequestSpec $spec) {
     $this->addDedupeField($spec);
     $spec->getFieldByName('contact_type')
-      ->setRequired(true)
+      ->setRequired(TRUE)
       ->setDefaultValue('Individual');
   }
 
@@ -44,4 +44,5 @@ class ContactCreationSpecProvider implements SpecProviderInterface {
 
     $specification->addFieldSpec($dedupeField);
   }
+
 }

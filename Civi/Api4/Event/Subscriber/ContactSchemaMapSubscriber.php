@@ -13,7 +13,7 @@ class ContactSchemaMapSubscriber implements EventSubscriberInterface {
    */
   public static function getSubscribedEvents() {
     return array(
-      Events::SCHEMA_MAP_BUILD => 'onSchemaBuild'
+      Events::SCHEMA_MAP_BUILD => 'onSchemaBuild',
     );
   }
 
@@ -28,4 +28,5 @@ class ContactSchemaMapSubscriber implements EventSubscriberInterface {
     $joinable->setJoinType($joinable::JOIN_TYPE_ONE_TO_MANY);
     $table->addTableLink('id', $joinable);
   }
+
 }

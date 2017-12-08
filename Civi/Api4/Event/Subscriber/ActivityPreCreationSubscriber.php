@@ -14,7 +14,7 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber {
     if ($activityType) {
       $result = OptionValue::get()
         ->setCheckPermissions(FALSE)
-        ->addWhere('name', '=' ,$activityType)
+        ->addWhere('name', '=', $activityType)
         ->addWhere('option_group.name', '=', 'activity_type')
         ->execute();
 

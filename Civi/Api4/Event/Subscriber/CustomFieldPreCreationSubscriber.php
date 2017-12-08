@@ -87,4 +87,5 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
       $request->setValue('option_type', NULL);
     }
   }
+
 }
