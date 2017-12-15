@@ -56,13 +56,14 @@ trait TestDataLoaderTrait {
     foreach ($entityValues as $name => $value) {
       if (is_array($value)) {
         $entityValues[$name] = $this->replaceReferences($value);
-      } else if (substr($value, 0, 4) === '@ref') {
+      }
+      elseif (substr($value, 0, 4) === '@ref') {
         $referenceName = substr($value, 5);
         list ($reference, $property) = explode('.', $referenceName);
-        $entityValues[$name] =  $this->references[$reference][$property];
+        $entityValues[$name] = $this->references[$reference][$property];
       }
     }
-
     return $entityValues;
   }
+
 }

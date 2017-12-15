@@ -47,7 +47,7 @@ class ContactJoinTest extends UnitTestCase {
 
   public function testJoinToPCM() {
     $contact = Contact::create()
-      ->setValues(["preferred_communication_method" => [1,2,3], 'contact_type' => 'Individual', 'first_name' => 'Test', 'last_name' => 'PCM'])
+      ->setValues(["preferred_communication_method" => [1, 2, 3], 'contact_type' => 'Individual', 'first_name' => 'Test', 'last_name' => 'PCM'])
       ->execute();
 
     $fetchedContact = Contact::get()
@@ -60,4 +60,5 @@ class ContactJoinTest extends UnitTestCase {
     // but it also needs pcm option values populated in order to pass.
     $this->assertEquals(3, count($fetchedContact["preferred_communication_method"]));
   }
+
 }

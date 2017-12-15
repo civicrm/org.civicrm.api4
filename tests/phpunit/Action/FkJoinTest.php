@@ -36,7 +36,6 @@ class FkJoinTest extends UnitTestCase {
       ->addWhere('activity_type.name', '=', 'housing_support')
       ->execute();
 
-
     $this->assertCount(1, $results);
   }
 
@@ -75,4 +74,5 @@ class FkJoinTest extends UnitTestCase {
     $firstPhone = array_shift($results['phones']);
     $this->assertEquals($testPhone['phone'], $firstPhone['phone']);
   }
+
 }

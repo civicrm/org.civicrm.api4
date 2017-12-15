@@ -82,7 +82,8 @@ class SpecFormatterTest extends UnitTestCase {
         ],
         'MyField',
         'Boolean'
-      ]
+      ],
     ];
   }
+
 }

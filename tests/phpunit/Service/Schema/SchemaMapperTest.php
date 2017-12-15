@@ -86,4 +86,5 @@ class SchemaMapperTest extends UnitTestCase {
 
     $this->assertEmpty($map->getPath('first', 'fifth'));
   }
+
 }

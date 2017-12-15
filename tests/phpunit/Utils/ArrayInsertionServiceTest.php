@@ -12,14 +12,14 @@ class ArrayInsertionServiceTest extends UnitTestCase {
 
   public function testInsertWillWork() {
     $arr = [];
-    $path = ['foo' => false, 'bar' => false];
+    $path = ['foo' => FALSE, 'bar' => FALSE];
     $inserter = new ArrayInsertionUtil();
     $inserter::insert($arr, $path, ['LALA']);
 
     $expected = [
       'foo' => [
         'bar' => 'LALA'
-      ]
+      ],
     ];
 
     $this->assertEquals($expected, $arr);
@@ -34,14 +34,14 @@ class ArrayInsertionServiceTest extends UnitTestCase {
       [
         'id' => 2,
         'first_name' => 'Karen'
-      ]
+      ],
     ];
     $emails = [
       [
         'email' => 'jim@jim.com',
         'id' => 2,
         '_parent_id' => 1
-      ]
+      ],
     ];
     $locationTypes = [
       [
@@ -51,8 +51,8 @@ class ArrayInsertionServiceTest extends UnitTestCase {
       ],
     ];
 
-    $emailPath = ['emails' => true];
-    $locationPath = ['emails' => true, 'location' => false];
+    $emailPath = ['emails' => TRUE];
+    $locationPath = ['emails' => TRUE, 'location' => FALSE];
     $inserter = new ArrayInsertionUtil();
 
     foreach ($contacts as &$contact) {
@@ -63,4 +63,5 @@ class ArrayInsertionServiceTest extends UnitTestCase {
     $locationType = $contacts[0]['emails'][0]['location']['name'];
     $this->assertEquals('Home', $locationType);
   }
+
 }

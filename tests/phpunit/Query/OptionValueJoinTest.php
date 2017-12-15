@@ -32,7 +32,7 @@ class OptionValueJoinTest extends UnitTestCase {
   }
 
   public function testCommunicationMethodJoin() {
-    $query = new Api4SelectQuery('Contact', false);
+    $query = new Api4SelectQuery('Contact', FALSE);
     $query->select[] = 'first_name';
     $query->select[] = 'preferred_communication_method.label';
     $results = $query->run();
@@ -42,4 +42,5 @@ class OptionValueJoinTest extends UnitTestCase {
       $results[0]['preferred_communication_method']['label']
     );
   }
+
 }

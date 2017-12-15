@@ -8,7 +8,7 @@ use Civi\Test\Api4\UnitTestCase;
 /**
  * @group headless
  */
-class ParticipantTest extends UnitTestCase  {
+class ParticipantTest extends UnitTestCase {
 
   public function setUp() {
     parent::setUp();
@@ -80,7 +80,7 @@ class ParticipantTest extends UnitTestCase  {
           'source' => $dummy['sources'][$i % 3], // 3 = number of sources
       ]])['sample_params'];
 
-       Participant::create()
+      Participant::create()
         ->setValues($dummy['participants'][$i])
         ->setCheckPermissions(FALSE)
         ->execute();
@@ -171,8 +171,8 @@ class ParticipantTest extends UnitTestCase  {
       ->addWhere('event_id', '=', $secondEventId)
       ->setCheckPermissions(FALSE)
       ->execute();
-    $expectedDeletes = [2,7,12,17];
-    $this->assertEquals($expectedDeletes, (array)$deleteResult,
+    $expectedDeletes = [2, 7, 12, 17];
+    $this->assertEquals($expectedDeletes, (array) $deleteResult,
       "didn't delete every second record as expected");
 
     $sqlCount = $this->getRowCount('civicrm_participant');
@@ -181,4 +181,5 @@ class ParticipantTest extends UnitTestCase  {
       $sqlCount,
       "records not gone from database after delete");
   }
+
 }

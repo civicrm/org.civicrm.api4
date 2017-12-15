@@ -21,14 +21,12 @@ class SpecGathererTest extends UnitTestCase {
 
   public function setUpHeadless() {
     $this->dropByPrefix('civicrm_value_favorite');
-    $this->cleanup(
-      [
-        'tablesToTruncate' => [
-          'civicrm_custom_group',
-          'civicrm_custom_field'
-        ]
-      ]
-    );
+    $this->cleanup([
+      'tablesToTruncate' => [
+        'civicrm_custom_group',
+        'civicrm_custom_field'
+      ],
+    ]);
     return parent::setUpHeadless();
   }
 
@@ -87,4 +85,5 @@ class SpecGathererTest extends UnitTestCase {
     $this->assertNotEmpty($regularField->getOptions());
     $this->assertContains('Individual', $regularField->getOptions());
   }
+
 }

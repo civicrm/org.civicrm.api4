@@ -85,4 +85,5 @@ class Api4SelectQueryTest extends UnitTestCase {
     $resultContact = $firstResult['contact'];
     $this->assertEquals($contact['display_name'], $resultContact['display_name']);
   }
+
 }

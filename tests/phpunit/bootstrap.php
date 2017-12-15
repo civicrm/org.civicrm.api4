@@ -6,7 +6,7 @@ $bootCode = cv('php:boot --level=classloader', 'phpcode');
 eval($bootCode);
 
 preg_match('/require_once\s*\'(.*)\'/', $bootCode, $matches);
-$loader = require(sprintf('%s/vendor/autoload.php', $matches[1]));
+$loader = require sprintf('%s/vendor/autoload.php', $matches[1]);
 $loader->addPsr4('Civi\\Test\\Api4\\', __DIR__);
 
 /**

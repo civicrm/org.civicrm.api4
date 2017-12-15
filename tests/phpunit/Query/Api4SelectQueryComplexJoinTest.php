@@ -82,4 +82,5 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
 
     $this->assertNotEmpty($firstResult['emails'][0]['location_type']['name']);
   }
+
 }

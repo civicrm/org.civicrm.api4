@@ -88,7 +88,8 @@ class TestCreationParameterProvider {
 
     if ($isIdField || $shouldUseKey) {
       return array_rand($options); // return key (ID)
-    } else {
+    }
+    else {
       return $options[array_rand($options)];
     }
   }
@@ -120,13 +121,15 @@ class TestCreationParameterProvider {
     switch ($dataType) {
       case 'Integer':
         return rand(0, 2000);
+
       case 'String':
         return StringHelper::createRandom(10, implode('', range('a', 'z')));
+
       case 'Money':
         return sprintf('%d.%2d', rand(0, 2000), rand(1, 99));
     }
 
-    return null;
+    return NULL;
   }
 
 }
