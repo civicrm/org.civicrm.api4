@@ -1,5 +1,5 @@
 <div id="bootstrap-theme" class="api4-explorer-page">
-  <div crm-ui-debug="params"></div>
+  <div crm-ui-debug="availableParams"></div>
 
   <h1 crm-page-title>
     {{ ts('CiviCRM API v4') }}{{ entity ? (' (' + entity + '::' + action + ')') : '' }}
@@ -17,23 +17,23 @@
         </div>
         <div class="panel-body">
           <div class="api4-input" ng-if="availableParams.select">
-            <label for="api4-param-select">select</label>
+            <label for="api4-param-select">select<span class="crm-marker" ng-if="availableParams.select.required"> *</span></label>
             <input class="form-control" ng-list crm-ui-select="{tags: fields, multiple: true}" id="api4-param-select" ng-model="params.select"/>
           </div>
           <div class="api4-input" ng-if="availableParams.action">
-            <label for="api4-param-action">action</label>
+            <label for="api4-param-action">action<span class="crm-marker" ng-if="availableParams.action.required"> *</span></label>
             <input class="form-control" crm-ui-select="{data: actions}" id="api4-param-action" ng-model="params.action"/>
           </div>
           <div class="api4-input" ng-repeat="(name, param) in availableParams" ng-if="param.type[0] === 'bool'">
-            <label for="api4-param-{{ name }}">{{ name }}</label>
+            <label for="api4-param-{{ name }}">{{ name }}<span class="crm-marker" ng-if="param.required"> *</span></label>
             <input type="checkbox" id="api4-param-{{ name }}" ng-model="params[name]"/>
           </div>
           <div class="api4-input" ng-repeat="(name, param) in availableParams" ng-if="name !== 'action' && (param.type[0] === 'string' || param.type[0] === 'int')">
-            <label for="api4-param-{{ name }}">{{ name }}</label>
+            <label for="api4-param-{{ name }}">{{ name }}<span class="crm-marker" ng-if="param.required"> *</span></label>
             <input class="form-control" type="{{ param.type[0] === 'int' ? 'number' : 'text' }}" id="api4-param-{{ name }}" ng-model="params[name]"/>
           </div>
           <fieldset ng-if="availableParams.where">
-            <legend>where</legend>
+            <legend>where<span class="crm-marker" ng-if="availableParams.where.required"> *</span></legend>
             <div class="api4-input row" ng-repeat="(index, clause) in params.where">
               <div class="col-md-4">
                 <input class="form-control" ng-model="clause[0]" crm-ui-select="{tags: fields, allowClear: true, placeholder: 'Field'}" />
@@ -52,7 +52,7 @@
             </div>
           </fieldset>
           <fieldset ng-if="availableParams.values">
-            <legend>values</legend>
+            <legend>values<span class="crm-marker" ng-if="availableParams.values.required"> *</span></legend>
             <div class="api4-input row" ng-repeat="(index, clause) in params.values">
               <div class="col-md-4">
                 <input class="form-control" ng-model="clause[0]" crm-ui-select="{tags: fields, allowClear: true, placeholder: 'Field'}" />
@@ -68,7 +68,7 @@
             </div>
           </fieldset>
           <fieldset ng-if="availableParams.orderBy">
-            <legend>orderBy</legend>
+            <legend>orderBy<span class="crm-marker" ng-if="availableParams.orderBy.required"> *</span></legend>
             <div class="api4-input row" ng-repeat="(index, clause) in params.orderBy">
               <div class="col-md-4">
                 <input class="form-control" ng-model="clause[0]" crm-ui-select="{tags: fields, allowClear: true, placeholder: 'Field'}" />
