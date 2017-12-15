@@ -28,9 +28,16 @@ namespace Civi\Api4\Action;
 use Civi\Api4\Result;
 
 /**
- * "delete" inherits all the abilities of "get"
+ * Delete one or more items, based on criteria specified in Where param.
  */
 class Delete extends Get {
+
+  /**
+   * Criteria for selecting items to delete.
+   *
+   * @required
+   */
+  protected $where = array();
 
   /**
    * Batch delete function

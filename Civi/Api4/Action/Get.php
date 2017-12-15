@@ -32,8 +32,7 @@ use Civi\Api4\Query\Api4SelectQuery;
 use Civi\Api4\Result;
 
 /**
- *
- * Base class for all get actions.
+ * Retrieve items based on criteria specified in the 'where' param.
  *
  * @method $this addSelect(string $select)
  * @method $this setSelect(array $selects)

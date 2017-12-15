@@ -8,7 +8,7 @@ use Civi\Api4\Service\Spec\RequestSpec;
 
 class ActivityCreationSpecProvider implements SpecProviderInterface {
   /**
-   * @inheritdoc
+   * @inheritDoc
    */
   public function modifySpec(RequestSpec $spec) {
     $spec->getFieldByName('subject')->setRequired(TRUE);
@@ -21,7 +21,7 @@ class ActivityCreationSpecProvider implements SpecProviderInterface {
   }
 
   /**
-   * @inheritdoc
+   * @inheritDoc
    */
   public function applies($entity, $action) {
     return $entity === 'Activity' && $action === Actions::CREATE;

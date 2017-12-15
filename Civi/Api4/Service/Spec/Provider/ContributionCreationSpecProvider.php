@@ -7,14 +7,14 @@ use Civi\Api4\Service\Spec\RequestSpec;
 
 class ContributionCreationSpecProvider implements SpecProviderInterface {
   /**
-   * @inheritdoc
+   * @inheritDoc
    */
   public function modifySpec(RequestSpec $spec) {
     $spec->getFieldByName('financial_type_id')->setRequired(TRUE);
   }
 
   /**
-   * @inheritdoc
+   * @inheritDoc
    */
   public function applies($entity, $action) {
     return $entity === 'Contribution' && $action === Actions::CREATE;

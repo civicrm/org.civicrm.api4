@@ -36,7 +36,14 @@ use Civi\Api4\Result;
 class Update extends Get {
 
   /**
-   * Field values to set
+   * Criteria for selecting items to update.
+   *
+   * @required
+   */
+  protected $where = array();
+
+  /**
+   * Field values to set.
    *
    * @var array
    */

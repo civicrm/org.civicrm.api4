@@ -30,8 +30,7 @@ namespace Civi\Api4\Action\Participant;
 use Civi\Api4\Action\Get as DefaultGet;
 
 /**
- * Base class for all get actions.
- *
+ * @inheritDoc
  */
 class Get extends DefaultGet {
 

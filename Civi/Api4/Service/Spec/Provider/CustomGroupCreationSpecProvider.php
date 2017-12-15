@@ -7,14 +7,14 @@ use Civi\Api4\Service\Spec\RequestSpec;
 
 class CustomGroupCreationSpecProvider implements SpecProviderInterface {
   /**
-   * @inheritdoc
+   * @inheritDoc
    */
   public function modifySpec(RequestSpec $spec) {
     return $spec->getFieldByName('extends')->setRequired(TRUE);
   }
 
   /**
-   * @inheritdoc
+   * @inheritDoc
    */
   public function applies($entity, $action) {
     return $entity === 'CustomGroup' && $action === Actions::CREATE;
