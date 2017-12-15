@@ -47,7 +47,7 @@ class Get extends AbstractAction {
    *
    * @var array
    */
-  protected $select = array();
+  protected $select = [];
   /**
    * Array of conditions keyed by field.
    *
@@ -55,7 +55,7 @@ class Get extends AbstractAction {
    *
    * @var array
    */
-  protected $where = array();
+  protected $where = [];
   /**
    * Array of field(s) to use in ordering the results
    *
@@ -64,7 +64,7 @@ class Get extends AbstractAction {
    *
    * @var array
    */
-  protected $orderBy = array();
+  protected $orderBy = [];
   /**
    * Maximum number of results to return.
    *
@@ -93,7 +93,7 @@ class Get extends AbstractAction {
     if (!in_array($op, \CRM_Core_DAO::acceptedSQLOperators())) {
       throw new \API_Exception('Unsupported operator');
     }
-    $this->where[] = array($field, $op, $value);
+    $this->where[] = [$field, $op, $value];
     return $this;
   }
 

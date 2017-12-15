@@ -40,23 +40,23 @@ class Update extends Get {
    *
    * @required
    */
-  protected $where = array();
+  protected $where = [];
 
   /**
    * Field values to set.
    *
    * @var array
    */
-  protected $values = array();
+  protected $values = [];
 
   public function _run(Result $result) {
     $bao_name = $this->getBaoName();
     // First run the parent action (get)
-    $this->select = array('id');
+    $this->select = ['id'];
     $patch_values = $this->getParams()['values'];
     parent::_run($result);
     // Then act on the result
-    $updated_results = array();
+    $updated_results = [];
     foreach ($result as $item) {
       // todo confirm we need a new object
       $bao = new $bao_name();

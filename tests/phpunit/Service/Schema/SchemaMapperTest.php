@@ -24,7 +24,7 @@ class SchemaMapperTest extends UnitTestCase {
     $phoneTable->addTableLink('location_type_id', $link);
 
     $map = new SchemaMap();
-    $map->addTables(array($phoneTable, $locationTable));
+    $map->addTables([$phoneTable, $locationTable]);
 
     $this->assertNotEmpty($map->getPath('civicrm_phone', 'location'));
   }
@@ -38,7 +38,7 @@ class SchemaMapperTest extends UnitTestCase {
     $activityContact->addTableLink('contact_id', $contactLink);
 
     $map = new SchemaMap();
-    $map->addTables(array($activity, $activityContact));
+    $map->addTables([$activity, $activityContact]);
 
     $this->assertNotEmpty($map->getPath('activity', 'contact'));
   }
@@ -52,7 +52,7 @@ class SchemaMapperTest extends UnitTestCase {
     $third->addTableLink('id', new Joinable('fourth', 'id'));
 
     $map = new SchemaMap();
-    $map->addTables(array($first, $second, $third));
+    $map->addTables([$first, $second, $third]);
 
     $this->assertNotEmpty($map->getPath('first', 'fourth'));
   }
@@ -66,7 +66,7 @@ class SchemaMapperTest extends UnitTestCase {
     $carTable->addTableLink('owner_id', $ownerLink);
 
     $map = new SchemaMap();
-    $map->addTables(array($contactTable, $carTable));
+    $map->addTables([$contactTable, $carTable]);
 
     $this->assertEmpty($map->getPath('contact', 'foo'));
   }
@@ -82,7 +82,7 @@ class SchemaMapperTest extends UnitTestCase {
     $fourth->addTableLink('id', new Joinable('fifth', 'id'));
 
     $map = new SchemaMap();
-    $map->addTables(array($first, $second, $third, $fourth));
+    $map->addTables([$first, $second, $third, $fourth]);
 
     $this->assertEmpty($map->getPath('first', 'fifth'));
   }

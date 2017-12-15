@@ -17,6 +17,6 @@ class TestV4ReflectionBase {
    *
    * @var array
    */
-  public $foo = array();
+  public $foo = [];
 
 }

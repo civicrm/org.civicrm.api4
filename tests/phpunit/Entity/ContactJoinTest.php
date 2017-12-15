@@ -11,7 +11,7 @@ use Civi\Test\Api4\UnitTestCase;
 class ContactJoinTest extends UnitTestCase {
 
   public function setUpHeadless() {
-    $relatedTables = array(
+    $relatedTables = [
       'civicrm_contact',
       'civicrm_address',
       'civicrm_email',
@@ -23,9 +23,9 @@ class ContactJoinTest extends UnitTestCase {
       'civicrm_option_value',
       'civicrm_activity',
       'civicrm_activity_contact',
-    );
+    ];
 
-    $this->cleanup(array('tablesToTruncate' => $relatedTables));
+    $this->cleanup(['tablesToTruncate' => $relatedTables]);
     $this->loadDataSet('SingleContact');
 
     return parent::setUpHeadless();
@@ -33,11 +33,11 @@ class ContactJoinTest extends UnitTestCase {
 
   public function testContactJoin() {
     $contact = $this->getReference('test_contact_1');
-    foreach (array('Address', 'Email', 'Phone', 'OpenID', 'IM', 'Website') as $entity) {
-      $results = civicrm_api4($entity, 'get', array(
-        'where' => array(array('contact_id', '=', $contact['id'])),
-        'select' => array('contact.display_name', 'contact.id'),
-      ));
+    foreach (['Address', 'Email', 'Phone', 'OpenID', 'IM', 'Website'] as $entity) {
+      $results = civicrm_api4($entity, 'get', [
+        'where' => [['contact_id', '=', $contact['id']]],
+        'select' => ['contact.display_name', 'contact.id'],
+      ]);
       foreach ($results as $result) {
         $this->assertEquals($contact['id'], $result['contact']['id']);
         $this->assertEquals($contact['display_name'], $result['contact']['display_name']);
@@ -47,7 +47,7 @@ class ContactJoinTest extends UnitTestCase {
 
   public function testJoinToPCM() {
     $contact = Contact::create()
-      ->setValues(array("preferred_communication_method" => array(1,2,3), 'contact_type' => 'Individual', 'first_name' => 'Test', 'last_name' => 'PCM'))
+      ->setValues(["preferred_communication_method" => [1,2,3], 'contact_type' => 'Individual', 'first_name' => 'Test', 'last_name' => 'PCM'])
       ->execute();
 
     $fetchedContact = Contact::get()

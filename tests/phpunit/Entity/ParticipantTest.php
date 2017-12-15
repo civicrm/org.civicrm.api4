@@ -12,12 +12,12 @@ class ParticipantTest extends UnitTestCase  {
 
   public function setUp() {
     parent::setUp();
-    $truncateTables = array(
+    $truncateTables = [
       'civicrm_participant',
       'civicrm_option_group',
       'civicrm_option_value'
-    );
-    $this->cleanup(array('tablesToTruncate' => $truncateTables));
+    ];
+    $this->cleanup(['tablesToTruncate' => $truncateTables]);
     $this->loadDataSet('ParticipantRoleOptionGroup');
   }
 
@@ -58,27 +58,27 @@ class ParticipantTest extends UnitTestCase  {
     // rotating participation creation method.
     $expectedFirstEventCount = ceil($participantCount / $eventCount);
 
-    $dummy = array(
-      'contacts' => $this->createEntity(array(
+    $dummy = [
+      'contacts' => $this->createEntity([
         'type' => 'Individual',
         'count' => $contactCount,
-        'seq' => 1)),
-      'events' => $this->createEntity(array(
+        'seq' => 1]),
+      'events' => $this->createEntity([
         'type' => 'Event',
         'count' => $eventCount,
-        'seq' => 1)),
-      'sources' => array('Paddington', 'Springfield', 'Central'),
-    );
+        'seq' => 1]),
+      'sources' => ['Paddington', 'Springfield', 'Central'],
+    ];
 
     // - create dummy participants record
     for ($i = 0; $i < $participantCount; $i++) {
-      $dummy['participants'][$i] = $this->sample(array(
+      $dummy['participants'][$i] = $this->sample([
         'type' => 'Participant',
-        'overrides' => array(
+        'overrides' => [
           'event_id' => $dummy['events'][$i % $eventCount]['id'],
           'contact_id' => $dummy['contacts'][$i % $contactCount]['id'],
           'source' => $dummy['sources'][$i % 3], // 3 = number of sources
-      )))['sample_params'];
+      ]])['sample_params'];
 
        Participant::create()
         ->setValues($dummy['participants'][$i])
@@ -94,7 +94,7 @@ class ParticipantTest extends UnitTestCase  {
 
     $firstOnlyResult = Participant::get()
       ->setCheckPermissions(FALSE)
-      ->addClause(array('event_id', '=', $firstEventId))
+      ->addClause(['event_id', '=', $firstEventId])
       ->execute();
 
     $this->assertEquals($expectedFirstEventCount, count($firstOnlyResult),
@@ -103,7 +103,7 @@ class ParticipantTest extends UnitTestCase  {
     // get first two events using different methods
     $firstTwo = Participant::get()
       ->setCheckPermissions(FALSE)
-      ->addWhere('event_id', 'IN', array($firstEventId, $secondEventId))
+      ->addWhere('event_id', 'IN', [$firstEventId, $secondEventId])
       ->execute();
 
     $firstResult = $result->first();
@@ -136,10 +136,10 @@ class ParticipantTest extends UnitTestCase  {
     $otherParticipantResult = Participant::get()
       ->setCheckPermissions(FALSE)
       ->setSelect(['id'])
-      ->addClause(array('NOT',
-        array('AND', array(
-          array('event_id', '=', $firstEventId),
-          array('contact_id', '=', $firstContactId)))))
+      ->addClause(['NOT',
+        ['AND', [
+          ['event_id', '=', $firstEventId],
+          ['contact_id', '=', $firstContactId]]]])
       ->execute()
       ->indexBy('id');
 
@@ -153,9 +153,9 @@ class ParticipantTest extends UnitTestCase  {
       'excluded wrong record');
 
     // retrieve a participant record and update some records
-    $patchRecord = array(
+    $patchRecord = [
       'source' => "not " . $firstResult['source'],
-    );
+    ];
 
     Participant::update()
       ->addWhere('event_id', '=', $firstEventId)
@@ -171,7 +171,7 @@ class ParticipantTest extends UnitTestCase  {
       ->addWhere('event_id', '=', $secondEventId)
       ->setCheckPermissions(FALSE)
       ->execute();
-    $expectedDeletes = array(2,7,12,17);
+    $expectedDeletes = [2,7,12,17];
     $this->assertEquals($expectedDeletes, (array)$deleteResult,
       "didn't delete every second record as expected");
 

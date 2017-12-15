@@ -29,7 +29,7 @@ trait TestDataLoaderTrait {
 
         $entityValues = $this->replaceReferences($entityValues);
 
-        $params = array('values' => $entityValues, 'checkPermissions' => FALSE);
+        $params = ['values' => $entityValues, 'checkPermissions' => FALSE];
         $result = civicrm_api4($entityName, 'create', $params);
         if (isset($entityValues['@ref'])) {
           $this->references[$entityValues['@ref']] = $result->getArrayCopy();

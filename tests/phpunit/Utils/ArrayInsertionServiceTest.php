@@ -11,45 +11,45 @@ use Civi\Test\Api4\UnitTestCase;
 class ArrayInsertionServiceTest extends UnitTestCase {
 
   public function testInsertWillWork() {
-    $arr = array();
+    $arr = [];
     $path = ['foo' => false, 'bar' => false];
     $inserter = new ArrayInsertionUtil();
-    $inserter::insert($arr, $path, array('LALA'));
+    $inserter::insert($arr, $path, ['LALA']);
 
-    $expected = array(
-      'foo' => array(
+    $expected = [
+      'foo' => [
         'bar' => 'LALA'
-      )
-    );
+      ]
+    ];
 
     $this->assertEquals($expected, $arr);
   }
 
   public function testInsertionOfContactEmailLocation() {
-    $contacts = array(
-      array(
+    $contacts = [
+      [
         'id' => 1,
         'first_name' => 'Jim'
-      ),
-      array(
+      ],
+      [
         'id' => 2,
         'first_name' => 'Karen'
-      )
-    );
-    $emails = array(
-      array(
+      ]
+    ];
+    $emails = [
+      [
         'email' => 'jim@jim.com',
         'id' => 2,
         '_parent_id' => 1
-      )
-    );
-    $locationTypes = array(
-      array(
+      ]
+    ];
+    $locationTypes = [
+      [
         'name' => 'Home',
         'id' => 3,
         '_parent_id' => 2
-      ),
-    );
+      ],
+    ];
 
     $emailPath = ['emails' => true];
     $locationPath = ['emails' => true, 'location' => false];

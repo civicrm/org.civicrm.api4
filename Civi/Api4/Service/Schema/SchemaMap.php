@@ -12,7 +12,7 @@ class SchemaMap {
   /**
    * @var Table[]
    */
-  protected $tables = array();
+  protected $tables = [];
 
   /**
    * @param $baseTableName
@@ -23,7 +23,7 @@ class SchemaMap {
    */
   public function getPath($baseTableName, $targetTableAlias) {
     $table = $this->getTableByName($baseTableName);
-    $path = array();
+    $path = [];
 
     if (!$table) {
       return $path;
@@ -34,7 +34,7 @@ class SchemaMap {
     foreach ($path as $index => $pathLink) {
       if ($pathLink instanceof BridgeJoinable) {
         $start = array_slice($path, 0, $index);
-        $middle = array($pathLink->getMiddleLink());
+        $middle = [$pathLink->getMiddleLink()];
         $end = array_slice($path, $index, count($path) - $index);
         $path = array_merge($start, $middle, $end);
       }
@@ -103,13 +103,13 @@ class SchemaMap {
    * @param Joinable[] $currentPath
    *   For internal use only to track the path to reach the target table
    */
-  private function findPaths(Table $table, $target, $depth, &$path, $currentPath = array()
+  private function findPaths(Table $table, $target, $depth, &$path, $currentPath = []
   ) {
-    static $visited = array();
+    static $visited = [];
 
     // reset if new call
     if ($depth === 1) {
-      $visited = array();
+      $visited = [];
     }
 
     $canBeShorter = empty($path) || count($currentPath) + 1 < count($path);
@@ -125,12 +125,12 @@ class SchemaMap {
 
     foreach ($table->getExternalLinks() as $link) {
       if ($link->getAlias() === $target) {
-        $path = array_merge($currentPath, array($link));
+        $path = array_merge($currentPath, [$link]);
       }
       else {
         $linkTable = $this->getTableByName($link->getTargetTable());
         if ($linkTable) {
-          $nextStep = array_merge($currentPath, array($link));
+          $nextStep = array_merge($currentPath, [$link]);
           $this->findPaths($linkTable, $target, $depth + 1, $path, $nextStep);
         }
       }

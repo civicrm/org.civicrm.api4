@@ -15,7 +15,7 @@ class Table {
    * @var Joinable[]
    *   Array of links to other tables
    */
-  protected $tableLinks = array();
+  protected $tableLinks = [];
 
   /**
    * @param $name

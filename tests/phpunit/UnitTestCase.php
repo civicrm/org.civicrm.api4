@@ -21,7 +21,7 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
    * @param array $data
    * @param string $dataName
    */
-  public function __construct($name = NULL, array$data = array(), $dataName = '') {
+  public function __construct($name = NULL, array$data = [], $dataName = '') {
     parent::__construct($name, $data, $dataName);
     error_reporting(E_ALL & ~E_NOTICE);
   }
@@ -45,9 +45,9 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
    * @param array $params
    */
   public function cleanup($params) {
-    $params += array(
-      'tablesToTruncate' => array(),
-    );
+    $params += [
+      'tablesToTruncate' => [],
+    ];
     \CRM_Core_DAO::executeQuery("SET FOREIGN_KEY_CHECKS = 0;");
     foreach ($params['tablesToTruncate'] as $table) {
       \Civi::log()->info('truncating: ' . $table);
@@ -75,16 +75,16 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
    * @return array (either single, or array of array if count >1)
    */
   public static function createEntity($params) {
-    $params += array(
+    $params += [
       'count' => 1,
       'seq' => 0,
-    );
-    $entities = array();
+    ];
+    $entities = [];
     $entity = NULL;
     for ($i = 0; $i < $params['count']; $i++) {
       $params['seq']++;
       $data = self::sample($params);
-      $api_params = array('sequential' => 1) + $data['sample_params'];
+      $api_params = ['sequential' => 1] + $data['sample_params'];
       $result = civicrm_api3($data['entity'], 'create', $api_params);
       if ($result['is_error']) {
         throw new \Exception("creating $data[entity] failed");
@@ -116,14 +116,14 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
    *   - sample_params: array API sample_params properties of sample entity
    */
   public static function sample($params) {
-    $params += array(
+    $params += [
       'seq' => 0,
-      'overrides' => array(),
-    );
+      'overrides' => [],
+    ];
     $type = $params['type'];
     // sample data - if field is array then chosed based on `seq`
-    $sample_params = array();
-    if (in_array($type, array('Individual', 'Organization', 'Household'))) {
+    $sample_params = [];
+    if (in_array($type, ['Individual', 'Organization', 'Household'])) {
       $sample_params['contact_type'] = $type;
       $entity = 'Contact';
     }
@@ -153,9 +153,9 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
     // make foreign enitiies if they haven't been supplied
     foreach ($sample_params as $key => $value) {
       if (substr($value, 0, 6) === 'dummy.') {
-        $foreign_entity = self::createEntity(array(
+        $foreign_entity = self::createEntity([
           'type' => substr($value, 6),
-          'seq' => $params['seq']));
+          'seq' => $params['seq']]);
         $sample_params[$key] = $foreign_entity['id'];
       }
     }
@@ -170,27 +170,27 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
    *   Strings in the form "dummy.Entity" require creating a foreign entity first.
    */
   public static function sampleData($type) {
-    $data = array(
-      'Individual' => array(
+    $data = [
+      'Individual' => [
         // The number of values in each list need to be coprime numbers to not have duplicates
-        'first_name' => array('Anthony', 'Joe', 'Terrence', 'Lucie', 'Albert', 'Bill', 'Kim'),
-        'middle_name' => array('J.', 'M.', 'P', 'L.', 'K.', 'A.', 'B.', 'C.', 'D', 'E.', 'Z.'),
-        'last_name' => array('Anderson', 'Miller', 'Smith', 'Collins', 'Peterson'),
+        'first_name' => ['Anthony', 'Joe', 'Terrence', 'Lucie', 'Albert', 'Bill', 'Kim'],
+        'middle_name' => ['J.', 'M.', 'P', 'L.', 'K.', 'A.', 'B.', 'C.', 'D', 'E.', 'Z.'],
+        'last_name' => ['Anderson', 'Miller', 'Smith', 'Collins', 'Peterson'],
         'contact_type' => 'Individual',
-      ),
-      'Organization' => array(
-        'organization_name' => array(
+      ],
+      'Organization' => [
+        'organization_name' => [
           'Unit Test Organization',
           'Acme',
           'Roberts and Sons',
           'Cryo Space Labs',
           'Sharper Pens',
-        ),
-      ),
-      'Household' => array(
-        'household_name' => array('Unit Test household'),
-      ),
-      'Event' => array(
+        ],
+      ],
+      'Household' => [
+        'household_name' => ['Unit Test household'],
+      ],
+      'Event' => [
         'title' => 'Annual CiviCRM meet',
         'summary' => 'If you have any CiviCRM related issues or want to track where CiviCRM is heading, Sign up now',
         'description' => 'This event is intended to give brief idea about progess of CiviCRM and giving solutions to common user issues',
@@ -206,8 +206,8 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
         'is_monetary' => 0,
         'is_active' => 1,
         'is_show_location' => 0,
-      ),
-      'Participant' => array(
+      ],
+      'Participant' => [
         'event_id' => 'dummy.Event',
         'contact_id' => 'dummy.Individual',
         'status_id' => 2,
@@ -215,18 +215,18 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase
         'register_date' => 20070219,
         'source' => 'Wimbeldon',
         'event_level' => 'Payment',
-      ),
-      'Contribution' => array(
+      ],
+      'Contribution' => [
         'contact_id' => 'dummy.Individual',
         'financial_type_id' => 1, // donation, 2 = member, 3 = campaign contribution, 4=event
         'total_amount' => 7.3,
-      ),
-      'Activity' => array(
+      ],
+      'Activity' => [
         //'activity_type_id' => 1,
         'subject' => 'unit testing',
         'source_contact_id' => 'dummy.Individual',
-      ),
-    );
+      ],
+    ];
     if ($type == 'Contact') {
       $type = 'Individual';
     }

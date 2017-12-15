@@ -11,9 +11,9 @@ abstract class AbstractPrepareSubscriber implements EventSubscriberInterface {
    * @return array
    */
   public static function getSubscribedEvents() {
-    return array(
+    return [
       Events::PREPARE => 'onApiPrepare',
-    );
+    ];
   }
 
   /**

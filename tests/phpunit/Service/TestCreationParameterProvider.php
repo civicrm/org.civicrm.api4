@@ -34,7 +34,7 @@ class TestCreationParameterProvider {
       $requiredFields[] = $createSpec->getFieldByName('last_name');
     }
 
-    $requiredParams = array();
+    $requiredParams = [];
     foreach ($requiredFields as $requiredField) {
       $value = $this->getRequiredValue($requiredField);
       $requiredParams[$requiredField->getName()] = $value;
@@ -82,7 +82,7 @@ class TestCreationParameterProvider {
    */
   private function getOption(FieldSpec $field) {
     $options = $field->getOptions();
-    $useKeyNames = array('data_type', 'html_type');
+    $useKeyNames = ['data_type', 'html_type'];
     $shouldUseKey = in_array($field->getName(), $useKeyNames);
     $isIdField = substr($field->getName(), -3) === '_id';
 
@@ -101,7 +101,7 @@ class TestCreationParameterProvider {
    */
   private function getFkID(FieldSpec $field) {
     $fkEntity = $field->getFkEntity();
-    $params = array('checkPermissions' => 0);
+    $params = ['checkPermissions' => 0];
     $entityList = civicrm_api4($fkEntity, 'get', $params);
     if ($entityList->count() < 1) {
       $msg = sprintf('At least one %s is required in test', $fkEntity);

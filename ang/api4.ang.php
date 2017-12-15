@@ -5,29 +5,29 @@
 $result = Civi\Api4\Entity\Entity::get()
   ->setCheckPermissions(FALSE)
   ->execute();
-$entities = array();
+$entities = [];
 foreach ($result as $entity) {
-  $entities[] = array(
+  $entities[] = [
     'id' => $entity,
     'text' => $entity,
-  );
+  ];
 }
-$vars = array(
+$vars = [
   'entities' => $entities,
   'operators' => \CRM_Core_DAO::acceptedSQLOperators(),
-);
+];
 \Civi::resources()->addVars('api4', $vars);
-return array(
-  'js' => array(
+return [
+  'js' => [
     'ang/api4.js',
     'ang/api4/*.js',
     'ang/api4/*/*.js',
-  ),
-  'css' => array(
+  ],
+  'css' => [
     'css/explorer.css',
-  ),
-  'partials' => array(
+  ],
+  'partials' => [
     'ang/api4',
-  ),
-  'requires' => array('crmUi', 'crmUtil', 'ngRoute', 'crmRouteBinder'),
-);
+  ],
+  'requires' => ['crmUi', 'crmUtil', 'ngRoute', 'crmRouteBinder'],
+];

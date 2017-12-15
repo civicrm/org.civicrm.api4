@@ -14,7 +14,7 @@ class Joiner {
   /**
    * @var Joinable[][]
    */
-  protected $cache = array();
+  protected $cache = [];
 
   /**
    * @param SchemaMap $schemaMap
@@ -73,7 +73,7 @@ class Joiner {
   protected function getPath($baseTable, $joinPath) {
     if (!isset($this->cache[$joinPath])) {
       $stack = explode('.', $joinPath);
-      $fullPath = array();
+      $fullPath = [];
 
       foreach ($stack as $key => $targetAlias) {
         $links = $this->schemaMap->getPath($baseTable, $targetAlias);

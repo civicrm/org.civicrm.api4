@@ -12,9 +12,9 @@ class ContactSchemaMapSubscriber implements EventSubscriberInterface {
    * @return array
    */
   public static function getSubscribedEvents() {
-    return array(
+    return [
       Events::SCHEMA_MAP_BUILD => 'onSchemaBuild',
-    );
+    ];
   }
 
   /**

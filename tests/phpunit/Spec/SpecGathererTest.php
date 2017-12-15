@@ -22,12 +22,12 @@ class SpecGathererTest extends UnitTestCase {
   public function setUpHeadless() {
     $this->dropByPrefix('civicrm_value_favorite');
     $this->cleanup(
-      array(
-        'tablesToTruncate' => array(
+      [
+        'tablesToTruncate' => [
           'civicrm_custom_group',
           'civicrm_custom_field'
-        )
-      )
+        ]
+      ]
     );
     return parent::setUpHeadless();
   }
@@ -68,7 +68,7 @@ class SpecGathererTest extends UnitTestCase {
       ->setValue('extends', 'Contact')
       ->execute()['id'];
 
-    $options = array('Red', 'Green', 'Pink');
+    $options = ['Red', 'Green', 'Pink'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)

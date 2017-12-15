@@ -17,7 +17,7 @@ class RequestSpec {
   /**
    * @var FieldSpec[]
    */
-  protected $fields = array();
+  protected $fields = [];
 
   /**
    * @param string $entity

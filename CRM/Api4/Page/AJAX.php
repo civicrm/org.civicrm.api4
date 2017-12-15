@@ -11,9 +11,9 @@ class CRM_Api4_Page_AJAX extends CRM_Core_Page {
       if (empty($this->urlPath[3])) {
         $calls = CRM_Utils_Request::retrieve('calls', 'String', CRM_Core_DAO::$_nullObject, TRUE, NULL, 'REQUEST', TRUE);
         $calls = json_decode($calls, TRUE);
-        $response = array();
+        $response = [];
         foreach ($calls as $index => $call) {
-          $response[$index] = $this->execute($call[0], $call[1], CRM_Utils_Array::value(2, $call, array()));
+          $response[$index] = $this->execute($call[0], $call[1], CRM_Utils_Array::value(2, $call, []));
         }
       }
       // Call single
@@ -21,15 +21,15 @@ class CRM_Api4_Page_AJAX extends CRM_Core_Page {
         $entity = $this->urlPath[3];
         $action = $this->urlPath[4];
         $params = CRM_Utils_Request::retrieve('params', 'String');
-        $params = $params ? json_decode($params, TRUE) : array();
+        $params = $params ? json_decode($params, TRUE) : [];
         $response = $this->execute($entity, $action, $params);
       }
     }
     catch (Exception $e) {
       http_response_code(500);
-      $response = array(
+      $response = [
         'error_code' => $e->getCode(),
-      );
+      ];
       if (CRM_Core_Permission::check('view debug output')) {
         $response['error_message'] = $e->getMessage();
         if (CRM_Core_BAO_Setting::getItem(NULL, 'backtrace')) {
@@ -54,7 +54,7 @@ class CRM_Api4_Page_AJAX extends CRM_Core_Page {
     $params['checkPermissions'] = TRUE;
     $result = civicrm_api4($entity, $action, $params);
     // Convert arrayObject into something more suitable for json
-    $vals = array('values' => (array) $result);
+    $vals = ['values' => (array) $result];
     foreach (get_class_vars(get_class($result)) as $key => $val) {
       $vals[$key] = $result->$key;
     }

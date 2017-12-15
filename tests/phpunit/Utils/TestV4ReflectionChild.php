@@ -13,6 +13,6 @@ class TestV4ReflectionChild extends Utils\TestV4ReflectionBase {
    *
    * In the child class, foo has been barred.
    */
-  public $foo = array('bar' => 1);
+  public $foo = ['bar' => 1];
 
 }

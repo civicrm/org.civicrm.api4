@@ -24,13 +24,13 @@ class ConformanceTest extends UnitTestCase {
    * Set up baseline for testing
    */
   public function setUp() {
-    $tablesToTruncate = array(
+    $tablesToTruncate = [
       'civicrm_custom_group',
       'civicrm_custom_field',
       'civicrm_option_group',
-    );
+    ];
     $this->dropByPrefix('civicrm_value_myfavorite');
-    $this->cleanup(array('tablesToTruncate' => $tablesToTruncate));
+    $this->cleanup(['tablesToTruncate' => $tablesToTruncate]);
     $this->loadDataSet('ConformanceTest');
     $this->creationParamProvider = \Civi::container()->get('test.param_provider');
     parent::setUp();
@@ -71,7 +71,7 @@ class ConformanceTest extends UnitTestCase {
       ->indexBy('name');
 
     $errMsg = sprintf('%s is missing required ID field', $entity);
-    $subset = array('data_type' => 'Integer');
+    $subset = ['data_type' => 'Integer'];
 
     $this->assertArraySubset($subset, $fields['id'], $errMsg);
   }
@@ -135,7 +135,7 @@ class ConformanceTest extends UnitTestCase {
       ->execute();
 
     // should get back an array of deleted id
-    $this->assertEquals(array($id), (array)$deleteResult);
+    $this->assertEquals([$id], (array)$deleteResult);
   }
 
   /**

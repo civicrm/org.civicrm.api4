@@ -151,7 +151,7 @@ class SchemaMapBuilder {
 
   private function addCustomFields(SchemaMap $map, Table $baseTable, $entityName) {
 
-    $parentTypes = array('Contact', 'Individual', 'Organization', 'Household');
+    $parentTypes = ['Contact', 'Individual', 'Organization', 'Household'];
     if (in_array($entityName, $parentTypes)) {
       $entityName = $parentTypes;
     }

@@ -40,11 +40,11 @@ class PermissionCheckSubscriber implements EventSubscriberInterface {
    * @return array
    */
   public static function getSubscribedEvents() {
-    return array(
-      Events::AUTHORIZE => array(
-        array('onApiAuthorize', Events::W_LATE),
-      ),
-    );
+    return [
+      Events::AUTHORIZE => [
+        ['onApiAuthorize', Events::W_LATE],
+      ],
+    ];
   }
 
   /**

@@ -39,7 +39,7 @@ class Joinable {
   /**
    * @var array
    */
-  protected $conditions = array();
+  protected $conditions = [];
 
   /**
    * @var string
@@ -79,7 +79,7 @@ class Joinable {
       $this->targetColumn
     );
 
-    return array_merge(array($baseCondition), $this->conditions);
+    return array_merge([$baseCondition], $this->conditions);
   }
 
   /**

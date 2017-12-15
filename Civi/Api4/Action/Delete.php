@@ -37,7 +37,7 @@ class Delete extends Get {
    *
    * @required
    */
-  protected $where = array();
+  protected $where = [];
 
   /**
    * Batch delete function
@@ -45,7 +45,7 @@ class Delete extends Get {
    */
   public function _run(Result $result) {
     $bao_name = $this->getBaoName();
-    $this->select = array('id');
+    $this->select = ['id'];
     $defaults = $this->getParamDefaults();
     if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
       throw new \API_Exception('Cannot delete with no "where" paramater specified');
@@ -53,7 +53,7 @@ class Delete extends Get {
     // run the parent action (get) to get the list
     parent::_run($result);
     // Then act on the result
-    $ids = array();
+    $ids = [];
     foreach ($result as $item) {
       // todo confirm we need a new object
       $bao = new $bao_name();

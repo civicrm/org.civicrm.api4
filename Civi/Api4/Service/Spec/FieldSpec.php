@@ -31,7 +31,7 @@ class FieldSpec {
   /**
    * @var array
    */
-  protected $options = array();
+  protected $options = [];
 
   /**
    * @var string
@@ -48,9 +48,9 @@ class FieldSpec {
    *
    * @var array
    */
-  public static $typeAliases = array(
+  public static $typeAliases = [
     'Int' => 'Integer',
-  );
+  ];
 
   /**
    * @param $name
@@ -184,7 +184,7 @@ class FieldSpec {
    * @return array
    */
   private function getValidDataTypes() {
-    $extraTypes = array('Boolean', 'Text', 'Float');
+    $extraTypes = ['Boolean', 'Text', 'Float'];
     $extraTypes = array_combine($extraTypes, $extraTypes);
 
     return array_merge(\CRM_Utils_Type::dataTypes(), $extraTypes);
@@ -234,7 +234,7 @@ class FieldSpec {
   }
 
   public function toArray() {
-    $ret = array();
+    $ret = [];
     foreach (get_object_vars($this) as $key => $val) {
       $key = strtolower(preg_replace('/(?=[A-Z])/', '_$0', $key));
       $ret[$key] = $val;

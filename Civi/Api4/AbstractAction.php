@@ -51,7 +51,7 @@ abstract class AbstractAction implements \ArrayAccess {
    *
    * @var array
    */
-  protected $chain = array();
+  protected $chain = [];
 
   /**
    * Whether to enforce acl permissions based on the current user.
@@ -68,7 +68,7 @@ abstract class AbstractAction implements \ArrayAccess {
    *
    * @var array
    */
-  protected $options = array();
+  protected $options = [];
 
   /* @var string */
   private $entity;
@@ -175,7 +175,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return array
    */
   public function getParams() {
-    $params = array();
+    $params = [];
     foreach ($this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
       $name = $property->getName();
       $params[$name] = $this->$name;
@@ -246,7 +246,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @inheritDoc
    */
   public function offsetExists($offset) {
-    return in_array($offset, array('entity', 'action', 'params', 'version', 'check_permissions')) || isset($this->thisArrayStorage[$offset]);
+    return in_array($offset, ['entity', 'action', 'params', 'version', 'check_permissions']) || isset($this->thisArrayStorage[$offset]);
   }
 
   /**
@@ -254,7 +254,7 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   public function &offsetGet($offset) {
     $val = NULL;
-    if (in_array($offset, array('entity', 'action', 'params', 'version'))) {
+    if (in_array($offset, ['entity', 'action', 'params', 'version'])) {
       $getter = 'get' . ucfirst($offset);
       $val = $this->$getter();
       return $val;
@@ -274,7 +274,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @inheritDoc
    */
   public function offsetSet($offset, $value) {
-    if (in_array($offset, array('entity', 'action', 'params', 'version'))) {
+    if (in_array($offset, ['entity', 'action', 'params', 'version'])) {
       throw new \API_Exception('Cannot modify api4 state via array access');
     }
     if ($offset == 'check_permissions') {
@@ -289,7 +289,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @inheritDoc
    */
   public function offsetUnset($offset) {
-    if (in_array($offset, array('entity', 'action', 'params', 'check_permissions', 'version'))) {
+    if (in_array($offset, ['entity', 'action', 'params', 'check_permissions', 'version'])) {
       throw new \API_Exception('Cannot modify api4 state via array access');
     }
     unset($this->thisArrayStorage[$offset]);
@@ -304,7 +304,7 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   public static function baoToArray($bao) {
     $fields = $bao->fields();
-    $values = array();
+    $values = [];
     foreach ($fields as $key => $field) {
       $name = $field['name'];
       if (property_exists($bao, $name)) {

@@ -76,7 +76,7 @@ class ReflectionUtils {
    * @return array
    */
   public static function parseDocBlock($comment) {
-    $info = array();
+    $info = [];
     foreach (preg_split("/((\r?\n)|(\r\n?))/", $comment) as $num => $line) {
       if (!$num || strpos($line, '*/') !== FALSE) {
         continue;

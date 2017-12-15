@@ -67,7 +67,7 @@ class Result extends \ArrayObject {
    */
   public function indexBy($key) {
     if (count($this)) {
-      $newResults = array();
+      $newResults = [];
       foreach ($this as $values) {
         if (isset($values[$key])) {
           $newResults[$values[$key]] = $values;

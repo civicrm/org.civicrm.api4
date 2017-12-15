@@ -14,13 +14,13 @@ class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base {
   public function install() {
     // Add menu item for api explorer; rename v3 explorer menu item.
     try {
-      $v3Item = civicrm_api3('Navigation', 'get', array(
+      $v3Item = civicrm_api3('Navigation', 'get', [
         'name' => 'API Explorer',
-        'return' => array('id', 'parent_id'),
+        'return' => ['id', 'parent_id'],
         'sequential' => 1,
-        'api.Navigation.create' => array('label' => ts("Api Explorer v3")),
-      ));
-      civicrm_api3('Navigation', 'create', array(
+        'api.Navigation.create' => ['label' => ts("Api Explorer v3")],
+      ]);
+      civicrm_api3('Navigation', 'create', [
         'parent_id' => $v3Item['values'][0]['parent_id'],
         'label' => ts("Api Explorer v4"),
         'weight' => 2,
@@ -28,7 +28,7 @@ class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base {
         'permission' => "administer CiviCRM",
         'url' => "civicrm/a/#/api4",
         'is_active' => 1,
-      ));
+      ]);
     }
     catch (Exception $e) {
       // Couldn't create menu item.
@@ -58,11 +58,11 @@ class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base {
    */
   public function uninstall() {
     // Remove Api4 Explorer navigation menu item
-    civicrm_api3('Navigation', 'get', array(
+    civicrm_api3('Navigation', 'get', [
       'name' => 'Api Explorer v4',
-      'return' => array('id'),
-      'api.Navigation.delete' => array(),
-    ));
+      'return' => ['id'],
+      'api.Navigation.delete' => [],
+    ]);
   }
 
   /**

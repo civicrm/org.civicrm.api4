@@ -38,8 +38,8 @@ class Get extends DefaultGet {
    * @inheritDoc
    * $example->addWhere('contact_id.contact_type', 'IN', array('Individual', 'Household'))
    */
-  protected $where = array(
-    array('is_test', '=', 0),
-  );
+  protected $where = [
+    ['is_test', '=', 0],
+  ];
 
 }

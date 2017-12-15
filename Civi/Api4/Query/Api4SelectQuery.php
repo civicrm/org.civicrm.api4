@@ -58,13 +58,13 @@ class Api4SelectQuery extends SelectQuery {
    * @var array
    *   Maps select fields to [<table_alias>, <column_alias>]
    */
-  protected $fkSelectAliases = array();
+  protected $fkSelectAliases = [];
 
   /**
    * @var Joinable[]
    *   The joinable tables that have been joined so far
    */
-  protected $joinedTables = array();
+  protected $joinedTables = [];
 
   /**
    * Why walk when you can
@@ -195,7 +195,7 @@ class Api4SelectQuery extends SelectQuery {
    */
   protected function validateClauseAndComposeSql($clause) {
     list($key, $operator, $criteria) = $clause;
-    $value = array($operator => $criteria);
+    $value = [$operator => $criteria];
     // $field = $this->getField($key); // <<-- unused
     // derive table and column:
     $table_name = NULL;
@@ -223,7 +223,7 @@ class Api4SelectQuery extends SelectQuery {
    * @inheritDoc
    */
   protected function getFields() {
-    $fields = civicrm_api4($this->entity, 'getFields', array('action' => 'get', 'includeCustom' => FALSE))->indexBy('name');
+    $fields = civicrm_api4($this->entity, 'getFields', ['action' => 'get', 'includeCustom' => FALSE])->indexBy('name');
     return (array) $fields;
   }
 
@@ -305,7 +305,7 @@ class Api4SelectQuery extends SelectQuery {
   private function buildPath($pathString) {
     $pathParts = explode('.', $pathString);
     array_pop($pathParts); // remove field
-    $path = array();
+    $path = [];
     $isMultipleChecker = function($alias)  {
       foreach ($this->joinedTables as $table) {
         if ($table->getAlias() === $alias) {
@@ -330,7 +330,7 @@ class Api4SelectQuery extends SelectQuery {
    */
   private function formatSelects($finalAlias, $selects) {
     $mainAlias = self::MAIN_TABLE_ALIAS;
-    $selectFields = array();
+    $selectFields = [];
 
     foreach ($selects as $select) {
       $selectAlias = $this->fkSelectAliases[$select];
@@ -365,10 +365,10 @@ class Api4SelectQuery extends SelectQuery {
     $originalSelect = substr($sql, 0, strpos($sql, ' FROM'));
     $sql = str_replace($originalSelect, $newSelect, $sql);
 
-    $relatedResults = array();
+    $relatedResults = [];
     $resultDAO = \CRM_Core_DAO::executeQuery($sql);
     while ($resultDAO->fetch()) {
-      $relatedResults[$resultDAO->id] = array();
+      $relatedResults[$resultDAO->id] = [];
       foreach ($selects as $alias => $column) {
         $returnName = $alias;
         $alias = str_replace('.', '_', $alias);
@@ -389,7 +389,7 @@ class Api4SelectQuery extends SelectQuery {
       return isset($this->fkSelectAliases[$select]);
     });
 
-    $selects = array();
+    $selects = [];
     // group related selects by alias so they can be executed in one query
     foreach ($joinedDotSelects as $select) {
       $parts = explode('.', $select);

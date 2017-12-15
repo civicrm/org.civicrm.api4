@@ -40,7 +40,7 @@ class GetActions extends AbstractAction {
   // over-ride default to allow open access
   protected $checkPermissions = FALSE;
 
-  private $_actions = array();
+  private $_actions = [];
 
   public function _run(Result $result) {
     $includePaths = array_unique(explode(PATH_SEPARATOR, get_include_path()));
@@ -72,7 +72,7 @@ class GetActions extends AbstractAction {
   private function scanDir($dir) {
     if (is_dir($dir)) {
       foreach (glob("$dir/*.php") as $file) {
-        $matches = array();
+        $matches = [];
         preg_match('/(\w*).php/', $file, $matches);
         $actionName = array_pop($matches);
         if ($actionName !== 'AbstractAction') {
@@ -89,11 +89,11 @@ class GetActions extends AbstractAction {
     try {
       if (!isset($this->_actions[$actionName])) {
         /* @var AbstractAction $action */
-        $action = call_user_func(array("\\Civi\\Api4\\Entity\\" . $this->getEntity(), $actionName));
+        $action = call_user_func(["\\Civi\\Api4\\Entity\\" . $this->getEntity(), $actionName]);
         $actionReflection = new \ReflectionClass($action);
         $actionInfo = ReflectionUtils::getCodeDocs($actionReflection);
         unset($actionInfo['method']);
-        $this->_actions[$actionName] = array('name' => $actionName) + $actionInfo;
+        $this->_actions[$actionName] = ['name' => $actionName] + $actionInfo;
         $this->_actions[$actionName]['params'] = $action->getParamInfo();
       }
     }

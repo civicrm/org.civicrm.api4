@@ -16,7 +16,7 @@ use Symfony\Component\Config\FileLocator;
  *
  * @return \Civi\Api4\Result
  */
-function civicrm_api4($entity, $action, $params = array()) {
+function civicrm_api4($entity, $action, $params = []) {
   $params['version'] = 4;
   $request = \Civi\API\Request::create($entity, $action, $params);
   return \Civi::service('civi_api_kernel')->runRequest($request);
@@ -31,7 +31,7 @@ function api4_civicrm_container($container) {
 
   $container->getDefinition('civi_api_kernel')->addMethodCall(
     'registerApiProvider',
-    array(new Reference('action_object_provider'))
+    [new Reference('action_object_provider')]
   );
 
   // add event subscribers$container->get(
@@ -41,7 +41,7 @@ function api4_civicrm_container($container) {
   foreach (array_keys($subscribers) as $subscriber) {
     $dispatcher->addMethodCall(
       'addSubscriber',
-      array(new Reference($subscriber))
+      [new Reference($subscriber)]
     );
   }
 
@@ -52,7 +52,7 @@ function api4_civicrm_container($container) {
   foreach (array_keys($providers) as $provider) {
     $gatherer->addMethodCall(
       'addSpecProvider',
-      array(new Reference($provider))
+      [new Reference($provider)]
     );
   }
 

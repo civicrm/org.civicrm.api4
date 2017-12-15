@@ -14,14 +14,14 @@ use Civi\Api4\Entity\Activity;
 class ComplexQueryTest extends UnitTestCase {
 
   public function setUpHeadless() {
-    $relatedTables = array(
+    $relatedTables = [
       'civicrm_contact',
       'civicrm_option_group',
       'civicrm_option_value',
       'civicrm_activity',
       'civicrm_activity_contact',
-    );
-    $this->cleanup(array('tablesToTruncate' => $relatedTables));
+    ];
+    $this->cleanup(['tablesToTruncate' => $relatedTables]);
     $this->loadDataSet('DefaultDataSet');
 
     return parent::setUpHeadless();

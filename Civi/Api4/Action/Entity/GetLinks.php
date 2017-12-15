@@ -43,11 +43,11 @@ class GetLinks extends AbstractAction {
       $entity = AllTables::getBriefName(AllTables::getClassForTable($table->getName()));
       // Since this is an api function, exclude tables that don't have an api
       if (class_exists('\Civi\Api4\Entity\\' . $entity)) {
-        $item = array(
+        $item = [
           'entity' => $entity,
           'table' => $table->getName(),
-          'links' => array(),
-        );
+          'links' => [],
+        ];
         foreach ($table->getTableLinks() as $link) {
           $link = $link->toArray();
           $link['entity'] = AllTables::getBriefName(AllTables::getClassForTable($link['targetTable']));

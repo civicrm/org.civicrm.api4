@@ -46,11 +46,11 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
     // Using a high priority allows adhoc implementations
     // to override standard implementations -- which is
     // handy for testing/mocking.
-    return array(
-      Events::RESOLVE => array(
-        array('onApiResolve', Events::W_EARLY),
-      ),
-    );
+    return [
+      Events::RESOLVE => [
+        ['onApiResolve', Events::W_EARLY],
+      ],
+    ];
   }
   /**
    * @param ResolveEvent $event
@@ -87,7 +87,7 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
    */
   public function getEntityNames($version) {
     /** FIXME */
-    return array();
+    return [];
   }
 
   /**
@@ -98,7 +98,7 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
    */
   public function getActionNames($version, $entity) {
     /** FIXME Civi\API\V4\Action\GetActions */
-    return array();
+    return [];
   }
 
 }

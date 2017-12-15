@@ -21,7 +21,7 @@ class ArrayInsertionUtil {
     $key = key($parts);
     $isMulti = array_shift($parts);
     if (!isset($array[$key])) {
-      $array[$key] = $isMulti ? array() : NULL;
+      $array[$key] = $isMulti ? [] : NULL;
     }
     if (empty($parts)) {
       $values = self::filterValues($array, $isMulti, $values);
@@ -55,7 +55,7 @@ class ArrayInsertionUtil {
       });
     }
 
-    $unsets = array('_parent_id', '_base_id');
+    $unsets = ['_parent_id', '_base_id'];
     array_walk($values, function (&$value) use ($unsets) {
       foreach ($unsets as $unset) {
         if (isset($value[$unset])) {

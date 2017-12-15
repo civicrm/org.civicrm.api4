@@ -10,7 +10,7 @@ class SpecGatherer {
   /**
    * @var SpecProviderInterface[]
    */
-  protected $specProviders = array();
+  protected $specProviders = [];
 
   /**
    * A cache of DAOs based on entity
@@ -75,11 +75,11 @@ class SpecGatherer {
    */
   private function addCustomFields($entity, RequestSpec $specification) {
     if ($entity == 'Contact') {
-      $entity = array('Contact', 'Individual', 'Organization', 'Household');
+      $entity = ['Contact', 'Individual', 'Organization', 'Household'];
     }
     $customFields = CustomField::get()
       ->addWhere('custom_group.extends', 'IN', $entity)
-      ->setSelect(array('custom_group.name', 'custom_group_id', 'name', 'label', 'data_type', 'html_type', 'is_required', 'is_searchable', 'is_search_range', 'weight', 'is_active', 'is_view', 'option_group_id', 'default_value'))
+      ->setSelect(['custom_group.name', 'custom_group_id', 'name', 'label', 'data_type', 'html_type', 'is_required', 'is_searchable', 'is_search_range', 'weight', 'is_active', 'is_view', 'option_group_id', 'default_value'])
       ->execute();
 
     foreach ($customFields as $fieldArray) {

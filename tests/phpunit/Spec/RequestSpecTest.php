@@ -36,6 +36,6 @@ class RequestSpecTest extends UnitTestCase {
     $fieldNames = $spec->getFieldNames();
 
     $this->assertCount(2, $fieldNames);
-    $this->assertEquals(array('name', 'age'), $fieldNames);
+    $this->assertEquals(['name', 'age'], $fieldNames);
   }
 }

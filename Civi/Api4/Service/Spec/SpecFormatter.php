@@ -12,10 +12,10 @@ class SpecFormatter {
    * @return array
    */
   public static function specToArray(RequestSpec $spec) {
-    $specArray = array();
+    $specArray = [];
     $specArray['entity'] = $spec->getEntity();
     $specArray['action'] = $spec->getAction();
-    $specArray['fields'] = array();
+    $specArray['fields'] = [];
 
     foreach ($spec->getFields() as $field) {
       $specArray['fields'][$field->getName()] = $field->toArray();

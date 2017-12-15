@@ -11,7 +11,7 @@ use Civi\Test\Api4\UnitTestCase;
 class Api4SelectQueryTest extends UnitTestCase {
 
   public function setUpHeadless() {
-    $relatedTables = array(
+    $relatedTables = [
       'civicrm_contact',
       'civicrm_address',
       'civicrm_email',
@@ -23,8 +23,8 @@ class Api4SelectQueryTest extends UnitTestCase {
       'civicrm_option_value',
       'civicrm_activity',
       'civicrm_activity_contact',
-    );
-    $this->cleanup(array('tablesToTruncate' => $relatedTables));
+    ];
+    $this->cleanup(['tablesToTruncate' => $relatedTables]);
     $this->loadDataSet('DefaultDataSet');
     $displayNameFormat = '{contact.first_name}{ }{contact.last_name}';
     \Civi::settings()->set('display_name_format', $displayNameFormat);
@@ -44,7 +44,7 @@ class Api4SelectQueryTest extends UnitTestCase {
     $phoneNum = $this->getReference('test_phone_1')['phone'];
 
     $query = new Api4SelectQuery('Contact', FALSE);
-    $query->where[] = array('phones.phone', '=', $phoneNum);
+    $query->where[] = ['phones.phone', '=', $phoneNum];
     $results = $query->run();
 
     $this->assertCount(1, $results);
@@ -57,7 +57,7 @@ class Api4SelectQueryTest extends UnitTestCase {
     $query->select[] = 'id';
     $query->select[] = 'first_name';
     $query->select[] = 'phones.phone';
-    $query->where[] = array('phones.phone', '=', $phoneNum);
+    $query->where[] = ['phones.phone', '=', $phoneNum];
     $results = $query->run();
 
     $this->assertCount(1, $results);
@@ -76,7 +76,7 @@ class Api4SelectQueryTest extends UnitTestCase {
     $query->select[] = 'phone';
     $query->select[] = 'contact.display_name';
     $query->select[] = 'contact.first_name';
-    $query->where[] = array('phone', '=', $phoneNum);
+    $query->where[] = ['phone', '=', $phoneNum];
     $results = $query->run();
 
     $this->assertCount(1, $results);

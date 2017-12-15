@@ -42,7 +42,7 @@ class Create extends AbstractAction {
    *
    * @var array
    */
-  protected $values = array();
+  protected $values = [];
 
   /**
    * Set a field value for the created object.
@@ -86,10 +86,10 @@ class Create extends AbstractAction {
     $bao = new $bao_name();
 
     // Some BAOs are weird and don't support a straightforward "create" method.
-    $oddballs = array(
+    $oddballs = [
       'Website' => 'add',
       'Address' => 'add',
-    );
+    ];
     $method = \CRM_Utils_Array::value($this->getEntity(), $oddballs, 'create');
     if (!method_exists($bao, $method)) {
       $method = 'add';
@@ -115,8 +115,8 @@ class Create extends AbstractAction {
    */
   private function formatCustomParams($params, $entity, $entityId) {
 
-    $params['custom'] = array();
-    $customParams = array();
+    $params['custom'] = [];
+    $customParams = [];
 
     // $customValueID is the ID of the custom value in the custom table for this
     // entity (i guess this assumes it's not a multi value entity)

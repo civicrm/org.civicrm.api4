@@ -43,13 +43,13 @@ class SpecFormatterTest extends UnitTestCase {
     $customFieldId = 3333;
     $name = 'MyFancyField';
 
-    $data = array(
+    $data = [
       'custom_group_id' => $customGroupId,
-      'custom_group' => array('name' => 'my_group'),
+      'custom_group' => ['name' => 'my_group'],
       'id' => $customFieldId,
       'name' => $name,
       'data_type' => 'String',
-    );
+    ];
 
     /** @var CustomFieldSpec $field */
     $field = SpecFormatter::arrayToField($data);
@@ -63,26 +63,26 @@ class SpecFormatterTest extends UnitTestCase {
    * @return array
    */
   public function arrayFieldSpecProvider() {
-    return array(
-      array(
-        array(
+    return [
+      [
+        [
           'name' => 'Foo',
           'title' => 'Bar',
           'type' => \CRM_Utils_Type::T_STRING
-        ),
+        ],
         'Foo',
         'String'
-      ),
-      array(
-        array(
+      ],
+      [
+        [
           'name' => 'MyField',
           'title' => 'Bar',
           'type' => \CRM_Utils_Type::T_STRING,
           'data_type' => 'Boolean' // this should take precedence
-        ),
+        ],
         'MyField',
         'Boolean'
-      )
-    );
+      ]
+    ];
   }
 }
