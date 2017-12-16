@@ -73,7 +73,7 @@
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="api4.required_fields.subscriber" class="Civi\Api4\Event\Subscriber\RequiredFieldsSubscriber">
+        <service id="api4.required_fields.subscriber" class="Civi\Api4\Event\Subscriber\ValidateFieldsSubscriber">
             <tag name="event_subscriber"/>
         </service>
 

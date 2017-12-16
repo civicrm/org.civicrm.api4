@@ -39,6 +39,7 @@ class Update extends Get {
    * Criteria for selecting items to update.
    *
    * @required
+   * @var array
    */
   protected $where = [];
 

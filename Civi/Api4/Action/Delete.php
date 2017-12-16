@@ -36,6 +36,7 @@ class Delete extends Get {
    * Criteria for selecting items to delete.
    *
    * @required
+   * @var array
    */
   protected $where = [];
 

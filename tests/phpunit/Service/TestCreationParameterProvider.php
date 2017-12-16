@@ -102,7 +102,7 @@ class TestCreationParameterProvider {
    */
   private function getFkID(FieldSpec $field) {
     $fkEntity = $field->getFkEntity();
-    $params = ['checkPermissions' => 0];
+    $params = ['checkPermissions' => FALSE];
     $entityList = civicrm_api4($fkEntity, 'get', $params);
     if ($entityList->count() < 1) {
       $msg = sprintf('At least one %s is required in test', $fkEntity);

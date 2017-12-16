@@ -37,7 +37,10 @@ use Civi\Api4\Utils\ReflectionUtils;
  */
 class GetActions extends AbstractAction {
 
-  // over-ride default to allow open access
+  /**
+   * Override default to allow open access
+   * @inheritDoc
+   */
   protected $checkPermissions = FALSE;
 
   private $_actions = [];

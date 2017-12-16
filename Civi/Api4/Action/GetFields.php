@@ -40,7 +40,10 @@ use Civi\Api4\Service\Spec\SpecFormatter;
  */
 class GetFields extends AbstractAction {
 
-  // over-ride default to allow open access
+  /**
+   * Override default to allow open access
+   * @inheritDoc
+   */
   protected $checkPermissions = FALSE;
 
   /**
@@ -51,7 +54,7 @@ class GetFields extends AbstractAction {
   /**
    * @var string
    */
-  protected $action;
+  protected $action = 'get';
 
   public function _run(Result $result) {
     /** @var SpecGatherer $gatherer */

@@ -54,6 +54,8 @@ class ConformanceTest extends UnitTestCase {
       $this->checkFields($entityClass, $entity);
       $id = $this->checkCreation($entity, $entityClass);
       $this->checkGet($entityClass, $id, $entity);
+      $this->checkWrongParamType($entityClass);
+      $this->checkDeleteWithNoId($entityClass);
       $this->checkDeletion($entityClass, $id);
       $this->checkPostDelete($entityClass, $id, $entity);
     }
@@ -122,6 +124,38 @@ class ConformanceTest extends UnitTestCase {
 
     $errMsg = sprintf('Failed to fetch a %s after creation', $entity);
     $this->assertEquals(1, count($getResult), $errMsg);
+  }
+
+  /**
+   * @param AbstractEntity $entityClass
+   */
+  protected function checkDeleteWithNoId($entityClass) {
+    $exceptionThrown = '';
+    try {
+      $entityClass::delete()
+        ->execute();
+    }
+    catch (\API_Exception $e) {
+      $exceptionThrown = $e->getMessage();
+    }
+    $this->assertContains('required', $exceptionThrown);
+  }
+
+  /**
+   * @param AbstractEntity $entityClass
+   */
+  protected function checkWrongParamType($entityClass) {
+    $exceptionThrown = '';
+    try {
+      $entityClass::get()
+        ->setCheckPermissions('nada')
+        ->execute();
+    }
+    catch (\API_Exception $e) {
+      $exceptionThrown = $e->getMessage();
+    }
+    $this->assertContains('checkPermissions', $exceptionThrown);
+    $this->assertContains('type', $exceptionThrown);
   }
 
   /**
