@@ -49,6 +49,7 @@ class SpecFormatterTest extends UnitTestCase {
       'id' => $customFieldId,
       'name' => $name,
       'data_type' => 'String',
+      'html_type' => 'Text',
     ];
 
     /** @var CustomFieldSpec $field */

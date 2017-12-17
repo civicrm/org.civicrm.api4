@@ -102,12 +102,15 @@ class Api4SelectQuery extends SelectQuery {
       return $primaryResults;
     }
 
+    $this->formatResults($primaryResults, $this->entity);
+
     $groupedSelects = $this->getJoinedDotSelects();
     foreach ($groupedSelects as $finalAlias => $selects) {
       $path = $this->buildPath($selects[0]);
       $selects = $this->formatSelects($finalAlias, $selects);
       $joinResults = $this->runWithNewSelects($selects);
 
+      // todo: call formatResults to unserialize joinResults
       foreach ($primaryResults as &$primaryResult) {
         $baseId = $primaryResult['id'];
         $filtered = array_filter($joinResults, function ($res) use ($baseId) {
@@ -120,6 +123,30 @@ class Api4SelectQuery extends SelectQuery {
 
     // no associative option
     return array_values($primaryResults);
+  }
+
+  /**
+   * Unserialize values
+   *
+   * @param $results
+   * @param $entity
+   * @throws \API_Exception
+   */
+  protected function formatResults(&$results, $entity) {
+    if ($entity == $this->entity) {
+      $fields = $this->apiFieldSpec;
+    }
+    else {
+      $fields = civicrm_api4($entity, 'getFields', ['action' => 'get', 'includeCustom' => FALSE])->indexBy('name');
+    }
+    // Unserialize arrays
+    foreach ($results as &$result) {
+      foreach ($result as $field => &$value) {
+        if (!empty($fields[$field]['serialize']) && is_string($value)) {
+          $value = \CRM_Core_DAO::unSerializeField($value, $fields[$field]['serialize']);
+        }
+      }
+    }
   }
 
   /**

@@ -44,6 +44,11 @@ class FieldSpec {
   protected $fkEntity;
 
   /**
+   * @var int
+   */
+  protected $serialize;
+
+  /**
    * Aliases for the valid data types
    *
    * @var array
@@ -176,6 +181,20 @@ class FieldSpec {
     $this->dataType = $dataType;
 
     return $this;
+  }
+
+  /**
+   * @return int
+   */
+  public function getSerialize() {
+    return $this->serialize;
+  }
+
+  /**
+   * @param int $serialize
+   */
+  public function setSerialize($serialize) {
+    $this->serialize = $serialize;
   }
 
   /**
