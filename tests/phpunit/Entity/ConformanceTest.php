@@ -34,6 +34,8 @@ class ConformanceTest extends UnitTestCase {
     $this->loadDataSet('ConformanceTest');
     $this->creationParamProvider = \Civi::container()->get('test.param_provider');
     parent::setUp();
+    // calculateTaxAmount() for contribution triggers a deprecation notice
+    \PHPUnit_Framework_Error_Deprecated::$enabled = FALSE;
   }
 
   public function testConformance() {

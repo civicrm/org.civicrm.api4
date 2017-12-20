@@ -32,8 +32,11 @@ class ContactJoinTest extends UnitTestCase {
   }
 
   public function testContactJoin() {
+
     $contact = $this->getReference('test_contact_1');
-    foreach (['Address', 'Email', 'Phone', 'OpenID', 'IM', 'Website'] as $entity) {
+    $entitiesToTest = ['Address', 'OpenID', 'IM', 'Website', 'Email', 'Phone'];
+
+    foreach ($entitiesToTest as $entity) {
       $results = civicrm_api4($entity, 'get', [
         'where' => [['contact_id', '=', $contact['id']]],
         'select' => ['contact.display_name', 'contact.id'],
