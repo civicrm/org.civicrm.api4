@@ -49,7 +49,7 @@ class SpecFormatterTest extends UnitTestCase {
       'id' => $customFieldId,
       'name' => $name,
       'data_type' => 'String',
-      'html_type' => 'Text',
+      'html_type' => 'MultiSelect',
     ];
 
     /** @var CustomFieldSpec $field */
@@ -58,6 +58,7 @@ class SpecFormatterTest extends UnitTestCase {
     $this->assertInstanceOf(CustomFieldSpec::class, $field);
     $this->assertEquals($customGroupId, $field->getCustomGroupId());
     $this->assertEquals($customFieldId, $field->getCustomFieldId());
+    $this->assertEquals(\CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND, $field->getSerialize());
   }
 
   /**

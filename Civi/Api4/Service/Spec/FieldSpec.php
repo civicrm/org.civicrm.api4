@@ -191,7 +191,7 @@ class FieldSpec {
   }
 
   /**
-   * @param int $serialize
+   * @param int|null $serialize
    */
   public function setSerialize($serialize) {
     $this->serialize = $serialize;
