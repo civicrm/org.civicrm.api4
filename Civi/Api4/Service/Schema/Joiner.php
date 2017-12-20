@@ -71,7 +71,8 @@ class Joiner {
    * @throws \Exception
    */
   protected function getPath($baseTable, $joinPath) {
-    if (!isset($this->cache[$joinPath])) {
+    $cacheKey = sprintf('%s.%s', $baseTable, $joinPath);
+    if (!isset($this->cache[$cacheKey])) {
       $stack = explode('.', $joinPath);
       $fullPath = [];
 
@@ -88,10 +89,10 @@ class Joiner {
         }
       }
 
-      $this->cache[$joinPath] = $fullPath;
+      $this->cache[$cacheKey] = $fullPath;
     }
 
-    return $this->cache[$joinPath];
+    return $this->cache[$cacheKey];
   }
 
 }
