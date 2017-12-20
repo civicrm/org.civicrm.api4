@@ -109,7 +109,18 @@ class Api4SelectQuery extends SelectQuery {
     foreach ($groupedSelects as $finalAlias => $selects) {
       $path = $this->buildPath($selects[0]);
       $selects = $this->formatSelects($finalAlias, $selects);
-      $joinResults = $this->runWithNewSelects($selects);
+
+      if (!empty($this->apiFieldSpec[$finalAlias]['serialize'])) {
+        $type = $this->apiFieldSpec[$finalAlias]['serialize'];
+        $joinResults = $this->getResultsForSerializedField($selects, $type);
+      } else {
+        $joinResults = $this->runWithNewSelects($selects);
+      }
+
+      // Remove results with no matching entries
+      $joinResults = array_filter($joinResults, function ($result) {
+        return !empty($result['id']);
+      });
 
       // todo: call formatResults to unserialize joinResults
       foreach ($primaryResults as &$primaryResult) {
@@ -407,11 +418,6 @@ class Api4SelectQuery extends SelectQuery {
       $relatedResults[] = $relatedResult;
     }
 
-    // Remove results with no matching entries
-    $relatedResults = array_filter($relatedResults, function ($result) {
-      return !empty($result['id']);
-    });
-
     return $relatedResults;
   }
 
@@ -439,6 +445,35 @@ class Api4SelectQuery extends SelectQuery {
     });
 
     return $selects;
+  }
+
+  /**
+   * @param array $selects
+   * @param string $serializationType
+   *
+   * @return array
+   */
+  private function getResultsForSerializedField(array $selects, $serializationType) {
+    $sampleField = current($selects);
+    $alias = strstr($sampleField, '.', TRUE);
+    $results = $this->runWithNewSelects([
+      'serialized' => self::MAIN_TABLE_ALIAS . '.' . $alias,
+      '_parent_id' => $selects['_parent_id'],
+      '_base_id' => $selects['_base_id'],
+    ]);
+
+    foreach($results as $result) {
+      $unserialized = \CRM_Core_DAO::unSerializeField(
+        $result['serialized'],
+        $serializationType
+      );
+      $unserializedResults[$result['_parent_id']] = $unserialized;
+    }
+
+    // todo do a new query to the option_value table for all values in $unserializedResults
+    // then loop through all $results and replace serialized with the resulting array
+
+    return [];
   }
 
 }
