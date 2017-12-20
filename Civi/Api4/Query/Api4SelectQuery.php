@@ -104,6 +104,7 @@ class Api4SelectQuery extends SelectQuery {
 
     $this->formatResults($primaryResults, $this->entity);
 
+    // Group the selects to avoid queries for each field
     $groupedSelects = $this->getJoinedDotSelects();
     foreach ($groupedSelects as $finalAlias => $selects) {
       $path = $this->buildPath($selects[0]);
@@ -395,15 +396,21 @@ class Api4SelectQuery extends SelectQuery {
     $relatedResults = [];
     $resultDAO = \CRM_Core_DAO::executeQuery($sql);
     while ($resultDAO->fetch()) {
-      $relatedResults[$resultDAO->id] = [];
+      $relatedResult = [];
       foreach ($selects as $alias => $column) {
         $returnName = $alias;
         $alias = str_replace('.', '_', $alias);
         if (property_exists($resultDAO, $alias)) {
-          $relatedResults[$resultDAO->id][$returnName] = $resultDAO->$alias;
+          $relatedResult[$returnName] = $resultDAO->$alias;
         }
       };
+      $relatedResults[] = $relatedResult;
     }
+
+    // Remove results with no matching entries
+    $relatedResults = array_filter($relatedResults, function ($result) {
+      return !empty($result['id']);
+    });
 
     return $relatedResults;
   }
