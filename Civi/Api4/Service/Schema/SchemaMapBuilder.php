@@ -99,7 +99,8 @@ class SchemaMapBuilder {
       $table->addTableLink($field, $joinable);
     }
     elseif ($optionGroupName) {
-      $joinable = new OptionValueJoinable($optionGroupName);
+      $keyColumn = ArrayHelper::value('keyColumn', $pseudoConstant, 'value');
+      $joinable = new OptionValueJoinable($optionGroupName, NULL, $keyColumn);
 
       if (!empty($data['serialize'])) {
         $joinable->setJoinType($joinable::JOIN_TYPE_ONE_TO_MANY);
