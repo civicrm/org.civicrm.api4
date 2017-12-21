@@ -160,6 +160,14 @@ class Joinable {
 
     return $this;
   }
+
+  /**
+   * @return array
+   */
+  public function getExtraJoinConditions() {
+    return $this->conditions;
+  }
+
   /**
    * @param array $conditions
    *
