@@ -36,10 +36,12 @@ class OptionValueJoinTest extends UnitTestCase {
     $query->select[] = 'first_name';
     $query->select[] = 'preferred_communication_method.label';
     $results = $query->run();
+    $first = array_shift($results);
+    $firstPreferredMethod = array_shift($first['preferred_communication_method']);
 
     $this->assertEquals(
       'Phone',
-      $results[0]['preferred_communication_method']['label']
+      $firstPreferredMethod['label']
     );
   }
 
