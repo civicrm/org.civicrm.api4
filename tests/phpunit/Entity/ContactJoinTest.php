@@ -95,8 +95,9 @@ class ContactJoinTest extends UnitTestCase {
       ->first();
 
     $preferredMethod = $fetchedContact['preferred_communication_method'];
+    $returnedLabels = array_column($preferredMethod, 'label');
 
-    $this->assertEquals($labels, $preferredMethod);
+    $this->assertEquals($labels, $returnedLabels);
   }
 
 }
