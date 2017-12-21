@@ -5,7 +5,6 @@ namespace Civi\Api4\Event\Subscriber;
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\SchemaMapBuildEvent;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
-use Civi\Api4\Service\Schema\Joinable\OptionValueJoinable;
 use Civi\Api4\Service\Schema\Table;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -26,7 +25,7 @@ class ContactSchemaMapSubscriber implements EventSubscriberInterface {
     $schema = $event->getSchemaMap();
     $table = $schema->getTableByName('civicrm_contact');
     $this->addCreatedActivitiesLink($table);
-    $this->fixPreferredLanguageLink($table);
+    $this->fixPreferredLanguageAlias($table);
   }
 
   /**
@@ -43,14 +42,10 @@ class ContactSchemaMapSubscriber implements EventSubscriberInterface {
   /**
    * @param Table $table
    */
-  private function fixPreferredLanguageLink($table) {
+  private function fixPreferredLanguageAlias($table) {
     foreach ($table->getExternalLinks() as $link) {
       if ($link->getAlias() === 'languages') {
-        $column = 'preferred_language';
-        // language joins on name instead of value (just for fun)
-        $replacement = new OptionValueJoinable('languages', $column, 'name');
-        $table->removeLink($link);
-        $table->addTableLink($column, $replacement);
+        $link->setAlias('preferred_language');
         return;
       }
     }
