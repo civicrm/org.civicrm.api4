@@ -39,4 +39,23 @@ class OptionValueJoinable extends Joinable {
     $this->addCondition($condition);
   }
 
+  /**
+   * The existing condition must also be re-aliased
+   *
+   * @param string $alias
+   *
+   * @return $this
+   */
+  public function setAlias($alias) {
+    foreach ($this->conditions as $index => $condition) {
+      $search = $this->alias . '.';
+      $replace = $alias . '.';
+      $this->conditions[$index] = str_replace($search, $replace, $condition);
+    }
+
+    parent::setAlias($alias);
+
+    return $this;
+  }
+
 }
