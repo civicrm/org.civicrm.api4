@@ -77,5 +77,9 @@
             <tag name="event_subscriber"/>
         </service>
 
+        <service id="api4.post_select_query.subscriber" class="Civi\Api4\Event\Subscriber\PostSelectQuerySubscriber">
+            <tag name="event_subscriber"/>
+        </service>
+
     </services>
 </container>
