@@ -25,14 +25,14 @@
  +--------------------------------------------------------------------+
  */
 
-namespace Civi\Api4\Entity;
+namespace Civi\Api4;
 
+use Civi\Api4\Action\Participant\Get;
 use Civi\Api4\Generic\AbstractEntity;
 
 /**
- * Activity entity.
- *
+ * @method static Get get
  */
-class Activity extends AbstractEntity {
+class Participant extends AbstractEntity {
 
 }

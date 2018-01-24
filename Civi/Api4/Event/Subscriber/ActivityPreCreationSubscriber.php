@@ -3,7 +3,7 @@
 namespace Civi\Api4\Event\Subscriber;
 
 use Civi\Api4\Action\Create;
-use Civi\Api4\Entity\OptionValue;
+use Civi\Api4\OptionValue;
 
 class ActivityPreCreationSubscriber extends PreCreationSubscriber {
   /**

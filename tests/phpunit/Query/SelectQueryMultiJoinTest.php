@@ -2,8 +2,8 @@
 
 namespace Civi\Test\Api4\Query;
 
-use Civi\Api4\Entity\Contact;
-use Civi\Api4\Entity\Email;
+use Civi\Api4\Contact;
+use Civi\Api4\Email;
 use Civi\Test\Api4\UnitTestCase;
 
 /**

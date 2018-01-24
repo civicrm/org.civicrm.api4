@@ -2,7 +2,7 @@
 
 namespace Civi\Test\Api4\Entity;
 
-use Civi\Api4\Entity\Entity;
+use Civi\Api4\Entity;
 use Civi\Test\Api4\UnitTestCase;
 
 /**

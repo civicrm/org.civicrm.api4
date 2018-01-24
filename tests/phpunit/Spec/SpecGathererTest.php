@@ -7,8 +7,8 @@ use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
 use Civi\Api4\Service\Spec\RequestSpec;
 use Civi\Api4\Service\Spec\SpecGatherer;
 use Civi\Test\Api4\UnitTestCase;
-use Civi\Api4\Entity\CustomField;
-use Civi\Api4\Entity\CustomGroup;
+use Civi\Api4\CustomField;
+use Civi\Api4\CustomGroup;
 use Civi\Test\Api4\Traits\TableDropperTrait;
 use Prophecy\Argument;
 

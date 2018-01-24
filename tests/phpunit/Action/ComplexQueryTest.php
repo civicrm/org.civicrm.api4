@@ -3,7 +3,7 @@
 namespace Civi\Test\Api4\Action;
 
 use Civi\Test\Api4\UnitTestCase;
-use Civi\Api4\Entity\Activity;
+use Civi\Api4\Activity;
 
 /**
  * @group headless

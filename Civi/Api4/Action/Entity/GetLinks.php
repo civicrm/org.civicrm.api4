@@ -42,7 +42,7 @@ class GetLinks extends AbstractAction {
     foreach ($schema->getTables() as $table) {
       $entity = AllTables::getBriefName(AllTables::getClassForTable($table->getName()));
       // Since this is an api function, exclude tables that don't have an api
-      if (class_exists('\Civi\Api4\Entity\\' . $entity)) {
+      if (class_exists('\Civi\Api4\\' . $entity)) {
         $item = [
           'entity' => $entity,
           'table' => $table->getName(),

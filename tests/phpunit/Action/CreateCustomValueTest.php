@@ -2,10 +2,10 @@
 
 namespace Civi\Test\Api4\Action;
 
-use Civi\Api4\Entity\CustomField;
-use Civi\Api4\Entity\CustomGroup;
-use Civi\Api4\Entity\OptionGroup;
-use Civi\Api4\Entity\OptionValue;
+use Civi\Api4\CustomField;
+use Civi\Api4\CustomGroup;
+use Civi\Api4\OptionGroup;
+use Civi\Api4\OptionValue;
 
 /**
  * @group headless
