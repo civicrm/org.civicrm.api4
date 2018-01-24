@@ -46,6 +46,11 @@
       "name": "Phone",
       "value": "phone",
       "option_group": "preferred_communication_method"
+    },
+    {
+      "name": "Email",
+      "value": "email",
+      "option_group": "preferred_communication_method"
     }
   ],
   "Activity": [

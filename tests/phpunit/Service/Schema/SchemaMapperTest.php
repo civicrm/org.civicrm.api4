@@ -1,6 +1,6 @@
 <?php
 
-namespace phpunit\Civi\API\Service\Schema;
+namespace Civi\Test\Api4\Service\Schema;
 
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Civi\Api4\Service\Schema\SchemaMap;

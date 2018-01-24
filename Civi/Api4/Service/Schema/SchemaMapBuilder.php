@@ -63,7 +63,6 @@ class SchemaMapBuilder {
    * @param array $data
    */
   private function addJoins(Table $table, $field, array $data) {
-    $pseudoConstant = ArrayHelper::value('pseudoconstant', $data);
     $fkClass = ArrayHelper::value('FKClassName', $data);
 
     // can there be multiple methods e.g. pseudoconstant and fkclass
@@ -74,8 +73,8 @@ class SchemaMapBuilder {
       $joinable->setJoinType($joinable::JOIN_TYPE_MANY_TO_ONE);
       $table->addTableLink($field, $joinable);
     }
-    elseif ($pseudoConstant) {
-      $this->addPseudoConstantJoin($table, $field, $pseudoConstant);
+    elseif (ArrayHelper::value('pseudoconstant', $data)) {
+      $this->addPseudoConstantJoin($table, $field, $data);
     }
   }
 
@@ -85,21 +84,28 @@ class SchemaMapBuilder {
    * @param array $data
    */
   private function addPseudoConstantJoin(Table $table, $field, array $data) {
-    $tableName = ArrayHelper::value('table', $data);
-    $optionGroupName = ArrayHelper::value('optionGroupName', $data);
-    $keyColumn = ArrayHelper::value('keyColumn', $data, 'id');
+    $pseudoConstant = ArrayHelper::value('pseudoconstant', $data);
+    $tableName = ArrayHelper::value('table', $pseudoConstant);
+    $optionGroupName = ArrayHelper::value('optionGroupName', $pseudoConstant);
+    $keyColumn = ArrayHelper::value('keyColumn', $pseudoConstant, 'id');
 
     if ($tableName) {
       $alias = str_replace('civicrm_', '', $tableName);
       $joinable = new Joinable($tableName, $keyColumn, $alias);
-      $condition = ArrayHelper::value('condition', $data);
+      $condition = ArrayHelper::value('condition', $pseudoConstant);
       if ($condition) {
         $joinable->addCondition($condition);
       }
       $table->addTableLink($field, $joinable);
     }
     elseif ($optionGroupName) {
-      $joinable = new OptionValueJoinable($optionGroupName);
+      $keyColumn = ArrayHelper::value('keyColumn', $pseudoConstant, 'value');
+      $joinable = new OptionValueJoinable($optionGroupName, NULL, $keyColumn);
+
+      if (!empty($data['serialize'])) {
+        $joinable->setJoinType($joinable::JOIN_TYPE_ONE_TO_MANY);
+      }
+
       $table->addTableLink($field, $joinable);
     }
   }

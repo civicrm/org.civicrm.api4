@@ -86,4 +86,24 @@ class Api4SelectQueryTest extends UnitTestCase {
     $this->assertEquals($contact['display_name'], $resultContact['display_name']);
   }
 
+  public function testOneToManyMultipleJoin() {
+    $query = new Api4SelectQuery('Contact', FALSE);
+    $query->select[] = 'id';
+    $query->select[] = 'first_name';
+    $query->select[] = 'phones.phone';
+    $results = $query->run();
+
+    $this->assertCount(2, $results);
+
+    foreach ($results as $result) {
+      if ($result['id'] == 2) {
+        // Contact has no phones
+        $this->assertEmpty($result['phones']);
+      }
+      elseif ($result['id'] == 1) {
+        $this->assertCount(2, $result['phones']);
+      }
+    }
+  }
+
 }

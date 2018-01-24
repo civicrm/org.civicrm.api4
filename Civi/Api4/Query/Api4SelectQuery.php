@@ -28,7 +28,8 @@
 namespace Civi\Api4\Query;
 
 use Civi\API\SelectQuery;
-use Civi\Api4\Utils\ArrayInsertionUtil;
+use Civi\Api4\Event\Events;
+use Civi\Api4\Event\PostSelectQueryEvent;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
@@ -74,7 +75,10 @@ class Api4SelectQuery extends SelectQuery {
   public function run() {
     $this->preRun();
     $baseResults = parent::run();
-    return $this->postRun($baseResults);
+    $event = new PostSelectQueryEvent($baseResults, $this);
+    \Civi::dispatcher()->dispatch(Events::POST_SELECT_QUERY, $event);
+
+    return $event->getResults();
   }
 
   /**
@@ -89,63 +93,6 @@ class Api4SelectQuery extends SelectQuery {
 
     foreach ($dotFields as $dotField) {
       $this->joinFK($dotField);
-    }
-  }
-
-  /**
-   * @param $primaryResults
-   *
-   * @return array
-   */
-  protected function postRun($primaryResults) {
-    if (empty($primaryResults)) {
-      return $primaryResults;
-    }
-
-    $this->formatResults($primaryResults, $this->entity);
-
-    $groupedSelects = $this->getJoinedDotSelects();
-    foreach ($groupedSelects as $finalAlias => $selects) {
-      $path = $this->buildPath($selects[0]);
-      $selects = $this->formatSelects($finalAlias, $selects);
-      $joinResults = $this->runWithNewSelects($selects);
-
-      // todo: call formatResults to unserialize joinResults
-      foreach ($primaryResults as &$primaryResult) {
-        $baseId = $primaryResult['id'];
-        $filtered = array_filter($joinResults, function ($res) use ($baseId) {
-          return ($res['_base_id'] === $baseId);
-        });
-        $filtered = array_values($filtered);
-        ArrayInsertionUtil::insert($primaryResult, $path, $filtered);
-      }
-    }
-
-    // no associative option
-    return array_values($primaryResults);
-  }
-
-  /**
-   * Unserialize values
-   *
-   * @param $results
-   * @param $entity
-   * @throws \API_Exception
-   */
-  protected function formatResults(&$results, $entity) {
-    if ($entity == $this->entity) {
-      $fields = $this->apiFieldSpec;
-    }
-    else {
-      $fields = civicrm_api4($entity, 'getFields', ['action' => 'get', 'includeCustom' => FALSE])->indexBy('name');
-    }
-    // Unserialize arrays
-    foreach ($results as &$result) {
-      foreach ($result as $field => &$value) {
-        if (!empty($fields[$field]['serialize']) && is_string($value)) {
-          $value = \CRM_Core_DAO::unSerializeField($value, $fields[$field]['serialize']);
-        }
-      }
     }
   }
 
@@ -321,117 +268,123 @@ class Api4SelectQuery extends SelectQuery {
     return TableHelper::getTableForClass(TableHelper::getFullName($this->entity));
   }
 
-
   /**
-   * @param string $pathString
-   *   Dot separated path to the field, e.g. emails.location_type.label
-   *
-   * @return array
-   *   Index is table alias and value is boolean whether is 1-to-many join
+   * @return string
    */
-  private function buildPath($pathString) {
-    $pathParts = explode('.', $pathString);
-    array_pop($pathParts); // remove field
-    $path = [];
-    $isMultipleChecker = function($alias)  {
-      foreach ($this->joinedTables as $table) {
-        if ($table->getAlias() === $alias) {
-          return $table->getJoinType() === Joinable::JOIN_TYPE_ONE_TO_MANY;
-        }
-      }
-      return FALSE;
-    };
-
-    foreach ($pathParts as $part) {
-      $path[$part] = $isMultipleChecker($part);
-    }
-
-    return $path;
-  }
-
-  /**
-   * @param $finalAlias
-   * @param $selects
-   *
-   * @return array
-   */
-  private function formatSelects($finalAlias, $selects) {
-    $mainAlias = self::MAIN_TABLE_ALIAS;
-    $selectFields = [];
-
-    foreach ($selects as $select) {
-      $selectAlias = $this->fkSelectAliases[$select];
-      $fieldAlias = substr($select, strrpos($select, '.') + 1);
-      $selectFields[$fieldAlias] = $selectAlias;
-    }
-
-    $firstSelect = $selects[0];
-    $pathParts = explode('.', $firstSelect);
-    $numParts = count($pathParts);
-    $parentAlias = $numParts > 2 ? $pathParts[$numParts - 3] : $mainAlias;
-
-    $selectFields['id'] = sprintf('%s.id', $finalAlias);
-    $selectFields['_parent_id'] = $parentAlias . '.id';
-    $selectFields['_base_id'] = $mainAlias . '.id';
-
-    return $selectFields;
-  }
-
-  /**
-   * @param array $selects
-   *
-   * @return array
-   */
-  private function runWithNewSelects(array $selects) {
-    $aliasedSelects = array_map(function ($field, $alias) {
-      return sprintf('%s as "%s"', $field, $alias);
-    }, $selects, array_keys($selects));
-
-    $newSelect = sprintf('SELECT DISTINCT %s', implode(", ", $aliasedSelects));
-    $sql = str_replace("\n", ' ', $this->query->toSQL());
-    $originalSelect = substr($sql, 0, strpos($sql, ' FROM'));
-    $sql = str_replace($originalSelect, $newSelect, $sql);
-
-    $relatedResults = [];
-    $resultDAO = \CRM_Core_DAO::executeQuery($sql);
-    while ($resultDAO->fetch()) {
-      $relatedResults[$resultDAO->id] = [];
-      foreach ($selects as $alias => $column) {
-        $returnName = $alias;
-        $alias = str_replace('.', '_', $alias);
-        if (property_exists($resultDAO, $alias)) {
-          $relatedResults[$resultDAO->id][$returnName] = $resultDAO->$alias;
-        }
-      };
-    }
-
-    return $relatedResults;
+  public function getEntity() {
+    return $this->entity;
   }
 
   /**
    * @return array
    */
-  private function getJoinedDotSelects() {
-    $joinedDotSelects = array_filter($this->select, function ($select) {
-      return isset($this->fkSelectAliases[$select]);
-    });
+  public function getSelect() {
+    return $this->select;
+  }
 
-    $selects = [];
-    // group related selects by alias so they can be executed in one query
-    foreach ($joinedDotSelects as $select) {
-      $parts = explode('.', $select);
-      $finalAlias = $parts[count($parts) - 2];
-      $selects[$finalAlias][] = $select;
-    }
+  /**
+   * @return array
+   */
+  public function getWhere() {
+    return $this->where;
+  }
 
-    // sort by depth, e.g. email selects should be done before email.location
-    uasort($selects, function ($a, $b) {
-      $aFirst = $a[0];
-      $bFirst = $b[0];
-      return substr_count($aFirst, '.') > substr_count($bFirst, '.');
-    });
+  /**
+   * @return array
+   */
+  public function getOrderBy() {
+    return $this->orderBy;
+  }
 
-    return $selects;
+  /**
+   * @return mixed
+   */
+  public function getLimit() {
+    return $this->limit;
+  }
+
+  /**
+   * @return mixed
+   */
+  public function getOffset() {
+    return $this->offset;
+  }
+
+  /**
+   * @return array
+   */
+  public function getSelectFields() {
+    return $this->selectFields;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isFillUniqueFields() {
+    return $this->isFillUniqueFields;
+  }
+
+  /**
+   * @return \CRM_Utils_SQL_Select
+   */
+  public function getQuery() {
+    return $this->query;
+  }
+
+  /**
+   * @return array
+   */
+  public function getJoins() {
+    return $this->joins;
+  }
+
+  /**
+   * @return array
+   */
+  public function getApiFieldSpec() {
+    return $this->apiFieldSpec;
+  }
+
+  /**
+   * @return array
+   */
+  public function getEntityFieldNames() {
+    return $this->entityFieldNames;
+  }
+
+  /**
+   * @return array
+   */
+  public function getAclFields() {
+    return $this->aclFields;
+  }
+
+  /**
+   * @return bool|string
+   */
+  public function getCheckPermissions() {
+    return $this->checkPermissions;
+  }
+
+  /**
+   * @return int
+   */
+  public function getApiVersion() {
+    return $this->apiVersion;
+  }
+
+  /**
+   * @return array
+   */
+  public function getFkSelectAliases() {
+    return $this->fkSelectAliases;
+  }
+
+  /**
+   * @return Joinable[]
+   */
+  public function getJoinedTables() {
+    return $this->joinedTables;
   }
 
 }

@@ -160,6 +160,14 @@ class Joinable {
 
     return $this;
   }
+
+  /**
+   * @return array
+   */
+  public function getExtraJoinConditions() {
+    return $this->conditions;
+  }
+
   /**
    * @param array $conditions
    *
@@ -203,6 +211,26 @@ class Joinable {
    */
   public function setJoinType($joinType) {
     $this->joinType = $joinType;
+
+    return $this;
+  }
+
+  /**
+   * @param string $targetTable
+   * @return $this
+   */
+  public function setTargetTable($targetTable) {
+    $this->targetTable = $targetTable;
+
+    return $this;
+  }
+
+  /**
+   * @param string $targetColumn
+   * @return $this
+   */
+  public function setTargetColumn($targetColumn) {
+    $this->targetColumn = $targetColumn;
 
     return $this;
   }

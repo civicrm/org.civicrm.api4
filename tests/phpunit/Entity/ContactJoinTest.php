@@ -1,8 +1,9 @@
 <?php
 
-namespace phpunit\Entity;
+namespace Civi\Test\Api4\Entity;
 
 use Civi\Api4\Entity\Contact;
+use Civi\Api4\Entity\OptionValue;
 use Civi\Test\Api4\UnitTestCase;
 
 /**
@@ -32,8 +33,11 @@ class ContactJoinTest extends UnitTestCase {
   }
 
   public function testContactJoin() {
+
     $contact = $this->getReference('test_contact_1');
-    foreach (['Address', 'Email', 'Phone', 'OpenID', 'IM', 'Website'] as $entity) {
+    $entitiesToTest = ['Address', 'OpenID', 'IM', 'Website', 'Email', 'Phone'];
+
+    foreach ($entitiesToTest as $entity) {
       $results = civicrm_api4($entity, 'get', [
         'where' => [['contact_id', '=', $contact['id']]],
         'select' => ['contact.display_name', 'contact.id'],
@@ -45,20 +49,55 @@ class ContactJoinTest extends UnitTestCase {
     }
   }
 
-  public function testJoinToPCM() {
-    $contact = Contact::create()
-      ->setValues(["preferred_communication_method" => [1, 2, 3], 'contact_type' => 'Individual', 'first_name' => 'Test', 'last_name' => 'PCM'])
-      ->execute();
+  public function testJoinToPCMWillReturnArray() {
+    $contact = Contact::create()->setValues([
+      'preferred_communication_method' => [1, 2, 3],
+      'contact_type' => 'Individual',
+      'first_name' => 'Test', 'last_name' => 'PCM'
+    ])->execute();
 
     $fetchedContact = Contact::get()
       ->addWhere('id', '=', $contact['id'])
+      ->addSelect('preferred_communication_method')
+      ->execute()
+      ->first();
+
+    $this->assertCount(3, $fetchedContact["preferred_communication_method"]);
+  }
+
+  public function testJoinToPCMOptionValueWillShowLabel() {
+    $options = OptionValue::get()
+      ->addWhere('option_group.name', '=', 'preferred_communication_method')
+      ->execute()
+      ->getArrayCopy();
+
+    $optionValues = array_column($options, 'value');
+    $labels = array_column($options, 'label');
+
+    $contact = Contact::create()->setValues([
+      'preferred_communication_method' => $optionValues,
+      'contact_type' => 'Individual',
+      'first_name' => 'Test', 'last_name' => 'PCM'
+    ])->execute()->getArrayCopy();
+
+    $contact2 = Contact::create()->setValues([
+      'preferred_communication_method' => $optionValues,
+      'contact_type' => 'Individual',
+      'first_name' => 'Test', 'last_name' => 'PCM2'
+    ])->execute()->getArrayCopy();
+
+    $contactIds = array_column([$contact, $contact2], 'id');
+
+    $fetchedContact = Contact::get()
+      ->addWhere('id', 'IN', $contactIds)
       ->addSelect('preferred_communication_method.label')
       ->execute()
       ->first();
 
-    // Todo: this test is failing due to a bug in the join code,
-    // but it also needs pcm option values populated in order to pass.
-    $this->assertEquals(3, count($fetchedContact["preferred_communication_method"]));
+    $preferredMethod = $fetchedContact['preferred_communication_method'];
+    $returnedLabels = array_column($preferredMethod, 'label');
+
+    $this->assertEquals($labels, $returnedLabels);
   }
 
 }

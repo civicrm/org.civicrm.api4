@@ -60,6 +60,17 @@ class Table {
   }
 
   /**
+   * @param Joinable $linkToRemove
+   */
+  public function removeLink(Joinable $linkToRemove) {
+    foreach ($this->tableLinks as $index => $link) {
+      if ($link === $linkToRemove) {
+        unset($this->tableLinks[$index]);
+      }
+    }
+  }
+
+  /**
    * @param string $baseColumn
    * @param Joinable $joinable
    *
