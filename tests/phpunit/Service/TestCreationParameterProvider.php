@@ -120,7 +120,7 @@ class TestCreationParameterProvider {
   private function getRandomValue($dataType) {
     switch ($dataType) {
       case 'Integer':
-        return rand(0, 2000);
+        return rand(1, 2000);
 
       case 'String':
         return StringHelper::createRandom(10, implode('', range('a', 'z')));
