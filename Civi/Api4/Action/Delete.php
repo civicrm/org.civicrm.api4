@@ -25,7 +25,7 @@
  +--------------------------------------------------------------------+
  */
 namespace Civi\Api4\Action;
-use Civi\Api4\Result;
+use Civi\Api4\Generic\Result;
 
 /**
  * Delete one or more items, based on criteria specified in Where param.

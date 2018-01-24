@@ -30,6 +30,6 @@ namespace Civi\Api4\Entity;
  * Contact entity.
  *
  */
-class Contact extends \Civi\Api4\AbstractEntity {
+class Contact extends \Civi\Api4\Generic\AbstractEntity {
 
 }

@@ -27,7 +27,7 @@
 
 namespace Civi\Api4\Action\Entity;
 
-use Civi\Api4\Result;
+use Civi\Api4\Generic\Result;
 use \Civi\Api4\Action\GetFields as GenericGetFields;
 
 /**

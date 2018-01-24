@@ -27,9 +27,9 @@
 
 namespace Civi\Api4\Action\Entity;
 
-use Civi\Api4\AbstractAction;
+use Civi\Api4\Generic\AbstractAction;
 use \CRM_Core_DAO_AllCoreTables as AllTables;
-use Civi\Api4\Result;
+use Civi\Api4\Generic\Result;
 
 /**
  * Get a list of FK links between entities

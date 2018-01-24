@@ -2,7 +2,7 @@
 
 namespace Civi\Api4\Event;
 
-use Civi\Api4\AbstractAction;
+use Civi\Api4\Generic\AbstractAction;
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
 class GetSpecEvent extends BaseEvent {

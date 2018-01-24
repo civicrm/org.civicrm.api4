@@ -28,8 +28,8 @@
 namespace Civi\Api4\Action;
 
 use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\AbstractAction;
-use Civi\Api4\Result;
+use Civi\Api4\Generic\AbstractAction;
+use Civi\Api4\Generic\Result;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**

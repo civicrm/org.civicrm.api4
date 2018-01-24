@@ -24,7 +24,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
-namespace Civi\Api4;
+namespace Civi\Api4\Generic;
 
 use Civi\API\Exception\UnauthorizedException;
 use Civi\API\Kernel;
@@ -166,7 +166,7 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   /**
-   * @param \Civi\Api4\Result $result
+   * @param \Civi\Api4\Generic\Result $result
    */
   abstract public function _run(Result $result);
 

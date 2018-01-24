@@ -25,7 +25,7 @@
  +--------------------------------------------------------------------+
  */
 namespace Civi\Api4\Action;
-use Civi\Api4\Result;
+use Civi\Api4\Generic\Result;
 
 /**
  * Update one or more records with new values. Use the where clause to select them.

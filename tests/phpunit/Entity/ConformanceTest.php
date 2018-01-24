@@ -2,7 +2,7 @@
 
 namespace Civi\Test\Api4\Entity;
 
-use Civi\Api4\AbstractEntity;
+use Civi\Api4\Generic\AbstractEntity;
 use Civi\Api4\Entity\Entity;
 use Civi\Test\Api4\Service\TestCreationParameterProvider;
 use Civi\Test\Api4\Traits\TableDropperTrait;

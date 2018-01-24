@@ -14,7 +14,7 @@ use Symfony\Component\Config\FileLocator;
  * @param $action
  * @param array $params
  *
- * @return \Civi\Api4\Result
+ * @return \Civi\Api4\Generic\Result
  */
 function civicrm_api4($entity, $action, $params = []) {
   $params['version'] = 4;
@@ -176,18 +176,3 @@ _api4_civix_civicrm_angularModules($angularModules);
 function api4_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _api4_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
-
-/**
- * Functions below this ship commented out. Uncomment as required.
- *
-
-/**
- * Implements hook_civicrm_preProcess().
- *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_preProcess
- *
-function api4_civicrm_preProcess($formName, &$form) {
-
-}
-
-*/

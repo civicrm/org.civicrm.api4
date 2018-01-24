@@ -24,61 +24,49 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
+namespace Civi\Api4\Generic;
 
-namespace Civi\Api4;
+use Civi\API\Exception\NotImplementedException;
+use Civi\Api4\Action\Create;
+use Civi\Api4\Action\Delete;
+use Civi\Api4\Action\Get;
+use Civi\Api4\Action\GetActions;
+use Civi\Api4\Action\GetFields;
+use Civi\Api4\Action\Update;
 
 /**
- * Container for api results.
+ * Base class for all api entities.
+ *
+ * @method static Get get
+ * @method static GetFields getFields
+ * @method static GetActions getActions
+ * @method static Create create
+ * @method static Update update
+ * @method static Delete delete
  */
-class Result extends \ArrayObject {
-  /**
-   * @var string
-   */
-  public $entity;
-  /**
-   * @var string
-   */
-  public $action;
-  /**
-   * Api version
-   * @var int
-   */
-  public $version = 4;
+abstract class AbstractEntity {
 
   /**
-   * Return first result.
-   * @return array|null
-   */
-  public function first() {
-    foreach ($this as $values) {
-      return $values;
-    }
-    return NULL;
-  }
-
-  /**
-   * Re-index the results array (which by default is non-associative)
+   * Magic method to return the action object for an api.
    *
-   * Drops any item from the results that does not contain the specified key
-   *
-   * @param string $key
-   * @return $this
-   * @throws \API_Exception
+   * @param string $action
+   * @param null $ignore
+   * @return AbstractAction
+   * @throws NotImplementedException
    */
-  public function indexBy($key) {
-    if (count($this)) {
-      $newResults = [];
-      foreach ($this as $values) {
-        if (isset($values[$key])) {
-          $newResults[$values[$key]] = $values;
-        }
-      }
-      if (!$newResults) {
-        throw new \API_Exception("Key $key not found in api results");
-      }
-      $this->exchangeArray($newResults);
+  public static function __callStatic($action, $ignore) {
+    // Get entity name from called class
+    $entity = substr(static::class, strrpos(static::class, '\\') + 1);
+    // Find class for this action
+    $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
+    $genericAction = '\Civi\Api4\Action\\' . ucfirst($action);
+    if (class_exists($entityAction)) {
+      return new $entityAction($entity);
     }
-    return $this;
+    elseif (class_exists($genericAction)) {
+      return new $genericAction($entity);
+    }
+    throw new NotImplementedException("Api $entity $action version 4 does not exist.");
   }
 
 }
