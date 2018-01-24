@@ -33,7 +33,7 @@ class SpecGatherer {
   public function getSpec($entity, $action, $includeCustom) {
     $specification = new RequestSpec($entity, $action);
 
-    $this->addDAOFields($entity, $specification);
+    $this->addDAOFields($entity, $action, $specification);
     if ($includeCustom) {
       $this->addCustomFields($entity, $specification);
     }
@@ -60,10 +60,13 @@ class SpecGatherer {
    * @param string $entity
    * @param RequestSpec $specification
    */
-  private function addDAOFields($entity, RequestSpec $specification) {
+  private function addDAOFields($entity, $action, RequestSpec $specification) {
     $DAOFields = $this->getDAOFields($entity);
 
     foreach ($DAOFields as $DAOField) {
+      if ($DAOField['name'] == 'id' && $action == 'create') {
+        continue;
+      }
       $field = SpecFormatter::arrayToField($DAOField);
       $specification->addFieldSpec($field);
     }
