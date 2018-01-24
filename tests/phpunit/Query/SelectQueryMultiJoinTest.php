@@ -6,6 +6,11 @@ use Civi\Api4\Entity\Contact;
 use Civi\Api4\Entity\Email;
 use Civi\Test\Api4\UnitTestCase;
 
+/**
+ * Class SelectQueryMultiJoinTest
+ * @package Civi\Test\Api4\Query
+ * @group headless
+ */
 class SelectQueryMultiJoinTest extends UnitTestCase {
   public function setUpHeadless() {
     $this->cleanup(['tablesToTruncate' => ['civicrm_contact', 'civicrm_email']]);

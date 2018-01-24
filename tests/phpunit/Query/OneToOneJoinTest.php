@@ -7,6 +7,11 @@ use Civi\Api4\Entity\OptionGroup;
 use Civi\Api4\Entity\OptionValue;
 use Civi\Test\Api4\UnitTestCase;
 
+/**
+ * Class OneToOneJoinTest
+ * @package Civi\Test\Api4\Query
+ * @group headless
+ */
 class OneToOneJoinTest extends UnitTestCase {
 
   public function testOneToOneJoin() {
