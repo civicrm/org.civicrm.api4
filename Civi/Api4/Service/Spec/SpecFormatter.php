@@ -39,9 +39,7 @@ class SpecFormatter {
       $field->setCustomGroupId($data['custom_group_id']);
       $field->setRequired((bool) ArrayHelper::value('is_required', $data, FALSE));
       $field->setTitle(ArrayHelper::value('label', $data));
-      if (\CRM_Core_BAO_CustomField::isSerialized($data)) {
-        $field->setSerialize(\CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND);
-      }
+      $field->setSerialize(\CRM_Core_BAO_CustomField::isSerialized($data));
     }
     else {
       $name = ArrayHelper::value('name', $data);
