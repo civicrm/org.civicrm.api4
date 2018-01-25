@@ -38,24 +38,33 @@ class ConformanceTest extends UnitTestCase {
     \PHPUnit_Framework_Error_Deprecated::$enabled = FALSE;
   }
 
-  public function testConformance() {
-
+  public function getEntities() {
+    $result = [];
     $entities = Entity::get()->setCheckPermissions(FALSE)->execute();
-
-    $this->assertNotEmpty($entities->getArrayCopy());
-
-    foreach ($entities as $entity) {
-      /** @var AbstractEntity $entityClass */
-      $entityClass = 'Civi\Api4\\' . $entity;
-
-      if ($entity === 'Entity') {
-        continue;
+    foreach($entities as $entity) {
+      if ($entity != 'Entity') {
+        $result[] = [$entity];
       }
+    }
+    return $result;
+  }
+
+  /**
+   * Fixme: This should use getEntities as a dataProvider but that fails for some reason
+   */
+  public function testConformance() {
+    $entities = $this->getEntities();
+    $this->assertNotEmpty($entities);
+
+    foreach ($entities as $data) {
+      $entity = $data[0];
+      $entityClass = 'Civi\Api4\\' . $entity;
 
       $this->checkActions($entityClass);
       $this->checkFields($entityClass, $entity);
       $id = $this->checkCreation($entity, $entityClass);
       $this->checkGet($entityClass, $id, $entity);
+      $this->checkUpdateFailsFromCreate($entityClass, $id);
       $this->checkWrongParamType($entityClass);
       $this->checkDeleteWithNoId($entityClass);
       $this->checkDeletion($entityClass, $id);
@@ -64,7 +73,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity $entityClass
+   * @param string $entityClass
    * @param $entity
    */
   protected function checkFields($entityClass, $entity) {
@@ -81,7 +90,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity $entityClass
+   * @param string $entityClass
    */
   protected function checkActions($entityClass) {
     $actions = $entityClass::getActions()
@@ -94,7 +103,7 @@ class ConformanceTest extends UnitTestCase {
 
   /**
    * @param string $entity
-   * @param AbstractEntity $entityClass
+   * @param string $entityClass
    *
    * @return mixed
    */
@@ -114,7 +123,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity $entityClass
+   * @param string $entityClass
    * @param int $id
    * @param string $entity
    */
@@ -129,7 +138,26 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity $entityClass
+   * @param string $entityClass
+   * @param int $id
+   * @param string $entity
+   */
+  protected function checkUpdateFailsFromCreate($entityClass, $id) {
+      $exceptionThrown = '';
+      try {
+        $entityClass::create()
+          ->setCheckPermissions(FALSE)
+          ->setValue('id', $id)
+          ->execute();
+      }
+      catch (\API_Exception $e) {
+        $exceptionThrown = $e->getMessage();
+      }
+      $this->assertContains('id', $exceptionThrown);
+  }
+
+  /**
+   * @param string $entityClass
    */
   protected function checkDeleteWithNoId($entityClass) {
     $exceptionThrown = '';
@@ -144,7 +172,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity $entityClass
+   * @param string $entityClass
    */
   protected function checkWrongParamType($entityClass) {
     $exceptionThrown = '';
@@ -161,7 +189,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity $entityClass
+   * @param string $entityClass
    * @param int $id
    */
   protected function checkDeletion($entityClass, $id) {
@@ -175,7 +203,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity $entityClass
+   * @param string $entityClass
    * @param int $id
    * @param string $entity
    */

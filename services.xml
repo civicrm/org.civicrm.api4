@@ -45,11 +45,7 @@
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="null_value.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\NullValueFormattingPreCreationSubscriber">
-            <tag name="event_subscriber"/>
-        </service>
-
-        <service id="contact.pre_update.subscriber" class="Civi\Api4\Event\Subscriber\ContactPreUpdateSubscriber">
+        <service id="null_value.presave.subscriber" class="Civi\Api4\Event\Subscriber\NullValueFormattingPresaveSubscriber">
             <tag name="event_subscriber"/>
         </service>
 

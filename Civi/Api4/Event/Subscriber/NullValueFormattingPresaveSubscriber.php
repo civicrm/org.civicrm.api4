@@ -2,14 +2,20 @@
 
 namespace Civi\Api4\Event\Subscriber;
 
+use Civi\API\Event\PrepareEvent;
 use Civi\Api4\Action\Create;
+use Civi\Api4\Action\Update;
 
-class NullValueFormattingPreCreationSubscriber extends PreCreationSubscriber {
+class NullValueFormattingPresaveSubscriber extends AbstractPrepareSubscriber {
+
   /**
-   * @param Create $request
+   * @param PrepareEvent $event
    */
-  protected function modify(Create $request) {
-    $this->formalNullInput($request);
+  public function onApiPrepare(PrepareEvent $event) {
+    $apiRequest = $event->getApiRequest();
+    if ($apiRequest instanceof Create || $apiRequest instanceof Update) {
+      $this->formalNullInput($apiRequest);
+    }
   }
 
   /**
@@ -29,7 +35,7 @@ class NullValueFormattingPreCreationSubscriber extends PreCreationSubscriber {
    *
    * @param Create $request
    */
-  private function formalNullInput(Create $request) {
+  private function formalNullInput($request) {
     foreach ($request->getValues() as $key => $value) {
       if ('null' === $value) {
         $request->setValue($key, 'Null');
@@ -38,15 +44,6 @@ class NullValueFormattingPreCreationSubscriber extends PreCreationSubscriber {
         $request->setValue($key, 'null');
       }
     }
-  }
-
-  /**
-   * @param Create $request
-   *
-   * @return TRUE as it should apply to all pre-creation requests
-   */
-  protected function applies(Create $request) {
-    return TRUE;
   }
 
 }

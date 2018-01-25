@@ -50,10 +50,13 @@ class Create extends AbstractAction {
    * @param string $key
    * @param mixed $value
    * @return $this
+   * @throws \API_Exception
    */
   public function setValue($key, $value) {
+    if ($key == 'id') {
+      throw new \API_Exception('Cannot update the id of an existing object.');
+    }
     $this->values[$key] = $value;
-    \Civi::log()->debug('setting $key: ' . json_encode($key, JSON_PRETTY_PRINT));
     return $this;
   }
 
@@ -77,103 +80,14 @@ class Create extends AbstractAction {
    * @inheritDoc
    */
   public function _run(Result $result) {
-    $params = $this->getParams()['values'];
-
-    $entityId = \CRM_Utils_Array::value('id', $params);
-    $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
-
-    $bao_name = $this->getBaoName();
-    $bao = new $bao_name();
-
-    // Some BAOs are weird and don't support a straightforward "create" method.
-    $oddballs = [
-      'Website' => 'add',
-      'Address' => 'add',
-    ];
-    $method = \CRM_Utils_Array::value($this->getEntity(), $oddballs, 'create');
-    if (!method_exists($bao, $method)) {
-      $method = 'add';
-    }
-    $createResult = $bao->$method($params);
-
-    if (!$createResult) {
-      $errMessage = sprintf('%s creation failed', $this->getEntity());
-      throw new \API_Exception($errMessage);
+    if (!empty($this->values['id'])) {
+      throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
     }
 
-    // trim back the junk and just get the array:
-    $resultAsArray = $this->baoToArray($createResult);
+    $resultArray = $this->writeObject($this->values);
+
     // fixme should return a single row array???
-    $result->exchangeArray($resultAsArray);
-  }
-
-  /**
-   * @param $params
-   * @param $entity
-   * @param $entityId
-   * @return mixed
-   */
-  private function formatCustomParams($params, $entity, $entityId) {
-
-    $params['custom'] = [];
-    $customParams = [];
-
-    // $customValueID is the ID of the custom value in the custom table for this
-    // entity (i guess this assumes it's not a multi value entity)
-    foreach ($params as $name => $value) {
-
-      if (strpos($name, '.') === FALSE) {
-        continue;
-      }
-
-      list($customGroup, $customField) = explode('.', $name);
-
-      $customFieldId = \CRM_Core_BAO_CustomField::getFieldValue(
-        \CRM_Core_DAO_CustomField::class,
-        $customField,
-        'id',
-        'name'
-      );
-      $customFieldType = \CRM_Core_BAO_CustomField::getFieldValue(
-        \CRM_Core_DAO_CustomField::class,
-        $customField,
-        'html_type',
-        'name'
-      );
-      $customFieldExtends = \CRM_Core_BAO_CustomGroup::getFieldValue(
-        \CRM_Core_DAO_CustomGroup::class,
-        $customGroup,
-        'extends',
-        'name'
-      );
-
-      // todo are we sure we don't want to allow setting to NULL? need to test
-      if ($customFieldId && NULL !== $value) {
-
-        if ($customFieldType == 'CheckBox') {
-          // this function should be part of a class
-          formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
-        }
-
-        \CRM_Core_BAO_CustomField::formatCustomField(
-          $customFieldId,
-          $customParams,
-          $value,
-          $customFieldExtends,
-          NULL, // todo check when this is needed
-          $entityId,
-          FALSE,
-          FALSE,
-          TRUE
-        );
-      }
-    }
-
-    if (!empty($customParams)) {
-      $params['custom'] = $customParams;
-    }
-
-    return $params;
+    $result->exchangeArray($resultArray);
   }
 
 }

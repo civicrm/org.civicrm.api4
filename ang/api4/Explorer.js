@@ -62,7 +62,7 @@
       return out;
     }
 
-    // Reformat an existing array of objects for compatabilitiy with select2
+    // Reformat an existing array of objects for compatibility with select2
     function formatForSelect2(input, container, key) {
       _.each(input, function(item) {
         item.id = item.text = item[key];

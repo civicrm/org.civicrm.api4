@@ -47,7 +47,7 @@ abstract class AbstractAction implements \ArrayAccess {
   protected $version = 4;
 
   /**
-   * A list of api actions to execute on the results.
+   * Todo: not implemented.
    *
    * @var array
    */
@@ -323,6 +323,110 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   public function isAuthorized() {
     return TRUE;
+  }
+
+  /**
+   * Write a bao object as part of a create/update action.
+   *
+   * @param $params
+   * @return array
+   * @throws \API_Exception
+   */
+  protected function writeObject($params) {
+    $entityId = \CRM_Utils_Array::value('id', $params);
+    $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
+
+    $baoName = $this->getBaoName();
+    $bao = new $baoName();
+
+    // For some reason the contact bao requires this
+    if ($entityId && $this->getEntity() == 'Contact') {
+      $params['contact_id'] = $entityId;
+    }
+    // Some BAOs are weird and don't support a straightforward "create" method.
+    $oddballs = [
+      'Website' => 'add',
+      'Address' => 'add',
+    ];
+    $method = \CRM_Utils_Array::value($this->getEntity(), $oddballs, 'create');
+    if (!method_exists($bao, $method)) {
+      $method = 'add';
+    }
+    $createResult = $bao->$method($params);
+
+    if (!$createResult) {
+      $errMessage = sprintf('%s write operation failed', $this->getEntity());
+      throw new \API_Exception($errMessage);
+    }
+
+    // trim back the junk and just get the array:
+    return $this->baoToArray($createResult);
+  }
+
+  /**
+   * @param $params
+   * @param $entity
+   * @param $entityId
+   * @return mixed
+   */
+  private function formatCustomParams($params, $entity, $entityId) {
+    $params['custom'] = $customParams = [];
+
+    // $customValueID is the ID of the custom value in the custom table for this
+    // entity (i guess this assumes it's not a multi value entity)
+    foreach ($params as $name => $value) {
+      if (strpos($name, '.') === FALSE) {
+        continue;
+      }
+
+      list($customGroup, $customField) = explode('.', $name);
+
+      $customFieldId = \CRM_Core_BAO_CustomField::getFieldValue(
+        \CRM_Core_DAO_CustomField::class,
+        $customField,
+        'id',
+        'name'
+      );
+      $customFieldType = \CRM_Core_BAO_CustomField::getFieldValue(
+        \CRM_Core_DAO_CustomField::class,
+        $customField,
+        'html_type',
+        'name'
+      );
+      $customFieldExtends = \CRM_Core_BAO_CustomGroup::getFieldValue(
+        \CRM_Core_DAO_CustomGroup::class,
+        $customGroup,
+        'extends',
+        'name'
+      );
+
+      // todo are we sure we don't want to allow setting to NULL? need to test
+      if ($customFieldId && NULL !== $value) {
+
+        if ($customFieldType == 'CheckBox') {
+          // this function should be part of a class
+          formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
+        }
+
+        \CRM_Core_BAO_CustomField::formatCustomField(
+          $customFieldId,
+          $customParams,
+          $value,
+          $customFieldExtends,
+          NULL, // todo check when this is needed
+          $entityId,
+          FALSE,
+          FALSE,
+          TRUE
+        );
+      }
+    }
+
+    if (!empty($customParams)) {
+      $params['custom'] = $customParams;
+    }
+
+    return $params;
   }
 
 }

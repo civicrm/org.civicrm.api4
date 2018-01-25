@@ -38,9 +38,9 @@ class UpdateCustomValueTest extends BaseCustomValueTest {
       ->execute()
       ->getArrayCopy()['id'];
 
-    Contact::create()
+    Contact::update()
       ->setCheckPermissions(FALSE)
-      ->setValue('id', $contactId)
+      ->addWhere('id', '=', $contactId)
       ->setValue('first_name', 'Red')
       ->setValue('last_name', 'Tester')
       ->setValue('contact_type', 'Individual')

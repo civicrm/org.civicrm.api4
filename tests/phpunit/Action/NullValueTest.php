@@ -28,19 +28,23 @@ class NullValueTest extends UnitTestCase {
     $this->assertSame('Joseph Null', $contact['display_name']);
   }
 
-  public function testSettingToNullA() {
-    $contactId = Contact::create()
+  public function testSettingToNull() {
+    $contact = Contact::create()
       ->setCheckPermissions(FALSE)
       ->setValue('first_name', 'ILoveMy')
       ->setValue('last_name', 'LastName')
       ->setValue('contact_type', 'Individual')
-      ->execute()['id'];
-
-    $contact = Contact::create()
-      ->setCheckPermissions(FALSE)
-      ->setValue('id', $contactId)
-      ->setValue('last_name', NULL)
       ->execute();
+
+    $this->assertSame('ILoveMy LastName', $contact['display_name']);
+    $contactId = $contact['id'];
+
+    $contact = Contact::update()
+      ->setCheckPermissions(FALSE)
+      ->addWhere('id', '=', $contactId)
+      ->setValue('last_name', NULL)
+      ->execute()
+      ->first();
 
     $this->assertSame(NULL, $contact['last_name']);
     $this->assertSame('ILoveMy', $contact['display_name']);

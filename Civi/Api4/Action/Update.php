@@ -50,22 +50,56 @@ class Update extends Get {
    */
   protected $values = [];
 
+  /**
+   * Set a field value for the created object.
+   *
+   * @param string $key
+   * @param mixed $value
+   * @return $this
+   * @throws \API_Exception
+   */
+  public function setValue($key, $value) {
+    if ($key == 'id') {
+      throw new \API_Exception('Cannot update the id of an existing object.');
+    }
+    $this->values[$key] = $value;
+    return $this;
+  }
+
+  /**
+   * @param $key
+   *
+   * @return mixed|null
+   */
+  public function getValue($key) {
+    return isset($this->values[$key]) ? $this->values[$key] : NULL;
+  }
+
+  /**
+   * @return array
+   */
+  public function getValues() {
+    return $this->values;
+  }
+
+  /**
+   * @inheritDoc
+   */
   public function _run(Result $result) {
-    $bao_name = $this->getBaoName();
+    if (!empty($this->values['id'])) {
+      throw new \Exception('Cannot update the id of an existing object.');
+    }
     // First run the parent action (get)
     $this->select = ['id'];
-    $patch_values = $this->getParams()['values'];
+    // For some reason the contact bao requires this
+    if ($this->getEntity() == 'Contact') {
+      $this->select[] = 'contact_type';
+    }
     parent::_run($result);
     // Then act on the result
     $updated_results = [];
     foreach ($result as $item) {
-      // todo confirm we need a new object
-      $bao = new $bao_name();
-      $patch = $item + $patch_values;
-      // update it
-      $update_result_bao = $bao->create($patch);
-      // trim back the junk and just get the array:
-      $updated_results[] = $this->baoToArray($update_result_bao);
+      $updated_results[$item['id']] = $this->writeObject($this->values + $item);
     }
     $result->exchangeArray($updated_results);
   }

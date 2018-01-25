@@ -32,7 +32,7 @@ class SpecGathererTest extends UnitTestCase {
 
   public function testBasicFieldsGathering() {
     $gatherer = new SpecGatherer();
-    $specs = $gatherer->getSpec('Contact', 'create', FALSE);
+    $specs = $gatherer->getSpec('Contact', 'get', FALSE);
     $contactDAO = _civicrm_api3_get_DAO('Contact');
     $contactFields = $contactDAO::fields();
     $specFieldNames = $specs->getFieldNames();

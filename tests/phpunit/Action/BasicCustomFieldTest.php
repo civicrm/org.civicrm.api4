@@ -50,6 +50,22 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
     $contactFields = $contact['MyContactFields'];
     $this->assertArrayHasKey('FavColor', $contactFields);
     $this->assertEquals('Red', $contactFields['FavColor']);
+
+    Contact::update()
+      ->addWhere('id', '=', $contactId)
+      ->setValue('MyContactFields.FavColor', 'Blue')
+      ->execute();
+
+
+    $contact = Contact::get()
+      ->setCheckPermissions(FALSE)
+      ->addSelect('MyContactFields.FavColor')
+      ->addWhere('id', '=', $contactId)
+      ->execute()
+      ->first();
+
+    $contactFields = $contact['MyContactFields'];
+    $this->assertEquals('Blue', $contactFields['FavColor']);
   }
 
 }
