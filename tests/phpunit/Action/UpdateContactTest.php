@@ -15,15 +15,15 @@ class UpdateContactTest extends UnitTestCase {
   public function testUpdateWillWork() {
     $contactId = Contact::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Johann')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
+      ->addValue('first_name', 'Johann')
+      ->addValue('last_name', 'Tester')
+      ->addValue('contact_type', 'Individual')
       ->execute()['id'];
 
     $contact = Contact::update()
       ->setCheckPermissions(FALSE)
       ->addWhere('id', '=', $contactId)
-      ->setValue('first_name', 'Testy')
+      ->addValue('first_name', 'Testy')
       ->execute()
       ->first();
     $this->assertEquals('Testy', $contact['first_name']);

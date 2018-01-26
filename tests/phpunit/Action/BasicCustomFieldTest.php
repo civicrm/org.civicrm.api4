@@ -15,25 +15,25 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
 
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'MyContactFields')
-      ->setValue('extends', 'Contact')
+      ->addValue('name', 'MyContactFields')
+      ->addValue('extends', 'Contact')
       ->execute()
       ->getArrayCopy();
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('custom_group_id', $customGroup['id'])
-      ->setValue('html_type', 'Text')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavColor')
+      ->addValue('custom_group_id', $customGroup['id'])
+      ->addValue('html_type', 'Text')
+      ->addValue('data_type', 'String')
       ->execute();
 
     $contactId = Contact::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Johann')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('MyContactFields.FavColor', 'Red')
+      ->addValue('first_name', 'Johann')
+      ->addValue('last_name', 'Tester')
+      ->addValue('contact_type', 'Individual')
+      ->addValue('MyContactFields.FavColor', 'Red')
       ->execute()
       ->getArrayCopy()['id'];
 
@@ -53,7 +53,7 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
 
     Contact::update()
       ->addWhere('id', '=', $contactId)
-      ->setValue('MyContactFields.FavColor', 'Blue')
+      ->addValue('MyContactFields.FavColor', 'Blue')
       ->execute();
 
 

@@ -19,9 +19,9 @@ class NullValueTest extends UnitTestCase {
   public function testStringNull() {
     $contact = Contact::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Joseph')
-      ->setValue('last_name', 'null')
-      ->setValue('contact_type', 'Individual')
+      ->addValue('first_name', 'Joseph')
+      ->addValue('last_name', 'null')
+      ->addValue('contact_type', 'Individual')
       ->execute();
 
     $this->assertSame('Null', $contact['last_name']);
@@ -31,9 +31,9 @@ class NullValueTest extends UnitTestCase {
   public function testSettingToNull() {
     $contact = Contact::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'ILoveMy')
-      ->setValue('last_name', 'LastName')
-      ->setValue('contact_type', 'Individual')
+      ->addValue('first_name', 'ILoveMy')
+      ->addValue('last_name', 'LastName')
+      ->addValue('contact_type', 'Individual')
       ->execute();
 
     $this->assertSame('ILoveMy LastName', $contact['display_name']);
@@ -42,7 +42,7 @@ class NullValueTest extends UnitTestCase {
     $contact = Contact::update()
       ->setCheckPermissions(FALSE)
       ->addWhere('id', '=', $contactId)
-      ->setValue('last_name', NULL)
+      ->addValue('last_name', NULL)
       ->execute()
       ->first();
 

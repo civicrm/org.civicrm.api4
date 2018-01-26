@@ -44,7 +44,7 @@ class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
       throw new \Exception('Option group name must match only a single group');
     }
 
-    $request->setValue('option_group_id', $optionGroup->first()['id']);
+    $request->addValue('option_group_id', $optionGroup->first()['id']);
   }
 
 }

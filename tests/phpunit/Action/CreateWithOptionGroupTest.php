@@ -23,54 +23,54 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
   public function testGetWithCustomData() {
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'FavoriteThings')
-      ->setValue('extends', 'Contact')
+      ->addValue('name', 'FavoriteThings')
+      ->addValue('extends', 'Contact')
       ->execute();
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavColor')
+      ->addValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('html_type', 'Select')
+      ->addValue('data_type', 'String')
       ->execute();
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavFood')
-      ->setValue('options', ['1' => 'Corn', '2' => 'Potatoes', '3' => 'Cheese'])
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavFood')
+      ->addValue('options', ['1' => 'Corn', '2' => 'Potatoes', '3' => 'Cheese'])
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('html_type', 'Select')
+      ->addValue('data_type', 'String')
       ->execute();
 
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'FinancialStuff')
-      ->setValue('extends', 'Contact')
+      ->addValue('name', 'FinancialStuff')
+      ->addValue('extends', 'Contact')
       ->execute();
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'Salary')
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Number')
-      ->setValue('data_type', 'Money')
+      ->addValue('label', 'Salary')
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('html_type', 'Number')
+      ->addValue('data_type', 'Money')
       ->execute();
 
     Contact::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Jerome')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('FavoriteThings.FavColor', 'r')
-      ->setValue('FavoriteThings.FavFood', '1')
-      ->setValue('FinancialStuff.Salary', 50000)
+      ->addValue('first_name', 'Jerome')
+      ->addValue('last_name', 'Tester')
+      ->addValue('contact_type', 'Individual')
+      ->addValue('FavoriteThings.FavColor', 'r')
+      ->addValue('FavoriteThings.FavFood', '1')
+      ->addValue('FinancialStuff.Salary', 50000)
       ->execute();
 
     $result = Contact::get()
@@ -97,64 +97,64 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
   public function testWithCustomDataForMultipleContacts() {
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'FavoriteThings')
-      ->setValue('extends', 'Contact')
+      ->addValue('name', 'FavoriteThings')
+      ->addValue('extends', 'Contact')
       ->execute();
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavColor')
+      ->addValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('html_type', 'Select')
+      ->addValue('data_type', 'String')
       ->execute();
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavFood')
-      ->setValue('options', ['1' => 'Corn', '2' => 'Potatoes', '3' => 'Cheese'])
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavFood')
+      ->addValue('options', ['1' => 'Corn', '2' => 'Potatoes', '3' => 'Cheese'])
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('html_type', 'Select')
+      ->addValue('data_type', 'String')
       ->execute();
 
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'FinancialStuff')
-      ->setValue('extends', 'Contact')
+      ->addValue('name', 'FinancialStuff')
+      ->addValue('extends', 'Contact')
       ->execute();
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'Salary')
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Number')
-      ->setValue('data_type', 'Money')
+      ->addValue('label', 'Salary')
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('html_type', 'Number')
+      ->addValue('data_type', 'Money')
       ->execute();
 
     Contact::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Red')
-      ->setValue('last_name', 'Corn')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('FavoriteThings.FavColor', 'r')
-      ->setValue('FavoriteThings.FavFood', '1')
-      ->setValue('FinancialStuff.Salary', 10000)
+      ->addValue('first_name', 'Red')
+      ->addValue('last_name', 'Corn')
+      ->addValue('contact_type', 'Individual')
+      ->addValue('FavoriteThings.FavColor', 'r')
+      ->addValue('FavoriteThings.FavFood', '1')
+      ->addValue('FinancialStuff.Salary', 10000)
       ->execute();
 
     Contact::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Blue')
-      ->setValue('last_name', 'Cheese')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('FavoriteThings.FavColor', 'b')
-      ->setValue('FavoriteThings.FavFood', '3')
-      ->setValue('FinancialStuff.Salary', 500000)
+      ->addValue('first_name', 'Blue')
+      ->addValue('last_name', 'Cheese')
+      ->addValue('contact_type', 'Individual')
+      ->addValue('FavoriteThings.FavColor', 'b')
+      ->addValue('FavoriteThings.FavFood', '3')
+      ->addValue('FinancialStuff.Salary', 500000)
       ->execute();
 
     $result = Contact::get()

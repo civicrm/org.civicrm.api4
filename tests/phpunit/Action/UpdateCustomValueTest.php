@@ -16,35 +16,35 @@ class UpdateCustomValueTest extends BaseCustomValueTest {
 
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'MyContactFields')
-      ->setValue('extends', 'Contact')
+      ->addValue('name', 'MyContactFields')
+      ->addValue('extends', 'Contact')
       ->execute()
       ->getArrayCopy();
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('custom_group_id', $customGroup['id'])
-      ->setValue('html_type', 'Text')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavColor')
+      ->addValue('custom_group_id', $customGroup['id'])
+      ->addValue('html_type', 'Text')
+      ->addValue('data_type', 'String')
       ->execute();
 
     $contactId = Contact::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Red')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('MyContactFields.FavColor', 'Red')
+      ->addValue('first_name', 'Red')
+      ->addValue('last_name', 'Tester')
+      ->addValue('contact_type', 'Individual')
+      ->addValue('MyContactFields.FavColor', 'Red')
       ->execute()
       ->getArrayCopy()['id'];
 
     Contact::update()
       ->setCheckPermissions(FALSE)
       ->addWhere('id', '=', $contactId)
-      ->setValue('first_name', 'Red')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('MyContactFields.FavColor', 'Blue')
+      ->addValue('first_name', 'Red')
+      ->addValue('last_name', 'Tester')
+      ->addValue('contact_type', 'Individual')
+      ->addValue('MyContactFields.FavColor', 'Blue')
       ->execute();
 
     $result = CustomValueTable::getEntityValues($contactId, 'Contact');

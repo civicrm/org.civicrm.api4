@@ -46,7 +46,7 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
    */
   protected function addDefaultCreationValues(Create $request) {
     if (NULL === $request->getValue('is_active')) {
-      $request->setValue('is_active', 1);
+      $request->addValue('is_active', 1);
     }
   }
 

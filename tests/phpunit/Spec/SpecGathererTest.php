@@ -62,19 +62,19 @@ class SpecGathererTest extends UnitTestCase {
   public function testPseudoConstantOptionsWillBeAdded() {
     $customGroupId = CustomGroup::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'FavoriteThings')
-      ->setValue('extends', 'Contact')
+      ->addValue('name', 'FavoriteThings')
+      ->addValue('extends', 'Contact')
       ->execute()['id'];
 
     $options = ['Red', 'Green', 'Pink'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('options', $options)
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavColor')
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('options', $options)
+      ->addValue('html_type', 'Select')
+      ->addValue('data_type', 'String')
       ->execute();
 
     $gatherer = new SpecGatherer();

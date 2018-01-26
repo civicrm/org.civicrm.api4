@@ -54,28 +54,28 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
     $optionType = $request->getValue($optionTypeKey);
 
     if (!$optionType) {
-      $request->setValue($optionTypeKey, self::OPTION_TYPE_NEW);
+      $request->addValue($optionTypeKey, self::OPTION_TYPE_NEW);
     }
 
     if (!$dataType) {
-      $request->setValue($dataTypeKey, 'String');
+      $request->addValue($dataTypeKey, 'String');
     }
 
     if (!$optionLabel) {
-      $request->setValue($optionLabelKey, array_values($options));
+      $request->addValue($optionLabelKey, array_values($options));
     }
 
     if (!$optionValue) {
-      $request->setValue($optionValueKey, array_keys($options));
+      $request->addValue($optionValueKey, array_keys($options));
     }
 
     if (!$optionStatus) {
       $statuses = array_fill(0, count($options), self::OPTION_STATUS_ACTIVE);
-      $request->setValue($optionStatusKey, $statuses);
+      $request->addValue($optionStatusKey, $statuses);
     }
 
     if (!$optionWeight) {
-      $request->setValue($optionWeightKey, range(1, count($options)));
+      $request->addValue($optionWeightKey, range(1, count($options)));
     }
   }
 
@@ -84,7 +84,7 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
    */
   private function setDefaults(Create $request) {
     if (!$request->getValue('option_type')) {
-      $request->setValue('option_type', NULL);
+      $request->addValue('option_type', NULL);
     }
   }
 

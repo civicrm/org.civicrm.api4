@@ -38,10 +38,10 @@ class NullValueFormattingPresaveSubscriber extends AbstractPrepareSubscriber {
   private function formalNullInput($request) {
     foreach ($request->getValues() as $key => $value) {
       if ('null' === $value) {
-        $request->setValue($key, 'Null');
+        $request->addValue($key, 'Null');
       }
       elseif (NULL === $value) {
-        $request->setValue($key, 'null');
+        $request->addValue($key, 'null');
       }
     }
   }

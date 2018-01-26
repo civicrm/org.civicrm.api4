@@ -8,6 +8,8 @@ use Civi\Api4\OptionValue;
 class ActivityPreCreationSubscriber extends PreCreationSubscriber {
   /**
    * @param Create $request
+   * @throws \API_Exception
+   * @throws \Exception
    */
   protected function modify(Create $request) {
     $activityType = $request->getValue('activity_type');
@@ -22,7 +24,7 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber {
         throw new \Exception('Activity type must match a *single* type');
       }
 
-      $request->setValue('activity_type_id', $result->first()['id']);
+      $request->addValue('activity_type_id', $result->first()['id']);
     }
   }
 

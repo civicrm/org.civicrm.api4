@@ -18,57 +18,57 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
 
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'MyContactFields')
-      ->setValue('title', 'MyContactFields')
-      ->setValue('extends', 'Contact')
+      ->addValue('name', 'MyContactFields')
+      ->addValue('title', 'MyContactFields')
+      ->addValue('extends', 'Contact')
       ->execute();
 
     $customGroupId = $customGroup->getArrayCopy()['id'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavColor')
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavColor')
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('options', ['r' => 'Red', 'g' => 'Green', 'b' => 'Blue'])
+      ->addValue('html_type', 'Select')
+      ->addValue('data_type', 'String')
       ->execute();
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavAnimal')
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Text')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavAnimal')
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('html_type', 'Text')
+      ->addValue('data_type', 'String')
       ->execute();
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavLetter')
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Text')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavLetter')
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('html_type', 'Text')
+      ->addValue('data_type', 'String')
       ->execute();
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'FavFood')
-      ->setValue('custom_group_id', $customGroupId)
-      ->setValue('html_type', 'Text')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'FavFood')
+      ->addValue('custom_group_id', $customGroupId)
+      ->addValue('html_type', 'Text')
+      ->addValue('data_type', 'String')
       ->execute();
 
     $this->beginQueryCount();
 
     Contact::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('first_name', 'Red')
-      ->setValue('last_name', 'Tester')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('MyContactFields.FavColor', 'r')
-      ->setValue('MyContactFields.FavAnimal', 'Sheep')
-      ->setValue('MyContactFields.FavLetter', 'z')
-      ->setValue('MyContactFields.FavFood', 'Coconuts')
+      ->addValue('first_name', 'Red')
+      ->addValue('last_name', 'Tester')
+      ->addValue('contact_type', 'Individual')
+      ->addValue('MyContactFields.FavColor', 'r')
+      ->addValue('MyContactFields.FavAnimal', 'Sheep')
+      ->addValue('MyContactFields.FavLetter', 'z')
+      ->addValue('MyContactFields.FavFood', 'Coconuts')
       ->execute();
 
     Contact::get()

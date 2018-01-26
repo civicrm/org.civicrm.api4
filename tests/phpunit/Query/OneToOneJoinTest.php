@@ -16,37 +16,37 @@ class OneToOneJoinTest extends UnitTestCase {
 
   public function testOneToOneJoin() {
     $languageGroupId = OptionGroup::create()
-      ->setValue('name', 'languages')
+      ->addValue('name', 'languages')
       ->execute()
       ->getArrayCopy()['id'];
 
     OptionValue::create()
-      ->setValue('option_group_id', $languageGroupId)
-      ->setValue('name', 'hy_AM')
-      ->setValue('value', 'hy')
-      ->setValue('label', 'Armenian')
+      ->addValue('option_group_id', $languageGroupId)
+      ->addValue('name', 'hy_AM')
+      ->addValue('value', 'hy')
+      ->addValue('label', 'Armenian')
       ->execute();
 
     OptionValue::create()
-      ->setValue('option_group_id', $languageGroupId)
-      ->setValue('name', 'eu_ES')
-      ->setValue('value', 'eu')
-      ->setValue('label', 'Basque')
+      ->addValue('option_group_id', $languageGroupId)
+      ->addValue('name', 'eu_ES')
+      ->addValue('value', 'eu')
+      ->addValue('label', 'Basque')
       ->execute();
 
     $armenianContact = Contact::create()
-      ->setValue('first_name', 'Contact')
-      ->setValue('last_name', 'One')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('preferred_language', 'hy_AM')
+      ->addValue('first_name', 'Contact')
+      ->addValue('last_name', 'One')
+      ->addValue('contact_type', 'Individual')
+      ->addValue('preferred_language', 'hy_AM')
       ->execute()
       ->getArrayCopy();
 
     $basqueContact = Contact::create()
-      ->setValue('first_name', 'Contact')
-      ->setValue('last_name', 'Two')
-      ->setValue('contact_type', 'Individual')
-      ->setValue('preferred_language', 'eu_ES')
+      ->addValue('first_name', 'Contact')
+      ->addValue('last_name', 'Two')
+      ->addValue('contact_type', 'Individual')
+      ->addValue('preferred_language', 'eu_ES')
       ->execute()
       ->getArrayCopy();
 

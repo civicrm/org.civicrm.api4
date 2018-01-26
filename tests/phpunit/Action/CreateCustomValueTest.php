@@ -17,17 +17,17 @@ class CreateCustomValueTest extends BaseCustomValueTest {
 
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('name', 'MyContactFields')
-      ->setValue('extends', 'Contact')
+      ->addValue('name', 'MyContactFields')
+      ->addValue('extends', 'Contact')
       ->execute();
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
-      ->setValue('label', 'Color')
-      ->setValue('options', $optionValues)
-      ->setValue('custom_group_id', $customGroup->getArrayCopy()['id'])
-      ->setValue('html_type', 'Select')
-      ->setValue('data_type', 'String')
+      ->addValue('label', 'Color')
+      ->addValue('options', $optionValues)
+      ->addValue('custom_group_id', $customGroup->getArrayCopy()['id'])
+      ->addValue('html_type', 'Select')
+      ->addValue('data_type', 'String')
       ->execute();
 
     $customField = CustomField::get()

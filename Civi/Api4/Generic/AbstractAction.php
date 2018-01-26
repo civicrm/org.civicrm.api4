@@ -118,8 +118,13 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   public function __call($name, $arguments) {
     $param = lcfirst(substr($name, 3));
+    $mode = substr($name, 0, 3);
+    // Handle plural when adding to e.g. $values with "addValue" method.
+    if ($mode == 'add' && $this->paramExists($param . 's')) {
+      $param .= 's';
+    }
     if ($this->paramExists($param)) {
-      switch (substr($name, 0, 3)) {
+      switch ($mode) {
         case 'get':
           return $this->$param;
 

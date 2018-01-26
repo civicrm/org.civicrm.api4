@@ -147,7 +147,7 @@ class ConformanceTest extends UnitTestCase {
       try {
         $entityClass::create()
           ->setCheckPermissions(FALSE)
-          ->setValue('id', $id)
+          ->addValue('id', $id)
           ->execute();
       }
       catch (\API_Exception $e) {

@@ -30,8 +30,8 @@ use Civi\Api4\Generic\Result;
 /**
  * Update one or more records with new values. Use the where clause to select them.
  *
- * @method $this setValues($values)
- * @method $this addValues($array)
+ * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
+ * @method $this addValue($field, $value) Set field value to update.
  */
 class Update extends Get {
 
@@ -44,27 +44,11 @@ class Update extends Get {
   protected $where = [];
 
   /**
-   * Field values to set.
+   * Field values to update.
    *
    * @var array
    */
   protected $values = [];
-
-  /**
-   * Set a field value for the created object.
-   *
-   * @param string $key
-   * @param mixed $value
-   * @return $this
-   * @throws \API_Exception
-   */
-  public function setValue($key, $value) {
-    if ($key == 'id') {
-      throw new \API_Exception('Cannot update the id of an existing object.');
-    }
-    $this->values[$key] = $value;
-    return $this;
-  }
 
   /**
    * @param $key
@@ -73,13 +57,6 @@ class Update extends Get {
    */
   public function getValue($key) {
     return isset($this->values[$key]) ? $this->values[$key] : NULL;
-  }
-
-  /**
-   * @return array
-   */
-  public function getValues() {
-    return $this->values;
   }
 
   /**

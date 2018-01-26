@@ -14,11 +14,11 @@ class CustomGroupPreCreationSubscriber extends PreCreationSubscriber {
     $name = $request->getValue('name');
 
     if (is_string($extends)) {
-      $request->setValue('extends', [$extends]);
+      $request->addValue('extends', [$extends]);
     }
 
     if (NULL === $title && $name) {
-      $request->setValue('title', $name);
+      $request->addValue('title', $name);
     }
   }
 
