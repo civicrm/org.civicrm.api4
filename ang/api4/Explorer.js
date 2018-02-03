@@ -199,7 +199,7 @@
       $scope.loading = true;
       crmApi4($scope.entity, $scope.action, getParams())
         .then(function(data) {
-          var meta = {},
+          var meta = {length: data.length},
             result = JSON.stringify(data, null, 2);
           data.length = 0;
           _.assign(meta, data);
