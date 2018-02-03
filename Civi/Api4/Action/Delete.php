@@ -45,8 +45,8 @@ class Delete extends Get {
    * @todo much of this should be abstracted out to a generic batch handler
    */
   public function _run(Result $result) {
-    $bao_name = $this->getBaoName();
-    $this->select = ['id'];
+    $baoName = $this->getBaoName();
+    $this->setSelect(['id']);
     $defaults = $this->getParamDefaults();
     if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
       throw new \API_Exception('Cannot delete with no "where" paramater specified');
@@ -55,17 +55,30 @@ class Delete extends Get {
     parent::_run($result);
     // Then act on the result
     $ids = [];
-    foreach ($result as $item) {
-      // todo confirm we need a new object
-      $bao = new $bao_name();
-      $bao->id = $item['id'];
-      // delete it
-      $action_result = $bao->delete();
-      if ($action_result) {
-        $ids[] = $item['id'];
+    if (method_exists($baoName, 'del')) {
+      foreach ($result as $item) {
+        $args = [$item['id']];
+        $bao = call_user_func_array([$baoName, 'del'], $args);
+        if ($bao !== FALSE) {
+          $ids[] = $item['id'];
+        }
+        else {
+          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
+        }
       }
-      else {
-        // fixme - what happens here???
+    }
+    else {
+      foreach ($result as $item) {
+        $bao = new $baoName();
+        $bao->id = $item['id'];
+        // delete it
+        $action_result = $bao->delete();
+        if ($action_result) {
+          $ids[] = $item['id'];
+        }
+        else {
+          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
+        }
       }
     }
     $result->exchangeArray($ids);
