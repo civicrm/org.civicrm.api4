@@ -36,6 +36,7 @@ use Civi\Api4\Service\Spec\SpecFormatter;
  * Get fields for an entity
  *
  * @method $this setIncludeCustom(bool $value)
+ * @method bool getIncludeCustom()
  * @method $this setAction(string $value)
  */
 class GetFields extends AbstractAction {

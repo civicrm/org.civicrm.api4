@@ -10,7 +10,7 @@
       <form name="api4-explorer" class="panel panel-default explorer-params-panel">
         <div class="panel-heading">
           <div class="form-inline">
-            <input class="form-control" ng-model="entity" crm-ui-select="{placeholder: ts('Entity'), data: entities}" />
+            <input class="form-control" ng-model="entity" ng-disabled="!entities.length" ng-class="{loading: !entities.length}" crm-ui-select="{placeholder: ts('Entity'), data: entities}" />
             <input class="form-control" ng-model="action" ng-disabled="!entity || !actions.length" ng-class="{loading: entity && !actions.length}" crm-ui-select="{placeholder: ts('Action'), data: actions}" />
             <button class="btn btn-success pull-right" crm-icon="fa-bolt" ng-disabled="!entity || !action || loading" ng-click="execute()">{{ ts('Execute') }}</button>
           </div>

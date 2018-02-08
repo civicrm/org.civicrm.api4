@@ -31,12 +31,22 @@ use Civi\Api4\Generic\Result;
 use \Civi\Api4\Action\GetFields as GenericGetFields;
 
 /**
- * Get fields for an entity
+ * Get fields for all entities
  */
 class GetFields extends GenericGetFields {
 
   public function _run(Result $result) {
-    return $result;
+    $action = $this->getAction();
+    $includeCustom = $this->getIncludeCustom();
+    $entities = \Civi\Api4\Entity::get()->execute();
+    foreach ($entities as $entity) {
+      $data = ['entity' => $entity, 'fields' => []];
+      // Prevent infinite recursion
+      if ($entity != 'Entity') {
+        $data['fields'] = (array) civicrm_api4($entity, 'getFields', ['action' => $action, 'includeCustom' => $includeCustom]);
+      }
+      $result[] = $data;
+    }
   }
 
 }

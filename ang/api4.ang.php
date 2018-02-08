@@ -1,19 +1,6 @@
 <?php
-// This file declares an Angular module which can be autoloaded
-// in CiviCRM. See also:
-// http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_angularModules
-$result = Civi\Api4\Entity::get()
-  ->setCheckPermissions(FALSE)
-  ->execute();
-$entities = [];
-foreach ($result as $entity) {
-  $entities[] = [
-    'id' => $entity,
-    'text' => $entity,
-  ];
-}
+// Autoloader data for Api4 angular module.
 $vars = [
-  'entities' => $entities,
   'operators' => \CRM_Core_DAO::acceptedSQLOperators(),
 ];
 \Civi::resources()->addVars('api4', $vars);

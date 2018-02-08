@@ -1,9 +1,11 @@
 (function(angular, $, _, undefined) {
 
+  // Cache schema metadata
+  var schema = [];
+  // Cache list of entities
+  var entities = [];
   // Cache list of actions
   var actions = [];
-  // Cache list of fields
-  var fields = [];
 
   angular.module('api4').config(function($routeProvider) {
       $routeProvider.when('/api4/:api4entity?/:api4action?', {
@@ -17,13 +19,14 @@
   angular.module('api4').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, crmUiHelp, crmApi4) {
     var ts = $scope.ts = CRM.ts('api4');
     var hs = $scope.hs = crmUiHelp({file: 'CRM/Api4/Explorer'});
-    $scope.entities = CRM.vars.api4.entities;
+    $scope.entities = entities;
     $scope.operators = arrayToSelect2(CRM.vars.api4.operators);
     $scope.actions = actions;
-    $scope.fields = fields;
+    $scope.fields = [];
     $scope.availableParams = [];
     $scope.params = {};
     var richParams = {where: 'array', values: 'object', orderBy: 'object'};
+    var getMetaParams = schema.length ? {} : {schema: ['Entity', 'getFields']};
     $scope.entity = $routeParams.api4entity;
     $scope.result = [];
     $scope.status = 'default';
@@ -63,11 +66,13 @@
     }
 
     // Reformat an existing array of objects for compatibility with select2
-    function formatForSelect2(input, container, key) {
+    function formatForSelect2(input, container, key, extra) {
       _.each(input, function(item) {
-        item.id = item.text = item[key];
-        delete(item[key]);
-        container.push(item);
+        var formatted = {id: item[key], text: item[key]};
+        if (extra) {
+          _.merge(formatted, _.pick(item, extra));
+        }
+        container.push(formatted);
       });
     }
 
@@ -93,6 +98,7 @@
 
     function selectAction() {
       $scope.action = $routeParams.api4action;
+      $scope.fields = _.result(_.findWhere(schema, {entity: $scope.entity}), 'fields');
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
         _.each(actionInfo.params, function (param, name) {
@@ -144,6 +150,7 @@
             });
           }
         });
+        console.log(actionInfo);
         $scope.availableParams = actionInfo.params;
       }
       writeCode();
@@ -213,16 +220,33 @@
         });
     };
 
+    function fetchMeta() {
+      crmApi4(getMetaParams)
+        .then(function(data) {
+          if (data.schema) {
+            schema = data.schema;
+            entities.length = 0;
+            formatForSelect2(schema, entities, 'entity');
+          }
+          if (data.actions) {
+            formatForSelect2(data.actions, actions, 'name', ['description', 'params']);
+            selectAction();
+          }
+        });
+    }
+
     if (!$scope.entity) {
       $scope.helpTitle = ts('Help');
       $scope.helpText = [ts('Welcome to the api explorer.'), ts('Select an entity to begin.')];
+      if (getMetaParams.schema) {
+        fetchMeta();
+      }
     } else if (!actions.length) {
-      crmApi4({actions: [$scope.entity, 'getActions'], fields: [$scope.entity, 'getFields']})
-        .then(function(data) {
-          formatForSelect2(data.actions, actions, 'name');
-          formatForSelect2(data.fields, fields, 'name');
-          selectAction();
-        });
+      if (getMetaParams.schema) {
+        entities.push({id: $scope.entity, text: $scope.entity});
+      }
+      getMetaParams.actions = [$scope.entity, 'getActions'];
+      fetchMeta();
     } else {
       selectAction();
     }
@@ -237,7 +261,6 @@
       if (oldVal !== newVal) {
         // Flush actions cache to re-fetch for new entity
         actions = [];
-        fields = [];
         $location.url('/api4/' + newVal);
       }
     });
