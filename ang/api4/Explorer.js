@@ -2,6 +2,8 @@
 
   // Cache schema metadata
   var schema = [];
+  // Cache fk schema data
+  var links = [];
   // Cache list of entities
   var entities = [];
   // Cache list of actions
@@ -26,7 +28,7 @@
     $scope.availableParams = [];
     $scope.params = {};
     var richParams = {where: 'array', values: 'object', orderBy: 'object'};
-    var getMetaParams = schema.length ? {} : {schema: ['Entity', 'getFields']};
+    var getMetaParams = schema.length ? {} : {schema: ['Entity', 'getFields'], links: ['Entity', 'getLinks']};
     $scope.entity = $routeParams.api4entity;
     $scope.result = [];
     $scope.status = 'default';
@@ -66,14 +68,37 @@
     }
 
     // Reformat an existing array of objects for compatibility with select2
-    function formatForSelect2(input, container, key, extra) {
+    function formatForSelect2(input, container, key, extra, prefix) {
       _.each(input, function(item) {
-        var formatted = {id: item[key], text: item[key]};
+        var id = (prefix || '') + item[key];
+        var formatted = {id: id, text: id};
         if (extra) {
           _.merge(formatted, _.pick(item, extra));
         }
         container.push(formatted);
       });
+      return container;
+    }
+
+    function entityFields(entity) {
+      return _.result(_.findWhere(schema, {entity: entity}), 'fields');
+    }
+
+    function getFieldList() {
+      var fields = [],
+        fks = _.findWhere(links, {entity: $scope.entity}) || {};
+      formatForSelect2(entityFields($scope.entity), fields, 'name', ['description']);
+      _.each(fks.links, function(link) {
+        var linkFields = entityFields(link.entity);
+        if (linkFields) {
+          fields.push({
+            text: link.alias,
+            description: 'Join to ' + link.entity,
+            children: formatForSelect2(linkFields, [], 'name', ['description'], link.alias + '.')
+          });
+        }
+      });
+      return fields;
     }
 
     // Get all params that have been set
@@ -98,7 +123,7 @@
 
     function selectAction() {
       $scope.action = $routeParams.api4action;
-      $scope.fields = _.result(_.findWhere(schema, {entity: $scope.entity}), 'fields');
+      $scope.fields = getFieldList();
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
         _.each(actionInfo.params, function (param, name) {
@@ -150,7 +175,6 @@
             });
           }
         });
-        console.log(actionInfo);
         $scope.availableParams = actionInfo.params;
       }
       writeCode();
@@ -228,6 +252,9 @@
             entities.length = 0;
             formatForSelect2(schema, entities, 'entity');
           }
+          if (data.links) {
+            links = data.links;
+          }
           if (data.actions) {
             formatForSelect2(data.actions, actions, 'name', ['description', 'params']);
             selectAction();
@@ -280,4 +307,21 @@
 
   });
 
+  // Collapsible optgroups for select2
+  $(function() {
+    $('body')
+      .on('select2-open', function(e) {
+        if ($(e.target).hasClass('collapsible-optgroups')) {
+          $('#select2-drop')
+            .off('.collapseOptionGroup')
+            .addClass('collapsible-optgroups-enabled')
+            .on('click.collapseOptionGroup', '.select2-result-with-children > .select2-result-label', function() {
+              $(this).parent().toggleClass('optgroup-expanded');
+            });
+        }
+      })
+     .on('select2-close', function() {
+        $('#select2-drop').off('.collapseOptionGroup').removeClass('collapsible-optgroups-enabled');
+      });
+  });
 })(angular, CRM.$, CRM._);
