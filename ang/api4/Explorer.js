@@ -127,7 +127,7 @@
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
         _.each(actionInfo.params, function (param, name) {
-          var format;
+          var format, defaultVal;
           if (param.type) {
             switch (param.type[0]) {
               case 'int':
@@ -143,10 +143,17 @@
               default:
                 format = 'raw';
             }
+            if (name == 'limit') {
+              defaultVal = 25;
+            }
+            if (name == 'checkPermissions') {
+              defaultVal = true;
+            }
             $scope.$bindToRoute({
               expr: 'params["' + name + '"]',
               param: name,
               format: format,
+              default: defaultVal,
               deep: name === 'where'
             });
           }
