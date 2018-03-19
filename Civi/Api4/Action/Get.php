@@ -41,13 +41,14 @@ use Civi\Api4\Generic\Result;
  * @method $this setLimit(int $limit)
  * @method $this setOffset(int $offset)
  */
-class Get extends AbstractAction {
+class Get extends AbstractAction
+{
   /**
    * Fields to return. Defaults to all non-custom fields.
    *
    * @var array
    */
-  protected $select = [];
+    protected $select = [];
   /**
    * Array of conditions keyed by field.
    *
@@ -55,7 +56,7 @@ class Get extends AbstractAction {
    *
    * @var array
    */
-  protected $where = [];
+    protected $where = [];
   /**
    * Array of field(s) to use in ordering the results
    *
@@ -64,7 +65,7 @@ class Get extends AbstractAction {
    *
    * @var array
    */
-  protected $orderBy = [];
+    protected $orderBy = [];
   /**
    * Maximum number of results to return.
    *
@@ -72,7 +73,7 @@ class Get extends AbstractAction {
    *
    * @var int
    */
-  protected $limit = 0;
+    protected $limit = 0;
   /**
    * Zero-based index of first result to return.
    *
@@ -80,7 +81,7 @@ class Get extends AbstractAction {
    *
    * @var int
    */
-  protected $offset = 0;
+    protected $offset = 0;
 
   /**
    * @param string $field
@@ -89,42 +90,52 @@ class Get extends AbstractAction {
    * @return $this
    * @throws \API_Exception
    */
-  public function addWhere($field, $op, $value) {
-    if (!in_array($op, \CRM_Core_DAO::acceptedSQLOperators())) {
-      throw new \API_Exception('Unsupported operator');
+    public function addWhere($field, $op, $value)
+    {
+        if (!in_array($op, \CRM_Core_DAO::acceptedSQLOperators())) {
+            throw new \API_Exception('Unsupported operator');
+        }
+        $this->where[] = [$field, $op, $value];
+        return $this;
     }
-    $this->where[] = [$field, $op, $value];
-    return $this;
-  }
 
   /**
    * @param array $clause
    * @return $this
    * @throws \API_Exception
    */
-  public function addClause($clause) {
-    $this->where[] = $clause;
-    return $this;
-  }
+    public function addClause($clause)
+    {
+        $this->where[] = $clause;
+        return $this;
+    }
 
   /**
    * @param string $field
    * @param string $direction
    * @return $this
    */
-  public function addOrderBy($field, $direction = 'ASC') {
-    $this->orderBy[$field] = $direction;
-    return $this;
-  }
-
-  public function _run(Result $result) {
-    $query = new Api4SelectQuery($this->getEntity(), $this->checkPermissions);
-    $query->select = $this->select;
-    $query->where = $this->where;
-    $query->orderBy = $this->orderBy;
-    $query->limit = $this->limit;
-    $query->offset = $this->offset;
-    $result->exchangeArray($query->run());
-  }
-
+    public function addOrderBy($field, $direction = 'ASC')
+    {
+        $this->orderBy[$field] = $direction;
+        return $this;
+    }
+    
+    /**
+     * @param Result $result
+     *
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Exception
+     */
+    public function _run(Result $result)
+    {
+        $query = new Api4SelectQuery($this->getEntity(), $this->checkPermissions);
+        $query->select = $this->select;
+        $query->where = $this->where;
+        $query->orderBy = $this->orderBy;
+        $query->limit = $this->limit;
+        $query->offset = $this->offset;
+        $result->exchangeArray($query->run());
+    }
 }

@@ -57,10 +57,10 @@ class Entity {
   public static function getFields() {
     return new GetFields('Entity');
   }
-
-  /**
-   * @return GetFields
-   */
+    
+    /**
+     * @return GetLinks
+     */
   public static function getLinks() {
     return new GetLinks('Entity');
   }

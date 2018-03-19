@@ -52,13 +52,14 @@ class Joiner {
 
     return $fullPath;
   }
-
-  /**
-   * @param Api4SelectQuery $query
-   * @param $joinPath
-   *
-   * @return bool
-   */
+    
+    /**
+     * @param Api4SelectQuery $query
+     * @param                 $joinPath
+     *
+     * @return bool
+     * @throws \Exception
+     */
   public function canJoin(Api4SelectQuery $query, $joinPath) {
     return !empty($this->getPath($query->getFrom(), $joinPath));
   }

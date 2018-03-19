@@ -66,12 +66,15 @@ class Api4SelectQuery extends SelectQuery {
    *   The joinable tables that have been joined so far
    */
   protected $joinedTables = [];
-
-  /**
-   * Why walk when you can
-   *
-   * @return array|int
-   */
+    
+    /**
+     * Why walk when you can
+     *
+     * @return array|int
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Exception
+     */
   public function run() {
     $this->preRun();
     $baseResults = parent::run();
@@ -123,17 +126,20 @@ class Api4SelectQuery extends SelectQuery {
       }
     }
   }
-
-  /**
-   * Recursively validate and transform a branch or leaf clause array to SQL.
-   *
-   * @param array $clause
-   * @return string SQL where clause
-   *
-   * @uses validateClauseAndComposeSql() to generate the SQL etc.
-   * @todo if an 'and' is nested within and 'and' (or or-in-or) then should
-   * flatten that to be a single list of clauses.
-   */
+    
+    /**
+     * Recursively validate and transform a branch or leaf clause array to SQL.
+     *
+     * @param array $clause
+     *
+     * @return string SQL where clause
+     *
+     * @throws \API_Exception
+     * @throws \Exception
+     * @uses validateClauseAndComposeSql() to generate the SQL etc.
+     * @todo if an 'and' is nested within and 'and' (or or-in-or) then should
+     * flatten that to be a single list of clauses.
+     */
   protected function treeWalkWhereClause($clause) {
     switch ($clause[0]) {
       case 'OR':
@@ -182,7 +188,7 @@ class Api4SelectQuery extends SelectQuery {
       list($table_name, $column_name) = explode('.', $this->fkSelectAliases[$key]);
     }
 
-    if (!$table_name || !$column_name || is_null($value)) {
+    if (!$table_name || !$column_name || null === $value) {
       throw new \API_Exception("Invalid field '$key' in where clause.");
     }
 

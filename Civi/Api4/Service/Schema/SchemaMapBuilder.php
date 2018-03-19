@@ -154,8 +154,13 @@ class SchemaMapBuilder {
         return $singular . 's';
     }
   }
-
-  private function addCustomFields(SchemaMap $map, Table $baseTable, $entityName) {
+    
+    /**
+     * @param SchemaMap                           $map
+     * @param Table                               $baseTable
+     * @param                                     $entityName
+     */
+    private function addCustomFields(SchemaMap $map, Table $baseTable, $entityName) {
 
     $parentTypes = ['Contact', 'Individual', 'Organization', 'Household'];
     if (in_array($entityName, $parentTypes)) {

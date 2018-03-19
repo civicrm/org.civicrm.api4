@@ -39,11 +39,19 @@ class Delete extends Get {
    * @var array
    */
   protected $where = [];
-
-  /**
-   * Batch delete function
-   * @todo much of this should be abstracted out to a generic batch handler
-   */
+    
+    /**
+     * Batch delete function
+     *
+     * @todo much of this should be abstracted out to a generic batch handler
+     *
+     * @param \Civi\Api4\Generic\Result $result
+     *
+     * @return \Civi\Api4\Generic\Result
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Exception
+     */
   public function _run(Result $result) {
     $baoName = $this->getBaoName();
     $this->setSelect(['id']);

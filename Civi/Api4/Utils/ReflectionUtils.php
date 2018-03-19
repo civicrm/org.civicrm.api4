@@ -32,7 +32,7 @@ namespace Civi\Api4\Utils;
  */
 class ReflectionUtils {
   /**
-   * @param \Reflector|\ReflectionClass $reflection
+   * @param \Reflector|\ReflectionClass|\ReflectionProperty $reflection
    * @param string $type
    *   If we are not reflecting the class itself, specify "Method", "Property", etc.
    *

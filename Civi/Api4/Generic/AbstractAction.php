@@ -153,16 +153,18 @@ abstract class AbstractAction implements \ArrayAccess {
     }
     throw new \API_Exception('Unknown api parameter: ' . $name);
   }
-
-  /**
-   * Invoke api call.
-   *
-   * At this point all the params have been sent in and we initiate the api call & return the result.
-   * This is basically the outer wrapper for api v4.
-   *
-   * @return Result|array
-   * @throws UnauthorizedException
-   */
+    
+    /**
+     * Invoke api call.
+     *
+     * At this point all the params have been sent in and we initiate the api call & return the result.
+     * This is basically the outer wrapper for api v4.
+     *
+     * @return Result|array
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\NotImplementedException
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
   final public function execute() {
     /** @var Kernel $kernel */
     $kernel = \Civi::service('civi_api_kernel');
@@ -274,10 +276,11 @@ abstract class AbstractAction implements \ArrayAccess {
       return $val;
     }
   }
-
-  /**
-   * @inheritDoc
-   */
+    
+    /**
+     * @inheritDoc
+     * @throws \API_Exception
+     */
   public function offsetSet($offset, $value) {
     if (in_array($offset, ['entity', 'action', 'params', 'version'])) {
       throw new \API_Exception('Cannot modify api4 state via array access');
@@ -289,10 +292,11 @@ abstract class AbstractAction implements \ArrayAccess {
       $this->thisArrayStorage[$offset] = $value;
     }
   }
-
-  /**
-   * @inheritDoc
-   */
+    
+    /**
+     * @inheritDoc
+     * @throws \API_Exception
+     */
   public function offsetUnset($offset) {
     if (in_array($offset, ['entity', 'action', 'params', 'check_permissions', 'version'])) {
       throw new \API_Exception('Cannot modify api4 state via array access');
