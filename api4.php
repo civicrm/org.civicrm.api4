@@ -10,11 +10,12 @@ use Symfony\Component\Config\FileLocator;
 /**
  * Procedural wrapper for the OO api version 4.
  *
- * @param $entity
- * @param $action
+ * @param       $entity
+ * @param       $action
  * @param array $params
  *
  * @return \Civi\Api4\Generic\Result
+ * @throws \API_Exception
  */
 function civicrm_api4($entity, $action, $params = []) {
   $params['version'] = 4;

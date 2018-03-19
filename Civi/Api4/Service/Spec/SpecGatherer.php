@@ -18,18 +18,21 @@ class SpecGatherer {
    * @var \CRM_Core_DAO[]
    */
   protected $DAONames;
-
-  /**
-   * Returns a RequestSpec with all the fields available. Uses spec providers
-   * to add or modify field specifications.
-   * For an example @see CustomFieldSpecProvider.
-   *
-   * @param string $entity
-   * @param string $action
-   * @param $includeCustom
-   *
-   * @return \Civi\Api4\Service\Spec\RequestSpec
-   */
+    
+    /**
+     * Returns a RequestSpec with all the fields available. Uses spec providers
+     * to add or modify field specifications.
+     * For an example @see CustomFieldSpecProvider.
+     *
+     * @param string $entity
+     * @param string $action
+     * @param        $includeCustom
+     *
+     * @return \Civi\Api4\Service\Spec\RequestSpec
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\NotImplementedException
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
   public function getSpec($entity, $action, $includeCustom) {
     $specification = new RequestSpec($entity, $action);
 
@@ -71,11 +74,15 @@ class SpecGatherer {
       $specification->addFieldSpec($field);
     }
   }
-
-  /**
-   * @param string $entity
-   * @param RequestSpec $specification
-   */
+    
+    /**
+     * @param string      $entity
+     * @param RequestSpec $specification
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\NotImplementedException
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
   private function addCustomFields($entity, RequestSpec $specification) {
     if ($entity == 'Contact') {
       $entity = ['Contact', 'Individual', 'Organization', 'Household'];

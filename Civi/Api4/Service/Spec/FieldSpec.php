@@ -203,7 +203,7 @@ class FieldSpec {
    * @return array
    */
   private function getValidDataTypes() {
-    $extraTypes = ['Boolean', 'Text', 'Float'];
+    $extraTypes = ['Boolean', 'Text', 'Float','Memo'];
     $extraTypes = array_combine($extraTypes, $extraTypes);
 
     return array_merge(\CRM_Utils_Type::dataTypes(), $extraTypes);

@@ -36,30 +36,34 @@ use Civi\Api4\Action\GetActions;
  * Meta entity.
  */
 class Entity {
-
-  /**
-   * @return Get
-   */
+    
+    /**
+     * @return Get
+     * @throws \ReflectionException
+     */
   public static function get() {
     return new Get('Entity');
   }
-
-  /**
-   * @return GetActions
-   */
+    
+    /**
+     * @return GetActions
+     * @throws \ReflectionException
+     */
   public static function getActions() {
     return new GetActions('Entity');
   }
-
-  /**
-   * @return GetFields
-   */
+    
+    /**
+     * @return GetFields
+     * @throws \ReflectionException
+     */
   public static function getFields() {
     return new GetFields('Entity');
   }
     
     /**
      * @return GetLinks
+     * @throws \ReflectionException
      */
   public static function getLinks() {
     return new GetLinks('Entity');

@@ -98,12 +98,12 @@ class Get extends AbstractAction
         $this->where[] = [$field, $op, $value];
         return $this;
     }
-
-  /**
-   * @param array $clause
-   * @return $this
-   * @throws \API_Exception
-   */
+    
+    /**
+     * @param array $clause
+     *
+     * @return $this
+     */
     public function addClause($clause)
     {
         $this->where[] = $clause;

@@ -33,45 +33,53 @@ use Civi\Api4\Generic\Result;
 use Civi\Api4\Service\Spec\SpecFormatter;
 
 /**
- * Get fields for an entity
+ * Get fields for an entity.
  *
  * @method $this setIncludeCustom(bool $value)
- * @method bool getIncludeCustom()
+ * @method bool  getIncludeCustom()
  * @method $this setAction(string $value)
  */
-class GetFields extends AbstractAction {
+class GetFields extends AbstractAction
+{
+    /**
+     * Override default to allow open access
+     * {@inheritdoc}
+     */
+    protected $checkPermissions = false;
 
-  /**
-   * Override default to allow open access
-   * @inheritDoc
-   */
-  protected $checkPermissions = FALSE;
+    /**
+     * @var bool
+     */
+    protected $includeCustom = true;
 
-  /**
-   * @var bool
-   */
-  protected $includeCustom = TRUE;
+    /**
+     * @var string
+     */
+    protected $action = 'get';
 
-  /**
-   * @var string
-   */
-  protected $action = 'get';
+    /**
+     * @param \Civi\Api4\Generic\Result $result
+     *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\NotImplementedException
+     * @throws \Civi\API\Exception\UnauthorizedException
+     */
+    public function _run(Result $result)
+    {
+        /** @var SpecGatherer $gatherer */
+        $gatherer = \Civi::container()->get('spec_gatherer');
+        $spec = $gatherer->getSpec($this->getEntity(), $this->getAction(), $this->includeCustom);
+        $specArray = SpecFormatter::specToArray($spec);
+        // Fixme - $this->action ought to already be set. Might be a name conflict upstream causing it to be nullified?
+        $result->action = 'getFields';
+        $result->exchangeArray(array_values($specArray['fields']));
+    }
 
-  public function _run(Result $result) {
-    /** @var SpecGatherer $gatherer */
-    $gatherer = \Civi::container()->get('spec_gatherer');
-    $spec = $gatherer->getSpec($this->getEntity(), $this->getAction(), $this->includeCustom);
-    $specArray = SpecFormatter::specToArray($spec);
-    // Fixme - $this->action ought to already be set. Might be a name conflict upstream causing it to be nullified?
-    $result->action = 'getFields';
-    $result->exchangeArray(array_values($specArray['fields']));
-  }
-
-  /**
-   * @return string
-   */
-  public function getAction() {
-    return $this->action;
-  }
-
+    /**
+     * @return string
+     */
+    public function getAction()
+    {
+        return $this->action;
+    }
 }

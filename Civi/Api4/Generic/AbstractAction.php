@@ -81,11 +81,14 @@ abstract class AbstractAction implements \ArrayAccess {
 
   /* @var array */
   private $thisArrayStorage;
-
-  /**
-   * Action constructor.
-   * @param string $entity
-   */
+    
+    /**
+     * Action constructor.
+     *
+     * @param string $entity
+     *
+     * @throws \ReflectionException
+     */
   public function __construct($entity) {
     $this->entity = $entity;
     $this->thisReflection = new \ReflectionClass($this);
