@@ -56,6 +56,7 @@ class Get extends AbstractAction {
     if (in_array('BaseEntity', $entities)) {
       unset($entities[array_search('BaseEntity', $entities)]);
     }
+    sort($entities);
     $result->exchangeArray($entities);
   }
 
