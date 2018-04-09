@@ -2,7 +2,7 @@
 
   angular.module('api4').factory('crmApi4', function($q) {
     var crmApi4 = function(entity, action, params, message) {
-      // JSON serialization in CRM.api3 is not aware of Angular metadata like $$hash, so use angular.toJson()
+      // JSON serialization in CRM.api4 is not aware of Angular metadata like $$hash, so use angular.toJson()
       var deferred = $q.defer();
       var p;
       var backend = crmApi4.backend || CRM.api4;

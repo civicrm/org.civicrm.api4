@@ -357,7 +357,12 @@ abstract class AbstractAction implements \ArrayAccess {
     if (!method_exists($bao, $method)) {
       $method = 'add';
     }
-    $createResult = $bao->$method($params);
+    if (method_exists($bao, $method)) {
+      $createResult = $bao->$method($params);
+    }
+    else {
+      $createResult = $this->genericCreateMethod($params);
+    }
 
     if (!$createResult) {
       $errMessage = sprintf('%s write operation failed', $this->getEntity());
@@ -366,6 +371,25 @@ abstract class AbstractAction implements \ArrayAccess {
 
     // trim back the junk and just get the array:
     return $this->baoToArray($createResult);
+  }
+
+  /**
+   * Fallback when a BAO does not contain create or add functions
+   *
+   * @param $params
+   * @return mixed
+   */
+  private function genericCreateMethod($params) {
+    $baoName = $this->getBaoName();
+    $hook = empty($params['id']) ? 'create' : 'edit';
+
+    \CRM_Utils_Hook::pre($hook, $this->getEntity(), \CRM_Utils_Array::value('id', $params), $params);
+    $instance = new $baoName();
+    $instance->copyValues($params, TRUE);
+    $instance->save();
+    \CRM_Utils_Hook::post($hook, $this->getEntity(), $instance->id, $instance);
+
+    return $instance;
   }
 
   /**
