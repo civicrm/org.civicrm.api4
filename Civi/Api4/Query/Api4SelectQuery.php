@@ -71,6 +71,7 @@ class Api4SelectQuery extends SelectQuery
 	/**
 	 * Why walk when you can.
 	 *
+	 * @throws \Civi\API\Exception\UnauthorizedException
 	 * @throws \API_Exception
 	 * @throws \CRM_Core_Exception
 	 * @throws \Exception
@@ -80,11 +81,71 @@ class Api4SelectQuery extends SelectQuery
 	public function run()
 	{
 		$this->preRun();
-		$baseResults = parent::run();
+		$baseResults = $this->getResult();
 		$event = new PostSelectQueryEvent($baseResults, $this);
 		\Civi::dispatcher()->dispatch(Events::POST_SELECT_QUERY, $event);
 
 		return $event->getResults();
+	}
+
+	/**
+	 * @throws \Exception
+	 * @throws \API_Exception
+	 * @throws \CRM_Core_Exception
+	 * @throws \Civi\API\Exception\UnauthorizedException
+	 *
+	 * @return array|int
+	 */
+	protected function getResult()
+	{
+		$this->buildSelectFields();
+
+		$this->buildWhereClause();
+		if (in_array('count_rows', $this->select)) {
+			$this->query->select('count(*) as c');
+		} else {
+			foreach ($this->selectFields as $column => $alias) {
+				$this->query->select("$column as `$alias`");
+			}
+			// Order by
+			$this->buildOrderBy();
+		}
+
+		// Limit
+		if (!empty($this->limit) || !empty($this->offset)) {
+			$this->query->limit($this->limit, $this->offset);
+		}
+
+		$result_entities = [];
+		$result_dao = \CRM_Core_DAO::executeQuery($this->query->toSQL());
+
+		while ($result_dao->fetch()) {
+			if (in_array('count_rows', $this->select)) {
+				$result_dao->free();
+
+				return (int) $result_dao->c;
+			}
+			$result_entities[$result_dao->id] = [];
+			foreach ($this->selectFields as $column => $alias) {
+				$returnName = $alias;
+				$alias = str_replace('.', '_', $alias);
+				$result_entities[$result_dao->id][$returnName] = $result_dao->$alias;
+
+				// Backward compatibility on fields names.
+				if ($this->isFillUniqueFields && !empty($this->apiFieldSpec[$alias]['uniqueName'])) {
+					$result_entities[$result_dao->id][$this->apiFieldSpec[$alias]['uniqueName']] = $result_dao->$alias;
+				}
+				foreach ($this->apiFieldSpec as $returnName => $spec) {
+					if (empty($result_entities[$result_dao->id][$returnName]) &&
+						!empty($result_entities[$result_dao->id][$spec['name']])) {
+						$result_entities[$result_dao->id][$returnName] = $result_entities[$result_dao->id][$spec['name']];
+					}
+				}
+			}
+		}
+		$result_dao->free();
+
+		return $result_entities;
 	}
 
 	/**
@@ -97,7 +158,7 @@ class Api4SelectQuery extends SelectQuery
 		$whereFields = array_column($this->where, 0);
 		$allFields = array_merge($whereFields, $this->select, $this->orderBy);
 		$dotFields = array_unique(array_filter($allFields, function ($field) {
-			return false !== mb_strpos($field, '.');
+			return false !== strpos($field, '.');
 		}));
 
 		foreach ($dotFields as $dotField) {
@@ -106,8 +167,7 @@ class Api4SelectQuery extends SelectQuery
 	}
 
 	/**
-	 * {@inheritdoc}
-	 *
+	 * @throws \Exception
 	 * @throws \API_Exception
 	 */
 	protected function buildWhereClause()
@@ -191,14 +251,13 @@ class Api4SelectQuery extends SelectQuery
 	{
 		list($key, $operator, $criteria) = $clause;
 		$value = [$operator => $criteria];
-		// $field = $this->getField($key); // <<-- unused
-		// derive table and column:
+
 		$table_name = null;
 		$column_name = null;
 		if (in_array($key, $this->entityFieldNames)) {
 			$table_name = self::MAIN_TABLE_ALIAS;
 			$column_name = $key;
-		} elseif (mb_strpos($key, '.') && isset($this->fkSelectAliases[$key])) {
+		} elseif (strpos($key, '.') && isset($this->fkSelectAliases[$key])) {
 			list($table_name, $column_name) = explode('.', $this->fkSelectAliases[$key]);
 		}
 
@@ -255,9 +314,9 @@ class Api4SelectQuery extends SelectQuery
 
 		/** @var Joiner $joiner */
 		$joiner = \Civi::container()->get('joiner');
-		$finalDot = mb_strrpos($key, '.');
-		$pathString = mb_substr($key, 0, $finalDot);
-		$field = mb_substr($key, $finalDot + 1);
+		$finalDot = strrpos($key, '.');
+		$pathString = substr($key, 0, $finalDot);
+		$field = substr($key, $finalDot + 1);
 
 		if (!$joiner->canJoin($this, $pathString)) {
 			return;
