@@ -34,8 +34,8 @@ class ReflectionUtils
 {
     /**
      * @param \Reflector|\ReflectionClass|\ReflectionProperty $reflection
-     * @param string $type
-     * If we are not reflecting the class itself, specify "Method", "Property", etc
+     * @param string                                          $type
+     *                                                                    If we are not reflecting the class itself, specify "Method", "Property", etc
      *
      * @return array
      */

@@ -13,28 +13,26 @@ use CRM_Core_BAO_CustomField as CustomFieldBAO;
 use CRM_Utils_Array as ArrayHelper;
 
 /**
- * Class SchemaMapBuilder
- *
- * @package Civi\Api4\Service\Schema
+ * Class SchemaMapBuilder.
  */
 class SchemaMapBuilder
 {
-  /**
-   * @var EventDispatcherInterface
-   */
+    /**
+     * @var EventDispatcherInterface
+     */
     protected $dispatcher;
 
-  /**
-   * @param EventDispatcherInterface $dispatcher
-   */
+    /**
+     * @param EventDispatcherInterface $dispatcher
+     */
     public function __construct(EventDispatcherInterface $dispatcher)
     {
         $this->dispatcher = $dispatcher;
     }
 
-  /**
-   * @return SchemaMap
-   */
+    /**
+     * @return SchemaMap
+     */
     public function build()
     {
         $map = new SchemaMap();
@@ -46,14 +44,14 @@ class SchemaMapBuilder
         return $map;
     }
 
-  /**
-   * Add all tables and joins
-   *
-   * @param SchemaMap $map
-   */
+    /**
+     * Add all tables and joins.
+     *
+     * @param SchemaMap $map
+     */
     private function loadTables(SchemaMap $map)
     {
-      /** @var \CRM_Core_DAO $daoName */
+        /** @var \CRM_Core_DAO $daoName */
         foreach (TableHelper::get() as $daoName => $data) {
             $table = new Table($data['table']);
             foreach ($daoName::fields() as $field => $fieldData) {
@@ -66,16 +64,16 @@ class SchemaMapBuilder
         $this->addBackReferences($map);
     }
 
-  /**
-   * @param Table $table
-   * @param string $field
-   * @param array $data
-   */
+    /**
+     * @param Table  $table
+     * @param string $field
+     * @param array  $data
+     */
     private function addJoins(Table $table, $field, array $data)
     {
         $fkClass = ArrayHelper::value('FKClassName', $data);
 
-      // can there be multiple methods e.g. pseudoconstant and fkclass
+        // can there be multiple methods e.g. pseudoconstant and fkclass
         if ($fkClass) {
             $tableName = TableHelper::getTableForClass($fkClass);
             $fkKey = ArrayHelper::value('FKKeyColumn', $data, 'id');
@@ -87,11 +85,11 @@ class SchemaMapBuilder
         }
     }
 
-  /**
-   * @param Table $table
-   * @param string $field
-   * @param array $data
-   */
+    /**
+     * @param Table  $table
+     * @param string $field
+     * @param array  $data
+     */
     private function addPseudoConstantJoin(Table $table, $field, array $data)
     {
         $pseudoConstant = ArrayHelper::value('pseudoconstant', $data);
@@ -119,16 +117,16 @@ class SchemaMapBuilder
         }
     }
 
-  /**
-   * Loop through existing links and provide link from the other side
-   *
-   * @param SchemaMap $map
-   */
+    /**
+     * Loop through existing links and provide link from the other side.
+     *
+     * @param SchemaMap $map
+     */
     private function addBackReferences(SchemaMap $map)
     {
         foreach ($map->getTables() as $table) {
             foreach ($table->getTableLinks() as $link) {
-              // there are too many possible joins from option value so skip
+                // there are too many possible joins from option value so skip
                 if ($link instanceof OptionValueJoinable) {
                     continue;
                 }
@@ -143,37 +141,36 @@ class SchemaMapBuilder
         }
     }
 
-  /**
-   * Simple implementation of pluralization.
-   * Could be replaced with symfony/inflector
-   *
-   * @param string $singular
-   *
-   * @return string
-   */
+    /**
+     * Simple implementation of pluralization.
+     * Could be replaced with symfony/inflector.
+     *
+     * @param string $singular
+     *
+     * @return string
+     */
     private function getPlural($singular)
     {
-        $last_letter = substr($singular, -1);
+        $last_letter = mb_substr($singular, -1);
         switch ($last_letter) {
             case 'y':
-                return substr($singular, 0, -1) . 'ies';
+                return mb_substr($singular, 0, -1).'ies';
 
             case 's':
-                return $singular . 'es';
+                return $singular.'es';
 
             default:
-                return $singular . 's';
+                return $singular.'s';
         }
     }
-    
+
     /**
-     * @param SchemaMap                           $map
-     * @param Table                               $baseTable
-     * @param                                     $entityName
+     * @param SchemaMap $map
+     * @param Table     $baseTable
+     * @param           $entityName
      */
     private function addCustomFields(SchemaMap $map, Table $baseTable, $entityName)
     {
-
         $parentTypes = ['Contact', 'Individual', 'Organization', 'Household'];
         if (in_array($entityName, $parentTypes)) {
             $entityName = $parentTypes;

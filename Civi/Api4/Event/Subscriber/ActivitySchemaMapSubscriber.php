@@ -8,18 +8,16 @@ use Civi\Api4\Service\Schema\Joinable\ActivityToActivityContactAssigneesJoinable
 use Civi\Api4\Service\Schema\Joinable\BridgeJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use \CRM_Utils_String as StringHelper;
+use CRM_Utils_String as StringHelper;
 
 /**
- * Class ActivitySchemaMapSubscriber
- *
- * @package Civi\Api4\Event\Subscriber
+ * Class ActivitySchemaMapSubscriber.
  */
 class ActivitySchemaMapSubscriber implements EventSubscriberInterface
 {
-  /**
-   * @return array
-   */
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [
@@ -27,9 +25,9 @@ class ActivitySchemaMapSubscriber implements EventSubscriberInterface
         ];
     }
 
-  /**
-   * @param SchemaMapBuildEvent $event
-   */
+    /**
+     * @param SchemaMapBuildEvent $event
+     */
     public function onSchemaBuild(SchemaMapBuildEvent $event)
     {
         $schema = $event->getSchemaMap();

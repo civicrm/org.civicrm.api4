@@ -17,7 +17,7 @@ class ContributionCreationSpecProvider implements SpecProviderInterface
     {
         $spec->getFieldByName('financial_type_id')->setRequired(true);
     }
-    
+
     /**
      * @param string $entity
      * @param string $action

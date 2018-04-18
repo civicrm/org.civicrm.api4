@@ -5,24 +5,22 @@ namespace Civi\Api4\Utils;
 use CRM_Utils_Array as ArrayHelper;
 
 /**
- * Class ArrayInsertionUtil
- *
- * @package Civi\Api4\Utils
+ * Class ArrayInsertionUtil.
  */
 class ArrayInsertionUtil
 {
-  /**
-   * If the values to be inserted contain a key _parent_id they will only be
-   * inserted if the parent node ID matches their ID
-   *
-   * @param $array
-   *   The array to insert the value in
-   * @param array $parts
-   *   Path to insertion point with structure:
-   *   [[ name => is_multiple ], ..]
-   * @param mixed $values
-   *   The value to be inserted
-   */
+    /**
+     * If the values to be inserted contain a key _parent_id they will only be
+     * inserted if the parent node ID matches their ID.
+     *
+     * @param $array
+     *   The array to insert the value in
+     * @param array $parts
+     *                      Path to insertion point with structure:
+     *                      [[ name => is_multiple ], ..]
+     * @param mixed $values
+     *                      The value to be inserted
+     */
     public static function insert(&$array, $parts, $values)
     {
         $key = key($parts);
@@ -44,20 +42,20 @@ class ArrayInsertionUtil
         }
     }
 
-  /**
-   * @param $parentArray
-   * @param $isMulti
-   * @param $values
-   *
-   * @return array|mixed
-   */
+    /**
+     * @param $parentArray
+     * @param $isMulti
+     * @param $values
+     *
+     * @return array|mixed
+     */
     private static function filterValues($parentArray, $isMulti, $values)
     {
         $parentID = ArrayHelper::value('id', $parentArray);
 
         if ($parentID) {
             $values = array_filter($values, function ($value) use ($parentID) {
-                return ArrayHelper::value('_parent_id', $value) == $parentID;
+                return ArrayHelper::value('_parent_id', $value) === $parentID;
             });
         }
 
@@ -73,6 +71,7 @@ class ArrayInsertionUtil
         if (!$isMulti) {
             $values = array_shift($values);
         }
+
         return $values;
     }
 }

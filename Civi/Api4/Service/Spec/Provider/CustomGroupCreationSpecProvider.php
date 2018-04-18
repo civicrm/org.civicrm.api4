@@ -11,7 +11,6 @@ use Civi\Api4\Service\Spec\RequestSpec;
  */
 class CustomGroupCreationSpecProvider implements SpecProviderInterface
 {
-    
     /**
      * @param RequestSpec $spec
      *
@@ -21,7 +20,7 @@ class CustomGroupCreationSpecProvider implements SpecProviderInterface
     {
         return $spec->getFieldByName('extends')->setRequired(true);
     }
-    
+
     /**
      * @param string $entity
      * @param string $action

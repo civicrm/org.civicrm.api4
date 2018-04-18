@@ -42,7 +42,7 @@ class GetActions extends AbstractAction
      * {@inheritdoc}
      */
     protected $checkPermissions = false;
-    
+
     /**
      * @var array
      */
@@ -76,7 +76,7 @@ class GetActions extends AbstractAction
         }
         $result->exchangeArray(array_values($this->_actions));
     }
-    
+
     /**
      * @param $dir
      *
@@ -95,7 +95,7 @@ class GetActions extends AbstractAction
             }
         }
     }
-    
+
     /**
      * @param $actionName
      *

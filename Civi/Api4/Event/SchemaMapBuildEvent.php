@@ -6,38 +6,36 @@ use Civi\Api4\Service\Schema\SchemaMap;
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
 /**
- * Class SchemaMapBuildEvent
- *
- * @package Civi\Api4\Event
+ * Class SchemaMapBuildEvent.
  */
 class SchemaMapBuildEvent extends BaseEvent
 {
-  /**
-   * @var SchemaMap
-   */
+    /**
+     * @var SchemaMap
+     */
     protected $schemaMap;
 
-  /**
-   * @param SchemaMap $schemaMap
-   */
+    /**
+     * @param SchemaMap $schemaMap
+     */
     public function __construct(SchemaMap $schemaMap)
     {
         $this->schemaMap = $schemaMap;
     }
 
-  /**
-   * @return SchemaMap
-   */
+    /**
+     * @return SchemaMap
+     */
     public function getSchemaMap()
     {
         return $this->schemaMap;
     }
 
-  /**
-   * @param SchemaMap $schemaMap
-   *
-   * @return $this
-   */
+    /**
+     * @param SchemaMap $schemaMap
+     *
+     * @return $this
+     */
     public function setSchemaMap($schemaMap)
     {
         $this->schemaMap = $schemaMap;

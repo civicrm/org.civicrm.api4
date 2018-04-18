@@ -67,7 +67,7 @@ class Api4SelectQuery extends SelectQuery
      *                 The joinable tables that have been joined so far
      */
     protected $joinedTables = [];
-    
+
     /**
      * Why walk when you can.
      *
@@ -86,7 +86,7 @@ class Api4SelectQuery extends SelectQuery
 
         return $event->getResults();
     }
-    
+
     /**
      * Gets all FK fields and does the required joins.
      *
@@ -117,7 +117,7 @@ class Api4SelectQuery extends SelectQuery
             $this->query->where($sql_clause);
         }
     }
-    
+
     /**
      * @throws \API_Exception
      */
@@ -213,9 +213,10 @@ class Api4SelectQuery extends SelectQuery
 
         return $sql_clause;
     }
-    
+
     /**
      * @return array
+     *
      * @throws \API_Exception
      */
     protected function getFields()
@@ -238,7 +239,7 @@ class Api4SelectQuery extends SelectQuery
             return $this->apiFieldSpec[$fieldName];
         }
     }
-    
+
     /**
      * @param $key
      *
@@ -251,12 +252,12 @@ class Api4SelectQuery extends SelectQuery
         if (count($stack) < 2) {
             return;
         }
-    
+
         /** @var Joiner $joiner */
-        $joiner     = \Civi::container()->get('joiner');
-        $finalDot   = mb_strrpos($key, '.');
+        $joiner = \Civi::container()->get('joiner');
+        $finalDot = mb_strrpos($key, '.');
         $pathString = mb_substr($key, 0, $finalDot);
-        $field      = mb_substr($key, $finalDot + 1);
+        $field = mb_substr($key, $finalDot + 1);
 
         if (!$joiner->canJoin($this, $pathString)) {
             return;

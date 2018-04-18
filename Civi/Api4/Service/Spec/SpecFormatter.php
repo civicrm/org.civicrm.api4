@@ -6,17 +6,15 @@ use CRM_Utils_Array as ArrayHelper;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
 
 /**
- * Class SpecFormatter
- *
- * @package Civi\Api4\Service\Spec
+ * Class SpecFormatter.
  */
 class SpecFormatter
 {
-  /**
-   * @param RequestSpec $spec
-   *
-   * @return array
-   */
+    /**
+     * @param RequestSpec $spec
+     *
+     * @return array
+     */
     public static function specToArray(RequestSpec $spec)
     {
         $specArray = [];
@@ -30,11 +28,12 @@ class SpecFormatter
 
         return $specArray;
     }
-    
+
     /**
      * @param array $data
      *
      * @return FieldSpec
+     *
      * @throws \Exception
      */
     public static function arrayToField(array $data)
@@ -42,7 +41,7 @@ class SpecFormatter
         $dataTypeName = self::getDataType($data);
 
         if (!empty($data['custom_group_id'])) {
-            $name = $data['custom_group']['name'] . '.' . $data['name'];
+            $name = $data['custom_group']['name'].'.'.$data['name'];
             $field = new CustomFieldSpec($name, $dataTypeName);
             $field->setCustomFieldId(ArrayHelper::value('id', $data));
             $field->setCustomGroupId($data['custom_group_id']);
@@ -70,14 +69,14 @@ class SpecFormatter
         return $field;
     }
 
-  /**
-   * Get the data type from an array. Defaults to 'data_type' with fallback to
-   * mapping for the integer value 'type'
-   *
-   * @param array $data
-   *
-   * @return string
-   */
+    /**
+     * Get the data type from an array. Defaults to 'data_type' with fallback to
+     * mapping for the integer value 'type'.
+     *
+     * @param array $data
+     *
+     * @return string
+     */
     private static function getDataType(array $data)
     {
         if (isset($data['data_type'])) {

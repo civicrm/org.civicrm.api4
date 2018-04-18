@@ -11,9 +11,7 @@ use Civi\Api4\Service\Spec\RequestSpec;
  */
 class ActivityCreationSpecProvider implements SpecProviderInterface
 {
-    
     /**
-     *
      * @param RequestSpec $spec
      *
      * @throws \Exception
@@ -28,7 +26,7 @@ class ActivityCreationSpecProvider implements SpecProviderInterface
 
         $spec->addFieldSpec($sourceContactField);
     }
-    
+
     /**
      * @param string $entity
      * @param string $action

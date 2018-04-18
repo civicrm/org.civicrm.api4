@@ -24,6 +24,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
+
 namespace Civi\Api4\Action;
 
 use Civi\Api4\Generic\Result;
@@ -33,23 +34,24 @@ use Civi\Api4\Generic\Result;
  */
 class Delete extends Get
 {
-
-  /**
-   * Criteria for selecting items to delete.
-   *
-   * @required
-   * @var array
-   */
-    protected $where = [];
-    
     /**
-     * Batch delete function
+     * Criteria for selecting items to delete.
+     *
+     * @required
+     *
+     * @var array
+     */
+    protected $where = [];
+
+    /**
+     * Batch delete function.
      *
      * @todo much of this should be abstracted out to a generic batch handler
      *
      * @param \Civi\Api4\Generic\Result $result
      *
      * @return \Civi\Api4\Generic\Result
+     *
      * @throws \API_Exception
      * @throws \CRM_Core_Exception
      * @throws \Exception
@@ -62,15 +64,15 @@ class Delete extends Get
         if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
             throw new \API_Exception('Cannot delete with no "where" paramater specified');
         }
-      // run the parent action (get) to get the list
+        // run the parent action (get) to get the list
         parent::_run($result);
-      // Then act on the result
+        // Then act on the result
         $ids = [];
         if (method_exists($baoName, 'del')) {
             foreach ($result as $item) {
                 $args = [$item['id']];
                 $bao = call_user_func_array([$baoName, 'del'], $args);
-                if ($bao !== false) {
+                if (false !== $bao) {
                     $ids[] = $item['id'];
                 } else {
                     throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
@@ -80,7 +82,7 @@ class Delete extends Get
             foreach ($result as $item) {
                 $bao = new $baoName();
                 $bao->id = $item['id'];
-              // delete it
+                // delete it
                 $action_result = $bao->delete();
                 if ($action_result) {
                     $ids[] = $item['id'];
@@ -90,6 +92,7 @@ class Delete extends Get
             }
         }
         $result->exchangeArray($ids);
+
         return $result;
     }
 }

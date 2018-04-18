@@ -56,7 +56,7 @@ class GetFields extends AbstractAction
      * @var string
      */
     protected $action = 'get';
-    
+
     /**
      * @param \Civi\Api4\Generic\Result $result
      *

@@ -5,48 +5,40 @@ namespace Civi\Api4\Event\Subscriber;
 use Civi\Api4\Action\Create;
 
 /**
- * Class CustomFieldPreCreationSubscriber
- *
- * @package Civi\Api4\Event\Subscriber
+ * Class CustomFieldPreCreationSubscriber.
  */
 class CustomFieldPreCreationSubscriber extends PreCreationSubscriber
 {
-    
-    /**
-     *
-     */
-    const OPTION_TYPE_NEW = 1;
-    
-    /**
-     *
-     */
-    const OPTION_STATUS_ACTIVE = 1;
+    public const OPTION_TYPE_NEW = 1;
 
-  /**
-   * @param Create $request
-   */
+    public const OPTION_STATUS_ACTIVE = 1;
+
+    /**
+     * @param Create $request
+     */
     public function modify(Create $request)
     {
         $this->formatOptionParams($request);
         $this->setDefaults($request);
     }
 
-  /**
-   * @param Create $request
-   *
-   * @return bool
-   */
+    /**
+     * @param Create $request
+     *
+     * @return bool
+     */
     protected function applies(Create $request)
     {
-        return $request->getEntity() === 'CustomField';
+        return 'CustomField' === $request->getEntity();
     }
 
-  /**
-   * Sets defaults required for option group and value creation
-   * @see CRM_Core_BAO_CustomField::create()
-   *
-   * @param Create $request
-   */
+    /**
+     * Sets defaults required for option group and value creation.
+     *
+     * @see CRM_Core_BAO_CustomField::create()
+     *
+     * @param Create $request
+     */
     protected function formatOptionParams(Create $request)
     {
         $options = $request->getValue('options');
@@ -95,9 +87,9 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber
         }
     }
 
-  /**
-   * @param Create $request
-   */
+    /**
+     * @param Create $request
+     */
     private function setDefaults(Create $request)
     {
         if (!$request->getValue('option_type')) {

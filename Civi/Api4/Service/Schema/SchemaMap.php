@@ -6,30 +6,24 @@ use Civi\Api4\Service\Schema\Joinable\BridgeJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 
 /**
- * Class SchemaMap
- *
- * @package Civi\Api4\Service\Schema
+ * Class SchemaMap.
  */
 class SchemaMap
 {
-    
-    /**
-     *
-     */
-    const MAX_JOIN_DEPTH = 3;
+    public const MAX_JOIN_DEPTH = 3;
 
-  /**
-   * @var Table[]
-   */
+    /**
+     * @var Table[]
+     */
     protected $tables = [];
 
-  /**
-   * @param $baseTableName
-   * @param $targetTableAlias
-   *
-   * @return Joinable[]
-   *   Array of links to the target table, empty if no path found
-   */
+    /**
+     * @param $baseTableName
+     * @param $targetTableAlias
+     *
+     * @return Joinable[]
+     *                    Array of links to the target table, empty if no path found
+     */
     public function getPath($baseTableName, $targetTableAlias)
     {
         $table = $this->getTableByName($baseTableName);
@@ -53,19 +47,19 @@ class SchemaMap
         return $path;
     }
 
-  /**
-   * @return Table[]
-   */
+    /**
+     * @return Table[]
+     */
     public function getTables()
     {
         return $this->tables;
     }
 
-  /**
-   * @param $name
-   *
-   * @return Table|null
-   */
+    /**
+     * @param $name
+     *
+     * @return Table|null
+     */
     public function getTableByName($name)
     {
         foreach ($this->tables as $table) {
@@ -73,17 +67,15 @@ class SchemaMap
                 return $table;
             }
         }
-
-        return null;
     }
 
-  /**
-   * Adds a table to the schema map if it has not already been added
-   *
-   * @param Table $table
-   *
-   * @return $this
-   */
+    /**
+     * Adds a table to the schema map if it has not already been added.
+     *
+     * @param Table $table
+     *
+     * @return $this
+     */
     public function addTable(Table $table)
     {
         if (!$this->getTableByName($table->getName())) {
@@ -93,9 +85,9 @@ class SchemaMap
         return $this;
     }
 
-  /**
-   * @param array $tables
-   */
+    /**
+     * @param array $tables
+     */
     public function addTables(array $tables)
     {
         foreach ($tables as $table) {
@@ -103,27 +95,26 @@ class SchemaMap
         }
     }
 
-  /**
-   * Recursive function to traverse the schema looking for a path
-   *
-   * @param Table $table
-   *   The current table to base fromm
-   * @param string $target
-   *   The target joinable table alias
-   * @param int $depth
-   *   The current level of recursion which reflects the number of joins needed
-   * @param Joinable[] $path
-   *   (By-reference) The possible paths to the target table
-   * @param Joinable[] $currentPath
-   *   For internal use only to track the path to reach the target table
-   */
+    /**
+     * Recursive function to traverse the schema looking for a path.
+     *
+     * @param Table      $table
+     *                                The current table to base fromm
+     * @param string     $target
+     *                                The target joinable table alias
+     * @param int        $depth
+     *                                The current level of recursion which reflects the number of joins needed
+     * @param Joinable[] $path
+     *                                (By-reference) The possible paths to the target table
+     * @param Joinable[] $currentPath
+     *                                For internal use only to track the path to reach the target table
+     */
     private function findPaths(Table $table, $target, $depth, &$path, $currentPath = []
-    )
-    {
+    ) {
         static $visited = [];
 
-      // reset if new call
-        if ($depth === 1) {
+        // reset if new call
+        if (1 === $depth) {
             $visited = [];
         }
 
@@ -135,7 +126,7 @@ class SchemaMap
             return;
         }
 
-      // prevent circular reference
+        // prevent circular reference
         $visited[] = $table->getName();
 
         foreach ($table->getExternalLinks() as $link) {

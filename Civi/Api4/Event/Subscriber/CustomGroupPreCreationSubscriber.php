@@ -5,15 +5,13 @@ namespace Civi\Api4\Event\Subscriber;
 use Civi\Api4\Action\Create;
 
 /**
- * Class CustomGroupPreCreationSubscriber
- *
- * @package Civi\Api4\Event\Subscriber
+ * Class CustomGroupPreCreationSubscriber.
  */
 class CustomGroupPreCreationSubscriber extends PreCreationSubscriber
 {
-  /**
-   * @param Create $request
-   */
+    /**
+     * @param Create $request
+     */
     protected function modify(Create $request)
     {
         $extends = $request->getValue('extends');
@@ -28,7 +26,7 @@ class CustomGroupPreCreationSubscriber extends PreCreationSubscriber
             $request->addValue('title', $name);
         }
     }
-    
+
     /**
      * @param Create $request
      *
@@ -36,6 +34,6 @@ class CustomGroupPreCreationSubscriber extends PreCreationSubscriber
      */
     protected function applies(Create $request)
     {
-        return $request->getEntity() === 'CustomGroup';
+        return 'CustomGroup' === $request->getEntity();
     }
 }

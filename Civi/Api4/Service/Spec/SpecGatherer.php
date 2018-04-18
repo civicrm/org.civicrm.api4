@@ -6,9 +6,7 @@ use Civi\Api4\CustomField;
 use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
 
 /**
- * Class SpecGatherer
- *
- * @package Civi\Api4\Service\Spec
+ * Class SpecGatherer.
  */
 class SpecGatherer
 {

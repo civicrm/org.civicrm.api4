@@ -38,27 +38,26 @@ use Civi\Api4\Generic\Result;
  */
 class Create extends AbstractAction
 {
-
-  /**
-   * Field values to set
-   *
-   * @var array
-   */
+    /**
+     * Field values to set.
+     *
+     * @var array
+     */
     protected $values = [];
 
-  /**
-   * @param $key
-   *
-   * @return mixed|null
-   */
+    /**
+     * @param $key
+     *
+     * @return mixed|null
+     */
     public function getValue($key)
     {
         return isset($this->values[$key]) ? $this->values[$key] : null;
     }
 
-  /**
-   * @inheritDoc
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function _run(Result $result)
     {
         if (!empty($this->values['id'])) {
@@ -67,7 +66,7 @@ class Create extends AbstractAction
 
         $resultArray = $this->writeObject($this->values);
 
-      // fixme should return a single row array???
+        // fixme should return a single row array???
         $result->exchangeArray($resultArray);
     }
 }

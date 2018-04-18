@@ -3,38 +3,35 @@
 namespace Civi\Api4\Service\Spec;
 
 /**
- * Class RequestSpec
- *
- * @package Civi\Api4\Service\Spec
+ * Class RequestSpec.
  */
 class RequestSpec
 {
-
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $entity;
 
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $action;
 
-  /**
-   * @var FieldSpec[]
-   */
+    /**
+     * @var FieldSpec[]
+     */
     protected $fields = [];
 
-  /**
-   * @param string $entity
-   * @param string $action
-   */
+    /**
+     * @param string $entity
+     * @param string $action
+     */
     public function __construct($entity, $action)
     {
         $this->entity = $entity;
         $this->action = $action;
     }
-    
+
     /**
      * @param FieldSpec $field
      */
@@ -43,11 +40,11 @@ class RequestSpec
         $this->fields[] = $field;
     }
 
-  /**
-   * @param $name
-   *
-   * @return FieldSpec|null
-   */
+    /**
+     * @param $name
+     *
+     * @return FieldSpec|null
+     */
     public function getFieldByName($name)
     {
         foreach ($this->fields as $field) {
@@ -55,14 +52,12 @@ class RequestSpec
                 return $field;
             }
         }
-
-        return null;
     }
 
-  /**
-   * @return array
-   *   Gets all the field names currently part of the specification
-   */
+    /**
+     * @return array
+     *               Gets all the field names currently part of the specification
+     */
     public function getFieldNames()
     {
         return array_map(function (FieldSpec $field) {
@@ -70,9 +65,9 @@ class RequestSpec
         }, $this->fields);
     }
 
-  /**
-   * @return array|FieldSpec[]
-   */
+    /**
+     * @return array|FieldSpec[]
+     */
     public function getRequiredFields()
     {
         return array_filter($this->fields, function (FieldSpec $field) {
@@ -80,25 +75,25 @@ class RequestSpec
         });
     }
 
-  /**
-   * @return FieldSpec[]
-   */
+    /**
+     * @return FieldSpec[]
+     */
     public function getFields()
     {
         return $this->fields;
     }
 
-  /**
-   * @return string
-   */
+    /**
+     * @return string
+     */
     public function getEntity()
     {
         return $this->entity;
     }
 
-  /**
-   * @return string
-   */
+    /**
+     * @return string
+     */
     public function getAction()
     {
         return $this->action;

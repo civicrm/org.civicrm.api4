@@ -6,5 +6,4 @@ use Civi\Api4\Generic\AbstractEntity;
 
 class Country extends AbstractEntity
 {
-    
 }

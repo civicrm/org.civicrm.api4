@@ -32,41 +32,44 @@ namespace Civi\Api4\Generic;
  */
 class Result extends \ArrayObject
 {
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     public $entity;
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     public $action;
-  /**
-   * Api version
-   * @var int
-   */
+    /**
+     * Api version.
+     *
+     * @var int
+     */
     public $version = 4;
 
-  /**
-   * Return first result.
-   * @return array|null
-   */
+    /**
+     * Return first result.
+     *
+     * @return array|null
+     */
     public function first()
     {
         foreach ($this as $values) {
             return $values;
         }
-        return null;
     }
 
-  /**
-   * Re-index the results array (which by default is non-associative)
-   *
-   * Drops any item from the results that does not contain the specified key
-   *
-   * @param string $key
-   * @return $this
-   * @throws \API_Exception
-   */
+    /**
+     * Re-index the results array (which by default is non-associative).
+     *
+     * Drops any item from the results that does not contain the specified key
+     *
+     * @param string $key
+     *
+     * @return $this
+     *
+     * @throws \API_Exception
+     */
     public function indexBy($key)
     {
         if (count($this)) {
@@ -81,6 +84,7 @@ class Result extends \ArrayObject
             }
             $this->exchangeArray($newResults);
         }
+
         return $this;
     }
 }

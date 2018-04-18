@@ -35,17 +35,15 @@ use Civi\Api4\Generic\Result;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Accept $apiRequests based on \Civi\API\Action
+ * Accept $apiRequests based on \Civi\API\Action.
  */
 class ActionObjectProvider implements EventSubscriberInterface, ProviderInterface
 {
-    
     /**
      * @return array
      */
     public static function getSubscribedEvents()
     {
-        
         // Using a high priority allows adhoc implementations
         // to override standard implementations -- which is
         // handy for testing/mocking.
@@ -55,14 +53,13 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
             ],
         ];
     }
-    
+
     /**
-     * @param ResolveEvent $event
-     *   API resolution event.
+     * @param resolveEvent $event
+     *                            API resolution event
      */
     public function onApiResolve(ResolveEvent $event)
     {
-        
         $apiRequest = $event->getApiRequest();
         if ($apiRequest instanceof AbstractAction) {
             $event->setApiRequest($apiRequest);
@@ -70,9 +67,9 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
             $event->stopPropagation();
         }
     }
-    
+
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @param array|AbstractAction $apiRequest
      *
@@ -80,17 +77,16 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
      */
     public function invoke($apiRequest)
     {
-        
-        $result         = new Result();
+        $result = new Result();
         $result->action = $apiRequest['action'];
         $result->entity = $apiRequest['entity'];
         $apiRequest->_run($result);
-        
+
         return $result;
     }
-    
+
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @param int $version
      *
@@ -98,13 +94,12 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
      */
     public function getEntityNames($version)
     {
-        
-        /** FIXME */
+        /* FIXME */
         return [];
     }
-    
+
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      *
      * @param int    $version
      * @param string $entity
@@ -113,8 +108,7 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
      */
     public function getActionNames($version, $entity)
     {
-        
-        /** FIXME Civi\API\V4\Action\GetActions */
+        /* FIXME Civi\API\V4\Action\GetActions */
         return [];
     }
 }

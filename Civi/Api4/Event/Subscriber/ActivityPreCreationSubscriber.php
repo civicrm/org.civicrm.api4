@@ -6,17 +6,16 @@ use Civi\Api4\Action\Create;
 use Civi\Api4\OptionValue;
 
 /**
- * Class ActivityPreCreationSubscriber
- *
- * @package Civi\Api4\Event\Subscriber
+ * Class ActivityPreCreationSubscriber.
  */
 class ActivityPreCreationSubscriber extends PreCreationSubscriber
 {
-  /**
-   * @param Create $request
-   * @throws \API_Exception
-   * @throws \Exception
-   */
+    /**
+     * @param Create $request
+     *
+     * @throws \API_Exception
+     * @throws \Exception
+     */
     protected function modify(Create $request)
     {
         $activityType = $request->getValue('activity_type');
@@ -27,7 +26,7 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber
             ->addWhere('option_group.name', '=', 'activity_type')
             ->execute();
 
-            if ($result->count() !== 1) {
+            if (1 !== $result->count()) {
                 throw new \Exception('Activity type must match a *single* type');
             }
 
@@ -35,13 +34,13 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber
         }
     }
 
-  /**
-   * @param Create $request
-   *
-   * @return bool
-   */
+    /**
+     * @param Create $request
+     *
+     * @return bool
+     */
     protected function applies(Create $request)
     {
-        return $request->getEntity() === 'Activity';
+        return 'Activity' === $request->getEntity();
     }
 }

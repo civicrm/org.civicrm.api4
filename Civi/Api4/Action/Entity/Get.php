@@ -31,21 +31,20 @@ use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 
 /**
- * Get entities
+ * Get entities.
  */
 class Get extends AbstractAction
 {
-
-  /**
-   * Scan all api directories to discover entities
-   *
-   * @param Result $result
-   */
+    /**
+     * Scan all api directories to discover entities.
+     *
+     * @param Result $result
+     */
     public function _run(Result $result)
     {
         $entities = [];
         foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
-            $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4';
+            $dir = \CRM_Utils_File::addTrailingSlash($path).'Civi/Api4';
             if (is_dir($dir)) {
                 foreach (glob("$dir/*.php") as $file) {
                     $matches = [];

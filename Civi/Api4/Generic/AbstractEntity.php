@@ -24,6 +24,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
+
 namespace Civi\Api4\Generic;
 
 use Civi\API\Exception\NotImplementedException;
@@ -46,22 +47,23 @@ use Civi\Api4\Action\Update;
  */
 abstract class AbstractEntity
 {
-
-  /**
-   * Magic method to return the action object for an api.
-   *
-   * @param string $action
-   * @param null $ignore
-   * @return AbstractAction
-   * @throws NotImplementedException
-   */
+    /**
+     * Magic method to return the action object for an api.
+     *
+     * @param string $action
+     * @param null   $ignore
+     *
+     * @return AbstractAction
+     *
+     * @throws NotImplementedException
+     */
     public static function __callStatic($action, $ignore)
     {
-      // Get entity name from called class
-        $entity = substr(static::class, strrpos(static::class, '\\') + 1);
-      // Find class for this action
-        $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
-        $genericAction = '\Civi\Api4\Action\\' . ucfirst($action);
+        // Get entity name from called class
+        $entity = mb_substr(static::class, mb_strrpos(static::class, '\\') + 1);
+        // Find class for this action
+        $entityAction = "\\Civi\\Api4\\Action\\$entity\\".ucfirst($action);
+        $genericAction = '\Civi\Api4\Action\\'.ucfirst($action);
         if (class_exists($entityAction)) {
             return new $entityAction($entity);
         } elseif (class_exists($genericAction)) {

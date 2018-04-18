@@ -33,11 +33,10 @@ use Civi\Api4\Entity;
 use Civi\Api4\Generic\Result;
 
 /**
- * Get fields for all entities
+ * Get fields for all entities.
  */
 class GetFields extends GenericGetFields
 {
-    
     /**
      * @param Result $result
      *
@@ -47,7 +46,6 @@ class GetFields extends GenericGetFields
      */
     public function _run(Result $result)
     {
-        
         $action = $this->getAction();
         $includeCustom = $this->getIncludeCustom();
         try {
@@ -57,8 +55,8 @@ class GetFields extends GenericGetFields
         foreach ($entities as $entity) {
             $data = ['entity' => $entity, 'fields' => []];
             // Prevent infinite recursion
-            if ($entity != 'Entity') {
-                $data['fields'] = (array)civicrm_api4(
+            if ('Entity' !== $entity) {
+                $data['fields'] = (array) civicrm_api4(
                     $entity,
                     'getFields',
                     ['action' => $action, 'includeCustom' => $includeCustom]

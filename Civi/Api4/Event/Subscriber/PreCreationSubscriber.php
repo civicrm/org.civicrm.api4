@@ -6,15 +6,13 @@ use Civi\API\Event\PrepareEvent;
 use Civi\Api4\Action\Create;
 
 /**
- * Class PreCreationSubscriber
- *
- * @package Civi\Api4\Event\Subscriber
+ * Class PreCreationSubscriber.
  */
 abstract class PreCreationSubscriber extends AbstractPrepareSubscriber
 {
-  /**
-   * @param PrepareEvent $event
-   */
+    /**
+     * @param PrepareEvent $event
+     */
     public function onApiPrepare(PrepareEvent $event)
     {
         $apiRequest = $event->getApiRequest();
@@ -28,29 +26,27 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber
         }
     }
 
-  /**
-   * Modify the request
-   *
-   * @param Create $request
-   *
-   * @return void
-   */
+    /**
+     * Modify the request.
+     *
+     * @param Create $request
+     */
     abstract protected function modify(Create $request);
 
-  /**
-   * Check if this subscriber should be applied to the request
-   *
-   * @param Create $request
-   *
-   * @return bool
-   */
+    /**
+     * Check if this subscriber should be applied to the request.
+     *
+     * @param Create $request
+     *
+     * @return bool
+     */
     abstract protected function applies(Create $request);
 
-  /**
-   * Sets default values common to all creation requests
-   *
-   * @param Create $request
-   */
+    /**
+     * Sets default values common to all creation requests.
+     *
+     * @param Create $request
+     */
     protected function addDefaultCreationValues(Create $request)
     {
         if (null === $request->getValue('is_active')) {

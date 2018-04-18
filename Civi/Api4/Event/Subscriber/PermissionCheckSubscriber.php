@@ -37,9 +37,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 class PermissionCheckSubscriber implements EventSubscriberInterface
 {
-  /**
-   * @return array
-   */
+    /**
+     * @return array
+     */
     public static function getSubscribedEvents()
     {
         return [
@@ -49,15 +49,15 @@ class PermissionCheckSubscriber implements EventSubscriberInterface
         ];
     }
 
-  /**
-   * @param \Civi\API\Event\AuthorizeEvent $event
-   *   API authorization event.
-   */
+    /**
+     * @param \Civi\API\Event\AuthorizeEvent $event
+     *                                              API authorization event
+     */
     public function onApiAuthorize(\Civi\API\Event\AuthorizeEvent $event)
     {
-      /* @var \Civi\Api4\Generic\AbstractAction $apiRequest */
+        /* @var \Civi\Api4\Generic\AbstractAction $apiRequest */
         $apiRequest = $event->getApiRequest();
-        if ($apiRequest['version'] == 4) {
+        if (4 === $apiRequest['version']) {
             if (!$apiRequest->getCheckPermissions() || $apiRequest->isAuthorized()) {
                 $event->authorize();
                 $event->stopPropagation();

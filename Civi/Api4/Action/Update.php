@@ -24,6 +24,7 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
+
 namespace Civi\Api4\Action;
 
 use Civi\Api4\Generic\Result;
@@ -36,48 +37,48 @@ use Civi\Api4\Generic\Result;
  */
 class Update extends Get
 {
-
-  /**
-   * Criteria for selecting items to update.
-   *
-   * @required
-   * @var array
-   */
+    /**
+     * Criteria for selecting items to update.
+     *
+     * @required
+     *
+     * @var array
+     */
     protected $where = [];
 
-  /**
-   * Field values to update.
-   *
-   * @var array
-   */
+    /**
+     * Field values to update.
+     *
+     * @var array
+     */
     protected $values = [];
 
-  /**
-   * @param $key
-   *
-   * @return mixed|null
-   */
+    /**
+     * @param $key
+     *
+     * @return mixed|null
+     */
     public function getValue($key)
     {
         return isset($this->values[$key]) ? $this->values[$key] : null;
     }
 
-  /**
-   * @inheritDoc
-   */
+    /**
+     * {@inheritdoc}
+     */
     public function _run(Result $result)
     {
         if (!empty($this->values['id'])) {
             throw new \Exception('Cannot update the id of an existing object.');
         }
-      // First run the parent action (get)
+        // First run the parent action (get)
         $this->select = ['id'];
-      // For some reason the contact bao requires this
-        if ($this->getEntity() == 'Contact') {
+        // For some reason the contact bao requires this
+        if ('Contact' === $this->getEntity()) {
             $this->select[] = 'contact_type';
         }
         parent::_run($result);
-      // Then act on the result
+        // Then act on the result
         $updated_results = [];
         foreach ($result as $item) {
             $updated_results[$item['id']] = $this->writeObject($this->values + $item);

@@ -5,11 +5,8 @@ namespace Civi\Api4;
 use Civi\Api4\Generic\AbstractEntity;
 
 /**
- * Class LocationType
- *
- * @package Civi\Api4
+ * Class LocationType.
  */
 class LocationType extends AbstractEntity
 {
-    
 }
