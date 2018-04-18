@@ -2,21 +2,24 @@
 
 namespace Civi\Api4\Service\Schema\Joinable;
 
+/**
+ * Class ActivityToActivityContactAssigneesJoinable.
+ */
 class ActivityToActivityContactAssigneesJoinable extends Joinable
 {
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $baseTable = 'civicrm_activity';
 
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $baseColumn = 'id';
 
-  /**
-   * @param $alias
-   */
+    /**
+     * @param $alias
+     */
     public function __construct($alias)
     {
         $optionValueTable = 'civicrm_option_value';

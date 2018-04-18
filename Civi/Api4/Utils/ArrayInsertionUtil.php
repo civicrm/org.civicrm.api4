@@ -4,6 +4,11 @@ namespace Civi\Api4\Utils;
 
 use CRM_Utils_Array as ArrayHelper;
 
+/**
+ * Class ArrayInsertionUtil
+ *
+ * @package Civi\Api4\Utils
+ */
 class ArrayInsertionUtil
 {
   /**

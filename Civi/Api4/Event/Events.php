@@ -2,6 +2,11 @@
 
 namespace Civi\Api4\Event;
 
+/**
+ * Class Events
+ *
+ * @package Civi\Api4\Event
+ */
 class Events
 {
 

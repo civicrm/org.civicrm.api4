@@ -37,36 +37,39 @@ use Civi\Api4\Action\GetActions;
  */
 class Entity
 {
-    
     /**
      * @return Get
+     *
      * @throws \ReflectionException
      */
     public static function get()
     {
         return new Get('Entity');
     }
-    
+
     /**
      * @return GetActions
+     *
      * @throws \ReflectionException
      */
     public static function getActions()
     {
         return new GetActions('Entity');
     }
-    
+
     /**
      * @return GetFields
+     *
      * @throws \ReflectionException
      */
     public static function getFields()
     {
         return new GetFields('Entity');
     }
-    
+
     /**
      * @return GetLinks
+     *
      * @throws \ReflectionException
      */
     public static function getLinks()

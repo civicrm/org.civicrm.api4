@@ -5,6 +5,11 @@ namespace Civi\Api4\Service\Spec;
 use CRM_Utils_Array as ArrayHelper;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
 
+/**
+ * Class SpecFormatter
+ *
+ * @package Civi\Api4\Service\Spec
+ */
 class SpecFormatter
 {
   /**
@@ -25,12 +30,13 @@ class SpecFormatter
 
         return $specArray;
     }
-
-  /**
-   * @param array $data
-   *
-   * @return FieldSpec
-   */
+    
+    /**
+     * @param array $data
+     *
+     * @return FieldSpec
+     * @throws \Exception
+     */
     public static function arrayToField(array $data)
     {
         $dataTypeName = self::getDataType($data);
@@ -59,7 +65,7 @@ class SpecFormatter
         $fkClassName = ArrayHelper::value('FKClassName', $data);
         $fkAPIName = ArrayHelper::value('FKApiName', $data);
         $fkEntity = $fkAPIName ?: TableHelper::getBriefName($fkClassName);
-        $field->setFKEntity($fkEntity);
+        $field->setFkEntity($fkEntity);
 
         return $field;
     }

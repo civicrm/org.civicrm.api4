@@ -5,6 +5,11 @@ namespace Civi\Api4\Event\Subscriber;
 use Civi\Api4\Action\Create;
 use Civi\Api4\OptionValue;
 
+/**
+ * Class ActivityPreCreationSubscriber
+ *
+ * @package Civi\Api4\Event\Subscriber
+ */
 class ActivityPreCreationSubscriber extends PreCreationSubscriber
 {
   /**

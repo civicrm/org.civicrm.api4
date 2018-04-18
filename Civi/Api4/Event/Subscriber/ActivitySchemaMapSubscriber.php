@@ -10,6 +10,11 @@ use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use \CRM_Utils_String as StringHelper;
 
+/**
+ * Class ActivitySchemaMapSubscriber
+ *
+ * @package Civi\Api4\Event\Subscriber
+ */
 class ActivitySchemaMapSubscriber implements EventSubscriberInterface
 {
   /**

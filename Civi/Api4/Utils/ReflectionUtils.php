@@ -32,18 +32,18 @@ namespace Civi\Api4\Utils;
  */
 class ReflectionUtils
 {
-  /**
-   * @param \Reflector|\ReflectionClass|\ReflectionProperty $reflection
-   * @param string $type
-   *   If we are not reflecting the class itself, specify "Method", "Property", etc.
-   *
-   * @return array
-   */
+    /**
+     * @param \Reflector|\ReflectionClass|\ReflectionProperty $reflection
+     * @param string $type
+     * If we are not reflecting the class itself, specify "Method", "Property", etc
+     *
+     * @return array
+     */
     public static function getCodeDocs($reflection, $type = null)
     {
         $docs = self::parseDocBlock($reflection->getDocComment());
 
-      // Recurse into parent functions
+        // Recurse into parent functions
         if (isset($docs['inheritDoc'])) {
             unset($docs['inheritDoc']);
             $newReflection = null;
@@ -61,40 +61,42 @@ class ReflectionUtils
             } catch (\ReflectionException $e) {
             }
             if ($newReflection) {
-              // Mix in
+                // Mix in
                 $additionalDocs = self::getCodeDocs($newReflection, $type);
                 if (!empty($docs['comment']) && !empty($additionalDocs['comment'])) {
-                    $docs['comment'] .= "\n\n" . $additionalDocs['comment'];
+                    $docs['comment'] .= "\n\n".$additionalDocs['comment'];
                 }
                 $docs += $additionalDocs;
             }
         }
+
         return $docs;
     }
 
-  /**
-   * @param string $comment
-   * @return array
-   */
+    /**
+     * @param string $comment
+     *
+     * @return array
+     */
     public static function parseDocBlock($comment)
     {
         $info = [];
         foreach (preg_split("/((\r?\n)|(\r\n?))/", $comment) as $num => $line) {
-            if (!$num || strpos($line, '*/') !== false) {
+            if (!$num || false !== mb_strpos($line, '*/')) {
                 continue;
             }
             $line = ltrim(trim($line), '* ');
-            if (strpos($line, '@') === 0) {
+            if (0 === mb_strpos($line, '@')) {
                 $words = explode(' ', $line);
-                $key = substr($words[0], 1);
-                if ($key == 'var') {
+                $key = mb_substr($words[0], 1);
+                if ('var' === $key) {
                     $info['type'] = explode('|', $words[1]);
                 } else {
-                  // Unrecognized annotation, but we'll duly add it to the info array
+                    // Unrecognized annotation, but we'll duly add it to the info array
                     $val = implode(' ', array_slice($words, 1));
-                    $info[$key] = strlen($val) ? $val : true;
+                    $info[$key] = mb_strlen($val) ? $val : true;
                 }
-            } elseif ($num == 1) {
+            } elseif (1 === $num) {
                 $info['description'] = $line;
             } elseif (!$line) {
                 if (isset($info['comment'])) {
@@ -107,6 +109,7 @@ class ReflectionUtils
         if (isset($info['comment'])) {
             $info['comment'] = trim($info['comment']);
         }
+
         return $info;
     }
 }

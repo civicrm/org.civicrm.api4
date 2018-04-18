@@ -5,9 +5,17 @@ namespace Civi\Api4\Service\Schema;
 use Civi\Api4\Service\Schema\Joinable\BridgeJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 
+/**
+ * Class SchemaMap
+ *
+ * @package Civi\Api4\Service\Schema
+ */
 class SchemaMap
 {
-
+    
+    /**
+     *
+     */
     const MAX_JOIN_DEPTH = 3;
 
   /**

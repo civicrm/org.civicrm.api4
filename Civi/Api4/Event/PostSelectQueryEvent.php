@@ -5,6 +5,11 @@ namespace Civi\Api4\Event;
 use Civi\Api4\Query\Api4SelectQuery;
 use Symfony\Component\EventDispatcher\Event;
 
+/**
+ * Class PostSelectQueryEvent
+ *
+ * @package Civi\Api4\Event
+ */
 class PostSelectQueryEvent extends Event
 {
 

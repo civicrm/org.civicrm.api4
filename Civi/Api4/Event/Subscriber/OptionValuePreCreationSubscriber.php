@@ -5,32 +5,38 @@ namespace Civi\Api4\Event\Subscriber;
 use Civi\Api4\Action\Create;
 use Civi\Api4\OptionGroup;
 
+/**
+ * Class OptionValuePreCreationSubscriber.
+ */
 class OptionValuePreCreationSubscriber extends PreCreationSubscriber
 {
-
-  /**
-   * @param Create $request
-   */
+    /**
+     * @param Create $request
+     *
+     * @throws \API_Exception
+     * @throws \Exception
+     */
     protected function modify(Create $request)
     {
         $this->setOptionGroupId($request);
     }
 
-  /**
-   * @param Create $request
-   *
-   * @return bool
-   */
+    /**
+     * @param Create $request
+     *
+     * @return bool
+     */
     protected function applies(Create $request)
     {
-        return $request->getEntity() === 'OptionValue';
+        return 'OptionValue' === $request->getEntity();
     }
 
-  /**
-   * @param Create $request
-   * @throws \API_Exception
-   * @throws \Exception
-   */
+    /**
+     * @param Create $request
+     *
+     * @throws \API_Exception
+     * @throws \Exception
+     */
     private function setOptionGroupId(Create $request)
     {
         $optionGroupName = $request->getValue('option_group');
@@ -44,7 +50,7 @@ class OptionValuePreCreationSubscriber extends PreCreationSubscriber
         ->addWhere('name', '=', $optionGroupName)
         ->execute();
 
-        if ($optionGroup->count() !== 1) {
+        if (1 !== $optionGroup->count()) {
             throw new \Exception('Option group name must match only a single group');
         }
 

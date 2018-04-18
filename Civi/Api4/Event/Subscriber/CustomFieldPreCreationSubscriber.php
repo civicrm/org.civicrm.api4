@@ -4,10 +4,22 @@ namespace Civi\Api4\Event\Subscriber;
 
 use Civi\Api4\Action\Create;
 
+/**
+ * Class CustomFieldPreCreationSubscriber
+ *
+ * @package Civi\Api4\Event\Subscriber
+ */
 class CustomFieldPreCreationSubscriber extends PreCreationSubscriber
 {
-
+    
+    /**
+     *
+     */
     const OPTION_TYPE_NEW = 1;
+    
+    /**
+     *
+     */
     const OPTION_STATUS_ACTIVE = 1;
 
   /**

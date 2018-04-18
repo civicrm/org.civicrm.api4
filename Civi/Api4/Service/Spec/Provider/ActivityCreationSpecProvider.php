@@ -6,11 +6,18 @@ use Civi\Api4\Action\Actions;
 use Civi\Api4\Service\Spec\FieldSpec;
 use Civi\Api4\Service\Spec\RequestSpec;
 
+/**
+ * Class ActivityCreationSpecProvider.
+ */
 class ActivityCreationSpecProvider implements SpecProviderInterface
 {
-  /**
-   * @inheritDoc
-   */
+    
+    /**
+     *
+     * @param RequestSpec $spec
+     *
+     * @throws \Exception
+     */
     public function modifySpec(RequestSpec $spec)
     {
         $spec->getFieldByName('subject')->setRequired(true);
@@ -21,12 +28,15 @@ class ActivityCreationSpecProvider implements SpecProviderInterface
 
         $spec->addFieldSpec($sourceContactField);
     }
-
-  /**
-   * @inheritDoc
-   */
+    
+    /**
+     * @param string $entity
+     * @param string $action
+     *
+     * @return bool
+     */
     public function applies($entity, $action)
     {
-        return $entity === 'Activity' && $action === Actions::CREATE;
+        return 'Activity' === $entity && Actions::CREATE === $action;
     }
 }

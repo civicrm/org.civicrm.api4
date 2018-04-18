@@ -6,6 +6,11 @@ use Civi\API\Event\PrepareEvent;
 use Civi\API\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Class AbstractPrepareSubscriber
+ *
+ * @package Civi\Api4\Event\Subscriber
+ */
 abstract class AbstractPrepareSubscriber implements EventSubscriberInterface
 {
   /**

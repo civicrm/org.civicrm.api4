@@ -5,21 +5,25 @@ namespace Civi\Api4\Service\Spec;
 use Civi\Api4\CustomField;
 use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
 
+/**
+ * Class SpecGatherer
+ *
+ * @package Civi\Api4\Service\Spec
+ */
 class SpecGatherer
 {
-
-  /**
-   * @var SpecProviderInterface[]
-   */
+    /**
+     * @var SpecProviderInterface[]
+     */
     protected $specProviders = [];
 
-  /**
-   * A cache of DAOs based on entity
-   *
-   * @var \CRM_Core_DAO[]
-   */
+    /**
+     * A cache of DAOs based on entity.
+     *
+     * @var \CRM_Core_DAO[]
+     */
     protected $DAONames;
-    
+
     /**
      * Returns a RequestSpec with all the fields available. Uses spec providers
      * to add or modify field specifications.
@@ -30,9 +34,11 @@ class SpecGatherer
      * @param        $includeCustom
      *
      * @return \Civi\Api4\Service\Spec\RequestSpec
+     *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\NotImplementedException
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Exception
      */
     public function getSpec($entity, $action, $includeCustom)
     {
@@ -54,31 +60,34 @@ class SpecGatherer
         return $specification;
     }
 
-  /**
-   * @param SpecProviderInterface $provider
-   */
+    /**
+     * @param SpecProviderInterface $provider
+     */
     public function addSpecProvider(SpecProviderInterface $provider)
     {
         $this->specProviders[] = $provider;
     }
 
-  /**
-   * @param string $entity
-   * @param RequestSpec $specification
-   */
+    /**
+     * @param string      $entity
+     * @param             $action
+     * @param RequestSpec $specification
+     *
+     * @throws \Exception
+     */
     private function addDAOFields($entity, $action, RequestSpec $specification)
     {
         $DAOFields = $this->getDAOFields($entity);
 
         foreach ($DAOFields as $DAOField) {
-            if ($DAOField['name'] == 'id' && $action == 'create') {
+            if ('id' === $DAOField['name'] && 'create' === $action) {
                 continue;
             }
             $field = SpecFormatter::arrayToField($DAOField);
             $specification->addFieldSpec($field);
         }
     }
-    
+
     /**
      * @param string      $entity
      * @param RequestSpec $specification
@@ -86,10 +95,11 @@ class SpecGatherer
      * @throws \API_Exception
      * @throws \Civi\API\Exception\NotImplementedException
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Exception
      */
     private function addCustomFields($entity, RequestSpec $specification)
     {
-        if ($entity == 'Contact') {
+        if ('Contact' === $entity) {
             $entity = ['Contact', 'Individual', 'Organization', 'Household'];
         }
         $customFields = CustomField::get()
@@ -103,11 +113,11 @@ class SpecGatherer
         }
     }
 
-  /**
-   * @param string $entityName
-   *
-   * @return array
-   */
+    /**
+     * @param string $entityName
+     *
+     * @return array
+     */
     private function getDAOFields($entityName)
     {
         $dao = $this->getDAO($entityName);
@@ -115,9 +125,9 @@ class SpecGatherer
         return $dao::fields();
     }
 
-  /**
-   * @param RequestSpec $spec
-   */
+    /**
+     * @param RequestSpec $spec
+     */
     private function addFieldOptions(RequestSpec $spec)
     {
         $dao = $this->getDAO($spec->getEntity());
@@ -126,7 +136,7 @@ class SpecGatherer
             $fieldName = $field->getName();
 
             if ($field instanceof CustomFieldSpec) {
-              // buildOptions relies on the custom_* type of field names
+                // buildOptions relies on the custom_* type of field names
                 $fieldName = sprintf('custom_%d', $field->getCustomFieldId());
             }
 
@@ -140,15 +150,15 @@ class SpecGatherer
         }
     }
 
-  /**
-   * todo this class should not rely on api3 code
-   *
-   * @param $entityName
-   *
-   * @return \CRM_Core_DAO|string
-   *   The DAO name for use in static calls. Return doc block is hacked to allow
-   *   auto-completion of static methods
-   */
+    /**
+     * todo this class should not rely on api3 code.
+     *
+     * @param $entityName
+     *
+     * @return \CRM_Core_DAO|string
+     *                              The DAO name for use in static calls. Return doc block is hacked to allow
+     *                              auto-completion of static methods
+     */
     private function getDAO($entityName)
     {
         if (!isset($this->DAONames[$entityName])) {

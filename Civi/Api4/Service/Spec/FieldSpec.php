@@ -2,85 +2,90 @@
 
 namespace Civi\Api4\Service\Spec;
 
+/**
+ * Class FieldSpec.
+ */
 class FieldSpec
 {
-  /**
-   * @var mixed
-   */
+    /**
+     * @var mixed
+     */
     protected $defaultValue;
 
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $name;
 
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $title;
 
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $description;
 
-  /**
-   * @var bool
-   */
+    /**
+     * @var bool
+     */
     protected $required = false;
 
-  /**
-   * @var array
-   */
+    /**
+     * @var array
+     */
     protected $options = [];
 
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $dataType;
 
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $fkEntity;
 
-  /**
-   * @var int
-   */
+    /**
+     * @var int
+     */
     protected $serialize;
 
-  /**
-   * Aliases for the valid data types
-   *
-   * @var array
-   */
+    /**
+     * Aliases for the valid data types.
+     *
+     * @var array
+     */
     public static $typeAliases = [
-    'Int' => 'Integer',
+        'Int' => 'Integer',
     ];
 
-  /**
-   * @param $name
-   * @param $dataType
-   */
+    /**
+     * @param        $name
+     * @param string $dataType
+     *
+     * @throws \Exception
+     */
     public function __construct($name, $dataType = 'String')
     {
         $this->setName($name);
         $this->setDataType($dataType);
     }
 
-  /**
-   * @return mixed
-   */
+    /**
+     * @return mixed
+     */
     public function getDefaultValue()
     {
         return $this->defaultValue;
     }
 
-  /**
-   * @param mixed $defaultValue
-   *
-   * @return $this
-   */
+    /**
+     * @param mixed $defaultValue
+     *
+     * @return $this
+     */
     public function setDefaultValue($defaultValue)
     {
         $this->defaultValue = $defaultValue;
@@ -88,19 +93,19 @@ class FieldSpec
         return $this;
     }
 
-  /**
-   * @return string
-   */
+    /**
+     * @return string
+     */
     public function getName()
     {
         return $this->name;
     }
 
-  /**
-   * @param string $name
-   *
-   * @return $this
-   */
+    /**
+     * @param string $name
+     *
+     * @return $this
+     */
     public function setName($name)
     {
         $this->name = $name;
@@ -108,19 +113,19 @@ class FieldSpec
         return $this;
     }
 
-  /**
-   * @return string
-   */
+    /**
+     * @return string
+     */
     public function getTitle()
     {
         return $this->title;
     }
 
-  /**
-   * @param string $title
-   *
-   * @return $this
-   */
+    /**
+     * @param string $title
+     *
+     * @return $this
+     */
     public function setTitle($title)
     {
         $this->title = $title;
@@ -128,19 +133,19 @@ class FieldSpec
         return $this;
     }
 
-  /**
-   * @return string
-   */
+    /**
+     * @return string
+     */
     public function getDescription()
     {
         return $this->description;
     }
 
-  /**
-   * @param string $description
-   *
-   * @return $this
-   */
+    /**
+     * @param string $description
+     *
+     * @return $this
+     */
     public function setDescription($description)
     {
         $this->description = $description;
@@ -148,19 +153,19 @@ class FieldSpec
         return $this;
     }
 
-  /**
-   * @return bool
-   */
+    /**
+     * @return bool
+     */
     public function isRequired()
     {
         return $this->required;
     }
 
-  /**
-   * @param bool $required
-   *
-   * @return $this
-   */
+    /**
+     * @param bool $required
+     *
+     * @return $this
+     */
     public function setRequired($required)
     {
         $this->required = $required;
@@ -168,20 +173,21 @@ class FieldSpec
         return $this;
     }
 
-  /**
-   * @return string
-   */
+    /**
+     * @return string
+     */
     public function getDataType()
     {
         return $this->dataType;
     }
 
-  /**
-   * @param $dataType
-   *
-   * @return $this
-   * @throws \Exception
-   */
+    /**
+     * @param $dataType
+     *
+     * @return $this
+     *
+     * @throws \Exception
+     */
     public function setDataType($dataType)
     {
         if (array_key_exists($dataType, self::$typeAliases)) {
@@ -197,48 +203,48 @@ class FieldSpec
         return $this;
     }
 
-  /**
-   * @return int
-   */
+    /**
+     * @return int
+     */
     public function getSerialize()
     {
         return $this->serialize;
     }
 
-  /**
-   * @param int|null $serialize
-   */
+    /**
+     * @param int|null $serialize
+     */
     public function setSerialize($serialize)
     {
         $this->serialize = $serialize;
     }
 
-  /**
-   * Add valid types that are not not part of \CRM_Utils_Type::dataTypes
-   *
-   * @return array
-   */
+    /**
+     * Add valid types that are not not part of \CRM_Utils_Type::dataTypes.
+     *
+     * @return array
+     */
     private function getValidDataTypes()
     {
-        $extraTypes = ['Boolean', 'Text', 'Float','Memo'];
+        $extraTypes = ['Boolean', 'Text', 'Float', 'Memo'];
         $extraTypes = array_combine($extraTypes, $extraTypes);
 
         return array_merge(\CRM_Utils_Type::dataTypes(), $extraTypes);
     }
 
-  /**
-   * @return array
-   */
+    /**
+     * @return array
+     */
     public function getOptions()
     {
         return $this->options;
     }
 
-  /**
-   * @param array $options
-   *
-   * @return $this
-   */
+    /**
+     * @param array $options
+     *
+     * @return $this
+     */
     public function setOptions($options)
     {
         $this->options = $options;
@@ -246,41 +252,45 @@ class FieldSpec
         return $this;
     }
 
-  /**
-   * @param $option
-   */
+    /**
+     * @param $option
+     */
     public function addOption($option)
     {
         $this->options[] = $option;
     }
 
-  /**
-   * @return string
-   */
+    /**
+     * @return string
+     */
     public function getFkEntity()
     {
         return $this->fkEntity;
     }
 
-  /**
-   * @param string $fkEntity
-   *
-   * @return $this
-   */
+    /**
+     * @param string $fkEntity
+     *
+     * @return $this
+     */
     public function setFkEntity($fkEntity)
     {
         $this->fkEntity = $fkEntity;
 
         return $this;
     }
-
+    
+    /**
+     * @return array
+     */
     public function toArray()
     {
         $ret = [];
         foreach (get_object_vars($this) as $key => $val) {
-            $key = strtolower(preg_replace('/(?=[A-Z])/', '_$0', $key));
+            $key = mb_strtolower(preg_replace('/(?=[A-Z])/', '_$0', $key));
             $ret[$key] = $val;
         }
+
         return $ret;
     }
 }

@@ -2,6 +2,11 @@
 
 namespace Civi\Api4\Service\Spec;
 
+/**
+ * Class RequestSpec
+ *
+ * @package Civi\Api4\Service\Spec
+ */
 class RequestSpec
 {
 
@@ -29,7 +34,10 @@ class RequestSpec
         $this->entity = $entity;
         $this->action = $action;
     }
-
+    
+    /**
+     * @param FieldSpec $field
+     */
     public function addFieldSpec(FieldSpec $field)
     {
         $this->fields[] = $field;

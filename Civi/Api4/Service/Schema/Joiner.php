@@ -5,6 +5,11 @@ namespace Civi\Api4\Service\Schema;
 use Civi\Api4\Query\Api4SelectQuery;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 
+/**
+ * Class Joiner
+ *
+ * @package Civi\Api4\Service\Schema
+ */
 class Joiner
 {
   /**

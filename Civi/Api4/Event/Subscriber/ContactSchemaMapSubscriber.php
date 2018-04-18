@@ -8,6 +8,11 @@ use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Civi\Api4\Service\Schema\Table;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Class ContactSchemaMapSubscriber
+ *
+ * @package Civi\Api4\Event\Subscriber
+ */
 class ContactSchemaMapSubscriber implements EventSubscriberInterface
 {
   /**

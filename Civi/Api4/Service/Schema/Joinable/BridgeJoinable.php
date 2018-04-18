@@ -2,20 +2,23 @@
 
 namespace Civi\Api4\Service\Schema\Joinable;
 
+/**
+ * Class BridgeJoinable.
+ */
 class BridgeJoinable extends Joinable
 {
-  /**
-   * @var Joinable
-   */
+    /**
+     * @var Joinable
+     */
     protected $middleLink;
-    
+
     /**
      * BridgeJoinable constructor.
      *
-     * @param                                             $targetTable
-     * @param                                             $targetColumn
-     * @param                                             $alias
-     * @param \Civi\Api4\Service\Schema\Joinable\Joinable $middleLink
+     * @param          $targetTable
+     * @param          $targetColumn
+     * @param          $alias
+     * @param Joinable $middleLink
      */
     public function __construct($targetTable, $targetColumn, $alias, Joinable $middleLink)
     {
@@ -23,9 +26,9 @@ class BridgeJoinable extends Joinable
         $this->middleLink = $middleLink;
     }
 
-  /**
-   * @return Joinable
-   */
+    /**
+     * @return Joinable
+     */
     public function getMiddleLink()
     {
         return $this->middleLink;

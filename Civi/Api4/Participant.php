@@ -27,13 +27,11 @@
 
 namespace Civi\Api4;
 
-use Civi\Api4\Action\Participant\Get;
 use Civi\Api4\Generic\AbstractEntity;
 
 /**
- * @method static Get get
+ * Class Participant.
  */
 class Participant extends AbstractEntity
 {
-
 }

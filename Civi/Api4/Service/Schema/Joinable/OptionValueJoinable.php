@@ -2,27 +2,30 @@
 
 namespace Civi\Api4\Service\Schema\Joinable;
 
+/**
+ * Class OptionValueJoinable.
+ */
 class OptionValueJoinable extends Joinable
 {
-  /**
-   * @var string
-   */
+    /**
+     * @var string
+     */
     protected $optionGroupName;
 
-  /**
-   * @param string $optionGroup
-   *   Can be either the option group name or ID
-   * @param string|null $alias
-   *   The join alias
-   * @param string $keyColumn
-   *   Which column to use to join, defaults to "value"
-   */
+    /**
+     * @param string      $optionGroup
+     *                                 Can be either the option group name or ID
+     * @param string|null $alias
+     *                                 The join alias
+     * @param string      $keyColumn
+     *                                 Which column to use to join, defaults to "value"
+     */
     public function __construct($optionGroup, $alias = null, $keyColumn = 'value')
     {
         $this->optionGroupName = $optionGroup;
         $optionValueTable = 'civicrm_option_value';
 
-      // default join alias to option group name, e.g. activity_type
+        // default join alias to option group name, e.g. activity_type
         if (!$alias && !is_numeric($optionGroup)) {
             $alias = $optionGroup;
         }
@@ -40,18 +43,18 @@ class OptionValueJoinable extends Joinable
         $this->addCondition($condition);
     }
 
-  /**
-   * The existing condition must also be re-aliased
-   *
-   * @param string $alias
-   *
-   * @return $this
-   */
+    /**
+     * The existing condition must also be re-aliased.
+     *
+     * @param string $alias
+     *
+     * @return $this
+     */
     public function setAlias($alias)
     {
         foreach ($this->conditions as $index => $condition) {
-            $search = $this->alias . '.';
-            $replace = $alias . '.';
+            $search = $this->alias.'.';
+            $replace = $alias.'.';
             $this->conditions[$index] = str_replace($search, $replace, $condition);
         }
 

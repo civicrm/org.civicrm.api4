@@ -4,6 +4,11 @@ namespace Civi\Api4\Service\Schema;
 
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 
+/**
+ * Class Table
+ *
+ * @package Civi\Api4\Service\Schema
+ */
 class Table
 {
 

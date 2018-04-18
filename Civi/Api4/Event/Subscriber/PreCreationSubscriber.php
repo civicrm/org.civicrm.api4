@@ -5,6 +5,11 @@ namespace Civi\Api4\Event\Subscriber;
 use Civi\API\Event\PrepareEvent;
 use Civi\Api4\Action\Create;
 
+/**
+ * Class PreCreationSubscriber
+ *
+ * @package Civi\Api4\Event\Subscriber
+ */
 abstract class PreCreationSubscriber extends AbstractPrepareSubscriber
 {
   /**

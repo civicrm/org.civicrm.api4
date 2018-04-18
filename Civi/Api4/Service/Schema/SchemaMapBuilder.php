@@ -12,6 +12,11 @@ use CRM_Core_DAO_AllCoreTables as TableHelper;
 use CRM_Core_BAO_CustomField as CustomFieldBAO;
 use CRM_Utils_Array as ArrayHelper;
 
+/**
+ * Class SchemaMapBuilder
+ *
+ * @package Civi\Api4\Service\Schema
+ */
 class SchemaMapBuilder
 {
   /**

@@ -5,6 +5,11 @@ namespace Civi\Api4\Event;
 use Civi\Api4\Service\Schema\SchemaMap;
 use Symfony\Component\EventDispatcher\Event as BaseEvent;
 
+/**
+ * Class SchemaMapBuildEvent
+ *
+ * @package Civi\Api4\Event
+ */
 class SchemaMapBuildEvent extends BaseEvent
 {
   /**

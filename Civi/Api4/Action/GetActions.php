@@ -42,7 +42,10 @@ class GetActions extends AbstractAction
      * {@inheritdoc}
      */
     protected $checkPermissions = false;
-
+    
+    /**
+     * @var array
+     */
     private $_actions = [];
 
     /**
