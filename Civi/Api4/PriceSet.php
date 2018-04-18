@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class PriceSet.
  */
-class PriceSet extends AbstractEntity
-{
+class PriceSet extends AbstractEntity {
+
 }

@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class MembershipStatus.
  */
-class MembershipStatus extends AbstractEntity
-{
+class MembershipStatus extends AbstractEntity {
+
 }

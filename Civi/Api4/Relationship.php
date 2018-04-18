@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Relationship.
  */
-class Relationship extends AbstractEntity
-{
+class Relationship extends AbstractEntity {
+
 }

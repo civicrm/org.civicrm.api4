@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class IM.
  */
-class IM extends AbstractEntity
-{
+class IM extends AbstractEntity {
+
 }

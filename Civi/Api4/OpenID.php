@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class OpenID.
  */
-class OpenID extends AbstractEntity
-{
+class OpenID extends AbstractEntity {
+
 }

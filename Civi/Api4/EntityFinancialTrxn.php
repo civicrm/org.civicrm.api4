@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class EntityFinancialTrxn.
  */
-class EntityFinancialTrxn extends AbstractEntity
-{
+class EntityFinancialTrxn extends AbstractEntity {
+
 }

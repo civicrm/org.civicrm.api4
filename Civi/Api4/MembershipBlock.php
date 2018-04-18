@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class MembershipBlock.
  */
-class MembershipBlock extends AbstractEntity
-{
+class MembershipBlock extends AbstractEntity {
+
 }

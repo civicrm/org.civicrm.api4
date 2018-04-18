@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class ACL.
  */
-class ACL extends AbstractEntity
-{
+class ACL extends AbstractEntity {
+
 }

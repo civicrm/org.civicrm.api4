@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class UFJoin.
  */
-class UFJoin extends AbstractEntity
-{
+class UFJoin extends AbstractEntity {
+
 }

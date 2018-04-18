@@ -37,78 +37,73 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Accept $apiRequests based on \Civi\API\Action.
  */
-class ActionObjectProvider implements EventSubscriberInterface, ProviderInterface
-{
-	/**
-	 * @return array
-	 */
-	public static function getSubscribedEvents()
-	{
-		// Using a high priority allows adhoc implementations
-		// to override standard implementations -- which is
-		// handy for testing/mocking.
-		return [
-			Events::RESOLVE => [
-				['onApiResolve', Events::W_EARLY],
-			],
-		];
-	}
+class ActionObjectProvider implements EventSubscriberInterface,
+  ProviderInterface {
 
-	/**
-	 * @param resolveEvent $event
-	 *                            API resolution event
-	 */
-	public function onApiResolve(ResolveEvent $event)
-	{
-		$apiRequest = $event->getApiRequest();
-		if ($apiRequest instanceof AbstractAction) {
-			$event->setApiRequest($apiRequest);
-			$event->setApiProvider($this);
-			$event->stopPropagation();
-		}
-	}
+  /**
+   * @return array
+   */
+  public static function getSubscribedEvents() {
+    // Using a high priority allows adhoc implementations
+    // to override standard implementations -- which is
+    // handy for testing/mocking.
+    return [
+      Events::RESOLVE => [
+        ['onApiResolve', Events::W_EARLY],
+      ],
+    ];
+  }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param array|AbstractAction $apiRequest
-	 *
-	 * @return array|mixed
-	 */
-	public function invoke($apiRequest)
-	{
-		$result = new Result();
-		$result->action = $apiRequest['action'];
-		$result->entity = $apiRequest['entity'];
-		$apiRequest->_run($result);
+  /**
+   * @param resolveEvent $event
+   *                            API resolution event
+   */
+  public function onApiResolve(ResolveEvent $event) {
+    $apiRequest = $event->getApiRequest();
+    if ($apiRequest instanceof AbstractAction) {
+      $event->setApiRequest($apiRequest);
+      $event->setApiProvider($this);
+      $event->stopPropagation();
+    }
+  }
 
-		return $result;
-	}
+  /**
+   * {@inheritdoc}
+   *
+   * @param array|AbstractAction $apiRequest
+   *
+   * @return array|mixed
+   */
+  public function invoke($apiRequest) {
+    $result         = new Result();
+    $result->action = $apiRequest['action'];
+    $result->entity = $apiRequest['entity'];
+    $apiRequest->_run($result);
+    return $result;
+  }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param int $version
-	 *
-	 * @return array
-	 */
-	public function getEntityNames($version)
-	{
-		/* FIXME */
-		return [];
-	}
+  /**
+   * {@inheritdoc}
+   *
+   * @param int $version
+   *
+   * @return array
+   */
+  public function getEntityNames($version) {
+    /* FIXME */
+    return [];
+  }
 
-	/**
-	 * {@inheritdoc}
-	 *
-	 * @param int    $version
-	 * @param string $entity
-	 *
-	 * @return array
-	 */
-	public function getActionNames($version, $entity)
-	{
-		/* FIXME Civi\API\V4\Action\GetActions */
-		return [];
-	}
+  /**
+   * {@inheritdoc}
+   *
+   * @param int    $version
+   * @param string $entity
+   *
+   * @return array
+   */
+  public function getActionNames($version, $entity) {
+    /* FIXME Civi\API\V4\Action\GetActions */
+    return [];
+  }
 }

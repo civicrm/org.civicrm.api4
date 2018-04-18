@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class CaseContact.
  */
-class CaseContact extends AbstractEntity
-{
+class CaseContact extends AbstractEntity {
+
 }

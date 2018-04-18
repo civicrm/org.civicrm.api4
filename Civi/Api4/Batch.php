@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Batch.
  */
-class Batch extends AbstractEntity
-{
+class Batch extends AbstractEntity {
+
 }

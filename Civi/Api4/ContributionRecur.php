@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class ContributionRecur.
  */
-class ContributionRecur extends AbstractEntity
-{
+class ContributionRecur extends AbstractEntity {
+
 }

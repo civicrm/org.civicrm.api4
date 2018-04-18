@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class MailingAB.
  */
-class MailingAB extends AbstractEntity
-{
+class MailingAB extends AbstractEntity {
+
 }

@@ -1,5 +1,4 @@
 <?php
-
 require_once 'api4.civix.php';
 
 use Symfony\Component\Config\FileLocator;
@@ -18,52 +17,43 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @return \Civi\Api4\Generic\Result
  */
-function civicrm_api4($entity, $action, $params = [])
-{
-	$params['version'] = 4;
-	$request = \Civi\API\Request::create($entity, $action, $params);
-
-	return \Civi::service('civi_api_kernel')->runRequest($request);
+function civicrm_api4($entity, $action, $params = []) {
+  $params['version'] = 4;
+  $request           = \Civi\API\Request::create($entity, $action, $params);
+  return \Civi::service('civi_api_kernel')->runRequest($request);
 }
 
 /**
  * @param ContainerBuilder $container
  */
-function api4_civicrm_container($container)
-{
-	$loader = new XmlFileLoader($container, new FileLocator(__DIR__));
-	$loader->load('services.xml');
-
-	$container->getDefinition('civi_api_kernel')->addMethodCall(
-	'registerApiProvider',
-	[new Reference('action_object_provider')]
+function api4_civicrm_container($container) {
+  $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
+  $loader->load('services.xml');
+  $container->getDefinition('civi_api_kernel')->addMethodCall(
+    'registerApiProvider',
+    [new Reference('action_object_provider')]
   );
-
-	// add event subscribers$container->get(
-	$dispatcher = $container->getDefinition('dispatcher');
-	$subscribers = $container->findTaggedServiceIds('event_subscriber');
-
-	foreach (array_keys($subscribers) as $subscriber) {
-		$dispatcher->addMethodCall(
-	  'addSubscriber',
-	  [new Reference($subscriber)]
-	);
-	}
-
-	// add spec providers
-	$providers = $container->findTaggedServiceIds('spec_provider');
-	$gatherer = $container->getDefinition('spec_gatherer');
-
-	foreach (array_keys($providers) as $provider) {
-		$gatherer->addMethodCall(
-	  'addSpecProvider',
-	  [new Reference($provider)]
-	);
-	}
-
-	if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
-		$loader->load('tests/services.xml');
-	}
+  // add event subscribers$container->get(
+  $dispatcher  = $container->getDefinition('dispatcher');
+  $subscribers = $container->findTaggedServiceIds('event_subscriber');
+  foreach (array_keys($subscribers) as $subscriber) {
+    $dispatcher->addMethodCall(
+      'addSubscriber',
+      [new Reference($subscriber)]
+    );
+  }
+  // add spec providers
+  $providers = $container->findTaggedServiceIds('spec_provider');
+  $gatherer  = $container->getDefinition('spec_gatherer');
+  foreach (array_keys($providers) as $provider) {
+    $gatherer->addMethodCall(
+      'addSpecProvider',
+      [new Reference($provider)]
+    );
+  }
+  if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
+    $loader->load('tests/services.xml');
+  }
 }
 
 /**
@@ -71,11 +61,11 @@ function api4_civicrm_container($container)
  *
  * @param mixed $region
  */
-function api4_civicrm_coreResourceList(&$list, $region)
-{
-	if ('html-header' == $region) {
-		Civi::resources()->addScriptFile('org.civicrm.api4', 'js/api4.js', -9000, $region);
-	}
+function api4_civicrm_coreResourceList(&$list, $region) {
+  if ('html-header' == $region) {
+    Civi::resources()
+        ->addScriptFile('org.civicrm.api4', 'js/api4.js', -9000, $region);
+  }
 }
 
 /**
@@ -83,9 +73,8 @@ function api4_civicrm_coreResourceList(&$list, $region)
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
-function api4_civicrm_config(&$config)
-{
-	_api4_civix_civicrm_config($config);
+function api4_civicrm_config(&$config) {
+  _api4_civix_civicrm_config($config);
 }
 
 /**
@@ -95,9 +84,8 @@ function api4_civicrm_config(&$config)
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
-function api4_civicrm_xmlMenu(&$files)
-{
-	_api4_civix_civicrm_xmlMenu($files);
+function api4_civicrm_xmlMenu(&$files) {
+  _api4_civix_civicrm_xmlMenu($files);
 }
 
 /**
@@ -105,9 +93,8 @@ function api4_civicrm_xmlMenu(&$files)
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
-function api4_civicrm_install()
-{
-	_api4_civix_civicrm_install();
+function api4_civicrm_install() {
+  _api4_civix_civicrm_install();
 }
 
 /**
@@ -115,9 +102,8 @@ function api4_civicrm_install()
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
  */
-function api4_civicrm_uninstall()
-{
-	_api4_civix_civicrm_uninstall();
+function api4_civicrm_uninstall() {
+  _api4_civix_civicrm_uninstall();
 }
 
 /**
@@ -125,9 +111,8 @@ function api4_civicrm_uninstall()
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
-function api4_civicrm_enable()
-{
-	_api4_civix_civicrm_enable();
+function api4_civicrm_enable() {
+  _api4_civix_civicrm_enable();
 }
 
 /**
@@ -135,26 +120,26 @@ function api4_civicrm_enable()
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
  */
-function api4_civicrm_disable()
-{
-	_api4_civix_civicrm_disable();
+function api4_civicrm_disable() {
+  _api4_civix_civicrm_disable();
 }
 
 /**
  * Implements hook_civicrm_upgrade().
  *
- * @param $op string, the type of operation being performed; 'check' or 'enqueue'
- * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of pending up upgrade tasks
+ * @param $op    string, the type of operation being performed; 'check' or
+ *               'enqueue'
+ * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of
+ *               pending up upgrade tasks
  *
  * @return mixed
- *   Based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
- *                for 'enqueue', returns void
+ *   Based on op. for 'check', returns array(boolean) (TRUE if upgrades are
+ *   pending) for 'enqueue', returns void
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
-function api4_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
-{
-	return _api4_civix_civicrm_upgrade($op, $queue);
+function api4_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
+  return _api4_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
@@ -165,9 +150,8 @@ function api4_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
  */
-function api4_civicrm_managed(&$entities)
-{
-	_api4_civix_civicrm_managed($entities);
+function api4_civicrm_managed(&$entities) {
+  _api4_civix_civicrm_managed($entities);
 }
 
 /**
@@ -180,9 +164,8 @@ function api4_civicrm_managed(&$entities)
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
-function api4_civicrm_angularModules(&$angularModules)
-{
-	_api4_civix_civicrm_angularModules($angularModules);
+function api4_civicrm_angularModules(&$angularModules) {
+  _api4_civix_civicrm_angularModules($angularModules);
 }
 
 /**
@@ -190,7 +173,6 @@ function api4_civicrm_angularModules(&$angularModules)
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
  */
-function api4_civicrm_alterSettingsFolders(&$metaDataFolders = null)
-{
-	_api4_civix_civicrm_alterSettingsFolders($metaDataFolders);
+function api4_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
+  _api4_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }

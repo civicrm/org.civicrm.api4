@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Widget.
  */
-class Widget extends AbstractEntity
-{
+class Widget extends AbstractEntity {
+
 }

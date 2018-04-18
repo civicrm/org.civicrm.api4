@@ -5,13 +5,13 @@ namespace Civi\Api4\Action;
 /**
  * Interface Actions.
  */
-interface Actions
-{
-	const CREATE = 'create';
+interface Actions {
 
-	const GET = 'get';
+  const CREATE     = 'create';
 
-	const GET_FIELDS = 'getFields';
+  const GET        = 'get';
 
-	const DELETE = 'delete';
+  const GET_FIELDS = 'getFields';
+
+  const DELETE     = 'delete';
 }

@@ -30,61 +30,60 @@ namespace Civi\Api4\Generic;
 /**
  * Container for api results.
  */
-class Result extends \ArrayObject
-{
-	/**
-	 * @var string
-	 */
-	public $entity;
-	/**
-	 * @var string
-	 */
-	public $action;
-	/**
-	 * Api version.
-	 *
-	 * @var int
-	 */
-	public $version = 4;
+class Result extends \ArrayObject {
 
-	/**
-	 * Return first result.
-	 *
-	 * @return array|null
-	 */
-	public function first()
-	{
-		foreach ($this as $values) {
-			return $values;
-		}
-	}
+  /**
+   * @var string
+   */
+  public $entity;
 
-	/**
-	 * Re-index the results array (which by default is non-associative).
-	 *
-	 * Drops any item from the results that does not contain the specified key
-	 *
-	 * @param string $key
-	 *
-	 * @throws \API_Exception
-	 *
-	 * @return $this
-	 */
-	public function indexBy($key)
-	{
-		if (count($this)) {
-			$newResults = [];
-			foreach ($this as $values) {
-				if (isset($values[$key])) {
-					$newResults[$values[$key]] = $values;
-				}
-			}
-			if (!$newResults) {
-				throw new \API_Exception("Key $key not found in api results");
-			}
-			$this->exchangeArray($newResults);
-		}
+  /**
+   * @var string
+   */
+  public $action;
 
-		return $this;
-	}
+  /**
+   * Api version.
+   *
+   * @var int
+   */
+  public $version = 4;
+
+  /**
+   * Return first result.
+   *
+   * @return array|null
+   */
+  public function first() {
+    foreach ($this as $values) {
+      return $values;
+    }
+  }
+
+  /**
+   * Re-index the results array (which by default is non-associative).
+   *
+   * Drops any item from the results that does not contain the specified key
+   *
+   * @param string $key
+   *
+   * @throws \API_Exception
+   *
+   * @return $this
+   */
+  public function indexBy($key) {
+    if (count($this)) {
+      $newResults = [];
+      foreach ($this as $values) {
+        if (isset($values[$key])) {
+          $newResults[$values[$key]] = $values;
+        }
+      }
+      if (!$newResults) {
+        throw new \API_Exception("Key $key not found in api results");
+      }
+      $this->exchangeArray($newResults);
+    }
+    return $this;
+  }
 }

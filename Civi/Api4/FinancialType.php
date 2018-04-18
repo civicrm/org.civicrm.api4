@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class FinancialType.
  */
-class FinancialType extends AbstractEntity
-{
+class FinancialType extends AbstractEntity {
+
 }

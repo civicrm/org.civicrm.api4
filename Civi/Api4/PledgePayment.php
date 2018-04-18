@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class PledgePayment.
  */
-class PledgePayment extends AbstractEntity
-{
+class PledgePayment extends AbstractEntity {
+
 }

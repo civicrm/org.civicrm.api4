@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Extension.
  */
-class Extension extends AbstractEntity
-{
+class Extension extends AbstractEntity {
+
 }

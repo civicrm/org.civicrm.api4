@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Tag.
  */
-class Tag extends AbstractEntity
-{
+class Tag extends AbstractEntity {
+
 }

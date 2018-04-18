@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class CampaignGroup.
  */
-class CampaignGroup extends AbstractEntity
-{
+class CampaignGroup extends AbstractEntity {
+
 }

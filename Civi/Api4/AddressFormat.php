@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class AddressFormat.
  */
-class AddressFormat extends AbstractEntity
-{
+class AddressFormat extends AbstractEntity {
+
 }

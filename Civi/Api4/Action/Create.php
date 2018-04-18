@@ -33,42 +33,39 @@ use Civi\Api4\Generic\Result;
 /**
  * Base class for all create actions.
  *
- * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
+ * @method $this setValues(array $values) Set all field values from an array of
+ *         key => value pairs.
  * @method $this addValue($field, $value) Set field value.
  */
-class Create extends AbstractAction
-{
-	/**
-	 * Field values to set.
-	 *
-	 * @var array
-	 */
-	protected $values = [];
+class Create extends AbstractAction {
 
-	/**
-	 * @param $key
-	 *
-	 * @return mixed|null
-	 */
-	public function getValue($key)
-	{
-		return isset($this->values[$key]) ? $this->values[$key] : null;
-	}
+  /**
+   * Field values to set.
+   *
+   * @var array
+   */
+  protected $values = [];
 
-	/**
-	 * @param \Civi\Api4\Generic\Result $result
-	 *
-	 * @throws \API_Exception
-	 */
-	public function _run(Result $result)
-	{
-		if (!empty($this->values['id'])) {
-			throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
-		}
+  /**
+   * @param $key
+   *
+   * @return mixed|null
+   */
+  public function getValue($key) {
+    return isset($this->values[$key]) ? $this->values[$key] : NULL;
+  }
 
-		$resultArray = $this->writeObject($this->values);
-
-		// fixme should return a single row array???
-		$result->exchangeArray($resultArray);
-	}
+  /**
+   * @param \Civi\Api4\Generic\Result $result
+   *
+   * @throws \API_Exception
+   */
+  public function _run(Result $result) {
+    if (!empty($this->values['id'])) {
+      throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
+    }
+    $resultArray = $this->writeObject($this->values);
+    // fixme should return a single row array???
+    $result->exchangeArray($resultArray);
+  }
 }

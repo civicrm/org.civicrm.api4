@@ -8,38 +8,34 @@ use Symfony\Component\EventDispatcher\Event as BaseEvent;
 /**
  * Class SchemaMapBuildEvent.
  */
-class SchemaMapBuildEvent extends BaseEvent
-{
-	/**
-	 * @var SchemaMap
-	 */
-	protected $schemaMap;
+class SchemaMapBuildEvent extends BaseEvent {
 
-	/**
-	 * @param SchemaMap $schemaMap
-	 */
-	public function __construct(SchemaMap $schemaMap)
-	{
-		$this->schemaMap = $schemaMap;
-	}
+  /**
+   * @var SchemaMap
+   */
+  protected $schemaMap;
 
-	/**
-	 * @return SchemaMap
-	 */
-	public function getSchemaMap()
-	{
-		return $this->schemaMap;
-	}
+  /**
+   * @param SchemaMap $schemaMap
+   */
+  public function __construct(SchemaMap $schemaMap) {
+    $this->schemaMap = $schemaMap;
+  }
 
-	/**
-	 * @param SchemaMap $schemaMap
-	 *
-	 * @return $this
-	 */
-	public function setSchemaMap($schemaMap)
-	{
-		$this->schemaMap = $schemaMap;
+  /**
+   * @return SchemaMap
+   */
+  public function getSchemaMap() {
+    return $this->schemaMap;
+  }
 
-		return $this;
-	}
+  /**
+   * @param SchemaMap $schemaMap
+   *
+   * @return $this
+   */
+  public function setSchemaMap($schemaMap) {
+    $this->schemaMap = $schemaMap;
+    return $this;
+  }
 }

@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class MembershipLog.
  */
-class MembershipLog extends AbstractEntity
-{
+class MembershipLog extends AbstractEntity {
+
 }

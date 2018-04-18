@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class StateProvince.
  */
-class StateProvince extends AbstractEntity
-{
+class StateProvince extends AbstractEntity {
+
 }

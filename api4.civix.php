@@ -1,7 +1,5 @@
 <?php
-
 // AUTO-GENERATED FILE -- Civix may overwrite any changes made to this file
-
 /**
  * (Delegated) Implements hook_civicrm_config().
  *
@@ -13,19 +11,15 @@ function _api4_civix_civicrm_config(&$config = NULL) {
     return;
   }
   $configured = TRUE;
-
   $template =& CRM_Core_Smarty::singleton();
-
-  $extRoot = dirname(__FILE__) . DIRECTORY_SEPARATOR;
-  $extDir = $extRoot . 'templates';
-
+  $extRoot = __DIR__ . DIRECTORY_SEPARATOR;
+  $extDir  = $extRoot . 'templates';
   if (is_array($template->template_dir)) {
     array_unshift($template->template_dir, $extDir);
   }
   else {
     $template->template_dir = [$extDir, $template->template_dir];
   }
-
   $include_path = $extRoot . PATH_SEPARATOR . get_include_path();
   set_include_path($include_path);
 }
@@ -113,11 +107,13 @@ function _api4_civix_civicrm_disable() {
 /**
  * (Delegated) Implements hook_civicrm_upgrade().
  *
- * @param $op string, the type of operation being performed; 'check' or 'enqueue'
- * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of pending up upgrade tasks
+ * @param $op    string, the type of operation being performed; 'check' or
+ *               'enqueue'
+ * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of
+ *               pending up upgrade tasks
  *
- * @return mixed  based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
- *                for 'enqueue', returns void
+ * @return mixed  based on op. for 'check', returns array(boolean) (TRUE if
+ *                upgrades are pending) for 'enqueue', returns void
  *
  * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
@@ -145,16 +141,16 @@ function _api4_civix_upgrader() {
  * Note: Dot-directories (like "..", ".git", or ".svn") will be ignored.
  * Note: In Civi 4.3+, delegate to CRM_Utils_File::findFiles()
  *
- * @param $dir string, base dir
+ * @param $dir     string, base dir
  * @param $pattern string, glob pattern, eg "*.txt"
+ *
  * @return array(string)
  */
 function _api4_civix_find_files($dir, $pattern) {
   if (is_callable(['CRM_Utils_File', 'findFiles'])) {
     return CRM_Utils_File::findFiles($dir, $pattern);
   }
-
-  $todos = [$dir];
+  $todos  = [$dir];
   $result = [];
   while (!empty($todos)) {
     $subdir = array_shift($todos);
@@ -177,6 +173,7 @@ function _api4_civix_find_files($dir, $pattern) {
   }
   return $result;
 }
+
 /**
  * (Delegated) Implements hook_civicrm_managed().
  *
@@ -213,18 +210,18 @@ function _api4_civix_civicrm_caseTypes(&$caseTypes) {
   if (!is_dir(__DIR__ . '/xml/case')) {
     return;
   }
-
   foreach (_api4_civix_glob(__DIR__ . '/xml/case/*.xml') as $file) {
     $name = preg_replace('/\.xml$/', '', basename($file));
     if ($name != CRM_Case_XMLProcessor::mungeCaseType($name)) {
-      $errorMessage = sprintf("Case-type file name is malformed (%s vs %s)", $name, CRM_Case_XMLProcessor::mungeCaseType($name));
+      $errorMessage = sprintf("Case-type file name is malformed (%s vs %s)",
+        $name, CRM_Case_XMLProcessor::mungeCaseType($name));
       CRM_Core_Error::fatal($errorMessage);
       // throw new CRM_Core_Exception($errorMessage);
     }
     $caseTypes[$name] = [
       'module' => 'org.civicrm.api4',
-      'name' => $name,
-      'file' => $file,
+      'name'   => $name,
+      'file'   => $file,
     ];
   }
 }
@@ -242,10 +239,9 @@ function _api4_civix_civicrm_angularModules(&$angularModules) {
   if (!is_dir(__DIR__ . '/ang')) {
     return;
   }
-
   $files = _api4_civix_glob(__DIR__ . '/ang/*.ang.php');
   foreach ($files as $file) {
-    $name = preg_replace(':\.ang\.php$:', '', basename($file));
+    $name   = preg_replace(':\.ang\.php$:', '', basename($file));
     $module = include $file;
     if (empty($module['ext'])) {
       $module['ext'] = 'org.civicrm.api4';
@@ -263,7 +259,9 @@ function _api4_civix_civicrm_angularModules(&$angularModules) {
  * This wrapper provides consistency.
  *
  * @link http://php.net/glob
+ *
  * @param string $pattern
+ *
  * @return array, possibly empty
  */
 function _api4_civix_glob($pattern) {
@@ -274,17 +272,19 @@ function _api4_civix_glob($pattern) {
 /**
  * Inserts a navigation menu item at a given place in the hierarchy.
  *
- * @param array $menu - menu hierarchy
- * @param string $path - path where insertion should happen (ie. Administer/System Settings)
- * @param array $item - menu you need to insert (parent/child attributes will be filled for you)
+ * @param array  $menu - menu hierarchy
+ * @param string $path - path where insertion should happen (ie.
+ *                     Administer/System Settings)
+ * @param array  $item - menu you need to insert (parent/child attributes will
+ *                     be filled for you)
  */
 function _api4_civix_insert_navigation_menu(&$menu, $path, $item) {
   // If we are done going down the path, insert menu
   if (empty($path)) {
     $menu[] = [
       'attributes' => array_merge([
-        'label'      => CRM_Utils_Array::value('name', $item),
-        'active'     => 1,
+        'label'  => CRM_Utils_Array::value('name', $item),
+        'active' => 1,
       ], $item),
     ];
     return TRUE;
@@ -292,14 +292,15 @@ function _api4_civix_insert_navigation_menu(&$menu, $path, $item) {
   else {
     // Find an recurse into the next level down
     $found = FALSE;
-    $path = explode('/', $path);
+    $path  = explode('/', $path);
     $first = array_shift($path);
     foreach ($menu as $key => &$entry) {
       if ($entry['attributes']['name'] == $first) {
         if (!isset($entry['child'])) {
           $entry['child'] = [];
         }
-        $found = _api4_civix_insert_navigation_menu($entry['child'], implode('/', $path), $item, $key);
+        $found = _api4_civix_insert_navigation_menu($entry['child'],
+          implode('/', $path), $item, $key);
       }
     }
     return $found;
@@ -321,7 +322,7 @@ function _api4_civix_navigationMenu(&$nodes) {
  */
 function _api4_civix_fixNavigationMenu(&$nodes) {
   $maxNavID = 1;
-  array_walk_recursive($nodes, function($item, $key) use (&$maxNavID) {
+  array_walk_recursive($nodes, function ($item, $key) use (&$maxNavID) {
     if ($key === 'navID') {
       $maxNavID = max($maxNavID, $item);
     }
@@ -332,19 +333,22 @@ function _api4_civix_fixNavigationMenu(&$nodes) {
 function _api4_civix_fixNavigationMenuItems(&$nodes, &$maxNavID, $parentID) {
   $origKeys = array_keys($nodes);
   foreach ($origKeys as $origKey) {
-    if (!isset($nodes[$origKey]['attributes']['parentID']) && $parentID !== NULL) {
+    if (!isset($nodes[$origKey]['attributes']['parentID'])
+        && $parentID !== NULL) {
       $nodes[$origKey]['attributes']['parentID'] = $parentID;
     }
     // If no navID, then assign navID and fix key.
     if (!isset($nodes[$origKey]['attributes']['navID'])) {
-      $newKey = ++$maxNavID;
+      $newKey                                 = ++$maxNavID;
       $nodes[$origKey]['attributes']['navID'] = $newKey;
-      $nodes[$newKey] = $nodes[$origKey];
+      $nodes[$newKey]                         = $nodes[$origKey];
       unset($nodes[$origKey]);
       $origKey = $newKey;
     }
-    if (isset($nodes[$origKey]['child']) && is_array($nodes[$origKey]['child'])) {
-      _api4_civix_fixNavigationMenuItems($nodes[$origKey]['child'], $maxNavID, $nodes[$origKey]['attributes']['navID']);
+    if (isset($nodes[$origKey]['child'])
+        && is_array($nodes[$origKey]['child'])) {
+      _api4_civix_fixNavigationMenuItems($nodes[$origKey]['child'], $maxNavID,
+        $nodes[$origKey]['attributes']['navID']);
     }
   }
 }
@@ -360,7 +364,6 @@ function _api4_civix_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
     return;
   }
   $configured = TRUE;
-
   $settingsDir = __DIR__ . DIRECTORY_SEPARATOR . 'settings';
   if (is_dir($settingsDir) && !in_array($settingsDir, $metaDataFolders)) {
     $metaDataFolders[] = $settingsDir;

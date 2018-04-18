@@ -39,48 +39,47 @@ use Civi\Api4\Service\Spec\SpecGatherer;
  * @method bool  getIncludeCustom()
  * @method $this setAction(string $value)
  */
-class GetFields extends AbstractAction
-{
-	/**
-	 * Override default to allow open access
-	 * {@inheritdoc}
-	 */
-	protected $checkPermissions = false;
+class GetFields extends AbstractAction {
 
-	/**
-	 * @var bool
-	 */
-	protected $includeCustom = true;
+  /**
+   * Override default to allow open access
+   * {@inheritdoc}
+   */
+  protected $checkPermissions = FALSE;
 
-	/**
-	 * @var string
-	 */
-	protected $action = 'get';
+  /**
+   * @var bool
+   */
+  protected $includeCustom = TRUE;
 
-	/**
-	 * @param \Civi\Api4\Generic\Result $result
-	 *
-	 * @throws \API_Exception
-	 * @throws \Civi\API\Exception\NotImplementedException
-	 * @throws \Civi\API\Exception\UnauthorizedException
-	 * @throws \Exception
-	 */
-	public function _run(Result $result)
-	{
-		/** @var SpecGatherer $gatherer */
-		$gatherer = \Civi::container()->get('spec_gatherer');
-		$spec = $gatherer->getSpec($this->getEntity(), $this->getAction(), $this->includeCustom);
-		$specArray = SpecFormatter::specToArray($spec);
-		// Fixme - $this->action ought to already be set. Might be a name conflict upstream causing it to be nullified?
-		$result->action = 'getFields';
-		$result->exchangeArray(array_values($specArray['fields']));
-	}
+  /**
+   * @var string
+   */
+  protected $action = 'get';
 
-	/**
-	 * @return string
-	 */
-	public function getAction()
-	{
-		return $this->action;
-	}
+  /**
+   * @param \Civi\Api4\Generic\Result $result
+   *
+   * @throws \API_Exception
+   * @throws \Civi\API\Exception\NotImplementedException
+   * @throws \Civi\API\Exception\UnauthorizedException
+   * @throws \Exception
+   */
+  public function _run(Result $result) {
+    /** @var SpecGatherer $gatherer */
+    $gatherer  = \Civi::container()->get('spec_gatherer');
+    $spec      = $gatherer->getSpec($this->getEntity(), $this->getAction(),
+      $this->includeCustom);
+    $specArray = SpecFormatter::specToArray($spec);
+    // Fixme - $this->action ought to already be set. Might be a name conflict upstream causing it to be nullified?
+    $result->action = 'getFields';
+    $result->exchangeArray(array_values($specArray['fields']));
+  }
+
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return $this->action;
+  }
 }

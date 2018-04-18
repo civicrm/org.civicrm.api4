@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Subscribe.
  */
-class Subscribe extends AbstractEntity
-{
+class Subscribe extends AbstractEntity {
+
 }

@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Worldregion.
  */
-class Worldregion extends AbstractEntity
-{
+class Worldregion extends AbstractEntity {
+
 }

@@ -32,6 +32,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Activity entity.
  */
-class Activity extends AbstractEntity
-{
+class Activity extends AbstractEntity {
+
 }

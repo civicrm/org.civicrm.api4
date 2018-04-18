@@ -5,97 +5,89 @@ namespace Civi\Api4\Service\Spec;
 /**
  * Class RequestSpec.
  */
-class RequestSpec
-{
-	/**
-	 * @var string
-	 */
-	protected $entity;
+class RequestSpec {
 
-	/**
-	 * @var string
-	 */
-	protected $action;
+  /**
+   * @var string
+   */
+  protected $entity;
 
-	/**
-	 * @var FieldSpec[]
-	 */
-	protected $fields = [];
+  /**
+   * @var string
+   */
+  protected $action;
 
-	/**
-	 * @param string $entity
-	 * @param string $action
-	 */
-	public function __construct($entity, $action)
-	{
-		$this->entity = $entity;
-		$this->action = $action;
-	}
+  /**
+   * @var FieldSpec[]
+   */
+  protected $fields = [];
 
-	/**
-	 * @param FieldSpec $field
-	 */
-	public function addFieldSpec(FieldSpec $field)
-	{
-		$this->fields[] = $field;
-	}
+  /**
+   * @param string $entity
+   * @param string $action
+   */
+  public function __construct($entity, $action) {
+    $this->entity = $entity;
+    $this->action = $action;
+  }
 
-	/**
-	 * @param $name
-	 *
-	 * @return FieldSpec|null
-	 */
-	public function getFieldByName($name)
-	{
-		foreach ($this->fields as $field) {
-			if ($field->getName() === $name) {
-				return $field;
-			}
-		}
-	}
+  /**
+   * @param FieldSpec $field
+   */
+  public function addFieldSpec(FieldSpec $field) {
+    $this->fields[] = $field;
+  }
 
-	/**
-	 * @return array
-	 *               Gets all the field names currently part of the specification
-	 */
-	public function getFieldNames()
-	{
-		return array_map(function (FieldSpec $field) {
-			return $field->getName();
-		}, $this->fields);
-	}
+  /**
+   * @param $name
+   *
+   * @return FieldSpec|null
+   */
+  public function getFieldByName($name) {
+    foreach ($this->fields as $field) {
+      if ($field->getName() === $name) {
+        return $field;
+      }
+    }
+  }
 
-	/**
-	 * @return array|FieldSpec[]
-	 */
-	public function getRequiredFields()
-	{
-		return array_filter($this->fields, function (FieldSpec $field) {
-			return $field->isRequired();
-		});
-	}
+  /**
+   * @return array
+   *               Gets all the field names currently part of the specification
+   */
+  public function getFieldNames() {
+    return array_map(function (FieldSpec $field) {
+      return $field->getName();
+    }, $this->fields);
+  }
 
-	/**
-	 * @return FieldSpec[]
-	 */
-	public function getFields()
-	{
-		return $this->fields;
-	}
+  /**
+   * @return array|FieldSpec[]
+   */
+  public function getRequiredFields() {
+    return array_filter($this->fields, function (FieldSpec $field) {
+      return $field->isRequired();
+    });
+  }
 
-	/**
-	 * @return string
-	 */
-	public function getEntity()
-	{
-		return $this->entity;
-	}
+  /**
+   * @return FieldSpec[]
+   */
+  public function getFields() {
+    return $this->fields;
+  }
 
-	/**
-	 * @return string
-	 */
-	public function getAction()
-	{
-		return $this->action;
-	}
+  /**
+   * @return string
+   */
+  public function getEntity() {
+    return $this->entity;
+  }
+
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return $this->action;
+  }
 }

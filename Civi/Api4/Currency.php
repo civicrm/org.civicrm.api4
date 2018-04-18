@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Currency.
  */
-class Currency extends AbstractEntity
-{
+class Currency extends AbstractEntity {
+
 }

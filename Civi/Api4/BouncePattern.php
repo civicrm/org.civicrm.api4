@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class BouncePattern.
  */
-class BouncePattern extends AbstractEntity
-{
+class BouncePattern extends AbstractEntity {
+
 }

@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Queue.
  */
-class Queue extends AbstractEntity
-{
+class Queue extends AbstractEntity {
+
 }

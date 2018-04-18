@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class CustomField.
  */
-class CustomField extends AbstractEntity
-{
+class CustomField extends AbstractEntity {
+
 }

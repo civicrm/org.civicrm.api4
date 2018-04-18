@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Recipients.
  */
-class Recipients extends AbstractEntity
-{
+class Recipients extends AbstractEntity {
+
 }

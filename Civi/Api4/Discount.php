@@ -7,6 +7,6 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * Class Discount.
  */
-class Discount extends AbstractEntity
-{
+class Discount extends AbstractEntity {
+
 }
