@@ -56,13 +56,14 @@ class GetFields extends AbstractAction
      * @var string
      */
     protected $action = 'get';
-
+    
     /**
      * @param \Civi\Api4\Generic\Result $result
      *
      * @throws \API_Exception
      * @throws \Civi\API\Exception\NotImplementedException
      * @throws \Civi\API\Exception\UnauthorizedException
+     * @throws \Exception
      */
     public function _run(Result $result)
     {
