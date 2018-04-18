@@ -226,11 +226,14 @@ class FieldSpec
      */
     private function getValidDataTypes()
     {
-        $extraTypes = ['Boolean', 'Text', 'Float', 'Memo'];
-        $extraTypes = array_combine($extraTypes, $extraTypes);
-
-        return array_merge(\CRM_Utils_Type::dataTypes(), $extraTypes);
-    }
+        $extra_types = ['Boolean', 'Text', 'Float', 'Memo'];
+        $valid_types = array_keys(\CRM_Utils_Type::getValidTypes());
+    
+        $extra_types = array_merge($extra_types,$valid_types);
+    
+        $extra_types = array_combine($extra_types, $extra_types);
+        return array_merge(\CRM_Utils_Type::dataTypes(), $extra_types);
+        }
 
     /**
      * @return array
