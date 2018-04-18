@@ -54,9 +54,11 @@ class Create extends AbstractAction
     {
         return isset($this->values[$key]) ? $this->values[$key] : null;
     }
-
+    
     /**
-     * {@inheritdoc}
+     * @param \Civi\Api4\Generic\Result $result
+     *
+     * @throws \API_Exception
      */
     public function _run(Result $result)
     {
