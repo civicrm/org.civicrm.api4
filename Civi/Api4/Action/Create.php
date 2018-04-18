@@ -36,36 +36,38 @@ use Civi\Api4\Generic\Result;
  * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
  * @method $this addValue($field, $value) Set field value.
  */
-class Create extends AbstractAction {
+class Create extends AbstractAction
+{
 
   /**
    * Field values to set
    *
    * @var array
    */
-  protected $values = [];
+    protected $values = [];
 
   /**
    * @param $key
    *
    * @return mixed|null
    */
-  public function getValue($key) {
-    return isset($this->values[$key]) ? $this->values[$key] : NULL;
-  }
+    public function getValue($key)
+    {
+        return isset($this->values[$key]) ? $this->values[$key] : null;
+    }
 
   /**
    * @inheritDoc
    */
-  public function _run(Result $result) {
-    if (!empty($this->values['id'])) {
-      throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
+    public function _run(Result $result)
+    {
+        if (!empty($this->values['id'])) {
+            throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
+        }
+
+        $resultArray = $this->writeObject($this->values);
+
+      // fixme should return a single row array???
+        $result->exchangeArray($resultArray);
     }
-
-    $resultArray = $this->writeObject($this->values);
-
-    // fixme should return a single row array???
-    $result->exchangeArray($resultArray);
-  }
-
 }

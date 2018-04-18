@@ -2,11 +2,12 @@
 
 namespace Civi\Api4\Service\Schema\Joinable;
 
-class OptionValueJoinable extends Joinable {
+class OptionValueJoinable extends Joinable
+{
   /**
    * @var string
    */
-  protected $optionGroupName;
+    protected $optionGroupName;
 
   /**
    * @param string $optionGroup
@@ -16,28 +17,28 @@ class OptionValueJoinable extends Joinable {
    * @param string $keyColumn
    *   Which column to use to join, defaults to "value"
    */
-  public function __construct($optionGroup, $alias = NULL, $keyColumn = 'value') {
-    $this->optionGroupName = $optionGroup;
-    $optionValueTable = 'civicrm_option_value';
+    public function __construct($optionGroup, $alias = null, $keyColumn = 'value')
+    {
+        $this->optionGroupName = $optionGroup;
+        $optionValueTable = 'civicrm_option_value';
 
-    // default join alias to option group name, e.g. activity_type
-    if (!$alias && !is_numeric($optionGroup)) {
-      $alias = $optionGroup;
+      // default join alias to option group name, e.g. activity_type
+        if (!$alias && !is_numeric($optionGroup)) {
+            $alias = $optionGroup;
+        }
+
+        parent::__construct($optionValueTable, $keyColumn, $alias);
+
+        if (!is_numeric($optionGroup)) {
+            $subSelect = 'SELECT id FROM civicrm_option_group WHERE name = "%s"';
+            $subQuery = sprintf($subSelect, $optionGroup);
+            $condition = sprintf('%s.option_group_id = (%s)', $alias, $subQuery);
+        } else {
+            $condition = sprintf('%s.option_group_id = %d', $alias, $optionGroup);
+        }
+
+        $this->addCondition($condition);
     }
-
-    parent::__construct($optionValueTable, $keyColumn, $alias);
-
-    if (!is_numeric($optionGroup)) {
-      $subSelect = 'SELECT id FROM civicrm_option_group WHERE name = "%s"';
-      $subQuery = sprintf($subSelect, $optionGroup);
-      $condition = sprintf('%s.option_group_id = (%s)', $alias, $subQuery);
-    }
-    else {
-      $condition = sprintf('%s.option_group_id = %d', $alias, $optionGroup);
-    }
-
-    $this->addCondition($condition);
-  }
 
   /**
    * The existing condition must also be re-aliased
@@ -46,16 +47,16 @@ class OptionValueJoinable extends Joinable {
    *
    * @return $this
    */
-  public function setAlias($alias) {
-    foreach ($this->conditions as $index => $condition) {
-      $search = $this->alias . '.';
-      $replace = $alias . '.';
-      $this->conditions[$index] = str_replace($search, $replace, $condition);
+    public function setAlias($alias)
+    {
+        foreach ($this->conditions as $index => $condition) {
+            $search = $this->alias . '.';
+            $replace = $alias . '.';
+            $this->conditions[$index] = str_replace($search, $replace, $condition);
+        }
+
+        parent::setAlias($alias);
+
+        return $this;
     }
-
-    parent::setAlias($alias);
-
-    return $this;
-  }
-
 }

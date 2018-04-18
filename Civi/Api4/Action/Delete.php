@@ -25,12 +25,14 @@
  +--------------------------------------------------------------------+
  */
 namespace Civi\Api4\Action;
+
 use Civi\Api4\Generic\Result;
 
 /**
  * Delete one or more items, based on criteria specified in Where param.
  */
-class Delete extends Get {
+class Delete extends Get
+{
 
   /**
    * Criteria for selecting items to delete.
@@ -38,7 +40,7 @@ class Delete extends Get {
    * @required
    * @var array
    */
-  protected $where = [];
+    protected $where = [];
     
     /**
      * Batch delete function
@@ -52,45 +54,42 @@ class Delete extends Get {
      * @throws \CRM_Core_Exception
      * @throws \Exception
      */
-  public function _run(Result $result) {
-    $baoName = $this->getBaoName();
-    $this->setSelect(['id']);
-    $defaults = $this->getParamDefaults();
-    if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
-      throw new \API_Exception('Cannot delete with no "where" paramater specified');
+    public function _run(Result $result)
+    {
+        $baoName = $this->getBaoName();
+        $this->setSelect(['id']);
+        $defaults = $this->getParamDefaults();
+        if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
+            throw new \API_Exception('Cannot delete with no "where" paramater specified');
+        }
+      // run the parent action (get) to get the list
+        parent::_run($result);
+      // Then act on the result
+        $ids = [];
+        if (method_exists($baoName, 'del')) {
+            foreach ($result as $item) {
+                $args = [$item['id']];
+                $bao = call_user_func_array([$baoName, 'del'], $args);
+                if ($bao !== false) {
+                    $ids[] = $item['id'];
+                } else {
+                    throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
+                }
+            }
+        } else {
+            foreach ($result as $item) {
+                $bao = new $baoName();
+                $bao->id = $item['id'];
+              // delete it
+                $action_result = $bao->delete();
+                if ($action_result) {
+                    $ids[] = $item['id'];
+                } else {
+                    throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
+                }
+            }
+        }
+        $result->exchangeArray($ids);
+        return $result;
     }
-    // run the parent action (get) to get the list
-    parent::_run($result);
-    // Then act on the result
-    $ids = [];
-    if (method_exists($baoName, 'del')) {
-      foreach ($result as $item) {
-        $args = [$item['id']];
-        $bao = call_user_func_array([$baoName, 'del'], $args);
-        if ($bao !== FALSE) {
-          $ids[] = $item['id'];
-        }
-        else {
-          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
-        }
-      }
-    }
-    else {
-      foreach ($result as $item) {
-        $bao = new $baoName();
-        $bao->id = $item['id'];
-        // delete it
-        $action_result = $bao->delete();
-        if ($action_result) {
-          $ids[] = $item['id'];
-        }
-        else {
-          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
-        }
-      }
-    }
-    $result->exchangeArray($ids);
-    return $result;
-  }
-
 }

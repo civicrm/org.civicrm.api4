@@ -35,31 +35,33 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * ($apiRequest['doctrineClass']), check permissions specified in
  * Civi\API\Annotation\Permission.
  */
-class PermissionCheckSubscriber implements EventSubscriberInterface {
+class PermissionCheckSubscriber implements EventSubscriberInterface
+{
   /**
    * @return array
    */
-  public static function getSubscribedEvents() {
-    return [
-      Events::AUTHORIZE => [
+    public static function getSubscribedEvents()
+    {
+        return [
+        Events::AUTHORIZE => [
         ['onApiAuthorize', Events::W_LATE],
-      ],
-    ];
-  }
+        ],
+        ];
+    }
 
   /**
    * @param \Civi\API\Event\AuthorizeEvent $event
    *   API authorization event.
    */
-  public function onApiAuthorize(\Civi\API\Event\AuthorizeEvent $event) {
-    /* @var \Civi\Api4\Generic\AbstractAction $apiRequest */
-    $apiRequest = $event->getApiRequest();
-    if ($apiRequest['version'] == 4) {
-      if (!$apiRequest->getCheckPermissions() || $apiRequest->isAuthorized()) {
-        $event->authorize();
-        $event->stopPropagation();
-      }
+    public function onApiAuthorize(\Civi\API\Event\AuthorizeEvent $event)
+    {
+      /* @var \Civi\Api4\Generic\AbstractAction $apiRequest */
+        $apiRequest = $event->getApiRequest();
+        if ($apiRequest['version'] == 4) {
+            if (!$apiRequest->getCheckPermissions() || $apiRequest->isAuthorized()) {
+                $event->authorize();
+                $event->stopPropagation();
+            }
+        }
     }
-  }
-
 }

@@ -6,17 +6,19 @@ use Civi\API\Event\PrepareEvent;
 use Civi\Api4\Action\Create;
 use Civi\Api4\Action\Update;
 
-class NullValueFormattingPresaveSubscriber extends AbstractPrepareSubscriber {
+class NullValueFormattingPresaveSubscriber extends AbstractPrepareSubscriber
+{
 
   /**
    * @param PrepareEvent $event
    */
-  public function onApiPrepare(PrepareEvent $event) {
-    $apiRequest = $event->getApiRequest();
-    if ($apiRequest instanceof Create || $apiRequest instanceof Update) {
-      $this->formalNullInput($apiRequest);
+    public function onApiPrepare(PrepareEvent $event)
+    {
+        $apiRequest = $event->getApiRequest();
+        if ($apiRequest instanceof Create || $apiRequest instanceof Update) {
+            $this->formalNullInput($apiRequest);
+        }
     }
-  }
 
   /**
    * Because of the wacky way that database values are saved we need to format
@@ -35,15 +37,14 @@ class NullValueFormattingPresaveSubscriber extends AbstractPrepareSubscriber {
    *
    * @param Create $request
    */
-  private function formalNullInput($request) {
-    foreach ($request->getValues() as $key => $value) {
-      if ('null' === $value) {
-        $request->addValue($key, 'Null');
-      }
-      elseif (NULL === $value) {
-        $request->addValue($key, 'null');
-      }
+    private function formalNullInput($request)
+    {
+        foreach ($request->getValues() as $key => $value) {
+            if ('null' === $value) {
+                $request->addValue($key, 'Null');
+            } elseif (null === $value) {
+                $request->addValue($key, 'null');
+            }
+        }
     }
-  }
-
 }

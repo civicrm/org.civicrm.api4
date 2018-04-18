@@ -2,10 +2,10 @@
 
 namespace Civi\Api4\Action;
 
-interface Actions {
-  const CREATE = 'create';
-  const GET = 'get';
-  const GET_FIELDS = 'getFields';
-  const DELETE = 'delete';
-
+interface Actions
+{
+    const CREATE = 'create';
+    const GET = 'get';
+    const GET_FIELDS = 'getFields';
+    const DELETE = 'delete';
 }

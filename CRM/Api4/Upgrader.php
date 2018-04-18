@@ -3,7 +3,8 @@
 /**
  * Collection of upgrade steps.
  */
-class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base {
+class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base
+{
 
   // By convention, functions that look like "function upgrade_NNNN()" are
   // upgrade tasks. They are executed in order (like Drupal's hook_update_N).
@@ -11,29 +12,29 @@ class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base {
   /**
    * Install script
    */
-  public function install() {
-    // Add menu item for api explorer; rename v3 explorer menu item.
-    try {
-      $v3Item = civicrm_api3('Navigation', 'get', [
-        'name' => 'API Explorer',
-        'return' => ['id', 'parent_id'],
-        'sequential' => 1,
-        'api.Navigation.create' => ['label' => ts("Api Explorer v3")],
-      ]);
-      civicrm_api3('Navigation', 'create', [
-        'parent_id' => $v3Item['values'][0]['parent_id'],
-        'label' => ts("Api Explorer v4"),
-        'weight' => 2,
-        'name' => "Api Explorer v4",
-        'permission' => "administer CiviCRM",
-        'url' => "civicrm/a/#/api4",
-        'is_active' => 1,
-      ]);
+    public function install()
+    {
+      // Add menu item for api explorer; rename v3 explorer menu item.
+        try {
+            $v3Item = civicrm_api3('Navigation', 'get', [
+            'name' => 'API Explorer',
+            'return' => ['id', 'parent_id'],
+            'sequential' => 1,
+            'api.Navigation.create' => ['label' => ts("Api Explorer v3")],
+            ]);
+            civicrm_api3('Navigation', 'create', [
+            'parent_id' => $v3Item['values'][0]['parent_id'],
+            'label' => ts("Api Explorer v4"),
+            'weight' => 2,
+            'name' => "Api Explorer v4",
+            'permission' => "administer CiviCRM",
+            'url' => "civicrm/a/#/api4",
+            'is_active' => 1,
+            ]);
+        } catch (Exception $e) {
+          // Couldn't create menu item.
+        }
     }
-    catch (Exception $e) {
-      // Couldn't create menu item.
-    }
-  }
 
   /**
    * Example: Work with entities usually not available during the install step.
@@ -56,14 +57,15 @@ class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base {
   /**
    * Uninstall script
    */
-  public function uninstall() {
-    // Remove Api4 Explorer navigation menu item
-    civicrm_api3('Navigation', 'get', [
-      'name' => 'Api Explorer v4',
-      'return' => ['id'],
-      'api.Navigation.delete' => [],
-    ]);
-  }
+    public function uninstall()
+    {
+      // Remove Api4 Explorer navigation menu item
+        civicrm_api3('Navigation', 'get', [
+        'name' => 'Api Explorer v4',
+        'return' => ['id'],
+        'api.Navigation.delete' => [],
+        ]);
+    }
 
   /**
    * Example: Run a simple query when a module is enabled.
@@ -154,5 +156,4 @@ class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base {
     }
     return TRUE;
   } // */
-
 }

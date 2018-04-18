@@ -37,21 +37,22 @@ use Civi\Api4\Utils\ReflectionUtils;
  * @method $this setCheckPermissions(bool $value)
  * @method bool getCheckPermissions()
  */
-abstract class AbstractAction implements \ArrayAccess {
+abstract class AbstractAction implements \ArrayAccess
+{
 
   /**
    * Api version number; cannot be changed.
    *
    * @var int
    */
-  protected $version = 4;
+    protected $version = 4;
 
   /**
    * Todo: not implemented.
    *
    * @var array
    */
-  protected $chain = [];
+    protected $chain = [];
 
   /**
    * Whether to enforce acl permissions based on the current user.
@@ -61,26 +62,26 @@ abstract class AbstractAction implements \ArrayAccess {
    *
    * @var bool
    */
-  protected $checkPermissions = TRUE;
+    protected $checkPermissions = true;
 
   /**
    * Rarely used options.
    *
    * @var array
    */
-  protected $options = [];
+    protected $options = [];
 
   /* @var string */
-  private $entity;
+    private $entity;
 
   /* @var \ReflectionClass */
-  private $thisReflection;
+    private $thisReflection;
 
   /* @var array */
-  private $thisParamInfo;
+    private $thisParamInfo;
 
   /* @var array */
-  private $thisArrayStorage;
+    private $thisArrayStorage;
     
     /**
      * Action constructor.
@@ -89,10 +90,11 @@ abstract class AbstractAction implements \ArrayAccess {
      *
      * @throws \ReflectionException
      */
-  public function __construct($entity) {
-    $this->entity = $entity;
-    $this->thisReflection = new \ReflectionClass($this);
-  }
+    public function __construct($entity)
+    {
+        $this->entity = $entity;
+        $this->thisReflection = new \ReflectionClass($this);
+    }
 
   /**
    * Strictly enforce api parameters
@@ -100,16 +102,18 @@ abstract class AbstractAction implements \ArrayAccess {
    * @param $value
    * @throws \Exception
    */
-  public function __set($name, $value) {
-    throw new \API_Exception('Unknown api parameter');
-  }
+    public function __set($name, $value)
+    {
+        throw new \API_Exception('Unknown api parameter');
+    }
 
   /**
    * @throws \API_Exception
    */
-  public function setVersion() {
-    throw new \API_Exception('Cannot modify api version');
-  }
+    public function setVersion()
+    {
+        throw new \API_Exception('Cannot modify api version');
+    }
 
   /**
    * Magic function to provide addFoo, getFoo and setFoo for params.
@@ -119,43 +123,42 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return $this|mixed
    * @throws \API_Exception
    */
-  public function __call($name, $arguments) {
-    $param = lcfirst(substr($name, 3));
-    $mode = substr($name, 0, 3);
-    // Handle plural when adding to e.g. $values with "addValue" method.
-    if ($mode == 'add' && $this->paramExists($param . 's')) {
-      $param .= 's';
-    }
-    if ($this->paramExists($param)) {
-      switch ($mode) {
-        case 'get':
-          return $this->$param;
+    public function __call($name, $arguments)
+    {
+        $param = lcfirst(substr($name, 3));
+        $mode = substr($name, 0, 3);
+      // Handle plural when adding to e.g. $values with "addValue" method.
+        if ($mode == 'add' && $this->paramExists($param . 's')) {
+            $param .= 's';
+        }
+        if ($this->paramExists($param)) {
+            switch ($mode) {
+                case 'get':
+                    return $this->$param;
 
-        case 'set':
-          if (is_array($this->$param)) {
-            // Don't overwrite any defaults
-            $this->$param = $arguments[0] + $this->$param;
-          }
-          else {
-            $this->$param = $arguments[0];
-          }
-          return $this;
+                case 'set':
+                    if (is_array($this->$param)) {
+                      // Don't overwrite any defaults
+                        $this->$param = $arguments[0] + $this->$param;
+                    } else {
+                        $this->$param = $arguments[0];
+                    }
+                    return $this;
 
-        case 'add':
-          if (!is_array($this->$param)) {
-            throw new \API_Exception('Cannot add to non-array param');
-          }
-          if (array_key_exists(1, $arguments)) {
-            $this->{$param}[$arguments[0]] = $arguments[1];
-          }
-          else {
-            $this->{$param}[] = $arguments[0];
-          }
-          return $this;
-      }
+                case 'add':
+                    if (!is_array($this->$param)) {
+                        throw new \API_Exception('Cannot add to non-array param');
+                    }
+                    if (array_key_exists(1, $arguments)) {
+                        $this->{$param}[$arguments[0]] = $arguments[1];
+                    } else {
+                        $this->{$param}[] = $arguments[0];
+                    }
+                    return $this;
+            }
+        }
+        throw new \API_Exception('Unknown api parameter: ' . $name);
     }
-    throw new \API_Exception('Unknown api parameter: ' . $name);
-  }
     
     /**
      * Invoke api call.
@@ -168,30 +171,32 @@ abstract class AbstractAction implements \ArrayAccess {
      * @throws \Civi\API\Exception\NotImplementedException
      * @throws \Civi\API\Exception\UnauthorizedException
      */
-  final public function execute() {
-    /** @var Kernel $kernel */
-    $kernel = \Civi::service('civi_api_kernel');
+    final public function execute()
+    {
+      /** @var Kernel $kernel */
+        $kernel = \Civi::service('civi_api_kernel');
 
-    return $kernel->runRequest($this);
-  }
+        return $kernel->runRequest($this);
+    }
 
   /**
    * @param \Civi\Api4\Generic\Result $result
    */
-  abstract public function _run(Result $result);
+    abstract public function _run(Result $result);
 
   /**
    * Serialize this object's params into an array
    * @return array
    */
-  public function getParams() {
-    $params = [];
-    foreach ($this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-      $name = $property->getName();
-      $params[$name] = $this->$name;
+    public function getParams()
+    {
+        $params = [];
+        foreach ($this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+            $name = $property->getName();
+            $params[$name] = $this->$name;
+        }
+        return $params;
     }
-    return $params;
-  }
 
   /**
    * Get documentation for one or all params
@@ -199,113 +204,121 @@ abstract class AbstractAction implements \ArrayAccess {
    * @param string $param
    * @return array of arrays [description, type, default, (comment)]
    */
-  public function getParamInfo($param = NULL) {
-    if (!isset($this->thisParamInfo)) {
-      $defaults = $this->getParamDefaults();
-      foreach ($this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
-        $name = $property->getName();
-        if ($name != 'version') {
-          $this->thisParamInfo[$name] = ReflectionUtils::getCodeDocs($property, 'Property');
-          $this->thisParamInfo[$name]['default'] = $defaults[$name];
+    public function getParamInfo($param = null)
+    {
+        if (!isset($this->thisParamInfo)) {
+            $defaults = $this->getParamDefaults();
+            foreach ($this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+                $name = $property->getName();
+                if ($name != 'version') {
+                    $this->thisParamInfo[$name] = ReflectionUtils::getCodeDocs($property, 'Property');
+                    $this->thisParamInfo[$name]['default'] = $defaults[$name];
+                }
+            }
         }
-      }
+        return $param ? $this->thisParamInfo[$param] : $this->thisParamInfo;
     }
-    return $param ? $this->thisParamInfo[$param] : $this->thisParamInfo;
-  }
 
   /**
    * @return string
    */
-  public function getEntity() {
-    return $this->entity;
-  }
+    public function getEntity()
+    {
+        return $this->entity;
+    }
 
   /**
    *
    * @return string
    */
-  public function getAction() {
-    $name = get_class($this);
-    return lcfirst(substr($name, strrpos($name, '\\') + 1));
-  }
+    public function getAction()
+    {
+        $name = get_class($this);
+        return lcfirst(substr($name, strrpos($name, '\\') + 1));
+    }
 
   /**
    * @param string $param
    * @return bool
    */
-  protected function paramExists($param) {
-    return array_key_exists($param, $this->getParams());
-  }
+    protected function paramExists($param)
+    {
+        return array_key_exists($param, $this->getParams());
+    }
 
   /**
    * @return array
    */
-  protected function getParamDefaults() {
-    return array_intersect_key($this->thisReflection->getDefaultProperties(), $this->getParams());
-  }
+    protected function getParamDefaults()
+    {
+        return array_intersect_key($this->thisReflection->getDefaultProperties(), $this->getParams());
+    }
 
   /**
    * @return null|string
    */
-  protected function getBaoName() {
-    require_once 'api/v3/utils.php';
-    return \_civicrm_api3_get_BAO($this->getEntity());
-  }
+    protected function getBaoName()
+    {
+        require_once 'api/v3/utils.php';
+        return \_civicrm_api3_get_BAO($this->getEntity());
+    }
 
   /**
    * @inheritDoc
    */
-  public function offsetExists($offset) {
-    return in_array($offset, ['entity', 'action', 'params', 'version', 'check_permissions']) || isset($this->thisArrayStorage[$offset]);
-  }
+    public function offsetExists($offset)
+    {
+        return in_array($offset, ['entity', 'action', 'params', 'version', 'check_permissions']) || isset($this->thisArrayStorage[$offset]);
+    }
 
   /**
    * @inheritDoc
    */
-  public function &offsetGet($offset) {
-    $val = NULL;
-    if (in_array($offset, ['entity', 'action', 'params', 'version'])) {
-      $getter = 'get' . ucfirst($offset);
-      $val = $this->$getter();
-      return $val;
+    public function &offsetGet($offset)
+    {
+        $val = null;
+        if (in_array($offset, ['entity', 'action', 'params', 'version'])) {
+            $getter = 'get' . ucfirst($offset);
+            $val = $this->$getter();
+            return $val;
+        }
+        if ($offset == 'check_permissions') {
+            return $this->checkPermissions;
+        }
+        if (isset($this->thisArrayStorage[$offset])) {
+            return $this->thisArrayStorage[$offset];
+        } else {
+            return $val;
+        }
     }
-    if ($offset == 'check_permissions') {
-      return $this->checkPermissions;
-    }
-    if (isset ($this->thisArrayStorage[$offset])) {
-      return $this->thisArrayStorage[$offset];
-    }
-    else {
-      return $val;
-    }
-  }
     
     /**
      * @inheritDoc
      * @throws \API_Exception
      */
-  public function offsetSet($offset, $value) {
-    if (in_array($offset, ['entity', 'action', 'params', 'version'])) {
-      throw new \API_Exception('Cannot modify api4 state via array access');
+    public function offsetSet($offset, $value)
+    {
+        if (in_array($offset, ['entity', 'action', 'params', 'version'])) {
+            throw new \API_Exception('Cannot modify api4 state via array access');
+        }
+        if ($offset == 'check_permissions') {
+            $this->setCheckPermissions($value);
+        } else {
+            $this->thisArrayStorage[$offset] = $value;
+        }
     }
-    if ($offset == 'check_permissions') {
-      $this->setCheckPermissions($value);
-    }
-    else {
-      $this->thisArrayStorage[$offset] = $value;
-    }
-  }
     
     /**
      * @inheritDoc
      * @throws \API_Exception
      */
-  public function offsetUnset($offset) {
-    if (in_array($offset, ['entity', 'action', 'params', 'check_permissions', 'version'])) {
-      throw new \API_Exception('Cannot modify api4 state via array access');
+    public function offsetUnset($offset)
+    {
+        if (in_array($offset, ['entity', 'action', 'params', 'check_permissions', 'version'])) {
+            throw new \API_Exception('Cannot modify api4 state via array access');
+        }
+        unset($this->thisArrayStorage[$offset]);
     }
-    unset($this->thisArrayStorage[$offset]);
-  }
 
   /**
    * Extract the true fields from a BAO
@@ -314,17 +327,18 @@ abstract class AbstractAction implements \ArrayAccess {
    * @param object $bao
    * @return array
    */
-  public static function baoToArray($bao) {
-    $fields = $bao->fields();
-    $values = [];
-    foreach ($fields as $key => $field) {
-      $name = $field['name'];
-      if (property_exists($bao, $name)) {
-        $values[$name] = $bao->$name;
-      }
+    public static function baoToArray($bao)
+    {
+        $fields = $bao->fields();
+        $values = [];
+        foreach ($fields as $key => $field) {
+            $name = $field['name'];
+            if (property_exists($bao, $name)) {
+                $values[$name] = $bao->$name;
+            }
+        }
+        return $values;
     }
-    return $values;
-  }
 
   /**
    * Is this api call permitted?
@@ -333,9 +347,10 @@ abstract class AbstractAction implements \ArrayAccess {
    *
    * @return bool
    */
-  public function isAuthorized() {
-    return TRUE;
-  }
+    public function isAuthorized()
+    {
+        return true;
+    }
 
   /**
    * Write a bao object as part of a create/update action.
@@ -344,36 +359,37 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return array
    * @throws \API_Exception
    */
-  protected function writeObject($params) {
-    $entityId = \CRM_Utils_Array::value('id', $params);
-    $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
+    protected function writeObject($params)
+    {
+        $entityId = \CRM_Utils_Array::value('id', $params);
+        $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
 
-    $baoName = $this->getBaoName();
-    $bao = new $baoName();
+        $baoName = $this->getBaoName();
+        $bao = new $baoName();
 
-    // For some reason the contact bao requires this
-    if ($entityId && $this->getEntity() == 'Contact') {
-      $params['contact_id'] = $entityId;
+      // For some reason the contact bao requires this
+        if ($entityId && $this->getEntity() == 'Contact') {
+            $params['contact_id'] = $entityId;
+        }
+      // Some BAOs are weird and don't support a straightforward "create" method.
+        $oddballs = [
+        'Website' => 'add',
+        'Address' => 'add',
+        ];
+        $method = \CRM_Utils_Array::value($this->getEntity(), $oddballs, 'create');
+        if (!method_exists($bao, $method)) {
+            $method = 'add';
+        }
+        $createResult = $bao->$method($params);
+
+        if (!$createResult) {
+            $errMessage = sprintf('%s write operation failed', $this->getEntity());
+            throw new \API_Exception($errMessage);
+        }
+
+      // trim back the junk and just get the array:
+        return $this->baoToArray($createResult);
     }
-    // Some BAOs are weird and don't support a straightforward "create" method.
-    $oddballs = [
-      'Website' => 'add',
-      'Address' => 'add',
-    ];
-    $method = \CRM_Utils_Array::value($this->getEntity(), $oddballs, 'create');
-    if (!method_exists($bao, $method)) {
-      $method = 'add';
-    }
-    $createResult = $bao->$method($params);
-
-    if (!$createResult) {
-      $errMessage = sprintf('%s write operation failed', $this->getEntity());
-      throw new \API_Exception($errMessage);
-    }
-
-    // trim back the junk and just get the array:
-    return $this->baoToArray($createResult);
-  }
 
   /**
    * @param $params
@@ -381,64 +397,63 @@ abstract class AbstractAction implements \ArrayAccess {
    * @param $entityId
    * @return mixed
    */
-  private function formatCustomParams($params, $entity, $entityId) {
-    $params['custom'] = $customParams = [];
+    private function formatCustomParams($params, $entity, $entityId)
+    {
+        $params['custom'] = $customParams = [];
 
-    // $customValueID is the ID of the custom value in the custom table for this
-    // entity (i guess this assumes it's not a multi value entity)
-    foreach ($params as $name => $value) {
-      if (strpos($name, '.') === FALSE) {
-        continue;
-      }
+      // $customValueID is the ID of the custom value in the custom table for this
+      // entity (i guess this assumes it's not a multi value entity)
+        foreach ($params as $name => $value) {
+            if (strpos($name, '.') === false) {
+                continue;
+            }
 
-      list($customGroup, $customField) = explode('.', $name);
+            list($customGroup, $customField) = explode('.', $name);
 
-      $customFieldId = \CRM_Core_BAO_CustomField::getFieldValue(
-        \CRM_Core_DAO_CustomField::class,
-        $customField,
-        'id',
-        'name'
-      );
-      $customFieldType = \CRM_Core_BAO_CustomField::getFieldValue(
-        \CRM_Core_DAO_CustomField::class,
-        $customField,
-        'html_type',
-        'name'
-      );
-      $customFieldExtends = \CRM_Core_BAO_CustomGroup::getFieldValue(
-        \CRM_Core_DAO_CustomGroup::class,
-        $customGroup,
-        'extends',
-        'name'
-      );
+            $customFieldId = \CRM_Core_BAO_CustomField::getFieldValue(
+                \CRM_Core_DAO_CustomField::class,
+                $customField,
+                'id',
+                'name'
+            );
+            $customFieldType = \CRM_Core_BAO_CustomField::getFieldValue(
+                \CRM_Core_DAO_CustomField::class,
+                $customField,
+                'html_type',
+                'name'
+            );
+            $customFieldExtends = \CRM_Core_BAO_CustomGroup::getFieldValue(
+                \CRM_Core_DAO_CustomGroup::class,
+                $customGroup,
+                'extends',
+                'name'
+            );
 
-      // todo are we sure we don't want to allow setting to NULL? need to test
-      if ($customFieldId && NULL !== $value) {
+          // todo are we sure we don't want to allow setting to NULL? need to test
+            if ($customFieldId && null !== $value) {
+                if ($customFieldType == 'CheckBox') {
+                  // this function should be part of a class
+                    formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
+                }
 
-        if ($customFieldType == 'CheckBox') {
-          // this function should be part of a class
-          formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
+                \CRM_Core_BAO_CustomField::formatCustomField(
+                    $customFieldId,
+                    $customParams,
+                    $value,
+                    $customFieldExtends,
+                    null, // todo check when this is needed
+                    $entityId,
+                    false,
+                    false,
+                    true
+                );
+            }
         }
 
-        \CRM_Core_BAO_CustomField::formatCustomField(
-          $customFieldId,
-          $customParams,
-          $value,
-          $customFieldExtends,
-          NULL, // todo check when this is needed
-          $entityId,
-          FALSE,
-          FALSE,
-          TRUE
-        );
-      }
+        if (!empty($customParams)) {
+            $params['custom'] = $customParams;
+        }
+
+        return $params;
     }
-
-    if (!empty($customParams)) {
-      $params['custom'] = $customParams;
-    }
-
-    return $params;
-  }
-
 }

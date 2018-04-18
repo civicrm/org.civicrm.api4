@@ -44,7 +44,8 @@ use Civi\Api4\Action\Update;
  * @method static Update update
  * @method static Delete delete
  */
-abstract class AbstractEntity {
+abstract class AbstractEntity
+{
 
   /**
    * Magic method to return the action object for an api.
@@ -54,19 +55,18 @@ abstract class AbstractEntity {
    * @return AbstractAction
    * @throws NotImplementedException
    */
-  public static function __callStatic($action, $ignore) {
-    // Get entity name from called class
-    $entity = substr(static::class, strrpos(static::class, '\\') + 1);
-    // Find class for this action
-    $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
-    $genericAction = '\Civi\Api4\Action\\' . ucfirst($action);
-    if (class_exists($entityAction)) {
-      return new $entityAction($entity);
+    public static function __callStatic($action, $ignore)
+    {
+      // Get entity name from called class
+        $entity = substr(static::class, strrpos(static::class, '\\') + 1);
+      // Find class for this action
+        $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
+        $genericAction = '\Civi\Api4\Action\\' . ucfirst($action);
+        if (class_exists($entityAction)) {
+            return new $entityAction($entity);
+        } elseif (class_exists($genericAction)) {
+            return new $genericAction($entity);
+        }
+        throw new NotImplementedException("Api $entity $action version 4 does not exist.");
     }
-    elseif (class_exists($genericAction)) {
-      return new $genericAction($entity);
-    }
-    throw new NotImplementedException("Api $entity $action version 4 does not exist.");
-  }
-
 }

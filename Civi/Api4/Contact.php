@@ -32,6 +32,7 @@ use Civi\Api4\Generic\AbstractEntity;
  * Contact entity.
  *
  */
-class Contact extends AbstractEntity {
+class Contact extends AbstractEntity
+{
 
 }

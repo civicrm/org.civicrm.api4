@@ -33,6 +33,7 @@ use Civi\Api4\Generic\AbstractEntity;
 /**
  * @method static Get get
  */
-class Participant extends AbstractEntity {
+class Participant extends AbstractEntity
+{
 
 }

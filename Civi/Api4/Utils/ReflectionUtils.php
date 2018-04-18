@@ -30,7 +30,8 @@ namespace Civi\Api4\Utils;
 /**
  * Just another place to put static functions...
  */
-class ReflectionUtils {
+class ReflectionUtils
+{
   /**
    * @param \Reflector|\ReflectionClass|\ReflectionProperty $reflection
    * @param string $type
@@ -38,78 +39,74 @@ class ReflectionUtils {
    *
    * @return array
    */
-  public static function getCodeDocs($reflection, $type = NULL) {
-    $docs = self::parseDocBlock($reflection->getDocComment());
+    public static function getCodeDocs($reflection, $type = null)
+    {
+        $docs = self::parseDocBlock($reflection->getDocComment());
 
-    // Recurse into parent functions
-    if (isset($docs['inheritDoc'])) {
-      unset($docs['inheritDoc']);
-      $newReflection = NULL;
-      try {
-        if ($type) {
-          $name = $reflection->getName();
-          $reflectionClass = $reflection->getDeclaringClass()->getParentClass();
-          if ($reflectionClass) {
-            $getItem = "get$type";
-            $newReflection = $reflectionClass->$getItem($name);
-          }
+      // Recurse into parent functions
+        if (isset($docs['inheritDoc'])) {
+            unset($docs['inheritDoc']);
+            $newReflection = null;
+            try {
+                if ($type) {
+                    $name = $reflection->getName();
+                    $reflectionClass = $reflection->getDeclaringClass()->getParentClass();
+                    if ($reflectionClass) {
+                        $getItem = "get$type";
+                        $newReflection = $reflectionClass->$getItem($name);
+                    }
+                } else {
+                    $newReflection = $reflection->getParentClass();
+                }
+            } catch (\ReflectionException $e) {
+            }
+            if ($newReflection) {
+              // Mix in
+                $additionalDocs = self::getCodeDocs($newReflection, $type);
+                if (!empty($docs['comment']) && !empty($additionalDocs['comment'])) {
+                    $docs['comment'] .= "\n\n" . $additionalDocs['comment'];
+                }
+                $docs += $additionalDocs;
+            }
         }
-        else {
-          $newReflection = $reflection->getParentClass();
-        }
-      }
-      catch (\ReflectionException $e) {}
-      if ($newReflection) {
-        // Mix in
-        $additionalDocs = self::getCodeDocs($newReflection, $type);
-        if (!empty($docs['comment']) && !empty($additionalDocs['comment'])) {
-          $docs['comment'] .= "\n\n" . $additionalDocs['comment'];
-        }
-        $docs += $additionalDocs;
-      }
+        return $docs;
     }
-    return $docs;
-  }
 
   /**
    * @param string $comment
    * @return array
    */
-  public static function parseDocBlock($comment) {
-    $info = [];
-    foreach (preg_split("/((\r?\n)|(\r\n?))/", $comment) as $num => $line) {
-      if (!$num || strpos($line, '*/') !== FALSE) {
-        continue;
-      }
-      $line = ltrim(trim($line), '* ');
-      if (strpos($line, '@') === 0) {
-        $words = explode(' ', $line);
-        $key = substr($words[0], 1);
-        if ($key == 'var') {
-          $info['type'] = explode('|', $words[1]);
+    public static function parseDocBlock($comment)
+    {
+        $info = [];
+        foreach (preg_split("/((\r?\n)|(\r\n?))/", $comment) as $num => $line) {
+            if (!$num || strpos($line, '*/') !== false) {
+                continue;
+            }
+            $line = ltrim(trim($line), '* ');
+            if (strpos($line, '@') === 0) {
+                $words = explode(' ', $line);
+                $key = substr($words[0], 1);
+                if ($key == 'var') {
+                    $info['type'] = explode('|', $words[1]);
+                } else {
+                  // Unrecognized annotation, but we'll duly add it to the info array
+                    $val = implode(' ', array_slice($words, 1));
+                    $info[$key] = strlen($val) ? $val : true;
+                }
+            } elseif ($num == 1) {
+                $info['description'] = $line;
+            } elseif (!$line) {
+                if (isset($info['comment'])) {
+                    $info['comment'] .= "\n";
+                }
+            } else {
+                $info['comment'] = isset($info['comment']) ? "{$info['comment']}\n$line" : $line;
+            }
         }
-        else {
-          // Unrecognized annotation, but we'll duly add it to the info array
-          $val = implode(' ', array_slice($words, 1));
-          $info[$key] = strlen($val) ? $val : TRUE;
-        }
-      }
-      elseif ($num == 1) {
-        $info['description'] = $line;
-      }
-      elseif (!$line) {
         if (isset($info['comment'])) {
-          $info['comment'] .= "\n";
+            $info['comment'] = trim($info['comment']);
         }
-      }
-      else {
-        $info['comment'] = isset($info['comment']) ? "{$info['comment']}\n$line" : $line;
-      }
+        return $info;
     }
-    if (isset($info['comment'])) {
-      $info['comment'] = trim($info['comment']);
-    }
-    return $info;
-  }
-
 }

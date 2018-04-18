@@ -4,13 +4,14 @@ namespace Civi\Api4\Service\Spec\Provider;
 
 use Civi\Api4\Service\Spec\RequestSpec;
 
-interface SpecProviderInterface {
+interface SpecProviderInterface
+{
   /**
    * @param RequestSpec $spec
    *
    * @return void
    */
-  public function modifySpec(RequestSpec $spec);
+    public function modifySpec(RequestSpec $spec);
 
   /**
    * @param string $entity
@@ -18,6 +19,5 @@ interface SpecProviderInterface {
    *
    * @return bool
    */
-  public function applies($entity, $action);
-
+    public function applies($entity, $action);
 }

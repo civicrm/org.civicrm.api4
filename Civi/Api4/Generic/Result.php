@@ -30,31 +30,33 @@ namespace Civi\Api4\Generic;
 /**
  * Container for api results.
  */
-class Result extends \ArrayObject {
+class Result extends \ArrayObject
+{
   /**
    * @var string
    */
-  public $entity;
+    public $entity;
   /**
    * @var string
    */
-  public $action;
+    public $action;
   /**
    * Api version
    * @var int
    */
-  public $version = 4;
+    public $version = 4;
 
   /**
    * Return first result.
    * @return array|null
    */
-  public function first() {
-    foreach ($this as $values) {
-      return $values;
+    public function first()
+    {
+        foreach ($this as $values) {
+            return $values;
+        }
+        return null;
     }
-    return NULL;
-  }
 
   /**
    * Re-index the results array (which by default is non-associative)
@@ -65,20 +67,20 @@ class Result extends \ArrayObject {
    * @return $this
    * @throws \API_Exception
    */
-  public function indexBy($key) {
-    if (count($this)) {
-      $newResults = [];
-      foreach ($this as $values) {
-        if (isset($values[$key])) {
-          $newResults[$values[$key]] = $values;
+    public function indexBy($key)
+    {
+        if (count($this)) {
+            $newResults = [];
+            foreach ($this as $values) {
+                if (isset($values[$key])) {
+                    $newResults[$values[$key]] = $values;
+                }
+            }
+            if (!$newResults) {
+                throw new \API_Exception("Key $key not found in api results");
+            }
+            $this->exchangeArray($newResults);
         }
-      }
-      if (!$newResults) {
-        throw new \API_Exception("Key $key not found in api results");
-      }
-      $this->exchangeArray($newResults);
+        return $this;
     }
-    return $this;
-  }
-
 }

@@ -29,6 +29,7 @@ namespace Civi\Api4;
 
 use Civi\Api4\Generic\AbstractEntity;
 
-class Event extends AbstractEntity {
+class Event extends AbstractEntity
+{
 
 }

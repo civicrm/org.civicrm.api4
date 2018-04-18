@@ -41,6 +41,9 @@ class GetFields extends GenericGetFields
     /**
      * @param Result $result
      *
+     * @throws \API_Exception
+     * @throws \Civi\API\Exception\NotImplementedException
+     * @throws \ReflectionException
      */
     public function _run(Result $result)
     {
@@ -56,12 +59,12 @@ class GetFields extends GenericGetFields
             // Prevent infinite recursion
             if ($entity != 'Entity') {
                 $data['fields'] = (array)civicrm_api4(
-                    $entity, 'getFields',
+                    $entity,
+                    'getFields',
                     ['action' => $action, 'includeCustom' => $includeCustom]
                 );
             }
             $result[] = $data;
         }
     }
-    
 }

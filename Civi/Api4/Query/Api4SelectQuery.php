@@ -48,24 +48,25 @@ use CRM_Core_DAO_CustomField as CustomFieldDAO;
  * * "NOT LIKE", 'IN', 'NOT IN', 'BETWEEN', 'NOT BETWEEN',
  * * 'IS NOT NULL', or 'IS NULL'.
  */
-class Api4SelectQuery extends SelectQuery {
+class Api4SelectQuery extends SelectQuery
+{
 
   /**
    * @var int
    */
-  protected $apiVersion = 4;
+    protected $apiVersion = 4;
 
   /**
    * @var array
    *   Maps select fields to [<table_alias>, <column_alias>]
    */
-  protected $fkSelectAliases = [];
+    protected $fkSelectAliases = [];
 
   /**
    * @var Joinable[]
    *   The joinable tables that have been joined so far
    */
-  protected $joinedTables = [];
+    protected $joinedTables = [];
     
     /**
      * Why walk when you can
@@ -75,57 +76,60 @@ class Api4SelectQuery extends SelectQuery {
      * @throws \CRM_Core_Exception
      * @throws \Exception
      */
-  public function run() {
-    $this->preRun();
-    $baseResults = parent::run();
-    $event = new PostSelectQueryEvent($baseResults, $this);
-    \Civi::dispatcher()->dispatch(Events::POST_SELECT_QUERY, $event);
+    public function run()
+    {
+        $this->preRun();
+        $baseResults = parent::run();
+        $event = new PostSelectQueryEvent($baseResults, $this);
+        \Civi::dispatcher()->dispatch(Events::POST_SELECT_QUERY, $event);
 
-    return $event->getResults();
-  }
+        return $event->getResults();
+    }
 
   /**
    * Gets all FK fields and does the required joins
    */
-  protected function preRun() {
-    $whereFields = array_column($this->where, 0);
-    $allFields = array_merge($whereFields, $this->select, $this->orderBy);
-    $dotFields = array_unique(array_filter($allFields, function ($field) {
-      return strpos($field, '.') !== FALSE;
-    }));
+    protected function preRun()
+    {
+        $whereFields = array_column($this->where, 0);
+        $allFields = array_merge($whereFields, $this->select, $this->orderBy);
+        $dotFields = array_unique(array_filter($allFields, function ($field) {
+            return strpos($field, '.') !== false;
+        }));
 
-    foreach ($dotFields as $dotField) {
-      $this->joinFK($dotField);
+        foreach ($dotFields as $dotField) {
+            $this->joinFK($dotField);
+        }
     }
-  }
-
-  /**
-   * @inheritDoc
-   */
-  protected function buildWhereClause() {
-    foreach ($this->where as $clause) {
-      $sql_clause = $this->treeWalkWhereClause($clause);
-      $this->query->where($sql_clause);
-    }
-  }
 
   /**
    * @inheritDoc
    */
-  protected function buildOrderBy() {
-    foreach ($this->orderBy as $field => $dir) {
-      if ($dir !== 'ASC' && $dir !== 'DESC') {
-        throw new \API_Exception("Invalid sort direction. Cannot order by $field $dir");
-      }
-      if ($this->getField($field)) {
-        $this->query->orderBy(self::MAIN_TABLE_ALIAS . '.' . $field . " $dir");
-      }
-      // TODO: Handle joined fields, custom fields, etc.
-      else {
-        throw new \API_Exception("Invalid sort field. Cannot order by $field $dir");
-      }
+    protected function buildWhereClause()
+    {
+        foreach ($this->where as $clause) {
+            $sql_clause = $this->treeWalkWhereClause($clause);
+            $this->query->where($sql_clause);
+        }
     }
-  }
+
+  /**
+   * @inheritDoc
+   */
+    protected function buildOrderBy()
+    {
+        foreach ($this->orderBy as $field => $dir) {
+            if ($dir !== 'ASC' && $dir !== 'DESC') {
+                throw new \API_Exception("Invalid sort direction. Cannot order by $field $dir");
+            }
+            if ($this->getField($field)) {
+                $this->query->orderBy(self::MAIN_TABLE_ALIAS . '.' . $field . " $dir");
+            } // TODO: Handle joined fields, custom fields, etc.
+            else {
+                throw new \API_Exception("Invalid sort field. Cannot order by $field $dir");
+            }
+        }
+    }
     
     /**
      * Recursively validate and transform a branch or leaf clause array to SQL.
@@ -140,31 +144,31 @@ class Api4SelectQuery extends SelectQuery {
      * @todo if an 'and' is nested within and 'and' (or or-in-or) then should
      * flatten that to be a single list of clauses.
      */
-  protected function treeWalkWhereClause($clause) {
-    switch ($clause[0]) {
-      case 'OR':
-      case 'AND':
-        // handle branches
-        if (count($clause[1]) === 1) {
-          // a single set so AND|OR is immaterial
-          return $this->treeWalkWhereClause($clause[1][0]);
-        }
-        else {
-          $sql_subclauses = [];
-          foreach ($clause[1] as $subclause) {
-            $sql_subclauses[] = $this->treeWalkWhereClause($subclause);
-          }
-          return '(' . implode("\n" . $clause[0], $sql_subclauses) . ')';
-        }
+    protected function treeWalkWhereClause($clause)
+    {
+        switch ($clause[0]) {
+            case 'OR':
+            case 'AND':
+              // handle branches
+                if (count($clause[1]) === 1) {
+                  // a single set so AND|OR is immaterial
+                    return $this->treeWalkWhereClause($clause[1][0]);
+                } else {
+                    $sql_subclauses = [];
+                    foreach ($clause[1] as $subclause) {
+                        $sql_subclauses[] = $this->treeWalkWhereClause($subclause);
+                    }
+                    return '(' . implode("\n" . $clause[0], $sql_subclauses) . ')';
+                }
 
-      case 'NOT':
-        // possibly these brackets are redundant
-        return 'NOT (' . $this->treeWalkWhereClause($clause[1]) . ')';
+            case 'NOT':
+              // possibly these brackets are redundant
+                return 'NOT (' . $this->treeWalkWhereClause($clause[1]) . ')';
 
-      default:
-        return $this->validateClauseAndComposeSql($clause);
+            default:
+                return $this->validateClauseAndComposeSql($clause);
+        }
     }
-  }
 
   /**
    * Validate and transform a leaf clause array to SQL.
@@ -173,39 +177,40 @@ class Api4SelectQuery extends SelectQuery {
    * @throws \API_Exception
    * @throws \Exception
    */
-  protected function validateClauseAndComposeSql($clause) {
-    list($key, $operator, $criteria) = $clause;
-    $value = [$operator => $criteria];
-    // $field = $this->getField($key); // <<-- unused
-    // derive table and column:
-    $table_name = NULL;
-    $column_name = NULL;
-    if (in_array($key, $this->entityFieldNames)) {
-      $table_name = self::MAIN_TABLE_ALIAS;
-      $column_name = $key;
-    }
-    elseif (strpos($key, '.') && isset($this->fkSelectAliases[$key])) {
-      list($table_name, $column_name) = explode('.', $this->fkSelectAliases[$key]);
-    }
+    protected function validateClauseAndComposeSql($clause)
+    {
+        list($key, $operator, $criteria) = $clause;
+        $value = [$operator => $criteria];
+      // $field = $this->getField($key); // <<-- unused
+      // derive table and column:
+        $table_name = null;
+        $column_name = null;
+        if (in_array($key, $this->entityFieldNames)) {
+            $table_name = self::MAIN_TABLE_ALIAS;
+            $column_name = $key;
+        } elseif (strpos($key, '.') && isset($this->fkSelectAliases[$key])) {
+            list($table_name, $column_name) = explode('.', $this->fkSelectAliases[$key]);
+        }
 
-    if (!$table_name || !$column_name || null === $value) {
-      throw new \API_Exception("Invalid field '$key' in where clause.");
-    }
+        if (!$table_name || !$column_name || null === $value) {
+            throw new \API_Exception("Invalid field '$key' in where clause.");
+        }
 
-    $sql_clause = \CRM_Core_DAO::createSQLFilter("`$table_name`.`$column_name`", $value);
-    if ($sql_clause === NULL) {
-      throw new \API_Exception("Invalid value in where clause for field '$key'");
+        $sql_clause = \CRM_Core_DAO::createSQLFilter("`$table_name`.`$column_name`", $value);
+        if ($sql_clause === null) {
+            throw new \API_Exception("Invalid value in where clause for field '$key'");
+        }
+        return $sql_clause;
     }
-    return $sql_clause;
-  }
 
   /**
    * @inheritDoc
    */
-  protected function getFields() {
-    $fields = civicrm_api4($this->entity, 'getFields', ['action' => 'get', 'includeCustom' => FALSE])->indexBy('name');
-    return (array) $fields;
-  }
+    protected function getFields()
+    {
+        $fields = civicrm_api4($this->entity, 'getFields', ['action' => 'get', 'includeCustom' => false])->indexBy('name');
+        return (array) $fields;
+    }
 
   /**
    * Fetch a field from the getFields list
@@ -214,183 +219,203 @@ class Api4SelectQuery extends SelectQuery {
    *
    * @return string|null
    */
-  protected function getField($fieldName) {
-    if ($fieldName && isset($this->apiFieldSpec[$fieldName])) {
-      return $this->apiFieldSpec[$fieldName];
+    protected function getField($fieldName)
+    {
+        if ($fieldName && isset($this->apiFieldSpec[$fieldName])) {
+            return $this->apiFieldSpec[$fieldName];
+        }
+        return null;
     }
-    return NULL;
-  }
 
   /**
    * @param $key
    */
-  protected function joinFK($key) {
-    $stack = explode('.', $key);
+    protected function joinFK($key)
+    {
+        $stack = explode('.', $key);
 
-    if (count($stack) < 2) {
-      return;
+        if (count($stack) < 2) {
+            return;
+        }
+
+        $joiner = \Civi::container()->get('joiner');
+        $finalDot = strrpos($key, '.');
+        $pathString = substr($key, 0, $finalDot);
+        $field = substr($key, $finalDot + 1);
+
+        if (!$joiner->canJoin($this, $pathString)) {
+            return;
+        }
+
+        $joinPath = $joiner->join($this, $pathString);
+        $lastLink = end($joinPath);
+
+      // custom groups use aliases for field names
+        if ($lastLink instanceof CustomGroupJoinable) {
+            $field = CustomFieldDAO::getFieldValue(
+                CustomFieldDAO::class,
+                $field,
+                'column_name',
+                'name'
+            );
+        }
+
+        $this->fkSelectAliases[$key] = sprintf('%s.%s', $lastLink->getAlias(), $field);
     }
-
-    $joiner = \Civi::container()->get('joiner');
-    $finalDot = strrpos($key, '.');
-    $pathString = substr($key, 0, $finalDot);
-    $field = substr($key, $finalDot + 1);
-
-    if (!$joiner->canJoin($this, $pathString)) {
-      return;
-    }
-
-    $joinPath = $joiner->join($this, $pathString);
-    $lastLink = end($joinPath);
-
-    // custom groups use aliases for field names
-    if ($lastLink instanceof CustomGroupJoinable) {
-      $field = CustomFieldDAO::getFieldValue(
-        CustomFieldDAO::class,
-        $field,
-        'column_name',
-        'name'
-      );
-    }
-
-    $this->fkSelectAliases[$key] = sprintf('%s.%s', $lastLink->getAlias(), $field);
-  }
 
   /**
    * @param Joinable $joinable
    *
    * @return $this
    */
-  public function addJoinedTable(Joinable $joinable) {
-    $this->joinedTables[] = $joinable;
+    public function addJoinedTable(Joinable $joinable)
+    {
+        $this->joinedTables[] = $joinable;
 
-    return $this;
-  }
+        return $this;
+    }
 
   /**
    * @return FALSE|string
    */
-  public function getFrom() {
-    return TableHelper::getTableForClass(TableHelper::getFullName($this->entity));
-  }
+    public function getFrom()
+    {
+        return TableHelper::getTableForClass(TableHelper::getFullName($this->entity));
+    }
 
   /**
    * @return string
    */
-  public function getEntity() {
-    return $this->entity;
-  }
+    public function getEntity()
+    {
+        return $this->entity;
+    }
 
   /**
    * @return array
    */
-  public function getSelect() {
-    return $this->select;
-  }
+    public function getSelect()
+    {
+        return $this->select;
+    }
 
   /**
    * @return array
    */
-  public function getWhere() {
-    return $this->where;
-  }
+    public function getWhere()
+    {
+        return $this->where;
+    }
 
   /**
    * @return array
    */
-  public function getOrderBy() {
-    return $this->orderBy;
-  }
+    public function getOrderBy()
+    {
+        return $this->orderBy;
+    }
 
   /**
    * @return mixed
    */
-  public function getLimit() {
-    return $this->limit;
-  }
+    public function getLimit()
+    {
+        return $this->limit;
+    }
 
   /**
    * @return mixed
    */
-  public function getOffset() {
-    return $this->offset;
-  }
+    public function getOffset()
+    {
+        return $this->offset;
+    }
 
   /**
    * @return array
    */
-  public function getSelectFields() {
-    return $this->selectFields;
-  }
+    public function getSelectFields()
+    {
+        return $this->selectFields;
+    }
 
   /**
    * @return bool
    */
-  public function isFillUniqueFields() {
-    return $this->isFillUniqueFields;
-  }
+    public function isFillUniqueFields()
+    {
+        return $this->isFillUniqueFields;
+    }
 
   /**
    * @return \CRM_Utils_SQL_Select
    */
-  public function getQuery() {
-    return $this->query;
-  }
+    public function getQuery()
+    {
+        return $this->query;
+    }
 
   /**
    * @return array
    */
-  public function getJoins() {
-    return $this->joins;
-  }
+    public function getJoins()
+    {
+        return $this->joins;
+    }
 
   /**
    * @return array
    */
-  public function getApiFieldSpec() {
-    return $this->apiFieldSpec;
-  }
+    public function getApiFieldSpec()
+    {
+        return $this->apiFieldSpec;
+    }
 
   /**
    * @return array
    */
-  public function getEntityFieldNames() {
-    return $this->entityFieldNames;
-  }
+    public function getEntityFieldNames()
+    {
+        return $this->entityFieldNames;
+    }
 
   /**
    * @return array
    */
-  public function getAclFields() {
-    return $this->aclFields;
-  }
+    public function getAclFields()
+    {
+        return $this->aclFields;
+    }
 
   /**
    * @return bool|string
    */
-  public function getCheckPermissions() {
-    return $this->checkPermissions;
-  }
+    public function getCheckPermissions()
+    {
+        return $this->checkPermissions;
+    }
 
   /**
    * @return int
    */
-  public function getApiVersion() {
-    return $this->apiVersion;
-  }
+    public function getApiVersion()
+    {
+        return $this->apiVersion;
+    }
 
   /**
    * @return array
    */
-  public function getFkSelectAliases() {
-    return $this->fkSelectAliases;
-  }
+    public function getFkSelectAliases()
+    {
+        return $this->fkSelectAliases;
+    }
 
   /**
    * @return Joinable[]
    */
-  public function getJoinedTables() {
-    return $this->joinedTables;
-  }
-
+    public function getJoinedTables()
+    {
+        return $this->joinedTables;
+    }
 }

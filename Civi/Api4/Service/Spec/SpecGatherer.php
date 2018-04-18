@@ -5,19 +5,20 @@ namespace Civi\Api4\Service\Spec;
 use Civi\Api4\CustomField;
 use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
 
-class SpecGatherer {
+class SpecGatherer
+{
 
   /**
    * @var SpecProviderInterface[]
    */
-  protected $specProviders = [];
+    protected $specProviders = [];
 
   /**
    * A cache of DAOs based on entity
    *
    * @var \CRM_Core_DAO[]
    */
-  protected $DAONames;
+    protected $DAONames;
     
     /**
      * Returns a RequestSpec with all the fields available. Uses spec providers
@@ -33,47 +34,50 @@ class SpecGatherer {
      * @throws \Civi\API\Exception\NotImplementedException
      * @throws \Civi\API\Exception\UnauthorizedException
      */
-  public function getSpec($entity, $action, $includeCustom) {
-    $specification = new RequestSpec($entity, $action);
+    public function getSpec($entity, $action, $includeCustom)
+    {
+        $specification = new RequestSpec($entity, $action);
 
-    $this->addDAOFields($entity, $action, $specification);
-    if ($includeCustom) {
-      $this->addCustomFields($entity, $specification);
+        $this->addDAOFields($entity, $action, $specification);
+        if ($includeCustom) {
+            $this->addCustomFields($entity, $specification);
+        }
+
+        foreach ($this->specProviders as $provider) {
+            if ($provider->applies($entity, $action)) {
+                $provider->modifySpec($specification);
+            }
+        }
+
+        $this->addFieldOptions($specification);
+
+        return $specification;
     }
-
-    foreach ($this->specProviders as $provider) {
-      if ($provider->applies($entity, $action)) {
-        $provider->modifySpec($specification);
-      }
-    }
-
-    $this->addFieldOptions($specification);
-
-    return $specification;
-  }
 
   /**
    * @param SpecProviderInterface $provider
    */
-  public function addSpecProvider(SpecProviderInterface $provider) {
-    $this->specProviders[] = $provider;
-  }
+    public function addSpecProvider(SpecProviderInterface $provider)
+    {
+        $this->specProviders[] = $provider;
+    }
 
   /**
    * @param string $entity
    * @param RequestSpec $specification
    */
-  private function addDAOFields($entity, $action, RequestSpec $specification) {
-    $DAOFields = $this->getDAOFields($entity);
+    private function addDAOFields($entity, $action, RequestSpec $specification)
+    {
+        $DAOFields = $this->getDAOFields($entity);
 
-    foreach ($DAOFields as $DAOField) {
-      if ($DAOField['name'] == 'id' && $action == 'create') {
-        continue;
-      }
-      $field = SpecFormatter::arrayToField($DAOField);
-      $specification->addFieldSpec($field);
+        foreach ($DAOFields as $DAOField) {
+            if ($DAOField['name'] == 'id' && $action == 'create') {
+                continue;
+            }
+            $field = SpecFormatter::arrayToField($DAOField);
+            $specification->addFieldSpec($field);
+        }
     }
-  }
     
     /**
      * @param string      $entity
@@ -83,55 +87,58 @@ class SpecGatherer {
      * @throws \Civi\API\Exception\NotImplementedException
      * @throws \Civi\API\Exception\UnauthorizedException
      */
-  private function addCustomFields($entity, RequestSpec $specification) {
-    if ($entity == 'Contact') {
-      $entity = ['Contact', 'Individual', 'Organization', 'Household'];
-    }
-    $customFields = CustomField::get()
-      ->addWhere('custom_group.extends', 'IN', $entity)
-      ->setSelect(['custom_group.name', 'custom_group_id', 'name', 'label', 'data_type', 'html_type', 'is_required', 'is_searchable', 'is_search_range', 'weight', 'is_active', 'is_view', 'option_group_id', 'default_value'])
-      ->execute();
+    private function addCustomFields($entity, RequestSpec $specification)
+    {
+        if ($entity == 'Contact') {
+            $entity = ['Contact', 'Individual', 'Organization', 'Household'];
+        }
+        $customFields = CustomField::get()
+        ->addWhere('custom_group.extends', 'IN', $entity)
+        ->setSelect(['custom_group.name', 'custom_group_id', 'name', 'label', 'data_type', 'html_type', 'is_required', 'is_searchable', 'is_search_range', 'weight', 'is_active', 'is_view', 'option_group_id', 'default_value'])
+        ->execute();
 
-    foreach ($customFields as $fieldArray) {
-      $field = SpecFormatter::arrayToField($fieldArray);
-      $specification->addFieldSpec($field);
+        foreach ($customFields as $fieldArray) {
+            $field = SpecFormatter::arrayToField($fieldArray);
+            $specification->addFieldSpec($field);
+        }
     }
-  }
 
   /**
    * @param string $entityName
    *
    * @return array
    */
-  private function getDAOFields($entityName) {
-    $dao = $this->getDAO($entityName);
+    private function getDAOFields($entityName)
+    {
+        $dao = $this->getDAO($entityName);
 
-    return $dao::fields();
-  }
+        return $dao::fields();
+    }
 
   /**
    * @param RequestSpec $spec
    */
-  private function addFieldOptions(RequestSpec $spec) {
-    $dao = $this->getDAO($spec->getEntity());
+    private function addFieldOptions(RequestSpec $spec)
+    {
+        $dao = $this->getDAO($spec->getEntity());
 
-    foreach ($spec->getFields() as $field) {
-      $fieldName = $field->getName();
+        foreach ($spec->getFields() as $field) {
+            $fieldName = $field->getName();
 
-      if ($field instanceof CustomFieldSpec) {
-        // buildOptions relies on the custom_* type of field names
-        $fieldName = sprintf('custom_%d', $field->getCustomFieldId());
-      }
+            if ($field instanceof CustomFieldSpec) {
+              // buildOptions relies on the custom_* type of field names
+                $fieldName = sprintf('custom_%d', $field->getCustomFieldId());
+            }
 
-      $options = $dao::buildOptions($fieldName);
+            $options = $dao::buildOptions($fieldName);
 
-      if (!is_array($options)) {
-        continue;
-      }
+            if (!is_array($options)) {
+                continue;
+            }
 
-      $field->setOptions($options);
+            $field->setOptions($options);
+        }
     }
-  }
 
   /**
    * todo this class should not rely on api3 code
@@ -142,14 +149,14 @@ class SpecGatherer {
    *   The DAO name for use in static calls. Return doc block is hacked to allow
    *   auto-completion of static methods
    */
-  private function getDAO($entityName) {
-    if (!isset($this->DAONames[$entityName])) {
-      require_once 'api/v3/utils.php';
-      $daoName = \_civicrm_api3_get_DAO($entityName);
-      $this->DAONames[$entityName] = $daoName;
+    private function getDAO($entityName)
+    {
+        if (!isset($this->DAONames[$entityName])) {
+            require_once 'api/v3/utils.php';
+            $daoName = \_civicrm_api3_get_DAO($entityName);
+            $this->DAONames[$entityName] = $daoName;
+        }
+
+        return $this->DAONames[$entityName];
     }
-
-    return $this->DAONames[$entityName];
-  }
-
 }

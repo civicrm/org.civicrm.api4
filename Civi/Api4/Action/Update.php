@@ -25,6 +25,7 @@
  +--------------------------------------------------------------------+
  */
 namespace Civi\Api4\Action;
+
 use Civi\Api4\Generic\Result;
 
 /**
@@ -33,7 +34,8 @@ use Civi\Api4\Generic\Result;
  * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
  * @method $this addValue($field, $value) Set field value to update.
  */
-class Update extends Get {
+class Update extends Get
+{
 
   /**
    * Criteria for selecting items to update.
@@ -41,44 +43,45 @@ class Update extends Get {
    * @required
    * @var array
    */
-  protected $where = [];
+    protected $where = [];
 
   /**
    * Field values to update.
    *
    * @var array
    */
-  protected $values = [];
+    protected $values = [];
 
   /**
    * @param $key
    *
    * @return mixed|null
    */
-  public function getValue($key) {
-    return isset($this->values[$key]) ? $this->values[$key] : NULL;
-  }
+    public function getValue($key)
+    {
+        return isset($this->values[$key]) ? $this->values[$key] : null;
+    }
 
   /**
    * @inheritDoc
    */
-  public function _run(Result $result) {
-    if (!empty($this->values['id'])) {
-      throw new \Exception('Cannot update the id of an existing object.');
+    public function _run(Result $result)
+    {
+        if (!empty($this->values['id'])) {
+            throw new \Exception('Cannot update the id of an existing object.');
+        }
+      // First run the parent action (get)
+        $this->select = ['id'];
+      // For some reason the contact bao requires this
+        if ($this->getEntity() == 'Contact') {
+            $this->select[] = 'contact_type';
+        }
+        parent::_run($result);
+      // Then act on the result
+        $updated_results = [];
+        foreach ($result as $item) {
+            $updated_results[$item['id']] = $this->writeObject($this->values + $item);
+        }
+        $result->exchangeArray($updated_results);
     }
-    // First run the parent action (get)
-    $this->select = ['id'];
-    // For some reason the contact bao requires this
-    if ($this->getEntity() == 'Contact') {
-      $this->select[] = 'contact_type';
-    }
-    parent::_run($result);
-    // Then act on the result
-    $updated_results = [];
-    foreach ($result as $item) {
-      $updated_results[$item['id']] = $this->writeObject($this->values + $item);
-    }
-    $result->exchangeArray($updated_results);
-  }
-
 }
