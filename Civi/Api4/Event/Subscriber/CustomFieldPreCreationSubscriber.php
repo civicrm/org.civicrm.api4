@@ -9,9 +9,9 @@ use Civi\Api4\Action\Create;
  */
 class CustomFieldPreCreationSubscriber extends PreCreationSubscriber
 {
-    public const OPTION_TYPE_NEW = 1;
+    const OPTION_TYPE_NEW = 1;
 
-    public const OPTION_STATUS_ACTIVE = 1;
+    const OPTION_STATUS_ACTIVE = 1;
 
     /**
      * @param Create $request

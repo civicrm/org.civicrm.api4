@@ -7,15 +7,15 @@ namespace Civi\Api4\Service\Schema\Joinable;
  */
 class Joinable
 {
-    public const JOIN_SIDE_LEFT = 'LEFT';
+    const JOIN_SIDE_LEFT = 'LEFT';
 
-    public const JOIN_SIDE_INNER = 'INNER';
+    const JOIN_SIDE_INNER = 'INNER';
 
-    public const JOIN_TYPE_ONE_TO_ONE = '1_to_1';
+    const JOIN_TYPE_ONE_TO_ONE = '1_to_1';
 
-    public const JOIN_TYPE_MANY_TO_ONE = 'n_to_1';
+    const JOIN_TYPE_MANY_TO_ONE = 'n_to_1';
 
-    public const JOIN_TYPE_ONE_TO_MANY = '1_to_n';
+    const JOIN_TYPE_ONE_TO_MANY = '1_to_n';
 
     /**
      * @var string

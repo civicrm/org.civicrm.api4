@@ -10,7 +10,7 @@ use Civi\Api4\Service\Schema\Joinable\Joinable;
  */
 class SchemaMap
 {
-    public const MAX_JOIN_DEPTH = 3;
+    const MAX_JOIN_DEPTH = 3;
 
     /**
      * @var Table[]

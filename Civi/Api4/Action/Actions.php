@@ -7,11 +7,11 @@ namespace Civi\Api4\Action;
  */
 interface Actions
 {
-    public const CREATE = 'create';
+    const CREATE = 'create';
 
-    public const GET = 'get';
+    const GET = 'get';
 
-    public const GET_FIELDS = 'getFields';
+    const GET_FIELDS = 'getFields';
 
-    public const DELETE = 'delete';
+    const DELETE = 'delete';
 }

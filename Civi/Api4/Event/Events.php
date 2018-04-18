@@ -13,15 +13,15 @@ class Events
      *
      * @see GetSpecEvent
      */
-    public const GET_SPEC = 'civi.api.get_spec';
+    const GET_SPEC = 'civi.api.get_spec';
 
     /**
      * Build the database schema, allow adding of custom joins and tables.
      */
-    public const SCHEMA_MAP_BUILD = 'api.schema_map.build';
+    const SCHEMA_MAP_BUILD = 'api.schema_map.build';
 
     /**
      * Alter query results of APIv4 select query.
      */
-    public const POST_SELECT_QUERY = 'api.select_query.post';
+    const POST_SELECT_QUERY = 'api.select_query.post';
 }
