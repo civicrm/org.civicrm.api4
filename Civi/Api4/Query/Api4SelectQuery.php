@@ -32,6 +32,7 @@ use Civi\Api4\Event\Events;
 use Civi\Api4\Event\PostSelectQueryEvent;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
+use Civi\Api4\Service\Schema\Joiner;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
 use CRM_Core_DAO_CustomField as CustomFieldDAO;
 
@@ -66,7 +67,7 @@ class Api4SelectQuery extends SelectQuery
      *                 The joinable tables that have been joined so far
      */
     protected $joinedTables = [];
-
+    
     /**
      * Why walk when you can.
      *
@@ -85,9 +86,11 @@ class Api4SelectQuery extends SelectQuery
 
         return $event->getResults();
     }
-
+    
     /**
      * Gets all FK fields and does the required joins.
+     *
+     * @throws \Exception
      */
     protected function preRun()
     {
@@ -114,9 +117,9 @@ class Api4SelectQuery extends SelectQuery
             $this->query->where($sql_clause);
         }
     }
-
+    
     /**
-     * {@inheritdoc}
+     * @throws \API_Exception
      */
     protected function buildOrderBy()
     {
@@ -210,9 +213,10 @@ class Api4SelectQuery extends SelectQuery
 
         return $sql_clause;
     }
-
+    
     /**
-     * {@inheritdoc}
+     * @return array
+     * @throws \API_Exception
      */
     protected function getFields()
     {
@@ -234,9 +238,11 @@ class Api4SelectQuery extends SelectQuery
             return $this->apiFieldSpec[$fieldName];
         }
     }
-
+    
     /**
      * @param $key
+     *
+     * @throws \Exception
      */
     protected function joinFK($key)
     {
@@ -245,11 +251,12 @@ class Api4SelectQuery extends SelectQuery
         if (count($stack) < 2) {
             return;
         }
-
-        $joiner = \Civi::container()->get('joiner');
-        $finalDot = mb_strrpos($key, '.');
+    
+        /** @var Joiner $joiner */
+        $joiner     = \Civi::container()->get('joiner');
+        $finalDot   = mb_strrpos($key, '.');
         $pathString = mb_substr($key, 0, $finalDot);
-        $field = mb_substr($key, $finalDot + 1);
+        $field      = mb_substr($key, $finalDot + 1);
 
         if (!$joiner->canJoin($this, $pathString)) {
             return;
