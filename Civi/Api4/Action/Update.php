@@ -37,56 +37,56 @@ use Civi\Api4\Generic\Result;
  */
 class Update extends Get
 {
-    /**
-     * Criteria for selecting items to update.
-     *
-     * @required
-     *
-     * @var array
-     */
-    protected $where = [];
+	/**
+	 * Criteria for selecting items to update.
+	 *
+	 * @required
+	 *
+	 * @var array
+	 */
+	protected $where = [];
 
-    /**
-     * Field values to update.
-     *
-     * @var array
-     */
-    protected $values = [];
+	/**
+	 * Field values to update.
+	 *
+	 * @var array
+	 */
+	protected $values = [];
 
-    /**
-     * @param $key
-     *
-     * @return mixed|null
-     */
-    public function getValue($key)
-    {
-        return isset($this->values[$key]) ? $this->values[$key] : null;
-    }
+	/**
+	 * @param $key
+	 *
+	 * @return mixed|null
+	 */
+	public function getValue($key)
+	{
+		return isset($this->values[$key]) ? $this->values[$key] : null;
+	}
 
-    /**
-     * @param \Civi\Api4\Generic\Result $result
-     *
-     * @throws \API_Exception
-     * @throws \CRM_Core_Exception
-     * @throws \Exception
-     */
-    public function _run(Result $result)
-    {
-        if (!empty($this->values['id'])) {
-            throw new \Exception('Cannot update the id of an existing object.');
-        }
-        // First run the parent action (get)
-        $this->select = ['id'];
-        // For some reason the contact bao requires this
-        if ('Contact' === $this->getEntity()) {
-            $this->select[] = 'contact_type';
-        }
-        parent::_run($result);
-        // Then act on the result
-        $updated_results = [];
-        foreach ($result as $item) {
-            $updated_results[$item['id']] = $this->writeObject($this->values + $item);
-        }
-        $result->exchangeArray($updated_results);
-    }
+	/**
+	 * @param \Civi\Api4\Generic\Result $result
+	 *
+	 * @throws \API_Exception
+	 * @throws \CRM_Core_Exception
+	 * @throws \Exception
+	 */
+	public function _run(Result $result)
+	{
+		if (!empty($this->values['id'])) {
+			throw new \Exception('Cannot update the id of an existing object.');
+		}
+		// First run the parent action (get)
+		$this->select = ['id'];
+		// For some reason the contact bao requires this
+		if ('Contact' === $this->getEntity()) {
+			$this->select[] = 'contact_type';
+		}
+		parent::_run($result);
+		// Then act on the result
+		$updated_results = [];
+		foreach ($result as $item) {
+			$updated_results[$item['id']] = $this->writeObject($this->values + $item);
+		}
+		$result->exchangeArray($updated_results);
+	}
 }

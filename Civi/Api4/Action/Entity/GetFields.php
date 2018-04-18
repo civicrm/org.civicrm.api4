@@ -37,32 +37,32 @@ use Civi\Api4\Generic\Result;
  */
 class GetFields extends GenericGetFields
 {
-    /**
-     * @param Result $result
-     *
-     * @throws \API_Exception
-     * @throws \Civi\API\Exception\NotImplementedException
-     * @throws \ReflectionException
-     */
-    public function _run(Result $result)
-    {
-        $action = $this->getAction();
-        $includeCustom = $this->getIncludeCustom();
-        try {
-            $entities = Entity::get()->execute();
-        } catch (UnauthorizedException $e) {
-        }
-        foreach ($entities as $entity) {
-            $data = ['entity' => $entity, 'fields' => []];
-            // Prevent infinite recursion
-            if ('Entity' !== $entity) {
-                $data['fields'] = (array) civicrm_api4(
-                    $entity,
-                    'getFields',
-                    ['action' => $action, 'includeCustom' => $includeCustom]
-                );
-            }
-            $result[] = $data;
-        }
-    }
+	/**
+	 * @param Result $result
+	 *
+	 * @throws \API_Exception
+	 * @throws \Civi\API\Exception\NotImplementedException
+	 * @throws \ReflectionException
+	 */
+	public function _run(Result $result)
+	{
+		$action = $this->getAction();
+		$includeCustom = $this->getIncludeCustom();
+		try {
+			$entities = Entity::get()->execute();
+		} catch (UnauthorizedException $e) {
+		}
+		foreach ($entities as $entity) {
+			$data = ['entity' => $entity, 'fields' => []];
+			// Prevent infinite recursion
+			if ('Entity' !== $entity) {
+				$data['fields'] = (array) civicrm_api4(
+					$entity,
+					'getFields',
+					['action' => $action, 'includeCustom' => $includeCustom]
+				);
+			}
+			$result[] = $data;
+		}
+	}
 }

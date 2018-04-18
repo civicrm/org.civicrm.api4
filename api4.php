@@ -2,10 +2,10 @@
 
 require_once 'api4.civix.php';
 
-use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Procedural wrapper for the OO api version 4.
@@ -14,70 +14,78 @@ use Symfony\Component\Config\FileLocator;
  * @param       $action
  * @param array $params
  *
- * @return \Civi\Api4\Generic\Result
  * @throws \API_Exception
+ *
+ * @return \Civi\Api4\Generic\Result
  */
-function civicrm_api4($entity, $action, $params = []) {
-  $params['version'] = 4;
-  $request = \Civi\API\Request::create($entity, $action, $params);
-  return \Civi::service('civi_api_kernel')->runRequest($request);
+function civicrm_api4($entity, $action, $params = [])
+{
+	$params['version'] = 4;
+	$request = \Civi\API\Request::create($entity, $action, $params);
+
+	return \Civi::service('civi_api_kernel')->runRequest($request);
 }
 
 /**
  * @param ContainerBuilder $container
  */
-function api4_civicrm_container($container) {
-  $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
-  $loader->load('services.xml');
+function api4_civicrm_container($container)
+{
+	$loader = new XmlFileLoader($container, new FileLocator(__DIR__));
+	$loader->load('services.xml');
 
-  $container->getDefinition('civi_api_kernel')->addMethodCall(
-    'registerApiProvider',
-    [new Reference('action_object_provider')]
+	$container->getDefinition('civi_api_kernel')->addMethodCall(
+	'registerApiProvider',
+	[new Reference('action_object_provider')]
   );
 
-  // add event subscribers$container->get(
-  $dispatcher = $container->getDefinition('dispatcher');
-  $subscribers = $container->findTaggedServiceIds('event_subscriber');
+	// add event subscribers$container->get(
+	$dispatcher = $container->getDefinition('dispatcher');
+	$subscribers = $container->findTaggedServiceIds('event_subscriber');
 
-  foreach (array_keys($subscribers) as $subscriber) {
-    $dispatcher->addMethodCall(
-      'addSubscriber',
-      [new Reference($subscriber)]
-    );
-  }
+	foreach (array_keys($subscribers) as $subscriber) {
+		$dispatcher->addMethodCall(
+	  'addSubscriber',
+	  [new Reference($subscriber)]
+	);
+	}
 
-  // add spec providers
-  $providers = $container->findTaggedServiceIds('spec_provider');
-  $gatherer = $container->getDefinition('spec_gatherer');
+	// add spec providers
+	$providers = $container->findTaggedServiceIds('spec_provider');
+	$gatherer = $container->getDefinition('spec_gatherer');
 
-  foreach (array_keys($providers) as $provider) {
-    $gatherer->addMethodCall(
-      'addSpecProvider',
-      [new Reference($provider)]
-    );
-  }
+	foreach (array_keys($providers) as $provider) {
+		$gatherer->addMethodCall(
+	  'addSpecProvider',
+	  [new Reference($provider)]
+	);
+	}
 
-  if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
-    $loader->load('tests/services.xml');
-  }
+	if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
+		$loader->load('tests/services.xml');
+	}
 }
 
 /**
  * Implements hook_civicrm_coreResourceList().
+ *
+ * @param mixed $region
  */
-function api4_civicrm_coreResourceList(&$list, $region) {
-  if ($region == 'html-header') {
-    Civi::resources()->addScriptFile('org.civicrm.api4', 'js/api4.js', -9000, $region);
-  }
+function api4_civicrm_coreResourceList(&$list, $region)
+{
+	if ('html-header' == $region) {
+		Civi::resources()->addScriptFile('org.civicrm.api4', 'js/api4.js', -9000, $region);
+	}
 }
 
 /**
  * Implements hook_civicrm_config().
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_config
  */
-function api4_civicrm_config(&$config) {
-  _api4_civix_civicrm_config($config);
+function api4_civicrm_config(&$config)
+{
+	_api4_civix_civicrm_config($config);
 }
 
 /**
@@ -85,46 +93,51 @@ function api4_civicrm_config(&$config) {
  *
  * @param $files array(string)
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
-function api4_civicrm_xmlMenu(&$files) {
-  _api4_civix_civicrm_xmlMenu($files);
+function api4_civicrm_xmlMenu(&$files)
+{
+	_api4_civix_civicrm_xmlMenu($files);
 }
 
 /**
  * Implements hook_civicrm_install().
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
  */
-function api4_civicrm_install() {
-  _api4_civix_civicrm_install();
+function api4_civicrm_install()
+{
+	_api4_civix_civicrm_install();
 }
 
 /**
  * Implements hook_civicrm_uninstall().
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
  */
-function api4_civicrm_uninstall() {
-  _api4_civix_civicrm_uninstall();
+function api4_civicrm_uninstall()
+{
+	_api4_civix_civicrm_uninstall();
 }
 
 /**
  * Implements hook_civicrm_enable().
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_enable
  */
-function api4_civicrm_enable() {
-  _api4_civix_civicrm_enable();
+function api4_civicrm_enable()
+{
+	_api4_civix_civicrm_enable();
 }
 
 /**
  * Implements hook_civicrm_disable().
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_disable
  */
-function api4_civicrm_disable() {
-  _api4_civix_civicrm_disable();
+function api4_civicrm_disable()
+{
+	_api4_civix_civicrm_disable();
 }
 
 /**
@@ -137,10 +150,11 @@ function api4_civicrm_disable() {
  *   Based on op. for 'check', returns array(boolean) (TRUE if upgrades are pending)
  *                for 'enqueue', returns void
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */
-function api4_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
-  return _api4_civix_civicrm_upgrade($op, $queue);
+function api4_civicrm_upgrade($op, CRM_Queue_Queue $queue = null)
+{
+	return _api4_civix_civicrm_upgrade($op, $queue);
 }
 
 /**
@@ -149,10 +163,11 @@ function api4_civicrm_upgrade($op, CRM_Queue_Queue $queue = NULL) {
  * Generate a list of entities to create/deactivate/delete when this module
  * is installed, disabled, uninstalled.
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_managed
  */
-function api4_civicrm_managed(&$entities) {
-  _api4_civix_civicrm_managed($entities);
+function api4_civicrm_managed(&$entities)
+{
+	_api4_civix_civicrm_managed($entities);
 }
 
 /**
@@ -163,17 +178,19 @@ function api4_civicrm_managed(&$entities) {
  * Note: This hook only runs in CiviCRM 4.5+. It may
  * use features only available in v4.6+.
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_caseTypes
  */
-function api4_civicrm_angularModules(&$angularModules) {
-_api4_civix_civicrm_angularModules($angularModules);
+function api4_civicrm_angularModules(&$angularModules)
+{
+	_api4_civix_civicrm_angularModules($angularModules);
 }
 
 /**
  * Implements hook_civicrm_alterSettingsFolders().
  *
- * @link http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
+ * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_alterSettingsFolders
  */
-function api4_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
-  _api4_civix_civicrm_alterSettingsFolders($metaDataFolders);
+function api4_civicrm_alterSettingsFolders(&$metaDataFolders = null)
+{
+	_api4_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }

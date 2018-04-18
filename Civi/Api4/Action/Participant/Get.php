@@ -34,11 +34,11 @@ use Civi\Api4\Action\Get as DefaultGet;
  */
 class Get extends DefaultGet
 {
-    /**
-     * {@inheritdoc}
-     * $example->addWhere('contact_id.contact_type', 'IN', array('Individual', 'Household')).
-     */
-    protected $where = [
-    ['is_test', '=', 0],
-    ];
+	/**
+	 * {@inheritdoc}
+	 * $example->addWhere('contact_id.contact_type', 'IN', array('Individual', 'Household')).
+	 */
+	protected $where = [
+	['is_test', '=', 0],
+	];
 }

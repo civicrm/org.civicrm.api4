@@ -11,18 +11,18 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  */
 abstract class AbstractPrepareSubscriber implements EventSubscriberInterface
 {
-    /**
-     * @return array
-     */
-    public static function getSubscribedEvents()
-    {
-        return [
-        Events::PREPARE => 'onApiPrepare',
-        ];
-    }
+	/**
+	 * @return array
+	 */
+	public static function getSubscribedEvents()
+	{
+		return [
+			Events::PREPARE => 'onApiPrepare',
+		];
+	}
 
-    /**
-     * @param PrepareEvent $event
-     */
-    abstract public function onApiPrepare(PrepareEvent $event);
+	/**
+	 * @param PrepareEvent $event
+	 */
+	abstract public function onApiPrepare(PrepareEvent $event);
 }

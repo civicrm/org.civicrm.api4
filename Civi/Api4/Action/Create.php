@@ -38,37 +38,37 @@ use Civi\Api4\Generic\Result;
  */
 class Create extends AbstractAction
 {
-    /**
-     * Field values to set.
-     *
-     * @var array
-     */
-    protected $values = [];
+	/**
+	 * Field values to set.
+	 *
+	 * @var array
+	 */
+	protected $values = [];
 
-    /**
-     * @param $key
-     *
-     * @return mixed|null
-     */
-    public function getValue($key)
-    {
-        return isset($this->values[$key]) ? $this->values[$key] : null;
-    }
-    
-    /**
-     * @param \Civi\Api4\Generic\Result $result
-     *
-     * @throws \API_Exception
-     */
-    public function _run(Result $result)
-    {
-        if (!empty($this->values['id'])) {
-            throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
-        }
+	/**
+	 * @param $key
+	 *
+	 * @return mixed|null
+	 */
+	public function getValue($key)
+	{
+		return isset($this->values[$key]) ? $this->values[$key] : null;
+	}
 
-        $resultArray = $this->writeObject($this->values);
+	/**
+	 * @param \Civi\Api4\Generic\Result $result
+	 *
+	 * @throws \API_Exception
+	 */
+	public function _run(Result $result)
+	{
+		if (!empty($this->values['id'])) {
+			throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
+		}
 
-        // fixme should return a single row array???
-        $result->exchangeArray($resultArray);
-    }
+		$resultArray = $this->writeObject($this->values);
+
+		// fixme should return a single row array???
+		$result->exchangeArray($resultArray);
+	}
 }
