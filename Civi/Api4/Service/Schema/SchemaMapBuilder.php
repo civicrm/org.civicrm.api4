@@ -54,6 +54,7 @@ class SchemaMapBuilder
         /** @var \CRM_Core_DAO $daoName */
         foreach (TableHelper::get() as $daoName => $data) {
             $table = new Table($data['table']);
+
             foreach ($daoName::fields() as $field => $fieldData) {
                 $this->addJoins($table, $field, $fieldData);
             }
@@ -72,6 +73,10 @@ class SchemaMapBuilder
     private function addJoins(Table $table, $field, array $data)
     {
         $fkClass = ArrayHelper::value('FKClassName', $data);
+
+        if ($table->getName() === 'civicrm_participant' && $field === 'participant_contact_id') {
+            $field = 'contact_id';
+        }
 
         // can there be multiple methods e.g. pseudoconstant and fkclass
         if ($fkClass) {
