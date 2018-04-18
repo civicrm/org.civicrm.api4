@@ -56,7 +56,12 @@ class SchemaMapBuilder
 			$table = new Table($data['table']);
 
 			foreach ($daoName::fields() as $field => $fieldData) {
-				$this->addJoins($table, $field, $fieldData);
+
+			    if (!empty($fieldData['name']) && $field !== $fieldData['name']){
+              $field = $fieldData['name'];
+          }
+
+          $this->addJoins($table, $field, $fieldData);
 			}
 			$map->addTable($table);
 			$this->addCustomFields($map, $table, $data['name']);
@@ -73,10 +78,6 @@ class SchemaMapBuilder
 	private function addJoins(Table $table, $field, array $data)
 	{
 		$fkClass = ArrayHelper::value('FKClassName', $data);
-
-		if ('civicrm_participant' === $table->getName() && 'participant_contact_id' === $field) {
-			$field = 'contact_id';
-		}
 
 		// can there be multiple methods e.g. pseudoconstant and fkclass
 		if ($fkClass) {
@@ -156,10 +157,10 @@ class SchemaMapBuilder
 	 */
 	private function getPlural($singular)
 	{
-		$last_letter = mb_substr($singular, -1);
+		$last_letter = substr($singular, -1);
 		switch ($last_letter) {
 			case 'y':
-				return mb_substr($singular, 0, -1).'ies';
+				return substr($singular, 0, -1).'ies';
 
 			case 's':
 				return $singular.'es';
