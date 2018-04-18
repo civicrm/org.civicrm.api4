@@ -42,14 +42,16 @@ class CRM_Api4_Page_AJAX extends CRM_Core_Page
         CRM_Utils_System::civiExit();
     }
 
-  /**
-   * Run api call & prepare result for json encoding
-   *
-   * @param $entity
-   * @param $action
-   * @param $params
-   * @return array
-   */
+    /**
+     * Run api call & prepare result for json encoding
+     *
+     * @param $entity
+     * @param $action
+     * @param $params
+     *
+     * @return array
+     * @throws \API_Exception
+     */
     protected function execute($entity, $action, $params)
     {
         $params['checkPermissions'] = true;

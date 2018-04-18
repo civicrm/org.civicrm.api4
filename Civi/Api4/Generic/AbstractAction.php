@@ -101,7 +101,7 @@ abstract class AbstractAction implements \ArrayAccess
      * @param $name
      * @param $value
      *
-     * @throws \Exception
+     * @throws \API_Exception
      */
     public function __set($name, $value)
     {
@@ -276,7 +276,9 @@ abstract class AbstractAction implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
+     *
+     * @return bool
      */
     public function offsetExists($offset)
     {
@@ -284,7 +286,9 @@ abstract class AbstractAction implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
+     *
+     * @return bool|mixed|null
      */
     public function &offsetGet($offset)
     {
@@ -306,7 +310,8 @@ abstract class AbstractAction implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
+     * @param mixed $value
      *
      * @throws \API_Exception
      */
@@ -323,7 +328,7 @@ abstract class AbstractAction implements \ArrayAccess
     }
 
     /**
-     * {@inheritdoc}
+     * @param mixed $offset
      *
      * @throws \API_Exception
      */
@@ -340,13 +345,13 @@ abstract class AbstractAction implements \ArrayAccess
      *
      * (Used by create and update actions)
      *
-     * @param object $bao
+     * @param \CRM_Core_DAO $bao
      *
      * @return array
      */
     public static function baoToArray($bao)
     {
-        $fields = $bao->fields();
+        $fields = $bao::fields();
         $values = [];
         foreach ($fields as $key => $field) {
             $name = $field['name'];
@@ -408,15 +413,15 @@ abstract class AbstractAction implements \ArrayAccess
         }
 
         // trim back the junk and just get the array:
-        return $this->baoToArray($createResult);
+        return static::baoToArray($createResult);
     }
 
     /**
-     * @param $params
-     * @param $entity
-     * @param $entityId
+     * @param array  $params
+     * @param string $entity
+     * @param int    $entityId
      *
-     * @return mixed
+     * @return array
      */
     private function formatCustomParams($params, $entity, $entityId)
     {
@@ -424,6 +429,7 @@ abstract class AbstractAction implements \ArrayAccess
 
         // $customValueID is the ID of the custom value in the custom table for this
         // entity (i guess this assumes it's not a multi value entity)
+
         foreach ($params as $name => $value) {
             if (false === mb_strpos($name, '.')) {
                 continue;

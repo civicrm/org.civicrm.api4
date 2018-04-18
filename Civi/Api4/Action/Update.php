@@ -64,7 +64,11 @@ class Update extends Get
     }
 
     /**
-     * {@inheritdoc}
+     * @param \Civi\Api4\Generic\Result $result
+     *
+     * @throws \API_Exception
+     * @throws \CRM_Core_Exception
+     * @throws \Exception
      */
     public function _run(Result $result)
     {
