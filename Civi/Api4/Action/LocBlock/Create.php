@@ -87,7 +87,7 @@ class Create extends AbstractAction
 		// $customValueID is the ID of the custom value in the custom table for this
 		// entity (i guess this assumes it's not a multi value entity)
 		foreach ($params as $name => $value) {
-			if (false === mb_strpos($name, '.')) {
+			if (false === strpos($name, '.')) {
 				continue;
 			}
 

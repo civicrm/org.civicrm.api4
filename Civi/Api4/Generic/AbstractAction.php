@@ -128,8 +128,8 @@ abstract class AbstractAction implements \ArrayAccess
 	 */
 	public function __call($name, $arguments)
 	{
-		$param = lcfirst(mb_substr($name, 3));
-		$mode = mb_substr($name, 0, 3);
+		$param = lcfirst(substr($name, 3));
+		$mode = substr($name, 0, 3);
 		// Handle plural when adding to e.g. $values with "addValue" method.
 		if ('add' === $mode && $this->paramExists($param.'s')) {
 			$param .= 's';
@@ -244,7 +244,7 @@ abstract class AbstractAction implements \ArrayAccess
 	{
 		$name = get_class($this);
 
-		return lcfirst(mb_substr($name, mb_strrpos($name, '\\') + 1));
+		return lcfirst(substr($name, strrpos($name, '\\') + 1));
 	}
 
 	/**
@@ -285,11 +285,12 @@ abstract class AbstractAction implements \ArrayAccess
 		return in_array($offset, ['entity', 'action', 'params', 'version', 'check_permissions']) || isset($this->thisArrayStorage[$offset]);
 	}
 
-	/**
-	 * @param mixed $offset
-	 *
-	 * @return bool|mixed|null
-	 */
+    /**
+     * @param mixed $offset
+     *
+     * @return bool|mixed|null
+     * @throws \API_Exception
+     */
 	public function &offsetGet($offset)
 	{
 		$val = null;
@@ -405,6 +406,7 @@ abstract class AbstractAction implements \ArrayAccess
 		if (!method_exists($bao, $method)) {
 			$method = 'add';
 		}
+
 		$createResult = $bao->$method($params);
 
 		if (!$createResult) {
@@ -431,7 +433,7 @@ abstract class AbstractAction implements \ArrayAccess
 		// entity (i guess this assumes it's not a multi value entity)
 
 		foreach ($params as $name => $value) {
-			if (false === mb_strpos($name, '.')) {
+			if (false === strpos($name, '.')) {
 				continue;
 			}
 
@@ -483,4 +485,5 @@ abstract class AbstractAction implements \ArrayAccess
 
 		return $params;
 	}
+
 }

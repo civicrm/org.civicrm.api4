@@ -139,7 +139,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface
 				$aFirst = $a[0];
 				$bFirst = $b[0];
 
-				return mb_substr_count($aFirst, '.') > mb_substr_count(
+				return substr_count($aFirst, '.') > substr_count(
 					$bFirst, '.'
 				);
 			}
@@ -162,7 +162,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface
 	) {
 		// Get the alias (Selects are grouped and all target the same table)
 		$sampleField = current($selects);
-		$alias = mb_strstr($sampleField, '.', true);
+		$alias = strstr($sampleField, '.', true);
 
 		// Fetch the results with the serialized field
 		$selects['serialized'] = $query::MAIN_TABLE_ALIAS.'.'.$alias;
@@ -225,8 +225,8 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface
 
 		foreach ($selects as $select) {
 			$selectAlias = $query->getFkSelectAliases()[$select];
-			$fieldAlias = mb_substr(
-				$select, mb_strrpos($select, '.') + 1
+			$fieldAlias = substr(
+				$select, strrpos($select, '.') + 1
 			);
 			$selectFields[$fieldAlias] = $selectAlias;
 		}
@@ -261,7 +261,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface
 			'SELECT DISTINCT %s', implode(', ', $aliasedSelects)
 		);
 		$sql = str_replace("\n", ' ', $query->getQuery()->toSQL());
-		$originalSelect = mb_substr($sql, 0, mb_strpos($sql, ' FROM'));
+		$originalSelect = substr($sql, 0, strpos($sql, ' FROM'));
 		$sql = str_replace($originalSelect, $newSelect, $sql);
 
 		$relatedResults = [];
@@ -361,7 +361,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface
 		array $values
 	) {
 		$sampleField = current($selects);
-		$alias = mb_strstr($sampleField, '.', true);
+		$alias = strstr($sampleField, '.', true);
 
 		// Get the option value table that was joined
 		$relatedTable = null;
@@ -374,7 +374,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface
 		// We only want subselects related to the joined table
 		$subSelects = array_filter(
 			$selects, function ($select) use ($alias) {
-				return 0 === mb_strpos($select, $alias);
+				return 0 === strpos($select, $alias);
 			}
 		);
 

@@ -291,7 +291,7 @@ class FieldSpec
 	{
 		$ret = [];
 		foreach (get_object_vars($this) as $key => $val) {
-			$key = mb_strtolower(preg_replace('/(?=[A-Z])/', '_$0', $key));
+			$key = strtolower(preg_replace('/(?=[A-Z])/', '_$0', $key));
 			$ret[$key] = $val;
 		}
 

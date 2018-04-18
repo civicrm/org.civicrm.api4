@@ -81,19 +81,19 @@ class ReflectionUtils
 	{
 		$info = [];
 		foreach (preg_split("/((\r?\n)|(\r\n?))/", $comment) as $num => $line) {
-			if (!$num || false !== mb_strpos($line, '*/')) {
+			if (!$num || false !== strpos($line, '*/')) {
 				continue;
 			}
 			$line = ltrim(trim($line), '* ');
-			if (0 === mb_strpos($line, '@')) {
+			if (0 === strpos($line, '@')) {
 				$words = explode(' ', $line);
-				$key = mb_substr($words[0], 1);
+				$key = substr($words[0], 1);
 				if ('var' === $key) {
 					$info['type'] = explode('|', $words[1]);
 				} else {
 					// Unrecognized annotation, but we'll duly add it to the info array
 					$val = implode(' ', array_slice($words, 1));
-					$info[$key] = mb_strlen($val) ? $val : true;
+					$info[$key] = '' !== $val ? $val : true;
 				}
 			} elseif (1 === $num) {
 				$info['description'] = $line;
