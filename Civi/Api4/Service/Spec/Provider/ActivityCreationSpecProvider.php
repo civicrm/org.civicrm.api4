@@ -22,7 +22,7 @@ class ActivityCreationSpecProvider implements SpecProviderInterface {
   }
 
   /**
-   * @param RequestSpec $spec
+   * @param \Civi\Api4\Service\Spec\RequestSpec $spec
    *
    * @throws \Exception
    */
@@ -33,4 +33,5 @@ class ActivityCreationSpecProvider implements SpecProviderInterface {
     $sourceContactField->setFkEntity('Contact');
     $spec->addFieldSpec($sourceContactField);
   }
+
 }

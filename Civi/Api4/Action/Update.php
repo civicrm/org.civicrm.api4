@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -34,11 +35,10 @@ use Civi\Api4\Generic\Result;
  * them.
  *
  * @method $this setValues(array $values) Set all field values from an array of
- *         key => value pairs.
+ *                                        key => value pairs.
  * @method $this addValue($field, $value) Set field value to update.
  */
 class Update extends Get {
-
   /**
    * Criteria for selecting items to update.
    *
@@ -77,16 +77,17 @@ class Update extends Get {
     }
     // First run the parent action (get)
     $this->select = ['id'];
-    // For some reason the contact bao requires this
+    // For some reason the contact bao requires this.
     if ('Contact' === $this->getEntity()) {
       $this->select[] = 'contact_type';
     }
     parent::_run($result);
-    // Then act on the result
+    // Then act on the result.
     $updated_results = [];
     foreach ($result as $item) {
       $updated_results[$item['id']] = $this->writeObject($this->values + $item);
     }
     $result->exchangeArray($updated_results);
   }
+
 }

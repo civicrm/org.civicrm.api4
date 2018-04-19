@@ -11,7 +11,7 @@ use Civi\Api4\Action\Create;
 abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
 
   /**
-   * @param PrepareEvent $event
+   * @param \Civi\API\Event\PrepareEvent $event
    */
   public function onApiPrepare(PrepareEvent $event) {
     $apiRequest = $event->getApiRequest();
@@ -27,7 +27,7 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
    * Sets default values common to all creation requests.
    *
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    */
   protected function addDefaultCreationValues(Create $request) {
     if (NULL === $request->getValue('is_active')) {
@@ -38,7 +38,7 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
    * Check if this subscriber should be applied to the request.
    *
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    *
    * @return bool
    */
@@ -47,7 +47,8 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
    * Modify the request.
    *
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    */
   abstract protected function modify(Create $request);
+
 }

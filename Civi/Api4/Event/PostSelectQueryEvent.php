@@ -9,26 +9,25 @@ use Symfony\Component\EventDispatcher\Event;
  * Class PostSelectQueryEvent.
  */
 class PostSelectQueryEvent extends Event {
-
   /**
    * @var array
    */
   protected $results;
 
   /**
-   * @var Api4SelectQuery
+   * @var \Civi\Api4\Query\Api4SelectQuery
    */
   protected $query;
 
   /**
    * PostSelectQueryEvent constructor.
    *
-   * @param array           $results
-   * @param Api4SelectQuery $query
+   * @param array $results
+   * @param \Civi\Api4\Query\Api4SelectQuery $query
    */
   public function __construct(array $results, Api4SelectQuery $query) {
     $this->results = $results;
-    $this->query   = $query;
+    $this->query = $query;
   }
 
   /**
@@ -45,23 +44,26 @@ class PostSelectQueryEvent extends Event {
    */
   public function setResults($results) {
     $this->results = $results;
+
     return $this;
   }
 
   /**
-   * @return Api4SelectQuery
+   * @return \Civi\Api4\Query\Api4SelectQuery
    */
   public function getQuery() {
     return $this->query;
   }
 
   /**
-   * @param Api4SelectQuery $query
+   * @param \Civi\Api4\Query\Api4SelectQuery $query
    *
    * @return $this
    */
   public function setQuery($query) {
     $this->query = $query;
+
     return $this;
   }
+
 }

@@ -53,7 +53,7 @@ class RequestSpec {
 
   /**
    * @return array
-   *               Gets all the field names currently part of the specification
+   *   Gets all the field names currently part of the specification
    */
   public function getFieldNames() {
     return array_map(function (FieldSpec $field) {
@@ -90,4 +90,5 @@ class RequestSpec {
   public function getAction() {
     return $this->action;
   }
+
 }

@@ -10,7 +10,7 @@ use Civi\Api4\Action\Create;
 class CustomGroupPreCreationSubscriber extends PreCreationSubscriber {
 
   /**
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    *
    * @return bool
    */
@@ -19,12 +19,12 @@ class CustomGroupPreCreationSubscriber extends PreCreationSubscriber {
   }
 
   /**
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    */
   protected function modify(Create $request) {
     $extends = $request->getValue('extends');
-    $title   = $request->getValue('title');
-    $name    = $request->getValue('name');
+    $title = $request->getValue('title');
+    $name = $request->getValue('name');
     if (is_string($extends)) {
       $request->addValue('extends', [$extends]);
     }
@@ -32,4 +32,5 @@ class CustomGroupPreCreationSubscriber extends PreCreationSubscriber {
       $request->addValue('title', $name);
     }
   }
+
 }

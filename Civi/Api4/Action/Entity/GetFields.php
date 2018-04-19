@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -38,7 +39,7 @@ use Civi\Api4\Generic\Result;
 class GetFields extends GenericGetFields {
 
   /**
-   * @param Result $result
+   * @param \Civi\Api4\Generic\Result $result
    *
    * @throws \API_Exception
    * @throws \Civi\API\Exception\NotImplementedException
@@ -49,11 +50,12 @@ class GetFields extends GenericGetFields {
     $includeCustom = $this->getIncludeCustom();
     try {
       $entities = Entity::get()->execute();
-    } catch (UnauthorizedException $e) {
+    }
+    catch (UnauthorizedException $e) {
     }
     foreach ($entities as $entity) {
       $data = ['entity' => $entity, 'fields' => []];
-      // Prevent infinite recursion
+      // Prevent infinite recursion.
       if ('Entity' !== $entity) {
         $data['fields'] = (array) civicrm_api4(
           $entity,
@@ -64,4 +66,5 @@ class GetFields extends GenericGetFields {
       $result[] = $data;
     }
   }
+
 }

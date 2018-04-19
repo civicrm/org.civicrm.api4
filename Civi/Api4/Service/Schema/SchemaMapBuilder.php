@@ -16,14 +16,13 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  * Class SchemaMapBuilder.
  */
 class SchemaMapBuilder {
-
   /**
-   * @var EventDispatcherInterface
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
    */
   protected $dispatcher;
 
   /**
-   * @param EventDispatcherInterface $dispatcher
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    */
   public function __construct(EventDispatcherInterface $dispatcher) {
     $this->dispatcher = $dispatcher;
@@ -37,6 +36,7 @@ class SchemaMapBuilder {
     $this->loadTables($map);
     $event = new SchemaMapBuildEvent($map);
     $this->dispatcher->dispatch(Events::SCHEMA_MAP_BUILD, $event);
+
     return $map;
   }
 
@@ -50,7 +50,6 @@ class SchemaMapBuilder {
     foreach (TableHelper::get() as $daoName => $data) {
       $table = new Table($data['table']);
       foreach ($daoName::fields() as $field => $fieldData) {
-
         if (!empty($fieldData['name']) && $field !== $fieldData['name']) {
           $field = $fieldData['name'];
         }
@@ -63,17 +62,17 @@ class SchemaMapBuilder {
   }
 
   /**
-   * @param Table  $table
+   * @param Table $table
    * @param string $field
-   * @param array  $data
+   * @param array $data
    */
   private function addJoins(Table $table, $field, array $data) {
     $fkClass = ArrayHelper::value('FKClassName', $data);
-    // can there be multiple methods e.g. pseudoconstant and fkclass
+    // Can there be multiple methods e.g. pseudoconstant and fkclass.
     if ($fkClass) {
       $tableName = TableHelper::getTableForClass($fkClass);
-      $fkKey     = ArrayHelper::value('FKKeyColumn', $data, 'id');
-      $joinable  = new Joinable($tableName, $fkKey);
+      $fkKey = ArrayHelper::value('FKKeyColumn', $data, 'id');
+      $joinable = new Joinable($tableName, $fkKey);
       $joinable->setJoinType($joinable::JOIN_TYPE_MANY_TO_ONE);
       $table->addTableLink($field, $joinable);
     }
@@ -83,18 +82,18 @@ class SchemaMapBuilder {
   }
 
   /**
-   * @param Table  $table
+   * @param Table $table
    * @param string $field
-   * @param array  $data
+   * @param array $data
    */
   private function addPseudoConstantJoin(Table $table, $field, array $data) {
-    $pseudoConstant  = ArrayHelper::value('pseudoconstant', $data);
-    $tableName       = ArrayHelper::value('table', $pseudoConstant);
+    $pseudoConstant = ArrayHelper::value('pseudoconstant', $data);
+    $tableName = ArrayHelper::value('table', $pseudoConstant);
     $optionGroupName = ArrayHelper::value('optionGroupName', $pseudoConstant);
-    $keyColumn       = ArrayHelper::value('keyColumn', $pseudoConstant, 'id');
+    $keyColumn = ArrayHelper::value('keyColumn', $pseudoConstant, 'id');
     if ($tableName) {
-      $alias     = str_replace('civicrm_', '', $tableName);
-      $joinable  = new Joinable($tableName, $keyColumn, $alias);
+      $alias = str_replace('civicrm_', '', $tableName);
+      $joinable = new Joinable($tableName, $keyColumn, $alias);
       $condition = ArrayHelper::value('condition', $pseudoConstant);
       if ($condition) {
         $joinable->addCondition($condition);
@@ -103,7 +102,7 @@ class SchemaMapBuilder {
     }
     elseif ($optionGroupName) {
       $keyColumn = ArrayHelper::value('keyColumn', $pseudoConstant, 'value');
-      $joinable  = new OptionValueJoinable($optionGroupName, NULL, $keyColumn);
+      $joinable = new OptionValueJoinable($optionGroupName, NULL, $keyColumn);
       if (!empty($data['serialize'])) {
         $joinable->setJoinType($joinable::JOIN_TYPE_ONE_TO_MANY);
       }
@@ -113,13 +112,13 @@ class SchemaMapBuilder {
 
   /**
    * @param SchemaMap $map
-   * @param Table     $baseTable
+   * @param Table $baseTable
    * @param           $entityName
    */
   private function addCustomFields(
-    SchemaMap $map,
-    Table $baseTable,
-    $entityName
+  SchemaMap $map,
+  Table $baseTable,
+  $entityName
   ) {
     $parentTypes = ['Contact', 'Individual', 'Organization', 'Household'];
     if (in_array($entityName, $parentTypes)) {
@@ -134,15 +133,15 @@ class SchemaMapBuilder {
       }
       $group = ArrayHelper::value('option_group_id', $fieldData);
       if ($group) {
-        $label               = ArrayHelper::value('label', $fieldData);
-        $columnName          = ArrayHelper::value('column_name', $fieldData);
+        $label = ArrayHelper::value('label', $fieldData);
+        $columnName = ArrayHelper::value('column_name', $fieldData);
         $optionValueJoinable = new OptionValueJoinable($group, $label);
         $customTable->addTableLink($columnName, $optionValueJoinable);
       }
       $map->addTable($customTable);
-      $alias      = ArrayHelper::value('groupTitle', $fieldData);
+      $alias = ArrayHelper::value('groupTitle', $fieldData);
       $isMultiple = ArrayHelper::value('is_multiple', $fieldData);
-      $joinable   = new CustomGroupJoinable($tableName, $alias, $isMultiple);
+      $joinable = new CustomGroupJoinable($tableName, $alias, $isMultiple);
       $baseTable->addTableLink('id', $joinable);
     }
   }
@@ -155,14 +154,14 @@ class SchemaMapBuilder {
   private function addBackReferences(SchemaMap $map) {
     foreach ($map->getTables() as $table) {
       foreach ($table->getTableLinks() as $link) {
-        // there are too many possible joins from option value so skip
+        // There are too many possible joins from option value so skip.
         if ($link instanceof OptionValueJoinable) {
           continue;
         }
-        $target    = $map->getTableByName($link->getTargetTable());
+        $target = $map->getTableByName($link->getTargetTable());
         $tableName = $link->getBaseTable();
-        $plural    = str_replace('civicrm_', '', $this->getPlural($tableName));
-        $joinable  = new Joinable($tableName, $link->getBaseColumn(), $plural);
+        $plural = str_replace('civicrm_', '', $this->getPlural($tableName));
+        $joinable = new Joinable($tableName, $link->getBaseColumn(), $plural);
         $joinable->setJoinType($joinable::JOIN_TYPE_ONE_TO_MANY);
         $target->addTableLink($link->getTargetColumn(), $joinable);
       }
@@ -171,6 +170,7 @@ class SchemaMapBuilder {
 
   /**
    * Simple implementation of pluralization.
+   *
    * Could be replaced with symfony/inflector.
    *
    * @param string $singular
@@ -182,10 +182,13 @@ class SchemaMapBuilder {
     switch ($last_letter) {
       case 'y':
         return substr($singular, 0, -1) . 'ies';
+
       case 's':
         return $singular . 'es';
+
       default:
         return $singular . 's';
     }
   }
+
 }

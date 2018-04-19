@@ -36,7 +36,7 @@ class Create extends AbstractAction {
       throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
     }
     $resultArray = $this->writeObject($this->values);
-    // fixme should return a single row array???
+    // Fixme should return a single row array???
     $result->exchangeArray($resultArray);
   }
 
@@ -53,23 +53,23 @@ class Create extends AbstractAction {
     $entityId = \CRM_Utils_Array::value('id', $params);
     $params   = $this->formatCustomParams($params, $this->getEntity(),
       $entityId);
-    $bao = new \CRM_Core_DAO_LocBlock();
+    $bao      = new \CRM_Core_DAO_LocBlock();
     $bao->copyValues($params);
     $createResult = $bao->save();
     if (!$createResult) {
       $errMessage = sprintf('%s write operation failed', $this->getEntity());
       throw new \API_Exception($errMessage);
     }
-    // trim back the junk and just get the array:
+    // Trim back the junk and just get the array:
     return static::baoToArray($createResult);
   }
 
   /**
-   * @param $params
-   * @param $entity
-   * @param $entityId
+   * @param array $params
+   * @param string $entity
+   * @param int $entityId
    *
-   * @return mixed
+   * @return array
    */
   private function formatCustomParams($params, $entity, $entityId) {
     $params['custom'] = $customParams = [];
@@ -80,28 +80,28 @@ class Create extends AbstractAction {
         continue;
       }
       list($customGroup, $customField) = explode('.', $name);
-      $customFieldId      = \CRM_Core_BAO_CustomField::getFieldValue(
+      $customFieldId                   = \CRM_Core_BAO_CustomField::getFieldValue(
         \CRM_Core_DAO_CustomField::class,
         $customField,
         'id',
         'name'
       );
-      $customFieldType    = \CRM_Core_BAO_CustomField::getFieldValue(
+      $customFieldType                 = \CRM_Core_BAO_CustomField::getFieldValue(
         \CRM_Core_DAO_CustomField::class,
         $customField,
         'html_type',
         'name'
       );
-      $customFieldExtends = \CRM_Core_BAO_CustomGroup::getFieldValue(
+      $customFieldExtends              = \CRM_Core_BAO_CustomGroup::getFieldValue(
         \CRM_Core_DAO_CustomGroup::class,
         $customGroup,
         'extends',
         'name'
       );
-      // todo are we sure we don't want to allow setting to NULL? need to test
+      // Todo are we sure we don't want to allow setting to NULL? need to test.
       if ($customFieldId && NULL !== $value) {
         if ('CheckBox' === $customFieldType) {
-          // this function should be part of a class
+          // This function should be part of a class.
           formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
         }
         \CRM_Core_BAO_CustomField::formatCustomField(
@@ -109,7 +109,8 @@ class Create extends AbstractAction {
           $customParams,
           $value,
           $customFieldExtends,
-          NULL, // todo check when this is needed
+        // Todo check when this is needed.
+          NULL,
           $entityId,
           FALSE,
           FALSE,
@@ -119,4 +120,5 @@ class Create extends AbstractAction {
     }
     return $params;
   }
+
 }

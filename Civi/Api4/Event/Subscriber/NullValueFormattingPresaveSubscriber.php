@@ -12,7 +12,9 @@ use Civi\Api4\Action\Update;
 class NullValueFormattingPresaveSubscriber extends AbstractPrepareSubscriber {
 
   /**
-   * @param PrepareEvent $event
+   * @param \Civi\API\Event\PrepareEvent $event
+   *
+   * @throws \API_Exception
    */
   public function onApiPrepare(PrepareEvent $event) {
     $apiRequest = $event->getApiRequest();
@@ -41,7 +43,9 @@ class NullValueFormattingPresaveSubscriber extends AbstractPrepareSubscriber {
    * @see \DB_DataObject::update() for how true null is ignored
    * @see \DB_DataObject::insert() for how string null is used to unset values
    *
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
+   *
+   * @throws \API_Exception
    */
   private function formalNullInput($request) {
     foreach ($request->getValues() as $key => $value) {
@@ -53,4 +57,5 @@ class NullValueFormattingPresaveSubscriber extends AbstractPrepareSubscriber {
       }
     }
   }
+
 }

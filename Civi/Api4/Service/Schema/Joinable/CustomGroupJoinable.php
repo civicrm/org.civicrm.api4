@@ -13,8 +13,10 @@ class CustomGroupJoinable extends Joinable {
   protected $joinSide = self::JOIN_SIDE_LEFT;
 
   /**
-   * @param      $targetTable
-   * @param      $alias
+   * CustomGroupJoinable constructor.
+   *
+   * @param $targetTable
+   * @param $alias
    * @param bool $isMultiRecord
    */
   public function __construct($targetTable, $alias, $isMultiRecord = FALSE) {
@@ -22,4 +24,5 @@ class CustomGroupJoinable extends Joinable {
     $this->joinType = $isMultiRecord ?
       self::JOIN_TYPE_ONE_TO_MANY : self::JOIN_TYPE_ONE_TO_ONE;
   }
+
 }

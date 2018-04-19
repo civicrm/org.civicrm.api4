@@ -11,7 +11,7 @@ use Civi\Api4\OptionValue;
 class ActivityPreCreationSubscriber extends PreCreationSubscriber {
 
   /**
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    *
    * @return bool
    */
@@ -20,7 +20,7 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber {
   }
 
   /**
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    *
    * @throws \API_Exception
    * @throws \Exception
@@ -29,14 +29,15 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber {
     $activityType = $request->getValue('activity_type');
     if ($activityType) {
       $result = OptionValue::get()
-                           ->setCheckPermissions(FALSE)
-                           ->addWhere('name', '=', $activityType)
-                           ->addWhere('option_group.name', '=', 'activity_type')
-                           ->execute();
+        ->setCheckPermissions(FALSE)
+        ->addWhere('name', '=', $activityType)
+        ->addWhere('option_group.name', '=', 'activity_type')
+        ->execute();
       if (1 !== $result->count()) {
         throw new \Exception('Activity type must match a *single* type');
       }
       $request->addValue('activity_type_id', $result->first()['id']);
     }
   }
+
 }

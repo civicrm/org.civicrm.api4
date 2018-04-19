@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -37,7 +38,7 @@ use CRM_Core_DAO_AllCoreTables as AllTables;
 class GetLinks extends AbstractAction {
 
   /**
-   * @param Result $result
+   * @param \Civi\Api4\Generic\Result $result
    *
    * @return array|Result
    */
@@ -47,7 +48,7 @@ class GetLinks extends AbstractAction {
     foreach ($schema->getTables() as $table) {
       $entity
         = AllTables::getBriefName(AllTables::getClassForTable($table->getName()));
-      // Since this is an api function, exclude tables that don't have an api
+      // Since this is an api function, exclude tables that don't have an api.
       if (class_exists('\Civi\Api4\\' . $entity)) {
         $item = [
           'entity' => $entity,
@@ -65,4 +66,5 @@ class GetLinks extends AbstractAction {
     }
     return $result;
   }
+
 }

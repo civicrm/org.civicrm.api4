@@ -25,7 +25,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * @param PostSelectQueryEvent $event
+   * @param \Civi\Api4\Event\PostSelectQueryEvent $event
    */
   public function onPostQuery(PostSelectQueryEvent $event) {
     $results = $event->getResults();
@@ -33,8 +33,8 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * @param array           $results
-   * @param Api4SelectQuery $query
+   * @param array $results
+   * @param \Civi\Api4\Query\Api4SelectQuery $query
    *
    * @return array
    */
@@ -44,35 +44,36 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
     }
     $fieldSpec = $query->getApiFieldSpec();
     $this->unserializeFields($results, $query->getEntity(), $fieldSpec);
-    // Group the selects to avoid queries for each field
+    // Group the selects to avoid queries for each field.
     $groupedSelects = $this->getJoinedDotSelects($query);
     foreach ($groupedSelects as $finalAlias => $selects) {
-      $joinPath    = $this->getJoinPathInfo($selects[0], $query);
-      $selects     = $this->formatSelects($finalAlias, $selects, $query);
+      $joinPath = $this->getJoinPathInfo($selects[0], $query);
+      $selects = $this->formatSelects($finalAlias, $selects, $query);
       $joinResults = $this->getJoinResults($query, $finalAlias, $selects);
       // todo: call formatResults to unserialize joinResults
-      // Insert join results into original result
+      // Insert join results into original result.
       foreach ($results as &$primaryResult) {
-        $baseId   = $primaryResult['id'];
+        $baseId = $primaryResult['id'];
         $filtered = array_filter(
-          $joinResults, function ($res) use ($baseId) {
+        $joinResults, function ($res) use ($baseId) {
           return $res['_base_id'] === $baseId;
         }
         );
         $filtered = array_values($filtered);
         ArrayInsertionUtil::insert(
-          $primaryResult, $joinPath, $filtered
+        $primaryResult, $joinPath, $filtered
         );
       }
     }
+
     return array_values($results);
   }
 
   /**
    * Unserialize values.
    *
-   * @param array       $results
-   * @param string      $entity
+   * @param array $results
+   * @param string $entity
    * @param array|mixed $fields
    *
    * @throws \API_Exception
@@ -81,19 +82,19 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
     if (empty($fields)) {
       $params = ['action' => 'get', 'includeCustom' => FALSE];
       $fields = civicrm_api4($entity, 'getFields', $params)->indexBy(
-        'name'
+      'name'
       );
     }
     foreach ($results as &$result) {
       foreach ($result as $field => &$value) {
         if (!empty($fields[$field]['serialize'])
-            && is_string(
-              $value
-            )
+        && is_string(
+        $value
+        )
         ) {
           $serializationType = $fields[$field]['serialize'];
-          $value             = \CRM_Core_DAO::unSerializeField(
-            $value, $serializationType
+          $value = \CRM_Core_DAO::unSerializeField(
+          $value, $serializationType
           );
         }
       }
@@ -101,151 +102,155 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * @param Api4SelectQuery $query
+   * @param \Civi\Api4\Query\Api4SelectQuery $query
    *
    * @return array
    */
   private function getJoinedDotSelects(Api4SelectQuery $query) {
-    // Remove selects that are not in a joined table
-    $fkAliases        = $query->getFkSelectAliases();
+    // Remove selects that are not in a joined table.
+    $fkAliases = $query->getFkSelectAliases();
     $joinedDotSelects = array_filter(
-      $query->getSelect(),
-      function ($select) use ($fkAliases) {
-        return isset($fkAliases[$select]);
-      }
+    $query->getSelect(),
+    function ($select) use ($fkAliases) {
+      return isset($fkAliases[$select]);
+    }
     );
     $selects = [];
-    // group related selects by alias so they can be executed in one query
+    // Group related selects by alias so they can be executed in one query.
     foreach ($joinedDotSelects as $select) {
-      $parts                  = explode('.', $select);
-      $finalAlias             = $parts[count($parts) - 2];
+      $parts = explode('.', $select);
+      $finalAlias = $parts[count($parts) - 2];
       $selects[$finalAlias][] = $select;
     }
-    // sort by depth, e.g. email selects should be done before email.location
+    // Sort by depth, e.g. email selects should be done before email.location.
     uasort(
-      $selects, function ($a, $b) {
+    $selects, function ($a, $b) {
       $aFirst = $a[0];
       $bFirst = $b[0];
+
       return substr_count($aFirst, '.') > substr_count(
-          $bFirst, '.'
-        );
+      $bFirst, '.'
+      );
     }
     );
+
     return $selects;
   }
 
   /**
-   * Separates a string like 'emails.location_type.label' into an array,
-   * where
+   * Separates a string like 'emails.location_type.label' into an array, where
    * each value in the array tells whether it is 1-1 or 1-n join type.
    *
-   * @param string          $pathString
-   *                                    Dot separated path to the field
-   * @param Api4SelectQuery $query
+   * @param string $pathString
+   *   Dot separated path to the field.
+   * @param \Civi\Api4\Query\Api4SelectQuery $query
    *
    * @return array
-   *               Index is table alias and value is boolean whether is
-   *               1-to-many join
+   *   Index is table alias and value is boolean whether is 1-to-many join
    */
   private function getJoinPathInfo($pathString, $query) {
     $pathParts = explode('.', $pathString);
-    array_pop($pathParts); // remove field
-    $path              = [];
+    // Remove field.
+    array_pop($pathParts);
+    $path = [];
     $isMultipleChecker = function ($alias) use ($query) {
       foreach ($query->getJoinedTables() as $table) {
         if ($table->getAlias() === $alias) {
-          return Joinable::JOIN_TYPE_ONE_TO_MANY
-                 === $table->getJoinType();
+          return Joinable::JOIN_TYPE_ONE_TO_MANY === $table->getJoinType();
         }
       }
+
       return FALSE;
     };
     foreach ($pathParts as $part) {
       $path[$part] = $isMultipleChecker($part);
     }
+
     return $path;
   }
 
   /**
    * Prepares selects for the subquery to fetch join results.
    *
-   * @param string          $alias
-   * @param array           $selects
-   * @param Api4SelectQuery $query
+   * @param string $alias
+   * @param array $selects
+   * @param \Civi\Api4\Query\Api4SelectQuery $query
    *
    * @return array
    */
   private function formatSelects($alias, $selects, Api4SelectQuery $query) {
-    $mainAlias    = $query::MAIN_TABLE_ALIAS;
+    $mainAlias = $query::MAIN_TABLE_ALIAS;
     $selectFields = [];
     foreach ($selects as $select) {
-      $selectAlias               = $query->getFkSelectAliases()[$select];
-      $fieldAlias                = substr(
-        $select, strrpos($select, '.') + 1
+      $selectAlias = $query->getFkSelectAliases()[$select];
+      $fieldAlias = substr(
+      $select, strrpos($select, '.') + 1
       );
       $selectFields[$fieldAlias] = $selectAlias;
     }
     $firstSelect = $selects[0];
-    $pathParts   = explode('.', $firstSelect);
-    $numParts    = count($pathParts);
+    $pathParts = explode('.', $firstSelect);
+    $numParts = count($pathParts);
     $parentAlias = $numParts > 2 ? $pathParts[$numParts - 3] : $mainAlias;
-    $selectFields['id']         = sprintf('%s.id', $alias);
+    $selectFields['id'] = sprintf('%s.id', $alias);
     $selectFields['_parent_id'] = $parentAlias . '.id';
-    $selectFields['_base_id']   = $mainAlias . '.id';
+    $selectFields['_base_id'] = $mainAlias . '.id';
+
     return $selectFields;
   }
 
   /**
-   * @param Api4SelectQuery $query
-   * @param                 $alias
-   * @param                 $selects
+   * @param \Civi\Api4\Query\Api4SelectQuery $query
+   * @param                                  $alias
+   * @param                                  $selects
    *
    * @return array
    */
   protected function getJoinResults(Api4SelectQuery $query, $alias, $selects) {
     $apiFieldSpec = $query->getApiFieldSpec();
     if (!empty($apiFieldSpec[$alias]['serialize'])) {
-      $type        = $apiFieldSpec[$alias]['serialize'];
+      $type = $apiFieldSpec[$alias]['serialize'];
       $joinResults = $this->getResultsForSerializedField(
-        $selects, $type, $query
+      $selects, $type, $query
       );
     }
     else {
       $joinResults = $this->runWithNewSelects($selects, $query);
     }
-    // Remove results with no matching entries
+    // Remove results with no matching entries.
     $joinResults = array_filter(
-      $joinResults, function ($result) {
+    $joinResults, function ($result) {
       return !empty($result['id']);
     }
     );
+
     return $joinResults;
   }
 
   /**
-   * @param array           $selects
-   * @param                 $serializationType
-   * @param Api4SelectQuery $query
+   * @param array $selects
+   * @param                                  $serializationType
+   * @param \Civi\Api4\Query\Api4SelectQuery $query
    *
    * @return array
    */
   private function getResultsForSerializedField(
-    array $selects,
-    $serializationType,
-    Api4SelectQuery $query
+  array $selects,
+  $serializationType,
+  Api4SelectQuery $query
   ) {
     // Get the alias (Selects are grouped and all target the same table)
     $sampleField = current($selects);
-    $alias       = strstr($sampleField, '.', TRUE);
-    // Fetch the results with the serialized field
+    $alias = strstr($sampleField, '.', TRUE);
+    // Fetch the results with the serialized field.
     $selects['serialized'] = $query::MAIN_TABLE_ALIAS . '.' . $alias;
-    $serializedResults     = $this->runWithNewSelects($selects, $query);
-    $newResults            = [];
-    // Create a new results array, with a separate entry for each option value
+    $serializedResults = $this->runWithNewSelects($selects, $query);
+    $newResults = [];
+    // Create a new results array, with a separate entry for each option value.
     foreach ($serializedResults as $result) {
       $optionValues = \CRM_Core_DAO::unSerializeField(
-        $result['serialized'],
-        $serializationType
+      $result['serialized'],
+      $serializationType
       );
       unset($result['serialized']);
       foreach ($optionValues as $value) {
@@ -253,102 +258,106 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
       }
     }
     $optionValueValues = array_unique(array_column($newResults, 'value'));
-    $optionValues      = $this->getOptionValuesFromValues(
-      $selects,
-      $query,
-      $optionValueValues
+    $optionValues = $this->getOptionValuesFromValues(
+    $selects,
+    $query,
+    $optionValueValues
     );
-    $valueField        = $alias . '.value';
-    // Index by value
+    $valueField = $alias . '.value';
+    // Index by value.
     foreach ($optionValues as $key => $subResult) {
       $optionValues[$subResult['value']] = $subResult;
       unset($subResult[$key]);
-      // Exclude 'value' if not in original selects
+      // Exclude 'value' if not in original selects.
       if (!in_array($valueField, $selects)) {
         unset($optionValues[$subResult['value']]['value']);
       }
     }
-    // Replace serialized with the sub-select results
+    // Replace serialized with the sub-select results.
     foreach ($newResults as &$result) {
       $result = array_merge($result, $optionValues[$result['value']]);
       unset($result['value']);
     }
+
     return $newResults;
   }
 
   /**
-   * @param array           $selects
-   * @param Api4SelectQuery $query
+   * @param array $selects
+   * @param \Civi\Api4\Query\Api4SelectQuery $query
    *
    * @return array
    */
   private function runWithNewSelects(array $selects, Api4SelectQuery $query) {
     $aliasedSelects = array_map(
-      function ($field, $alias) {
-        return sprintf('%s as "%s"', $field, $alias);
-      }, $selects, array_keys($selects)
+    function ($field, $alias) {
+      return sprintf('%s as "%s"', $field, $alias);
+    }, $selects, array_keys($selects)
     );
-    $newSelect      = sprintf(
-      'SELECT DISTINCT %s', implode(', ', $aliasedSelects)
+    $newSelect = sprintf(
+    'SELECT DISTINCT %s', implode(', ', $aliasedSelects)
     );
-    $sql            = str_replace("\n", ' ', $query->getQuery()->toSQL());
+    $sql = str_replace("\n", ' ', $query->getQuery()->toSQL());
     $originalSelect = substr($sql, 0, strpos($sql, ' FROM'));
-    $sql            = str_replace($originalSelect, $newSelect, $sql);
+    $sql = str_replace($originalSelect, $newSelect, $sql);
     $relatedResults = [];
-    $resultDAO      = \CRM_Core_DAO::executeQuery($sql);
+    $resultDAO = \CRM_Core_DAO::executeQuery($sql);
     while ($resultDAO->fetch()) {
       $relatedResult = [];
       foreach ($selects as $alias => $column) {
         $returnName = $alias;
-        $alias      = str_replace('.', '_', $alias);
+        $alias = str_replace('.', '_', $alias);
         if (property_exists($resultDAO, $alias)) {
           $relatedResult[$returnName] = $resultDAO->$alias;
         }
       }
       $relatedResults[] = $relatedResult;
     }
+
     return $relatedResults;
   }
 
   /**
    * Get all the option_value values required in the query.
    *
-   * @param array           $selects
-   * @param Api4SelectQuery $query
-   * @param array           $values
+   * @param array $selects
+   * @param \Civi\Api4\Query\Api4SelectQuery $query
+   * @param array $values
    *
    * @return array
    */
   private function getOptionValuesFromValues(
-    array $selects,
-    Api4SelectQuery $query,
-    array $values
+  array $selects,
+  Api4SelectQuery $query,
+  array $values
   ) {
     $sampleField = current($selects);
-    $alias       = strstr($sampleField, '.', TRUE);
-    // Get the option value table that was joined
+    $alias = strstr($sampleField, '.', TRUE);
+    // Get the option value table that was joined.
     $relatedTable = NULL;
     foreach ($query->getJoinedTables() as $joinedTable) {
       if ($joinedTable->getAlias() === $alias) {
         $relatedTable = $joinedTable;
       }
     }
-    // We only want subselects related to the joined table
+    // We only want subselects related to the joined table.
     $subSelects = array_filter(
-      $selects, function ($select) use ($alias) {
+    $selects, function ($select) use ($alias) {
       return 0 === strpos($select, $alias);
     }
     );
-    // Fetch all related option_value entries
-    $valueField   = $alias . '.value';
+    // Fetch all related option_value entries.
+    $valueField = $alias . '.value';
     $subSelects[] = $valueField;
-    $tableName    = $relatedTable->getTargetTable();
-    $conditions   = $relatedTable->getExtraJoinConditions();
+    $tableName = $relatedTable->getTargetTable();
+    $conditions = $relatedTable->getExtraJoinConditions();
     $conditions[] = $valueField . ' IN ("' . implode('", "', $values) . '")';
-    $subQuery     = new \CRM_Utils_SQL_Select($tableName . ' ' . $alias);
+    $subQuery = new \CRM_Utils_SQL_Select($tableName . ' ' . $alias);
     $subQuery->where($conditions);
     $subQuery->select($subSelects);
     $subResults = $subQuery->execute()->fetchAll();
+
     return $subResults;
   }
+
 }

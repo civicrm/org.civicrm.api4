@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -38,7 +39,7 @@ class Get extends AbstractAction {
   /**
    * Scan all api directories to discover entities.
    *
-   * @param Result $result
+   * @param \Civi\Api4\Generic\Result $result
    */
   public function _run(Result $result) {
     $entities = [];
@@ -58,4 +59,5 @@ class Get extends AbstractAction {
     }
     $result->exchangeArray($entities);
   }
+
 }

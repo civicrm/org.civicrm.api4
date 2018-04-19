@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -27,7 +28,6 @@
 
 namespace Civi\Api4\Generic;
 
-use Civi\API\Kernel;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**
@@ -70,16 +70,28 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   protected $options = [];
 
-  /* @var string */
+  /**
+   * @var string
+   */
+
   private $entity;
 
-  /* @var \ReflectionClass */
+  /**
+   * @var \ReflectionClass
+   */
+
   private $thisReflection;
 
-  /* @var array */
+  /**
+   * @var array
+   */
+
   private $thisParamInfo;
 
-  /* @var array */
+  /**
+   * @var array
+   */
+
   private $thisArrayStorage;
 
   /**
@@ -119,13 +131,13 @@ abstract class AbstractAction implements \ArrayAccess {
    * @param $name
    * @param $arguments
    *
-   * @throws \API_Exception
-   *
    * @return $this|mixed
+   *
+   * @throws \API_Exception
    */
   public function __call($name, $arguments) {
     $param = lcfirst(substr($name, 3));
-    $mode  = substr($name, 0, 3);
+    $mode = substr($name, 0, 3);
     // Handle plural when adding to e.g. $values with "addValue" method.
     if ('add' === $mode && $this->paramExists($param . 's')) {
       $param .= 's';
@@ -134,15 +146,17 @@ abstract class AbstractAction implements \ArrayAccess {
       switch ($mode) {
         case 'get':
           return $this->$param;
+
         case 'set':
           if (is_array($this->$param)) {
-            // Don't overwrite any defaults
+            // Don't overwrite any defaults.
             $this->$param = $arguments[0] + $this->$param;
           }
           else {
             $this->$param = $arguments[0];
           }
           return $this;
+
         case 'add':
           if (!is_array($this->$param)) {
             throw new \API_Exception('Cannot add to non-array param');
@@ -198,7 +212,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return Result|array
    */
   final public function execute() {
-    /** @var Kernel $kernel */
+    /** @var \Civi\API\Kernel $kernel */
     $kernel = \Civi::service('civi_api_kernel');
     return $kernel->runRequest($this);
   }
@@ -220,7 +234,7 @@ abstract class AbstractAction implements \ArrayAccess {
       $defaults = $this->getParamDefaults();
       foreach (
         $this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED)
-        as $property
+ as $property
       ) {
         $name = $property->getName();
         if ('version' !== $name) {
@@ -337,9 +351,9 @@ abstract class AbstractAction implements \ArrayAccess {
     $entityId = \CRM_Utils_Array::value('id', $params);
     $params   = $this->formatCustomParams($params, $this->getEntity(),
       $entityId);
-    $baoName = $this->getBaoName();
-    $bao     = new $baoName();
-    // For some reason the contact bao requires this
+    $baoName  = $this->getBaoName();
+    $bao      = new $baoName();
+    // For some reason the contact bao requires this.
     if ($entityId && 'Contact' === $this->getEntity()) {
       $params['contact_id'] = $entityId;
     }
@@ -358,14 +372,14 @@ abstract class AbstractAction implements \ArrayAccess {
       $errMessage = sprintf('%s write operation failed', $this->getEntity());
       throw new \API_Exception($errMessage);
     }
-    // trim back the junk and just get the array:
+    // Trim back the junk and just get the array:
     return static::baoToArray($createResult);
   }
 
   /**
-   * @param array  $params
+   * @param array $params
    * @param string $entity
-   * @param int    $entityId
+   * @param int $entityId
    *
    * @return array
    */
@@ -378,28 +392,28 @@ abstract class AbstractAction implements \ArrayAccess {
         continue;
       }
       list($customGroup, $customField) = explode('.', $name);
-      $customFieldId      = \CRM_Core_BAO_CustomField::getFieldValue(
+      $customFieldId                   = \CRM_Core_BAO_CustomField::getFieldValue(
         \CRM_Core_DAO_CustomField::class,
         $customField,
         'id',
         'name'
       );
-      $customFieldType    = \CRM_Core_BAO_CustomField::getFieldValue(
+      $customFieldType                 = \CRM_Core_BAO_CustomField::getFieldValue(
         \CRM_Core_DAO_CustomField::class,
         $customField,
         'html_type',
         'name'
       );
-      $customFieldExtends = \CRM_Core_BAO_CustomGroup::getFieldValue(
+      $customFieldExtends              = \CRM_Core_BAO_CustomGroup::getFieldValue(
         \CRM_Core_DAO_CustomGroup::class,
         $customGroup,
         'extends',
         'name'
       );
-      // todo are we sure we don't want to allow setting to NULL? need to test
+      // Todo are we sure we don't want to allow setting to NULL? need to test.
       if ($customFieldId && NULL !== $value) {
         if ('CheckBox' === $customFieldType) {
-          // this function should be part of a class
+          // This function should be part of a class.
           formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
         }
         \CRM_Core_BAO_CustomField::formatCustomField(
@@ -407,7 +421,8 @@ abstract class AbstractAction implements \ArrayAccess {
           $customParams,
           $value,
           $customFieldExtends,
-          NULL, // todo check when this is needed
+        // Todo check when this is needed.
+          NULL,
           $entityId,
           FALSE,
           FALSE,

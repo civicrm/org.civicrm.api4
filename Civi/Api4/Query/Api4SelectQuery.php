@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -32,7 +33,6 @@ use Civi\Api4\Event\Events;
 use Civi\Api4\Event\PostSelectQueryEvent;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
-use Civi\Api4\Service\Schema\Joiner;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
 use CRM_Core_DAO_CustomField as CustomFieldDAO;
 
@@ -50,7 +50,6 @@ use CRM_Core_DAO_CustomField as CustomFieldDAO;
  * * 'IS NOT NULL', or 'IS NULL'.
  */
 class Api4SelectQuery extends SelectQuery {
-
   /**
    * @var int
    */
@@ -63,8 +62,8 @@ class Api4SelectQuery extends SelectQuery {
   protected $fkSelectAliases = [];
 
   /**
-   * @var Joinable[]
-   *                 The joinable tables that have been joined so far
+   * @var \Civi\Api4\Service\Schema\Joinable\Joinable[]
+   *                                                    The joinable tables that have been joined so far
    */
   protected $joinedTables = [];
 
@@ -81,8 +80,9 @@ class Api4SelectQuery extends SelectQuery {
   public function run() {
     $this->preRun();
     $baseResults = $this->getResult();
-    $event       = new PostSelectQueryEvent($baseResults, $this);
+    $event = new PostSelectQueryEvent($baseResults, $this);
     \Civi::dispatcher()->dispatch(Events::POST_SELECT_QUERY, $event);
+
     return $event->getResults();
   }
 
@@ -104,42 +104,44 @@ class Api4SelectQuery extends SelectQuery {
       foreach ($this->selectFields as $column => $alias) {
         $this->query->select("$column as `$alias`");
       }
-      // Order by
+      // Order by.
       $this->buildOrderBy();
     }
-    // Limit
+    // Limit.
     if (!empty($this->limit) || !empty($this->offset)) {
       $this->query->limit($this->limit, $this->offset);
     }
     $result_entities = [];
-    $result_dao      = \CRM_Core_DAO::executeQuery($this->query->toSQL());
+    $result_dao = \CRM_Core_DAO::executeQuery($this->query->toSQL());
     while ($result_dao->fetch()) {
       if (in_array('count_rows', $this->select)) {
         $result_dao->free();
+
         return (int) $result_dao->c;
       }
       $result_entities[$result_dao->id] = [];
       foreach ($this->selectFields as $column => $alias) {
-        $returnName                                    = $alias;
-        $alias                                         = str_replace('.', '_',
-          $alias);
+        $returnName = $alias;
+        $alias = str_replace('.', '_',
+        $alias);
         $result_entities[$result_dao->id][$returnName] = $result_dao->$alias;
         // Backward compatibility on fields names.
         if ($this->isFillUniqueFields
-            && !empty($this->apiFieldSpec[$alias]['uniqueName'])) {
+        && !empty($this->apiFieldSpec[$alias]['uniqueName'])) {
           $result_entities[$result_dao->id][$this->apiFieldSpec[$alias]['uniqueName']]
-            = $result_dao->$alias;
+          = $result_dao->$alias;
         }
         foreach ($this->apiFieldSpec as $returnName => $spec) {
           if (empty($result_entities[$result_dao->id][$returnName])
-              && !empty($result_entities[$result_dao->id][$spec['name']])) {
+          && !empty($result_entities[$result_dao->id][$spec['name']])) {
             $result_entities[$result_dao->id][$returnName]
-              = $result_entities[$result_dao->id][$spec['name']];
+            = $result_entities[$result_dao->id][$spec['name']];
           }
         }
       }
     }
     $result_dao->free();
+
     return $result_entities;
   }
 
@@ -150,8 +152,8 @@ class Api4SelectQuery extends SelectQuery {
    */
   protected function preRun() {
     $whereFields = array_column($this->where, 0);
-    $allFields   = array_merge($whereFields, $this->select, $this->orderBy);
-    $dotFields   = array_unique(array_filter($allFields, function ($field) {
+    $allFields = array_merge($whereFields, $this->select, $this->orderBy);
+    $dotFields = array_unique(array_filter($allFields, function ($field) {
       return FALSE !== strpos($field, '.');
     }));
     foreach ($dotFields as $dotField) {
@@ -180,7 +182,8 @@ class Api4SelectQuery extends SelectQuery {
       }
       if ($this->getField($field)) {
         $this->query->orderBy(self::MAIN_TABLE_ALIAS . '.' . $field . " $dir");
-      } // TODO: Handle joined fields, custom fields, etc.
+      }
+      // TODO: Handle joined fields, custom fields, etc.
       else {
         throw new \API_Exception("Invalid sort field. Cannot order by $field $dir");
       }
@@ -206,19 +209,22 @@ class Api4SelectQuery extends SelectQuery {
     switch ($clause[0]) {
       case 'OR':
       case 'AND':
-        // handle branches
+        // Handle branches.
         if (1 === count($clause[1])) {
-          // a single set so AND|OR is immaterial
+          // A single set so AND|OR is immaterial.
           return $this->treeWalkWhereClause($clause[1][0]);
         }
         $sql_subclauses = [];
         foreach ($clause[1] as $subclause) {
           $sql_subclauses[] = $this->treeWalkWhereClause($subclause);
         }
+
         return '(' . implode("\n" . $clause[0], $sql_subclauses) . ')';
+
       case 'NOT':
-        // possibly these brackets are redundant
+        // Possibly these brackets are redundant.
         return 'NOT (' . $this->treeWalkWhereClause($clause[1]) . ')';
+
       default:
         return $this->validateClauseAndComposeSql($clause);
     }
@@ -227,7 +233,8 @@ class Api4SelectQuery extends SelectQuery {
   /**
    * Validate and transform a leaf clause array to SQL.
    *
-   * @param array $clause [$fieldName, $operator, $criteria]
+   * @param array $clause
+   *   [$fieldName, $operator, $criteria].
    *
    * @throws \API_Exception
    * @throws \Exception
@@ -237,24 +244,25 @@ class Api4SelectQuery extends SelectQuery {
   protected function validateClauseAndComposeSql($clause) {
     list($key, $operator, $criteria) = $clause;
     $value = [$operator => $criteria];
-    $table_name  = NULL;
+    $table_name = NULL;
     $column_name = NULL;
     if (in_array($key, $this->entityFieldNames)) {
-      $table_name  = self::MAIN_TABLE_ALIAS;
+      $table_name = self::MAIN_TABLE_ALIAS;
       $column_name = $key;
     }
     elseif (strpos($key, '.') && isset($this->fkSelectAliases[$key])) {
       list($table_name, $column_name) = explode('.',
-        $this->fkSelectAliases[$key]);
+      $this->fkSelectAliases[$key]);
     }
     if (!$table_name || !$column_name || NULL === $value) {
       throw new \API_Exception("Invalid field '$key' in where clause.");
     }
     $sql_clause = \CRM_Core_DAO::createSQLFilter("`$table_name`.`$column_name`",
-      $value);
+    $value);
     if (NULL === $sql_clause) {
       throw new \API_Exception("Invalid value in where clause for field '$key'");
     }
+
     return $sql_clause;
   }
 
@@ -265,7 +273,8 @@ class Api4SelectQuery extends SelectQuery {
    */
   protected function getFields() {
     $fields = civicrm_api4($this->entity, 'getFields',
-      ['action' => 'get', 'includeCustom' => FALSE])->indexBy('name');
+    ['action' => 'get', 'includeCustom' => FALSE])->indexBy('name');
+
     return (array) $fields;
   }
 
@@ -292,36 +301,37 @@ class Api4SelectQuery extends SelectQuery {
     if (count($stack) < 2) {
       return;
     }
-    /** @var Joiner $joiner */
-    $joiner     = \Civi::container()->get('joiner');
-    $finalDot   = strrpos($key, '.');
+    /** @var \Civi\Api4\Service\Schema\Joiner $joiner */
+    $joiner = \Civi::container()->get('joiner');
+    $finalDot = strrpos($key, '.');
     $pathString = substr($key, 0, $finalDot);
-    $field      = substr($key, $finalDot + 1);
+    $field = substr($key, $finalDot + 1);
     if (!$joiner->canJoin($this, $pathString)) {
       return;
     }
     $joinPath = $joiner->join($this, $pathString);
     $lastLink = end($joinPath);
-    // custom groups use aliases for field names
+    // Custom groups use aliases for field names.
     if ($lastLink instanceof CustomGroupJoinable) {
       $field = CustomFieldDAO::getFieldValue(
-        CustomFieldDAO::class,
-        $field,
-        'column_name',
-        'name'
+      CustomFieldDAO::class,
+      $field,
+      'column_name',
+      'name'
       );
     }
     $this->fkSelectAliases[$key] = sprintf('%s.%s', $lastLink->getAlias(),
-      $field);
+    $field);
   }
 
   /**
-   * @param Joinable $joinable
+   * @param \Civi\Api4\Service\Schema\Joinable\Joinable $joinable
    *
    * @return $this
    */
   public function addJoinedTable(Joinable $joinable) {
     $this->joinedTables[] = $joinable;
+
     return $this;
   }
 
@@ -445,9 +455,10 @@ class Api4SelectQuery extends SelectQuery {
   }
 
   /**
-   * @return Joinable[]
+   * @return \Civi\Api4\Service\Schema\Joinable\Joinable[]
    */
   public function getJoinedTables() {
     return $this->joinedTables;
   }
+
 }

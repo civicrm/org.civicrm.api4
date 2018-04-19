@@ -38,4 +38,5 @@ class ActivityToActivityContactAssigneesJoinable extends Joinable {
       $subSelect));
     parent::__construct('civicrm_activity_contact', 'activity_id', $alias);
   }
+
 }

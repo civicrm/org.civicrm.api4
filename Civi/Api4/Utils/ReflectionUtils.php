@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -33,21 +34,15 @@ namespace Civi\Api4\Utils;
 class ReflectionUtils {
 
   /**
-   * @param \Reflector|\ReflectionClass|\ReflectionProperty $reflection
-   * @param string|null                                     $type If we are not
-   *                                                              reflecting
-   *                                                              the class
-   *                                                              itself,
-   *                                                              specify
-   *                                                              "Method",
-   *                                                              "Property",
-   *                                                              etc
+   * @param \Reflector|\ReflectionClass $reflection
+   * @param string $type
+   *   If we are not reflecting the class itself, specify "Method", "Property", etc.
    *
    * @return array
    */
   public static function getCodeDocs($reflection, $type = NULL) {
     $docs = self::parseDocBlock($reflection->getDocComment());
-    // Recurse into parent functions
+    // Recurse into parent functions.
     if (isset($docs['inheritDoc'])) {
       unset($docs['inheritDoc']);
       $newReflection = NULL;
@@ -63,10 +58,11 @@ class ReflectionUtils {
         else {
           $newReflection = $reflection->getParentClass();
         }
-      } catch (\ReflectionException $e) {
+      }
+      catch (\ReflectionException $e) {
       }
       if ($newReflection) {
-        // Mix in
+        // Mix in.
         $additionalDocs = self::getCodeDocs($newReflection, $type);
         if (!empty($docs['comment']) && !empty($additionalDocs['comment'])) {
           $docs['comment'] .= "\n\n" . $additionalDocs['comment'];
@@ -96,7 +92,7 @@ class ReflectionUtils {
           $info['type'] = explode('|', $words[1]);
         }
         else {
-          // Unrecognized annotation, but we'll duly add it to the info array
+          // Unrecognized annotation, but we'll duly add it to the info array.
           $val        = implode(' ', array_slice($words, 1));
           $info[$key] = '' !== $val ? $val : TRUE;
         }
@@ -119,4 +115,5 @@ class ReflectionUtils {
     }
     return $info;
   }
+
 }

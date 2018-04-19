@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -36,7 +37,7 @@ use Civi\Api4\Generic\AbstractAction;
 class ValidateFieldsSubscriber extends AbstractPrepareSubscriber {
 
   /**
-   * @param PrepareEvent $event
+   * @param \Civi\API\Event\PrepareEvent $event
    *
    * @throws \Exception
    */
@@ -47,17 +48,17 @@ class ValidateFieldsSubscriber extends AbstractPrepareSubscriber {
       $paramInfo = $apiRequest->getParamInfo();
       foreach ($paramInfo as $param => $info) {
         $getParam = 'get' . ucfirst($param);
-        $value    = $apiRequest->$getParam();
-        // Required fields
+        $value = $apiRequest->$getParam();
+        // Required fields.
         if (!empty($info['required'])
-            && (!$value && 0 !== $value
-                && '0' !== $value)) {
+        && (!$value && 0 !== $value
+        && '0' !== $value)) {
           throw new \API_Exception('Parameter "' . $param . '" is required.');
         }
         if (!empty($info['type']) && !self::checkType($value, $info['type'])) {
           throw new \API_Exception('Parameter "' . $param
-                                   . '" is not of the correct type. Expecting '
-                                   . implode(' or ', $info['type']) . '.');
+           . '" is not of the correct type. Expecting '
+           . implode(' or ', $info['type']) . '.');
         }
       }
     }
@@ -85,15 +86,19 @@ class ValidateFieldsSubscriber extends AbstractPrepareSubscriber {
             return TRUE;
           }
           break;
+
         case 'int':
           if (\CRM_Utils_Rule::integer($value)) {
             return TRUE;
           }
           break;
+
         default:
           throw new \API_Exception('Unknown paramater type: ' . $type);
       }
     }
+
     return FALSE;
   }
+
 }

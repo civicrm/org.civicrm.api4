@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -40,6 +41,7 @@ class Get extends DefaultGet {
    * 'Household')).
    */
   protected $where = [
-    ['is_test', '=', 0]
+    ['is_test', '=', 0],
   ];
+
 }

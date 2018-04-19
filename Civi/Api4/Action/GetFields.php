@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -30,7 +31,6 @@ namespace Civi\Api4\Action;
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Service\Spec\SpecFormatter;
-use Civi\Api4\Service\Spec\SpecGatherer;
 
 /**
  * Get fields for an entity.
@@ -40,10 +40,9 @@ use Civi\Api4\Service\Spec\SpecGatherer;
  * @method $this setAction(string $value)
  */
 class GetFields extends AbstractAction {
-
   /**
    * Override default to allow open access
-   * {@inheritdoc}
+   * {@inheritdoc}.
    */
   protected $checkPermissions = FALSE;
 
@@ -66,10 +65,10 @@ class GetFields extends AbstractAction {
    * @throws \Exception
    */
   public function _run(Result $result) {
-    /** @var SpecGatherer $gatherer */
-    $gatherer  = \Civi::container()->get('spec_gatherer');
-    $spec      = $gatherer->getSpec($this->getEntity(), $this->getAction(),
-      $this->includeCustom);
+    /** @var \Civi\Api4\Service\Spec\SpecGatherer $gatherer */
+    $gatherer = \Civi::container()->get('spec_gatherer');
+    $spec = $gatherer->getSpec($this->getEntity(), $this->getAction(),
+    $this->includeCustom);
     $specArray = SpecFormatter::specToArray($spec);
     // Fixme - $this->action ought to already be set. Might be a name conflict upstream causing it to be nullified?
     $result->action = 'getFields';
@@ -82,4 +81,5 @@ class GetFields extends AbstractAction {
   public function getAction() {
     return $this->action;
   }
+
 }

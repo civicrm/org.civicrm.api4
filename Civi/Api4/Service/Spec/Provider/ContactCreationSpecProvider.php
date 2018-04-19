@@ -22,19 +22,19 @@ class ContactCreationSpecProvider implements SpecProviderInterface {
   }
 
   /**
-   * @param RequestSpec $spec
+   * @param \Civi\Api4\Service\Spec\RequestSpec $spec
    *
    * @throws \Exception
    */
   public function modifySpec(RequestSpec $spec) {
     $this->addDedupeField($spec);
     $spec->getFieldByName('contact_type')
-         ->setRequired(TRUE)
-         ->setDefaultValue('Individual');
+      ->setRequired(TRUE)
+      ->setDefaultValue('Individual');
   }
 
   /**
-   * @param RequestSpec $specification
+   * @param \Civi\Api4\Service\Spec\RequestSpec $specification
    *
    * @throws \Exception
    */
@@ -48,4 +48,5 @@ class ContactCreationSpecProvider implements SpecProviderInterface {
       ->setTitle('Check for Duplicates');
     $specification->addFieldSpec($dedupeField);
   }
+
 }

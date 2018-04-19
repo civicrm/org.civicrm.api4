@@ -11,7 +11,7 @@ use Civi\Api4\OptionGroup;
 class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
 
   /**
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    *
    * @return bool
    */
@@ -20,7 +20,7 @@ class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
   }
 
   /**
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    *
    * @throws \API_Exception
    * @throws \Exception
@@ -30,7 +30,7 @@ class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
   }
 
   /**
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    *
    * @throws \API_Exception
    * @throws \Exception
@@ -41,13 +41,14 @@ class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
       return;
     }
     $optionGroup = OptionGroup::get()
-                              ->setCheckPermissions(FALSE)
-                              ->addSelect('id')
-                              ->addWhere('name', '=', $optionGroupName)
-                              ->execute();
+      ->setCheckPermissions(FALSE)
+      ->addSelect('id')
+      ->addWhere('name', '=', $optionGroupName)
+      ->execute();
     if (1 !== $optionGroup->count()) {
       throw new \Exception('Option group name must match only a single group');
     }
     $request->addValue('option_group_id', $optionGroup->first()['id']);
   }
+
 }

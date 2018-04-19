@@ -21,9 +21,10 @@ class ContributionCreationSpecProvider implements SpecProviderInterface {
   }
 
   /**
-   * @param RequestSpec $spec
+   * @param \Civi\Api4\Service\Spec\RequestSpec $spec
    */
   public function modifySpec(RequestSpec $spec) {
     $spec->getFieldByName('financial_type_id')->setRequired(TRUE);
   }
+
 }

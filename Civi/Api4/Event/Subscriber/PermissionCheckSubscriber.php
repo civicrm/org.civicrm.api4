@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -50,17 +51,19 @@ class PermissionCheckSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * @param AuthorizeEvent $event API authorization event
+   * @param \Civi\API\Event\AuthorizeEvent $event
+   *   API authorization event.
    */
   public function onApiAuthorize(AuthorizeEvent $event) {
     /* @var \Civi\Api4\Generic\AbstractAction $apiRequest */
     $apiRequest = $event->getApiRequest();
     if (4 === $apiRequest['version']
-        && (!$apiRequest->getCheckPermissions()
-            || $apiRequest->isAuthorized())
+    && (!$apiRequest->getCheckPermissions()
+    || $apiRequest->isAuthorized())
     ) {
       $event->authorize();
       $event->stopPropagation();
     }
   }
+
 }

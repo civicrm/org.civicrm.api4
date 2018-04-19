@@ -8,13 +8,12 @@ use Civi\Api4\Action\Create;
  * Class CustomFieldPreCreationSubscriber.
  */
 class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
-
-  const OPTION_TYPE_NEW      = 1;
+  const OPTION_TYPE_NEW = 1;
 
   const OPTION_STATUS_ACTIVE = 1;
 
   /**
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    *
    * @return bool
    */
@@ -23,7 +22,7 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
   }
 
   /**
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    */
   public function modify(Create $request) {
     $this->formatOptionParams($request);
@@ -35,25 +34,25 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
    *
    * @see CRM_Core_BAO_CustomField::create()
    *
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    */
   protected function formatOptionParams(Create $request) {
     $options = $request->getValue('options');
     if (!is_array($options)) {
       return;
     }
-    $dataTypeKey     = 'data_type';
-    $optionLabelKey  = 'option_label';
+    $dataTypeKey = 'data_type';
+    $optionLabelKey = 'option_label';
     $optionWeightKey = 'option_weight';
     $optionStatusKey = 'option_status';
-    $optionValueKey  = 'option_value';
-    $optionTypeKey   = 'option_type';
-    $dataType     = $request->getValue($dataTypeKey);
-    $optionLabel  = $request->getValue($optionLabelKey);
+    $optionValueKey = 'option_value';
+    $optionTypeKey = 'option_type';
+    $dataType = $request->getValue($dataTypeKey);
+    $optionLabel = $request->getValue($optionLabelKey);
     $optionWeight = $request->getValue($optionWeightKey);
     $optionStatus = $request->getValue($optionStatusKey);
-    $optionValue  = $request->getValue($optionValueKey);
-    $optionType   = $request->getValue($optionTypeKey);
+    $optionValue = $request->getValue($optionValueKey);
+    $optionType = $request->getValue($optionTypeKey);
     if (!$optionType) {
       $request->addValue($optionTypeKey, self::OPTION_TYPE_NEW);
     }
@@ -76,11 +75,12 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
   }
 
   /**
-   * @param Create $request
+   * @param \Civi\Api4\Action\Create $request
    */
   private function setDefaults(Create $request) {
     if (!$request->getValue('option_type')) {
       $request->addValue('option_type', NULL);
     }
   }
+
 }

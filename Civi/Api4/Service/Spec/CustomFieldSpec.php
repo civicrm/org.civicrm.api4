@@ -50,4 +50,5 @@ class CustomFieldSpec extends FieldSpec {
     $this->customGroupId = $customGroupId;
     return $this;
   }
+
 }

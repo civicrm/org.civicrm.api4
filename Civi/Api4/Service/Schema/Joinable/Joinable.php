@@ -6,12 +6,11 @@ namespace Civi\Api4\Service\Schema\Joinable;
  * Class Joinable.
  */
 class Joinable {
+  const JOIN_SIDE_LEFT = 'LEFT';
 
-  const JOIN_SIDE_LEFT        = 'LEFT';
+  const JOIN_SIDE_INNER = 'INNER';
 
-  const JOIN_SIDE_INNER       = 'INNER';
-
-  const JOIN_TYPE_ONE_TO_ONE  = '1_to_1';
+  const JOIN_TYPE_ONE_TO_ONE = '1_to_1';
 
   const JOIN_TYPE_MANY_TO_ONE = 'n_to_1';
 
@@ -63,9 +62,9 @@ class Joinable {
    * @param string|null $alias
    */
   public function __construct($targetTable, $targetColumn, $alias = NULL) {
-    $this->targetTable  = $targetTable;
+    $this->targetTable = $targetTable;
     $this->targetColumn = $targetColumn;
-    $this->alias        = $alias ?: str_replace('civicrm_', '', $targetTable);
+    $this->alias = $alias ?: str_replace('civicrm_', '', $targetTable);
   }
 
   /**
@@ -75,6 +74,7 @@ class Joinable {
    */
   public function setConditions($conditions) {
     $this->conditions = $conditions;
+
     return $this;
   }
 
@@ -82,18 +82,19 @@ class Joinable {
    * Gets conditions required when joining to a base table.
    *
    * @param string|null $baseTableAlias
-   *                                    Name of the base table, if aliased
+   *   Name of the base table, if aliased.
    *
    * @return array
    */
   public function getConditionsForJoin($baseTableAlias = NULL) {
     $baseCondition = sprintf(
-      '%s.%s =  %s.%s',
-      $baseTableAlias ?: $this->baseTable,
-      $this->baseColumn,
-      $this->getAlias(),
-      $this->targetColumn
+    '%s.%s =  %s.%s',
+    $baseTableAlias ?: $this->baseTable,
+    $this->baseColumn,
+    $this->getAlias(),
+    $this->targetColumn
     );
+
     return array_merge([$baseCondition], $this->conditions);
   }
 
@@ -111,6 +112,7 @@ class Joinable {
    */
   public function setAlias($alias) {
     $this->alias = $alias;
+
     return $this;
   }
 
@@ -128,6 +130,7 @@ class Joinable {
    */
   public function setBaseTable($baseTable) {
     $this->baseTable = $baseTable;
+
     return $this;
   }
 
@@ -145,6 +148,7 @@ class Joinable {
    */
   public function setBaseColumn($baseColumn) {
     $this->baseColumn = $baseColumn;
+
     return $this;
   }
 
@@ -162,6 +166,7 @@ class Joinable {
    */
   public function setTargetTable($targetTable) {
     $this->targetTable = $targetTable;
+
     return $this;
   }
 
@@ -179,6 +184,7 @@ class Joinable {
    */
   public function setTargetColumn($targetColumn) {
     $this->targetColumn = $targetColumn;
+
     return $this;
   }
 
@@ -189,6 +195,7 @@ class Joinable {
    */
   public function addCondition($condition) {
     $this->conditions[] = $condition;
+
     return $this;
   }
 
@@ -213,6 +220,7 @@ class Joinable {
    */
   public function setJoinSide($joinSide) {
     $this->joinSide = $joinSide;
+
     return $this;
   }
 
@@ -230,6 +238,7 @@ class Joinable {
    */
   public function setJoinType($joinType) {
     $this->joinType = $joinType;
+
     return $this;
   }
 
@@ -239,4 +248,5 @@ class Joinable {
   public function toArray() {
     return get_object_vars($this);
   }
+
 }

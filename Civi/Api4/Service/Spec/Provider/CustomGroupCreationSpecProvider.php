@@ -3,7 +3,6 @@
 namespace Civi\Api4\Service\Spec\Provider;
 
 use Civi\Api4\Action\Actions;
-use Civi\Api4\Service\Spec\FieldSpec;
 use Civi\Api4\Service\Spec\RequestSpec;
 
 /**
@@ -22,11 +21,12 @@ class CustomGroupCreationSpecProvider implements SpecProviderInterface {
   }
 
   /**
-   * @param RequestSpec $spec
+   * @param \Civi\Api4\Service\Spec\RequestSpec $spec
    *
-   * @return FieldSpec|null
+   * @return \Civi\Api4\Service\Spec\FieldSpec|null
    */
   public function modifySpec(RequestSpec $spec) {
     return $spec->getFieldByName('extends')->setRequired(TRUE);
   }
+
 }

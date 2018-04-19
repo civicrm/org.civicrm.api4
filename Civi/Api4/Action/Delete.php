@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -64,14 +65,14 @@ class Delete extends Get {
         && !array_diff_key($this->where, $defaults['where'])) {
       throw new \API_Exception('Cannot delete with no "where" paramater specified');
     }
-    // run the parent action (get) to get the list
+    // Run the parent action (get) to get the list.
     parent::_run($result);
-    // Then act on the result
+    // Then act on the result.
     $ids = [];
     if (method_exists($baoName, 'del')) {
       foreach ($result as $item) {
         $args = [$item['id']];
-        $bao  = call_user_func_array([$baoName, 'del'], $args);
+        $bao = call_user_func_array([$baoName, 'del'], $args);
         if (FALSE !== $bao) {
           $ids[] = $item['id'];
         }
@@ -84,7 +85,7 @@ class Delete extends Get {
       foreach ($result as $item) {
         $bao = new $baoName();
         $bao->id = $item['id'];
-        // delete it
+        // Delete it.
         $action_result = $bao->delete();
         if ($action_result) {
           $ids[] = $item['id'];
@@ -97,4 +98,5 @@ class Delete extends Get {
     $result->exchangeArray($ids);
     return $result;
   }
+
 }

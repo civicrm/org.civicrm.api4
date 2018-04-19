@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -63,7 +64,7 @@ class Result extends \ArrayObject {
   /**
    * Re-index the results array (which by default is non-associative).
    *
-   * Drops any item from the results that does not contain the specified key
+   * Drops any item from the results that does not contain the specified key.
    *
    * @param string $key
    *
@@ -86,4 +87,5 @@ class Result extends \ArrayObject {
     }
     return $this;
   }
+
 }

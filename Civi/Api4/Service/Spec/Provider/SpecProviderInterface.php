@@ -10,7 +10,7 @@ use Civi\Api4\Service\Spec\RequestSpec;
 interface SpecProviderInterface {
 
   /**
-   * @param RequestSpec $spec
+   * @param \Civi\Api4\Service\Spec\RequestSpec $spec
    */
   public function modifySpec(RequestSpec $spec);
 
@@ -21,4 +21,5 @@ interface SpecProviderInterface {
    * @return bool
    */
   public function applies($entity, $action);
+
 }

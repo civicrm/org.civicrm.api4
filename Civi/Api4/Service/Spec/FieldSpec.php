@@ -12,10 +12,7 @@ class FieldSpec {
    *
    * @var array
    */
-  public static $typeAliases
-    = [
-      'Int' => 'Integer',
-    ];
+  public static $typeAliases = ['Int' => 'Integer'];
 
   /**
    * @var mixed
@@ -262,4 +259,5 @@ class FieldSpec {
     }
     return $ret;
   }
+
 }

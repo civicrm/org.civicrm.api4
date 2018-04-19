@@ -15,9 +15,9 @@ class BridgeJoinable extends Joinable {
   /**
    * BridgeJoinable constructor.
    *
-   * @param          $targetTable
-   * @param          $targetColumn
-   * @param          $alias
+   * @param $targetTable
+   * @param $targetColumn
+   * @param $alias
    * @param Joinable $middleLink
    */
   public function __construct(
@@ -36,4 +36,5 @@ class BridgeJoinable extends Joinable {
   public function getMiddleLink() {
     return $this->middleLink;
   }
+
 }

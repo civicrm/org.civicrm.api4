@@ -13,13 +13,13 @@ class OptionValueJoinable extends Joinable {
   protected $optionGroupName;
 
   /**
-   * @param string      $optionGroup
-   *                                 Can be either the option group name or ID
+   * @param string $optionGroup
+   *   Can be either the option group name or ID.
    * @param string|null $alias
-   *                                 The join alias
-   * @param string      $keyColumn
-   *                                 Which column to use to join, defaults to
-   *                                 "value"
+   *   The join alias.
+   * @param string $keyColumn
+   *   Which column to use to join, defaults to
+   *                            "value".
    */
   public function __construct(
     $optionGroup,
@@ -28,14 +28,14 @@ class OptionValueJoinable extends Joinable {
   ) {
     $this->optionGroupName = $optionGroup;
     $optionValueTable      = 'civicrm_option_value';
-    // default join alias to option group name, e.g. activity_type
+    // Default join alias to option group name, e.g. activity_type.
     if (!$alias && !is_numeric($optionGroup)) {
       $alias = $optionGroup;
     }
     parent::__construct($optionValueTable, $keyColumn, $alias);
     if (!is_numeric($optionGroup)) {
       $subSelect = 'SELECT id FROM civicrm_option_group WHERE name = "%s"';
-      $subQuery  = sprintf($subSelect, $optionGroup);
+      $subQuery = sprintf($subSelect, $optionGroup);
       $condition = sprintf('%s.option_group_id = (%s)', $alias, $subQuery);
     }
     else {
@@ -60,4 +60,5 @@ class OptionValueJoinable extends Joinable {
     parent::setAlias($alias);
     return $this;
   }
+
 }

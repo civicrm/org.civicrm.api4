@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -90,7 +91,7 @@ class Get extends AbstractAction {
   /**
    * @param string $field
    * @param string $op
-   * @param mixed  $value
+   * @param mixed $value
    *
    * @throws \API_Exception
    *
@@ -126,20 +127,20 @@ class Get extends AbstractAction {
   }
 
   /**
-   * @param Result $result
+   * @param \Civi\Api4\Generic\Result $result
    *
    * @throws \API_Exception
    * @throws \CRM_Core_Exception
    * @throws \Exception
    */
   public function _run(Result $result) {
-    $query          = new Api4SelectQuery($this->getEntity(),
-      $this->checkPermissions);
-    $query->select  = $this->select;
-    $query->where   = $this->where;
+    $query = new Api4SelectQuery($this->getEntity(), $this->checkPermissions);
+    $query->select = $this->select;
+    $query->where = $this->where;
     $query->orderBy = $this->orderBy;
-    $query->limit   = $this->limit;
-    $query->offset  = $this->offset;
+    $query->limit = $this->limit;
+    $query->offset = $this->offset;
     $result->exchangeArray($query->run());
   }
+
 }

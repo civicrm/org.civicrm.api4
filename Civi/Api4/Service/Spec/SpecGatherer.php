@@ -11,7 +11,7 @@ use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
 class SpecGatherer {
 
   /**
-   * @var SpecProviderInterface[]
+   * @var \Civi\Api4\Service\Spec\Provider\SpecProviderInterface[]
    */
   protected $specProviders = [];
 
@@ -29,7 +29,7 @@ class SpecGatherer {
    *
    * @param string $entity
    * @param string $action
-   * @param        $includeCustom
+   * @param $includeCustom
    *
    * @throws \API_Exception
    * @throws \Civi\API\Exception\NotImplementedException
@@ -54,7 +54,7 @@ class SpecGatherer {
   }
 
   /**
-   * @param string      $entity
+   * @param string $entity
    * @param             $action
    * @param RequestSpec $specification
    *
@@ -82,14 +82,13 @@ class SpecGatherer {
   }
 
   /**
-   * todo this class should not rely on api3 code.
+   * Todo this class should not rely on api3 code.
    *
    * @param $entityName
    *
    * @return \CRM_Core_DAO|string
-   *                              The DAO name for use in static calls. Return
-   *                              doc block is hacked to allow auto-completion
-   *                              of static methods
+   *   The DAO name for use in static calls. Return doc block is hacked to allow
+   *   auto-completion of static methods
    */
   private function getDAO($entityName) {
     if (!isset($this->DAONames[$entityName])) {
@@ -101,7 +100,7 @@ class SpecGatherer {
   }
 
   /**
-   * @param string      $entity
+   * @param string $entity
    * @param RequestSpec $specification
    *
    * @throws \API_Exception
@@ -114,24 +113,24 @@ class SpecGatherer {
       $entity = ['Contact', 'Individual', 'Organization', 'Household'];
     }
     $customFields = CustomField::get()
-                               ->addWhere('custom_group.extends', 'IN', $entity)
-                               ->setSelect([
-                                 'custom_group.name',
-                                 'custom_group_id',
-                                 'name',
-                                 'label',
-                                 'data_type',
-                                 'html_type',
-                                 'is_required',
-                                 'is_searchable',
-                                 'is_search_range',
-                                 'weight',
-                                 'is_active',
-                                 'is_view',
-                                 'option_group_id',
-                                 'default_value',
-                               ])
-                               ->execute();
+      ->addWhere('custom_group.extends', 'IN', $entity)
+      ->setSelect([
+        'custom_group.name',
+        'custom_group_id',
+        'name',
+        'label',
+        'data_type',
+        'html_type',
+        'is_required',
+        'is_searchable',
+        'is_search_range',
+        'weight',
+        'is_active',
+        'is_view',
+        'option_group_id',
+        'default_value',
+      ])
+      ->execute();
     foreach ($customFields as $fieldArray) {
       $field = SpecFormatter::arrayToField($fieldArray);
       $specification->addFieldSpec($field);
@@ -146,7 +145,7 @@ class SpecGatherer {
     foreach ($spec->getFields() as $field) {
       $fieldName = $field->getName();
       if ($field instanceof CustomFieldSpec) {
-        // buildOptions relies on the custom_* type of field names
+        // buildOptions relies on the custom_* type of field names.
         $fieldName = sprintf('custom_%d', $field->getCustomFieldId());
       }
       $options = $dao::buildOptions($fieldName);
@@ -158,9 +157,10 @@ class SpecGatherer {
   }
 
   /**
-   * @param SpecProviderInterface $provider
+   * @param \Civi\Api4\Service\Spec\Provider\SpecProviderInterface $provider
    */
   public function addSpecProvider(SpecProviderInterface $provider) {
     $this->specProviders[] = $provider;
   }
+
 }

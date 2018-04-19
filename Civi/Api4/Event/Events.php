@@ -24,4 +24,5 @@ class Events {
    * Alter query results of APIv4 select query.
    */
   const POST_SELECT_QUERY = 'api.select_query.post';
+
 }

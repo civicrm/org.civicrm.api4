@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -37,8 +38,9 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Accept $apiRequests based on \Civi\API\Action.
  */
-class ActionObjectProvider implements EventSubscriberInterface,
-  ProviderInterface {
+class ActionObjectProvider implements
+    EventSubscriberInterface,
+    ProviderInterface {
 
   /**
    * @return array
@@ -56,7 +58,7 @@ class ActionObjectProvider implements EventSubscriberInterface,
 
   /**
    * @param resolveEvent $event
-   *                            API resolution event
+   *   API resolution event.
    */
   public function onApiResolve(ResolveEvent $event) {
     $apiRequest = $event->getApiRequest();
@@ -97,7 +99,7 @@ class ActionObjectProvider implements EventSubscriberInterface,
   /**
    * {@inheritdoc}
    *
-   * @param int    $version
+   * @param int $version
    * @param string $entity
    *
    * @return array
@@ -106,4 +108,5 @@ class ActionObjectProvider implements EventSubscriberInterface,
     /* FIXME Civi\API\V4\Action\GetActions */
     return [];
   }
+
 }
