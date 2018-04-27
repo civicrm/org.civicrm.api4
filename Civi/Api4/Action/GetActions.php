@@ -109,7 +109,7 @@ class GetActions extends AbstractAction {
     try {
       if (!isset($this->_actions[$actionName])) {
         /* @var AbstractAction $action */
-        $action = call_user_func(['\\Civi\\Api4\\' . $this->getEntity(), $actionName]);
+        $action = \call_user_func(['\\Civi\\Api4\\' . $this->getEntity(), $actionName]);
         $actionReflection = new \ReflectionClass($action);
         $actionInfo
                   = ReflectionUtils::getCodeDocs($actionReflection);

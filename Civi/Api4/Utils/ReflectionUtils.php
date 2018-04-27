@@ -34,7 +34,7 @@ namespace Civi\Api4\Utils;
 class ReflectionUtils {
 
   /**
-   * @param \Reflector|\ReflectionClass $reflection
+   * @param \Reflector|\ReflectionClass|\ReflectionProperty $reflection
    * @param string $type
    *   If we are not reflecting the class itself, specify "Method", "Property", etc.
    *
@@ -93,7 +93,7 @@ class ReflectionUtils {
         }
         else {
           // Unrecognized annotation, but we'll duly add it to the info array.
-          $val        = implode(' ', array_slice($words, 1));
+          $val        = implode(' ', \array_slice($words, 1));
           $info[$key] = '' !== $val ? $val : TRUE;
         }
       }

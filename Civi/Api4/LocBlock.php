@@ -22,15 +22,16 @@ class LocBlock extends AbstractEntity {
    */
   public static function __callStatic($action, $ignore) {
     $entity = 'LocBlock';
-    // Find class for this action
-    $entityAction  = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
+    // Find class for this action.
+    $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
     $genericAction = '\Civi\Api4\Action\\' . ucfirst($action);
     if (class_exists($entityAction)) {
       return new $entityAction($entity);
     }
-    elseif (class_exists($genericAction)) {
+    if (class_exists($genericAction)) {
       return new $genericAction($entity);
     }
     throw new NotImplementedException("Api $entity $action version 4 does not exist.");
   }
+
 }

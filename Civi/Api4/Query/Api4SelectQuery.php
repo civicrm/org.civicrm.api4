@@ -97,7 +97,7 @@ class Api4SelectQuery extends SelectQuery {
   protected function getResult() {
     $this->buildSelectFields();
     $this->buildWhereClause();
-    if (in_array('count_rows', $this->select)) {
+    if (\in_array('count_rows', $this->select)) {
       $this->query->select('count(*) as c');
     }
     else {
@@ -114,7 +114,7 @@ class Api4SelectQuery extends SelectQuery {
     $result_entities = [];
     $result_dao = \CRM_Core_DAO::executeQuery($this->query->toSQL());
     while ($result_dao->fetch()) {
-      if (in_array('count_rows', $this->select)) {
+      if (\in_array('count_rows', $this->select)) {
         $result_dao->free();
 
         return (int) $result_dao->c;
@@ -210,7 +210,7 @@ class Api4SelectQuery extends SelectQuery {
       case 'OR':
       case 'AND':
         // Handle branches.
-        if (1 === count($clause[1])) {
+        if (1 === \count($clause[1])) {
           // A single set so AND|OR is immaterial.
           return $this->treeWalkWhereClause($clause[1][0]);
         }
@@ -246,7 +246,7 @@ class Api4SelectQuery extends SelectQuery {
     $value = [$operator => $criteria];
     $table_name = NULL;
     $column_name = NULL;
-    if (in_array($key, $this->entityFieldNames)) {
+    if (\in_array($key, $this->entityFieldNames)) {
       $table_name = self::MAIN_TABLE_ALIAS;
       $column_name = $key;
     }
@@ -298,7 +298,7 @@ class Api4SelectQuery extends SelectQuery {
    */
   protected function joinFK($key) {
     $stack = explode('.', $key);
-    if (count($stack) < 2) {
+    if (\count($stack) < 2) {
       return;
     }
     /** @var \Civi\Api4\Service\Schema\Joiner $joiner */

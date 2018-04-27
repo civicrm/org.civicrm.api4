@@ -72,7 +72,7 @@ class Delete extends Get {
     if (method_exists($baoName, 'del')) {
       foreach ($result as $item) {
         $args = [$item['id']];
-        $bao = call_user_func_array([$baoName, 'del'], $args);
+        $bao = \call_user_func_array([$baoName, 'del'], $args);
         if (FALSE !== $bao) {
           $ids[] = $item['id'];
         }
@@ -83,7 +83,8 @@ class Delete extends Get {
     }
     else {
       foreach ($result as $item) {
-        $bao = new $baoName();
+        /** @var \CRM_Core_DAO $bao */
+        $bao     = new $baoName();
         $bao->id = $item['id'];
         // Delete it.
         $action_result = $bao->delete();

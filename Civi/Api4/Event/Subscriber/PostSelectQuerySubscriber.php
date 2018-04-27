@@ -88,7 +88,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
     foreach ($results as &$result) {
       foreach ($result as $field => &$value) {
         if (!empty($fields[$field]['serialize'])
-        && is_string(
+        && \is_string(
         $value
         )
         ) {
@@ -119,7 +119,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
     // Group related selects by alias so they can be executed in one query.
     foreach ($joinedDotSelects as $select) {
       $parts = explode('.', $select);
-      $finalAlias = $parts[count($parts) - 2];
+      $finalAlias = $parts[\count($parts) - 2];
       $selects[$finalAlias][] = $select;
     }
     // Sort by depth, e.g. email selects should be done before email.location.
@@ -190,7 +190,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
     }
     $firstSelect = $selects[0];
     $pathParts = explode('.', $firstSelect);
-    $numParts = count($pathParts);
+    $numParts = \count($pathParts);
     $parentAlias = $numParts > 2 ? $pathParts[$numParts - 3] : $mainAlias;
     $selectFields['id'] = sprintf('%s.id', $alias);
     $selectFields['_parent_id'] = $parentAlias . '.id';
@@ -269,7 +269,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
       $optionValues[$subResult['value']] = $subResult;
       unset($subResult[$key]);
       // Exclude 'value' if not in original selects.
-      if (!in_array($valueField, $selects)) {
+      if (!\in_array($valueField, $selects)) {
         unset($optionValues[$subResult['value']]['value']);
       }
     }
@@ -355,9 +355,7 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
     $subQuery = new \CRM_Utils_SQL_Select($tableName . ' ' . $alias);
     $subQuery->where($conditions);
     $subQuery->select($subSelects);
-    $subResults = $subQuery->execute()->fetchAll();
-
-    return $subResults;
+    return $subQuery->execute()->fetchAll();
   }
 
 }

@@ -32,9 +32,9 @@ class SchemaMap {
     $this->findPaths($table, $targetTableAlias, 1, $path);
     foreach ($path as $index => $pathLink) {
       if ($pathLink instanceof BridgeJoinable) {
-        $start = array_slice($path, 0, $index);
+        $start = \array_slice($path, 0, $index);
         $middle = [$pathLink->getMiddleLink()];
-        $end = array_slice($path, $index, count($path) - $index);
+        $end = \array_slice($path, $index, \count($path) - $index);
         $path = array_merge($start, $middle, $end);
       }
     }
@@ -75,9 +75,9 @@ class SchemaMap {
     if (1 === $depth) {
       $visited = [];
     }
-    $canBeShorter = empty($path) || count($currentPath) + 1 < count($path);
+    $canBeShorter = empty($path) || \count($currentPath) + 1 < \count($path);
     $tooFar = $depth > self::MAX_JOIN_DEPTH;
-    $beenHere = in_array($table->getName(), $visited);
+    $beenHere = \in_array($table->getName(), $visited);
     if ($tooFar || $beenHere || !$canBeShorter) {
       return;
     }
