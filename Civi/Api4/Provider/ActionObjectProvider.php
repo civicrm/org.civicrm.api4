@@ -38,9 +38,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 /**
  * Accept $apiRequests based on \Civi\API\Action.
  */
-class ActionObjectProvider implements
-    EventSubscriberInterface,
-    ProviderInterface {
+class ActionObjectProvider implements EventSubscriberInterface, ProviderInterface {
 
   /**
    * @return array
@@ -51,7 +49,7 @@ class ActionObjectProvider implements
     // handy for testing/mocking.
     return [
       Events::RESOLVE => [
-        ['onApiResolve', Events::W_EARLY],
+                ['onApiResolve', Events::W_EARLY],
       ],
     ];
   }
@@ -77,10 +75,11 @@ class ActionObjectProvider implements
    * @return array|mixed
    */
   public function invoke($apiRequest) {
-    $result         = new Result();
+    $result = new Result();
     $result->action = $apiRequest['action'];
     $result->entity = $apiRequest['entity'];
     $apiRequest->_run($result);
+
     return $result;
   }
 

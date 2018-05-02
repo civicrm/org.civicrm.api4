@@ -6,7 +6,6 @@ namespace Civi\Api4\Service\Spec;
  * Class FieldSpec.
  */
 class FieldSpec {
-
   /**
    * Aliases for the valid data types.
    *
@@ -84,6 +83,7 @@ class FieldSpec {
    */
   public function setDefaultValue($defaultValue) {
     $this->defaultValue = $defaultValue;
+
     return $this;
   }
 
@@ -101,6 +101,7 @@ class FieldSpec {
    */
   public function setName($name) {
     $this->name = $name;
+
     return $this;
   }
 
@@ -118,6 +119,7 @@ class FieldSpec {
    */
   public function setTitle($title) {
     $this->title = $title;
+
     return $this;
   }
 
@@ -135,6 +137,7 @@ class FieldSpec {
    */
   public function setDescription($description) {
     $this->description = $description;
+
     return $this;
   }
 
@@ -152,6 +155,7 @@ class FieldSpec {
    */
   public function setRequired($required) {
     $this->required = $required;
+
     return $this;
   }
 
@@ -170,13 +174,14 @@ class FieldSpec {
    * @return $this
    */
   public function setDataType($dataType) {
-    if (array_key_exists($dataType, self::$typeAliases)) {
+    if (\array_key_exists($dataType, self::$typeAliases)) {
       $dataType = self::$typeAliases[$dataType];
     }
-    if (!in_array($dataType, $this->getValidDataTypes())) {
-      throw new \Exception(sprintf('Invalid data type "%s', $dataType));
+    if (!\in_array($dataType, $this->getValidDataTypes())) {
+      throw new \Exception(\sprintf('Invalid data type "%s', $dataType));
     }
     $this->dataType = $dataType;
+
     return $this;
   }
 
@@ -201,10 +206,11 @@ class FieldSpec {
    */
   private function getValidDataTypes() {
     $extra_types = ['Boolean', 'Text', 'Float', 'Memo'];
-    $valid_types = array_keys(\CRM_Utils_Type::getValidTypes());
-    $extra_types = array_merge($extra_types, $valid_types);
-    $extra_types = array_combine($extra_types, $extra_types);
-    return array_merge(\CRM_Utils_Type::dataTypes(), $extra_types);
+    $valid_types = \array_keys(\CRM_Utils_Type::getValidTypes());
+    $extra_types = \array_merge($extra_types, $valid_types);
+    $extra_types = \array_combine($extra_types, $extra_types);
+
+    return \array_merge(\CRM_Utils_Type::dataTypes(), $extra_types);
   }
 
   /**
@@ -221,6 +227,7 @@ class FieldSpec {
    */
   public function setOptions($options) {
     $this->options = $options;
+
     return $this;
   }
 
@@ -245,6 +252,7 @@ class FieldSpec {
    */
   public function setFkEntity($fkEntity) {
     $this->fkEntity = $fkEntity;
+
     return $this;
   }
 
@@ -253,10 +261,11 @@ class FieldSpec {
    */
   public function toArray() {
     $ret = [];
-    foreach (get_object_vars($this) as $key => $val) {
-      $key       = strtolower(preg_replace('/(?=[A-Z])/', '_$0', $key));
+    foreach (\get_object_vars($this) as $key => $val) {
+      $key = \strtolower(\preg_replace('/(?=[A-Z])/', '_$0', $key));
       $ret[$key] = $val;
     }
+
     return $ret;
   }
 

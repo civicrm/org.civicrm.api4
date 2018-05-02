@@ -17,13 +17,13 @@ class ArrayInsertionUtil {
    *   The array to insert the value in
    * @param array $parts
    *   Path to insertion point with structure:
-   *   [[ name => is_multiple ], ..].
+   *                      [[ name => is_multiple ], ..].
    * @param mixed $values
    *   The value to be inserted.
    */
   public static function insert(&$array, $parts, $values) {
-    $key = key($parts);
-    $isMulti = array_shift($parts);
+    $key = \key($parts);
+    $isMulti = \array_shift($parts);
     if (!isset($array[$key])) {
       $array[$key] = $isMulti ? [] : NULL;
     }
@@ -53,12 +53,12 @@ class ArrayInsertionUtil {
   private static function filterValues($parentArray, $isMulti, $values) {
     $parentID = ArrayHelper::value('id', $parentArray);
     if ($parentID) {
-      $values = array_filter($values, function ($value) use ($parentID) {
-        return ArrayHelper::value('_parent_id', $value) === $parentID;
+      $values = \array_filter($values, function ($value) use ($parentID) {
+          return ArrayHelper::value('_parent_id', $value) === $parentID;
       });
     }
     $unsets = ['_parent_id', '_base_id'];
-    array_walk($values, function (&$value) use ($unsets) {
+    \array_walk($values, function (&$value) use ($unsets) {
       foreach ($unsets as $unset) {
         if (isset($value[$unset])) {
           unset($value[$unset]);
@@ -66,7 +66,7 @@ class ArrayInsertionUtil {
       }
     });
     if (!$isMulti) {
-      $values = array_shift($values);
+      $values = \array_shift($values);
     }
 
     return $values;

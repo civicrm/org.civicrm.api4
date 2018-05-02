@@ -25,7 +25,7 @@ class CustomGroupPreCreationSubscriber extends PreCreationSubscriber {
     $extends = $request->getValue('extends');
     $title = $request->getValue('title');
     $name = $request->getValue('name');
-    if (is_string($extends)) {
+    if (\is_string($extends)) {
       $request->addValue('extends', [$extends]);
     }
     if (NULL === $title && $name) {

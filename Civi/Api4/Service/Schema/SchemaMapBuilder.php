@@ -92,7 +92,7 @@ class SchemaMapBuilder {
     $optionGroupName = ArrayHelper::value('optionGroupName', $pseudoConstant);
     $keyColumn = ArrayHelper::value('keyColumn', $pseudoConstant, 'id');
     if ($tableName) {
-      $alias = str_replace('civicrm_', '', $tableName);
+      $alias = \str_replace('civicrm_', '', $tableName);
       $joinable = new Joinable($tableName, $keyColumn, $alias);
       $condition = ArrayHelper::value('condition', $pseudoConstant);
       if ($condition) {
@@ -115,13 +115,9 @@ class SchemaMapBuilder {
    * @param Table $baseTable
    * @param           $entityName
    */
-  private function addCustomFields(
-  SchemaMap $map,
-  Table $baseTable,
-  $entityName
-  ) {
+  private function addCustomFields(SchemaMap $map, Table $baseTable, $entityName) {
     $parentTypes = ['Contact', 'Individual', 'Organization', 'Household'];
-    if (in_array($entityName, $parentTypes)) {
+    if (\in_array($entityName, $parentTypes)) {
       $entityName = $parentTypes;
     }
     $customFields = CustomFieldBAO::getFields($entityName, TRUE);
@@ -160,7 +156,7 @@ class SchemaMapBuilder {
         }
         $target = $map->getTableByName($link->getTargetTable());
         $tableName = $link->getBaseTable();
-        $plural = str_replace('civicrm_', '', $this->getPlural($tableName));
+        $plural = \str_replace('civicrm_', '', $this->getPlural($tableName));
         $joinable = new Joinable($tableName, $link->getBaseColumn(), $plural);
         $joinable->setJoinType($joinable::JOIN_TYPE_ONE_TO_MANY);
         $target->addTableLink($link->getTargetColumn(), $joinable);
@@ -178,10 +174,10 @@ class SchemaMapBuilder {
    * @return string
    */
   private function getPlural($singular) {
-    $last_letter = substr($singular, -1);
+    $last_letter = \substr($singular, -1);
     switch ($last_letter) {
       case 'y':
-        return substr($singular, 0, -1) . 'ies';
+        return \substr($singular, 0, -1) . 'ies';
 
       case 's':
         return $singular . 'es';

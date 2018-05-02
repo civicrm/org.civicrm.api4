@@ -32,7 +32,6 @@ namespace Civi\Api4\Generic;
  * Container for api results.
  */
 class Result extends \ArrayObject {
-
   /**
    * @var string
    */
@@ -73,7 +72,7 @@ class Result extends \ArrayObject {
    * @return $this
    */
   public function indexBy($key) {
-    if (count($this)) {
+    if (\count($this)) {
       $newResults = [];
       foreach ($this as $values) {
         if (isset($values[$key])) {
@@ -81,10 +80,11 @@ class Result extends \ArrayObject {
         }
       }
       if (!$newResults) {
-        throw new \API_Exception("Key $key not found in api results");
+        throw new \API_Exception("Key ${key} not found in api results");
       }
       $this->exchangeArray($newResults);
     }
+
     return $this;
   }
 

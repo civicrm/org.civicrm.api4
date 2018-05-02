@@ -64,7 +64,7 @@ class Joinable {
   public function __construct($targetTable, $targetColumn, $alias = NULL) {
     $this->targetTable = $targetTable;
     $this->targetColumn = $targetColumn;
-    $this->alias = $alias ?: str_replace('civicrm_', '', $targetTable);
+    $this->alias = $alias ?: \str_replace('civicrm_', '', $targetTable);
   }
 
   /**
@@ -87,15 +87,9 @@ class Joinable {
    * @return array
    */
   public function getConditionsForJoin($baseTableAlias = NULL) {
-    $baseCondition = sprintf(
-    '%s.%s =  %s.%s',
-    $baseTableAlias ?: $this->baseTable,
-    $this->baseColumn,
-    $this->getAlias(),
-    $this->targetColumn
-    );
+    $baseCondition = \sprintf('%s.%s =  %s.%s', $baseTableAlias ?: $this->baseTable, $this->baseColumn, $this->getAlias(), $this->targetColumn);
 
-    return array_merge([$baseCondition], $this->conditions);
+    return \array_merge([$baseCondition], $this->conditions);
   }
 
   /**
@@ -246,7 +240,7 @@ class Joinable {
    * @return array
    */
   public function toArray() {
-    return get_object_vars($this);
+    return \get_object_vars($this);
   }
 
 }

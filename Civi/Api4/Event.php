@@ -34,5 +34,4 @@ use Civi\Api4\Generic\AbstractEntity;
  * Class Event.
  */
 class Event extends AbstractEntity {
-
 }

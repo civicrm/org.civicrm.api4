@@ -8,5 +8,4 @@ use Civi\Api4\Generic\AbstractEntity;
  * Class Setting.
  */
 class Setting extends AbstractEntity {
-
 }

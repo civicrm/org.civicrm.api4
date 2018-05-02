@@ -8,5 +8,4 @@ use Civi\Api4\Generic\AbstractEntity;
  * Class File.
  */
 class File extends AbstractEntity {
-
 }

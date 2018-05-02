@@ -48,11 +48,11 @@ class ReflectionUtils {
       $newReflection = NULL;
       try {
         if ($type) {
-          $name            = $reflection->getName();
+          $name = $reflection->getName();
           $reflectionClass = $reflection->getDeclaringClass()->getParentClass();
           if ($reflectionClass) {
-            $getItem       = "get$type";
-            $newReflection = $reflectionClass->$getItem($name);
+            $getItem = "get${type}";
+            $newReflection = $reflectionClass->{$getItem}($name);
           }
         }
         else {
@@ -70,6 +70,7 @@ class ReflectionUtils {
         $docs += $additionalDocs;
       }
     }
+
     return $docs;
   }
 
@@ -80,20 +81,20 @@ class ReflectionUtils {
    */
   public static function parseDocBlock($comment) {
     $info = [];
-    foreach (preg_split("/((\r?\n)|(\r\n?))/", $comment) as $num => $line) {
-      if (!$num || FALSE !== strpos($line, '*/')) {
+    foreach (\preg_split("/((\r?\n)|(\r\n?))/", $comment) as $num => $line) {
+      if (!$num || FALSE !== \strpos($line, '*/')) {
         continue;
       }
-      $line = ltrim(trim($line), '* ');
-      if (0 === strpos($line, '@')) {
-        $words = explode(' ', $line);
-        $key   = substr($words[0], 1);
+      $line = \ltrim(\trim($line), '* ');
+      if (0 === \strpos($line, '@')) {
+        $words = \explode(' ', $line);
+        $key = \substr($words[0], 1);
         if ('var' === $key) {
-          $info['type'] = explode('|', $words[1]);
+          $info['type'] = \explode('|', $words[1]);
         }
         else {
           // Unrecognized annotation, but we'll duly add it to the info array.
-          $val        = implode(' ', \array_slice($words, 1));
+          $val = \implode(' ', \array_slice($words, 1));
           $info[$key] = '' !== $val ? $val : TRUE;
         }
       }
@@ -106,13 +107,14 @@ class ReflectionUtils {
         }
       }
       else {
-        $info['comment'] = isset($info['comment']) ? "{$info['comment']}\n$line"
-          : $line;
+        $info['comment'] = isset($info['comment']) ? "{$info['comment']}\n${line}"
+        : $line;
       }
     }
     if (isset($info['comment'])) {
-      $info['comment'] = trim($info['comment']);
+      $info['comment'] = \trim($info['comment']);
     }
+
     return $info;
   }
 

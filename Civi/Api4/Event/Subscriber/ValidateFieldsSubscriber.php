@@ -44,21 +44,21 @@ class ValidateFieldsSubscriber extends AbstractPrepareSubscriber {
   public function onApiPrepare(PrepareEvent $event) {
     /** @var \Civi\Api4\Generic\AbstractAction $apiRequest */
     $apiRequest = $event->getApiRequest();
-    if (is_a($apiRequest, AbstractAction::class)) {
+    if (\is_a($apiRequest, AbstractAction::class)) {
       $paramInfo = $apiRequest->getParamInfo();
       foreach ($paramInfo as $param => $info) {
-        $getParam = 'get' . ucfirst($param);
-        $value = $apiRequest->$getParam();
+        $getParam = 'get' . \ucfirst($param);
+        $value = $apiRequest->{$getParam}();
         // Required fields.
-        if (!empty($info['required'])
-        && (!$value && 0 !== $value
-        && '0' !== $value)) {
-          throw new \API_Exception('Parameter "' . $param . '" is required.');
+        if (!empty($info['required']) && (!$value && 0 !== $value && '0' !== $value)) {
+          throw new \API_Exception("Parameter \"{$param}\" is required.");
         }
         if (!empty($info['type']) && !self::checkType($value, $info['type'])) {
-          throw new \API_Exception('Parameter "' . $param
-           . '" is not of the correct type. Expecting '
-           . implode(' or ', $info['type']) . '.');
+          $expecting_type = \implode(' or ', $info['type']);
+
+          $message = "Parameter \"{$param}\" is not of the correct type. Expecting \"{$expecting_type}\"";
+
+          throw new \API_Exception($message);
         }
       }
     }

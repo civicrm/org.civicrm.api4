@@ -4,12 +4,15 @@ namespace Civi\Api4\Action\LocBlock;
 
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
+use CRM_Core_BAO_CustomField as CustomFieldBAO;
+use CRM_Core_BAO_CustomGroup as CustomGroupBAO;
+use CRM_Core_DAO_CustomField as CustomFieldDAO;
+use CRM_Core_DAO_CustomGroup as CustomGroupDAO;
 
 /**
  * Class Create.
  */
 class Create extends AbstractAction {
-
   /**
    * Field values to set.
    *
@@ -51,13 +54,12 @@ class Create extends AbstractAction {
    */
   protected function writeObject($params) {
     $entityId = \CRM_Utils_Array::value('id', $params);
-    $params   = $this->formatCustomParams($params, $this->getEntity(),
-      $entityId);
-    $bao      = new \CRM_Core_DAO_LocBlock();
+    $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
+    $bao = new \CRM_Core_DAO_LocBlock();
     $bao->copyValues($params);
     $createResult = $bao->save();
     if (!$createResult) {
-      $errMessage = sprintf('%s write operation failed', $this->getEntity());
+      $errMessage = \sprintf('%s write operation failed', $this->getEntity());
       throw new \API_Exception($errMessage);
     }
     // Trim back the junk and just get the array:
@@ -76,40 +78,25 @@ class Create extends AbstractAction {
     // $customValueID is the ID of the custom value in the custom table for this
     // entity (i guess this assumes it's not a multi value entity)
     foreach ($params as $name => $value) {
-      if (FALSE === strpos($name, '.')) {
+      if (FALSE === \strpos($name, '.')) {
         continue;
       }
-      list($customGroup, $customField) = explode('.', $name);
-      $customFieldId                   = \CRM_Core_BAO_CustomField::getFieldValue(
-        \CRM_Core_DAO_CustomField::class,
-        $customField,
-        'id',
-        'name'
-      );
-      $customFieldType                 = \CRM_Core_BAO_CustomField::getFieldValue(
-        \CRM_Core_DAO_CustomField::class,
-        $customField,
-        'html_type',
-        'name'
-      );
-      $customFieldExtends              = \CRM_Core_BAO_CustomGroup::getFieldValue(
-        \CRM_Core_DAO_CustomGroup::class,
-        $customGroup,
-        'extends',
-        'name'
-      );
+      list($customGroup, $customField) = \explode('.', $name);
+      $customFieldId = CustomFieldBAO::getFieldValue(CustomFieldDAO::class, $customField, 'id', 'name');
+      $customFieldType = CustomFieldBAO::getFieldValue(CustomFieldDAO::class, $customField, 'html_type', 'name');
+      $customFieldExtends = CustomGroupBAO::getFieldValue(CustomGroupDAO::class, $customGroup, 'extends', 'name');
       // Todo are we sure we don't want to allow setting to NULL? need to test.
       if ($customFieldId && NULL !== $value) {
         if ('CheckBox' === $customFieldType) {
           // This function should be part of a class.
           formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
         }
-        \CRM_Core_BAO_CustomField::formatCustomField(
-          $customFieldId,
+        CustomFieldBAO::formatCustomField(
+         $customFieldId,
           $customParams,
           $value,
           $customFieldExtends,
-        // Todo check when this is needed.
+          // Todo check when this is needed.
           NULL,
           $entityId,
           FALSE,
@@ -118,6 +105,7 @@ class Create extends AbstractAction {
         );
       }
     }
+
     return $params;
   }
 

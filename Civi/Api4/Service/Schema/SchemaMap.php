@@ -19,9 +19,8 @@ class SchemaMap {
    * @param $baseTableName
    * @param $targetTableAlias
    *
-   * @return \Civi\Api4\Service\Schema\Joinable\Joinable[]
-   *   Array of links to the target table, empty if no path
-   *                                                       found
+   * @return Joinable\Joinable[]
+   *   Array of links to the target table, empty if no path found
    */
   public function getPath($baseTableName, $targetTableAlias) {
     $table = $this->getTableByName($baseTableName);
@@ -35,7 +34,7 @@ class SchemaMap {
         $start = \array_slice($path, 0, $index);
         $middle = [$pathLink->getMiddleLink()];
         $end = \array_slice($path, $index, \count($path) - $index);
-        $path = array_merge($start, $middle, $end);
+        $path = \array_merge($start, $middle, $end);
       }
     }
 
@@ -64,9 +63,9 @@ class SchemaMap {
    *   The target joinable table alias.
    * @param int $depth
    *   The current level of recursion which reflects the number of joins needed.
-   * @param \Civi\Api4\Service\Schema\Joinable\Joinable[] $path
+   * @param Joinable\Joinable[] $path
    *   (By-reference) The possible paths to the target table.
-   * @param \Civi\Api4\Service\Schema\Joinable\Joinable[] $currentPath
+   * @param Joinable\Joinable[] $currentPath
    *   For internal use only to track the path to reach the target table.
    */
   private function findPaths(Table $table, $target, $depth, &$path, $currentPath = []) {
@@ -85,12 +84,12 @@ class SchemaMap {
     $visited[] = $table->getName();
     foreach ($table->getExternalLinks() as $link) {
       if ($link->getAlias() === $target) {
-        $path = array_merge($currentPath, [$link]);
+        $path = \array_merge($currentPath, [$link]);
       }
       else {
         $linkTable = $this->getTableByName($link->getTargetTable());
         if ($linkTable) {
-          $nextStep = array_merge($currentPath, [$link]);
+          $nextStep = \array_merge($currentPath, [$link]);
           $this->findPaths($linkTable, $target, $depth + 1, $path, $nextStep);
         }
       }

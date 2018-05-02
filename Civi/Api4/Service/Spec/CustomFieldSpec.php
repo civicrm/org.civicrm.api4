@@ -6,7 +6,6 @@ namespace Civi\Api4\Service\Spec;
  * Class CustomFieldSpec.
  */
 class CustomFieldSpec extends FieldSpec {
-
   /**
    * @var int
    */
@@ -31,6 +30,7 @@ class CustomFieldSpec extends FieldSpec {
    */
   public function setCustomFieldId($customFieldId) {
     $this->customFieldId = $customFieldId;
+
     return $this;
   }
 
@@ -48,6 +48,7 @@ class CustomFieldSpec extends FieldSpec {
    */
   public function setCustomGroupId($customGroupId) {
     $this->customGroupId = $customGroupId;
+
     return $this;
   }
 

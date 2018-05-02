@@ -36,9 +36,9 @@ class ContactSchemaMapSubscriber implements EventSubscriberInterface {
    */
   private function addCreatedActivitiesLink($table) {
     $alias = 'created_activities';
-    $joinable = new Joinable(
-    'civicrm_activity_contact', 'contact_id', $alias
-    );
+    $targetTable = 'civicrm_activity_contact';
+    $targetColumn = 'contact_id';
+    $joinable = new Joinable($targetTable, $targetColumn, $alias);
     $joinable->addCondition($alias . '.record_type_id = 1');
     $joinable->setJoinType($joinable::JOIN_TYPE_ONE_TO_MANY);
     $table->addTableLink('id', $joinable);

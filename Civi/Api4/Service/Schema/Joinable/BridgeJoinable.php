@@ -6,7 +6,6 @@ namespace Civi\Api4\Service\Schema\Joinable;
  * Class BridgeJoinable.
  */
 class BridgeJoinable extends Joinable {
-
   /**
    * @var Joinable
    */
@@ -20,12 +19,7 @@ class BridgeJoinable extends Joinable {
    * @param $alias
    * @param Joinable $middleLink
    */
-  public function __construct(
-    $targetTable,
-    $targetColumn,
-    $alias,
-    Joinable $middleLink
-  ) {
+  public function __construct($targetTable, $targetColumn, $alias, Joinable $middleLink) {
     parent::__construct($targetTable, $targetColumn, $alias);
     $this->middleLink = $middleLink;
   }

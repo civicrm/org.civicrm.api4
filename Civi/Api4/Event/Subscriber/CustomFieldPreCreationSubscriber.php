@@ -38,7 +38,7 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
    */
   protected function formatOptionParams(Create $request) {
     $options = $request->getValue('options');
-    if (!is_array($options)) {
+    if (!\is_array($options)) {
       return;
     }
     $dataTypeKey = 'data_type';
@@ -60,17 +60,17 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
       $request->addValue($dataTypeKey, 'String');
     }
     if (!$optionLabel) {
-      $request->addValue($optionLabelKey, array_values($options));
+      $request->addValue($optionLabelKey, \array_values($options));
     }
     if (!$optionValue) {
-      $request->addValue($optionValueKey, array_keys($options));
+      $request->addValue($optionValueKey, \array_keys($options));
     }
     if (!$optionStatus) {
-      $statuses = array_fill(0, count($options), self::OPTION_STATUS_ACTIVE);
+      $statuses = \array_fill(0, \count($options), self::OPTION_STATUS_ACTIVE);
       $request->addValue($optionStatusKey, $statuses);
     }
     if (!$optionWeight) {
-      $request->addValue($optionWeightKey, range(1, count($options)));
+      $request->addValue($optionWeightKey, \range(1, \count($options)));
     }
   }
 

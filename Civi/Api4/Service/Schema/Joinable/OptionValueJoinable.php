@@ -6,7 +6,6 @@ namespace Civi\Api4\Service\Schema\Joinable;
  * Class OptionValueJoinable.
  */
 class OptionValueJoinable extends Joinable {
-
   /**
    * @var string
    */
@@ -18,28 +17,23 @@ class OptionValueJoinable extends Joinable {
    * @param string|null $alias
    *   The join alias.
    * @param string $keyColumn
-   *   Which column to use to join, defaults to
-   *                            "value".
+   *   Which column to use to join, defaults to "value".
    */
-  public function __construct(
-    $optionGroup,
-    $alias = NULL,
-    $keyColumn = 'value'
-  ) {
+  public function __construct($optionGroup, $alias = NULL, $keyColumn = 'value') {
     $this->optionGroupName = $optionGroup;
-    $optionValueTable      = 'civicrm_option_value';
+    $optionValueTable = 'civicrm_option_value';
     // Default join alias to option group name, e.g. activity_type.
-    if (!$alias && !is_numeric($optionGroup)) {
+    if (!$alias && !\is_numeric($optionGroup)) {
       $alias = $optionGroup;
     }
     parent::__construct($optionValueTable, $keyColumn, $alias);
-    if (!is_numeric($optionGroup)) {
+    if (!\is_numeric($optionGroup)) {
       $subSelect = 'SELECT id FROM civicrm_option_group WHERE name = "%s"';
-      $subQuery = sprintf($subSelect, $optionGroup);
-      $condition = sprintf('%s.option_group_id = (%s)', $alias, $subQuery);
+      $subQuery = \sprintf($subSelect, $optionGroup);
+      $condition = \sprintf('%s.option_group_id = (%s)', $alias, $subQuery);
     }
     else {
-      $condition = sprintf('%s.option_group_id = %d', $alias, $optionGroup);
+      $condition = \sprintf('%s.option_group_id = %d', $alias, $optionGroup);
     }
     $this->addCondition($condition);
   }
@@ -53,11 +47,12 @@ class OptionValueJoinable extends Joinable {
    */
   public function setAlias($alias) {
     foreach ($this->conditions as $index => $condition) {
-      $search                   = $this->alias . '.';
-      $replace                  = $alias . '.';
-      $this->conditions[$index] = str_replace($search, $replace, $condition);
+      $search = $this->alias . '.';
+      $replace = $alias . '.';
+      $this->conditions[$index] = \str_replace($search, $replace, $condition);
     }
     parent::setAlias($alias);
+
     return $this;
   }
 

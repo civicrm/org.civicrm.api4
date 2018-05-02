@@ -1,16 +1,21 @@
 <?php
+
+/**
+ * @file
+ */
+
 require_once 'api4.civix.php';
 
+use Civi\API\Request;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Procedural wrapper for the OO api version 4.
  *
- * @param       $entity
- * @param       $action
+ * @param $entity
+ * @param $action
  * @param array $params
  *
  * @throws \API_Exception
@@ -19,12 +24,12 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 function civicrm_api4($entity, $action, $params = []) {
   $params['version'] = 4;
-  $request           = \Civi\API\Request::create($entity, $action, $params);
+  $request           = Request::create($entity, $action, $params);
   return \Civi::service('civi_api_kernel')->runRequest($request);
 }
 
 /**
- * @param ContainerBuilder $container
+ * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
  */
 function api4_civicrm_container($container) {
   $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
@@ -33,8 +38,8 @@ function api4_civicrm_container($container) {
     'registerApiProvider',
     [new Reference('action_object_provider')]
   );
-  // add event subscribers$container->get(
-  $dispatcher  = $container->getDefinition('dispatcher');
+  // Add event subscribers$container->get(.
+  $dispatcher = $container->getDefinition('dispatcher');
   $subscribers = $container->findTaggedServiceIds('event_subscriber');
   foreach (array_keys($subscribers) as $subscriber) {
     $dispatcher->addMethodCall(
@@ -42,9 +47,9 @@ function api4_civicrm_container($container) {
       [new Reference($subscriber)]
     );
   }
-  // add spec providers
+  // Add spec providers.
   $providers = $container->findTaggedServiceIds('spec_provider');
-  $gatherer  = $container->getDefinition('spec_gatherer');
+  $gatherer = $container->getDefinition('spec_gatherer');
   foreach (array_keys($providers) as $provider) {
     $gatherer->addMethodCall(
       'addSpecProvider',
@@ -64,7 +69,7 @@ function api4_civicrm_container($container) {
 function api4_civicrm_coreResourceList(&$list, $region) {
   if ('html-header' == $region) {
     Civi::resources()
-        ->addScriptFile('org.civicrm.api4', 'js/api4.js', -9000, $region);
+      ->addScriptFile('org.civicrm.api4', 'js/api4.js', -9000, $region);
   }
 }
 
@@ -80,7 +85,7 @@ function api4_civicrm_config(&$config) {
 /**
  * Implements hook_civicrm_xmlMenu().
  *
- * @param $files array(string)
+ * @param array|string $files
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_xmlMenu
  */
@@ -92,6 +97,9 @@ function api4_civicrm_xmlMenu(&$files) {
  * Implements hook_civicrm_install().
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_install
+ *
+ * @throws \CRM_Core_Exception
+ * @throws \CRM_Exception
  */
 function api4_civicrm_install() {
   _api4_civix_civicrm_install();
@@ -101,6 +109,8 @@ function api4_civicrm_install() {
  * Implements hook_civicrm_uninstall().
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_uninstall
+ *
+ * @throws \CRM_Exception
  */
 function api4_civicrm_uninstall() {
   _api4_civix_civicrm_uninstall();
@@ -127,14 +137,18 @@ function api4_civicrm_disable() {
 /**
  * Implements hook_civicrm_upgrade().
  *
- * @param $op    string, the type of operation being performed; 'check' or
- *               'enqueue'
- * @param $queue CRM_Queue_Queue, (for 'enqueue') the modifiable list of
- *               pending up upgrade tasks
+ * @param string $op
+ *   the type of operation being performed; 'check' or
+ *   'enqueue'.
+ * @param $queue
+ *   CRM_Queue_Queue, (for 'enqueue') the modifiable list of
+ *   pending up upgrade tasks
  *
  * @return mixed
  *   Based on op. for 'check', returns array(boolean) (TRUE if upgrades are
  *   pending) for 'enqueue', returns void
+ *
+ * @throws \ReflectionException
  *
  * @see http://wiki.civicrm.org/confluence/display/CRMDOC/hook_civicrm_upgrade
  */

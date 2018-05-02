@@ -8,5 +8,4 @@ use Civi\Api4\Generic\AbstractEntity;
  * Class PriceFieldValue.
  */
 class PriceFieldValue extends AbstractEntity {
-
 }

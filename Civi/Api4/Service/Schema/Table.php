@@ -15,7 +15,7 @@ class Table {
 
   /**
    * @var \Civi\Api4\Service\Schema\Joinable\Joinable[]
-   *    Arrayoflinkstoothertables
+   *   Array of links to other tables
    */
   protected $tableLinks = [];
 
@@ -46,12 +46,11 @@ class Table {
 
   /**
    * @return \Civi\Api4\Service\Schema\Joinable\Joinable[]
-   *   Only those links that are not joining the table to
-   *                                                       itself
+   *   Only those links that are not joining the table to itself
    */
   public function getExternalLinks() {
-    return array_filter($this->tableLinks, function (Joinable $joinable) {
-      return $joinable->getTargetTable() !== $this->getName();
+    return \array_filter($this->tableLinks, function (Joinable $joinable) {
+       return $joinable->getTargetTable() !== $this->getName();
     });
   }
 
@@ -116,10 +115,7 @@ class Table {
    */
   private function hasLink($target, $targetCol, $alias) {
     foreach ($this->tableLinks as $link) {
-      if ($link->getTargetTable() === $target
-      && $link->getTargetColumn() === $targetCol
-      && $link->getAlias() === $alias
-      ) {
+      if ($link->getTargetTable() === $target && $link->getTargetColumn() === $targetCol && $link->getAlias() === $alias) {
         return TRUE;
       }
     }

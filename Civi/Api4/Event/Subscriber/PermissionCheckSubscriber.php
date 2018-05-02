@@ -57,10 +57,7 @@ class PermissionCheckSubscriber implements EventSubscriberInterface {
   public function onApiAuthorize(AuthorizeEvent $event) {
     /* @var \Civi\Api4\Generic\AbstractAction $apiRequest */
     $apiRequest = $event->getApiRequest();
-    if (4 === $apiRequest['version']
-    && (!$apiRequest->getCheckPermissions()
-    || $apiRequest->isAuthorized())
-    ) {
+    if (4 === $apiRequest['version'] && (!$apiRequest->getCheckPermissions() || $apiRequest->isAuthorized())) {
       $event->authorize();
       $event->stopPropagation();
     }

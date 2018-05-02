@@ -46,7 +46,7 @@ class GetFields extends GenericGetFields {
    * @throws \ReflectionException
    */
   public function _run(Result $result) {
-    $action        = $this->getAction();
+    $action = $this->getAction();
     $includeCustom = $this->getIncludeCustom();
     try {
       $entities = Entity::get()->execute();
@@ -58,9 +58,9 @@ class GetFields extends GenericGetFields {
       // Prevent infinite recursion.
       if ('Entity' !== $entity) {
         $data['fields'] = (array) civicrm_api4(
-          $entity,
-          'getFields',
-          ['action' => $action, 'includeCustom' => $includeCustom]
+         $entity,
+         'getFields',
+         ['action' => $action, 'includeCustom' => $includeCustom]
         );
       }
       $result[] = $data;

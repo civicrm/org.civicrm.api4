@@ -34,5 +34,4 @@ use Civi\Api4\Generic\AbstractEntity;
  * Class Contribution.
  */
 class Contribution extends AbstractEntity {
-
 }

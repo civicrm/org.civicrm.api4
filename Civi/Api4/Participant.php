@@ -33,5 +33,4 @@ use Civi\Api4\Generic\AbstractEntity;
  * Class Participant.
  */
 class Participant extends AbstractEntity {
-
 }

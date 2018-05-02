@@ -9,7 +9,6 @@ use Symfony\Component\EventDispatcher\Event as BaseEvent;
  * Class GetSpecEvent.
  */
 class GetSpecEvent extends BaseEvent {
-
   /**
    * @var \Civi\Api4\Generic\AbstractAction
    */

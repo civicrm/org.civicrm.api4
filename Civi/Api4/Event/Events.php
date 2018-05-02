@@ -6,7 +6,6 @@ namespace Civi\Api4\Event;
  * Class Events.
  */
 class Events {
-
   /**
    * Prepare the specification for a request. Fired from within a request to
    * get fields.

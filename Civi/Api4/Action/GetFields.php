@@ -67,12 +67,11 @@ class GetFields extends AbstractAction {
   public function _run(Result $result) {
     /** @var \Civi\Api4\Service\Spec\SpecGatherer $gatherer */
     $gatherer = \Civi::container()->get('spec_gatherer');
-    $spec = $gatherer->getSpec($this->getEntity(), $this->getAction(),
-    $this->includeCustom);
+    $spec = $gatherer->getSpec($this->getEntity(), $this->getAction(), $this->includeCustom);
     $specArray = SpecFormatter::specToArray($spec);
     // Fixme - $this->action ought to already be set. Might be a name conflict upstream causing it to be nullified?
     $result->action = 'getFields';
-    $result->exchangeArray(array_values($specArray['fields']));
+    $result->exchangeArray(\array_values($specArray['fields']));
   }
 
   /**

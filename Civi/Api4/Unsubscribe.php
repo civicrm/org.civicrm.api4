@@ -8,5 +8,4 @@ use Civi\Api4\Generic\AbstractEntity;
  * Class Unsubscribe.
  */
 class Unsubscribe extends AbstractEntity {
-
 }

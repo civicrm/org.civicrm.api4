@@ -30,7 +30,7 @@ namespace Civi\Api4\Action\Entity;
 
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
-use CRM_Core_DAO_AllCoreTables as AllTables;
+use Civi\Api4\Utils\EntityUtil;
 
 /**
  * Get a list of FK links between entities.
@@ -46,24 +46,24 @@ class GetLinks extends AbstractAction {
     /** @var \Civi\Api4\Service\Schema\SchemaMap $schema */
     $schema = \Civi::container()->get('schema_map');
     foreach ($schema->getTables() as $table) {
-      $entity
-        = AllTables::getBriefName(AllTables::getClassForTable($table->getName()));
+
+      $entity = EntityUtil::getClassFromTable($table->getName());
       // Since this is an api function, exclude tables that don't have an api.
       if (class_exists('\Civi\Api4\\' . $entity)) {
         $item = [
           'entity' => $entity,
-          'table'  => $table->getName(),
-          'links'  => [],
+          'table' => $table->getName(),
+          'links' => [],
         ];
         foreach ($table->getTableLinks() as $link) {
           $link = $link->toArray();
-          $link['entity']
-            = AllTables::getBriefName(AllTables::getClassForTable($link['targetTable']));
+          $link['entity'] = EntityUtil::getClassFromTable($link['targetTable']);
           $item['links'][] = $link;
         }
         $result[] = $item;
       }
     }
+
     return $result;
   }
 

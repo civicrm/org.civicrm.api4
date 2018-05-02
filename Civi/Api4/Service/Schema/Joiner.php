@@ -14,7 +14,7 @@ class Joiner {
   protected $schemaMap;
 
   /**
-   * @var \Civi\Api4\Service\Schema\Joinable\Joinable[][]
+   * @var Joinable\Joinable[]
    */
   protected $cache = [];
 
@@ -30,13 +30,13 @@ class Joiner {
    *   The query object to do the joins on.
    * @param string $joinPath
    *   A path of aliases in dot notation, e.g.
-   *                         contact.phone.
+   *   contact.phone.
    * @param string $side
    *   Can be LEFT or INNER.
    *
    * @throws \Exception
    *
-   * @return \Civi\Api4\Service\Schema\Joinable\Joinable[]
+   * @return Joinable\Joinable[]
    *   The path used to make the join
    */
   public function join(Api4SelectQuery $query, $joinPath, $side = 'LEFT') {
@@ -63,18 +63,17 @@ class Joiner {
    * @return array
    */
   protected function getPath($baseTable, $joinPath) {
-    $cacheKey = sprintf('%s.%s', $baseTable, $joinPath);
+    $cacheKey = \sprintf('%s.%s', $baseTable, $joinPath);
     if (!isset($this->cache[$cacheKey])) {
-      $stack = explode('.', $joinPath);
+      $stack = \explode('.', $joinPath);
       $fullPath = [];
       foreach ($stack as $key => $targetAlias) {
         $links = $this->schemaMap->getPath($baseTable, $targetAlias);
         if (empty($links)) {
-          throw new \Exception(sprintf('Cannot join %s to %s', $baseTable,
-          $targetAlias));
+          throw new \Exception(\sprintf('Cannot join %s to %s', $baseTable, $targetAlias));
         }
-        $fullPath = array_merge($fullPath, $links);
-        $lastLink = end($links);
+        $fullPath = \array_merge($fullPath, $links);
+        $lastLink = \end($links);
         $baseTable = $lastLink->getTargetTable();
       }
       $this->cache[$cacheKey] = $fullPath;

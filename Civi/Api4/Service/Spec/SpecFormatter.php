@@ -2,20 +2,23 @@
 
 namespace Civi\Api4\Service\Spec;
 
+use CRM_Core_BAO_CustomField as BAO_CustomField;
+use CRM_Core_DAO as DAO;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
 use CRM_Utils_Array as ArrayHelper;
 
 /**
  * Class SpecFormatter.
  */
-class SpecFormatter {
-
+class SpecFormatter
+{
   /**
    * @param RequestSpec $spec
    *
    * @return array
    */
-  public static function specToArray(RequestSpec $spec) {
+  public static function specToArray(RequestSpec $spec)
+  {
     $specArray = [];
     $specArray['entity'] = $spec->getEntity();
     $specArray['action'] = $spec->getAction();
@@ -34,24 +37,24 @@ class SpecFormatter {
    *
    * @return FieldSpec
    */
-  public static function arrayToField(array $data) {
+  public static function arrayToField(array $data)
+  {
     $dataTypeName = self::getDataType($data);
     if (!empty($data['custom_group_id'])) {
-      $name = $data['custom_group']['name'] . '.' . $data['name'];
+      $name = $data['custom_group']['name'].'.'.$data['name'];
       $field = new CustomFieldSpec($name, $dataTypeName);
       $field->setCustomFieldId(ArrayHelper::value('id', $data));
       $field->setCustomGroupId($data['custom_group_id']);
       $field->setRequired((bool) ArrayHelper::value('is_required', $data,
-      FALSE));
+    false));
       $field->setTitle(ArrayHelper::value('label', $data));
-      if (\CRM_Core_BAO_CustomField::isSerialized($data)) {
-        $field->setSerialize(\CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND);
+      if (BAO_CustomField::isSerialized($data)) {
+        $field->setSerialize(DAO::SERIALIZE_SEPARATOR_BOOKEND);
       }
-    }
-    else {
+    } else {
       $name = ArrayHelper::value('name', $data);
       $field = new FieldSpec($name, $dataTypeName);
-      $field->setRequired((bool) ArrayHelper::value('required', $data, FALSE));
+      $field->setRequired((bool) ArrayHelper::value('required', $data, false));
       $field->setTitle(ArrayHelper::value('title', $data));
       $field->setSerialize(ArrayHelper::value('serialize', $data));
     }
@@ -73,12 +76,13 @@ class SpecFormatter {
    *
    * @return string
    */
-  private static function getDataType(array $data) {
+  private static function getDataType(array $data)
+  {
     if (isset($data['data_type'])) {
       return $data['data_type'];
     }
     $dataTypeInt = ArrayHelper::value('type', $data);
+
     return \CRM_Utils_Type::typeToString($dataTypeInt);
   }
-
 }
