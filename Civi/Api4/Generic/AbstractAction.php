@@ -191,8 +191,7 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   public function getParams() {
     $params = [];
-    $properties
-                = $this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED);
+    $properties = $this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED);
     foreach ($properties as $property) {
       $name = $property->getName();
       $params[$name] = $this->{$name};
