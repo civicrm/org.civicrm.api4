@@ -217,6 +217,8 @@ class Api4SelectQuery extends SelectQuery {
 
   /**
    * @param $key
+   *
+   * @throws \Exception
    */
   protected function joinFK($key) {
     $stack = explode('.', $key);
@@ -225,6 +227,7 @@ class Api4SelectQuery extends SelectQuery {
       return;
     }
 
+    /** @var \Civi\Api4\Service\Schema\Joiner $joiner */
     $joiner = \Civi::container()->get('joiner');
     $finalDot = strrpos($key, '.');
     $pathString = substr($key, 0, $finalDot);
@@ -235,6 +238,7 @@ class Api4SelectQuery extends SelectQuery {
     }
 
     $joinPath = $joiner->join($this, $pathString);
+    /** @var \Civi\Api4\Service\Schema\Joinable\Joinable $lastLink */
     $lastLink = end($joinPath);
 
     // custom groups use aliases for field names
@@ -245,6 +249,32 @@ class Api4SelectQuery extends SelectQuery {
         'column_name',
         'name'
       );
+    }
+   
+    if ('*' === $field) {
+      $entity_name = \str_replace('civicrm_', '', $lastLink->getTargetTable());
+      $entity_name = _civicrm_api_get_camel_name($entity_name);
+
+      try {
+        /** @var \Civi\Api4\Generic\Result $fields */
+        $fields = civicrm_api4($entity_name, 'getFields', [
+          'action' => 'get',
+          'includeCustom' => FALSE,
+        ])->indexBy('name');
+      }
+      catch (\Exception $e) {
+        return;
+      }
+
+      foreach ($fields as $item) {
+        $_key = \sprintf('%s.%s', $lastLink->getAlias(), $item['name']);
+       
+        $this->select[] = $_key;
+       
+        $this->fkSelectAliases[$_key] = $_key;
+      }
+
+      return;
     }
 
     $this->fkSelectAliases[$key] = sprintf('%s.%s', $lastLink->getAlias(), $field);
