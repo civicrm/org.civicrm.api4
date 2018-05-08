@@ -60,6 +60,10 @@
         <service id="contact.schema_map.subscriber" class="Civi\Api4\Event\Subscriber\ContactSchemaMapSubscriber">
             <tag name="event_subscriber"/>
         </service>
+        
+        <service id="relationship.schema_map.subscriber" class="Civi\Api4\Event\Subscriber\RelationshipSchemaMapSubscriber">
+            <tag name="event_subscriber"/>
+        </service>
 
         <service id="activity.schema_map.subscriber" class="Civi\Api4\Event\Subscriber\ActivitySchemaMapSubscriber">
             <tag name="event_subscriber"/>
