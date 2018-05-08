@@ -1,5 +1,6 @@
 <?php
 
+define('CIVICRM_CONTAINER_CACHE', 'never');
 ini_set('memory_limit', '2G');
 ini_set('safe_mode', 0);
 $bootCode = cv('php:boot --level=classloader', 'phpcode');
