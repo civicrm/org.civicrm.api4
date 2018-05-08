@@ -48,11 +48,6 @@ class GetFields extends AbstractAction {
   protected $checkPermissions = FALSE;
 
   /**
-   * @var bool
-   */
-  protected $includeCustom = TRUE;
-
-  /**
    * @var string
    */
   protected $action = 'get';
