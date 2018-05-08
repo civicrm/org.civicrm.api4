@@ -2,6 +2,9 @@
 
 namespace Civi\Api4\Service\Spec;
 
+/**
+ * Class CustomFieldSpec.
+ */
 class CustomFieldSpec extends FieldSpec {
   /**
    * @var int

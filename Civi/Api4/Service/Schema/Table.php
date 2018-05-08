@@ -4,15 +4,17 @@ namespace Civi\Api4\Service\Schema;
 
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 
+/**
+ * Class Table.
+ */
 class Table {
-
   /**
    * @var string
    */
   protected $name;
 
   /**
-   * @var Joinable[]
+   * @var \Civi\Api4\Service\Schema\Joinable\Joinable[]
    *   Array of links to other tables
    */
   protected $tableLinks = [];
@@ -22,6 +24,34 @@ class Table {
    */
   public function __construct($name) {
     $this->name = $name;
+  }
+
+  /**
+   * @return \Civi\Api4\Service\Schema\Joinable\Joinable[]
+   */
+  public function getTableLinks() {
+    return $this->tableLinks;
+  }
+
+  /**
+   * @param mixed $tableLinks
+   *
+   * @return $this
+   */
+  public function setTableLinks($tableLinks) {
+    $this->tableLinks = $tableLinks;
+
+    return $this;
+  }
+
+  /**
+   * @return \Civi\Api4\Service\Schema\Joinable\Joinable[]
+   *   Only those links that are not joining the table to itself
+   */
+  public function getExternalLinks() {
+    return \array_filter($this->tableLinks, function (Joinable $joinable) {
+       return $joinable->getTargetTable() !== $this->getName();
+    });
   }
 
   /**
@@ -43,24 +73,7 @@ class Table {
   }
 
   /**
-   * @return Joinable[]
-   */
-  public function getTableLinks() {
-    return $this->tableLinks;
-  }
-
-  /**
-   * @return Joinable[]
-   *   Only those links that are not joining the table to itself
-   */
-  public function getExternalLinks() {
-    return array_filter($this->tableLinks, function (Joinable $joinable) {
-      return $joinable->getTargetTable() !== $this->getName();
-    });
-  }
-
-  /**
-   * @param Joinable $linkToRemove
+   * @param \Civi\Api4\Service\Schema\Joinable\Joinable $linkToRemove
    */
   public function removeLink(Joinable $linkToRemove) {
     foreach ($this->tableLinks as $index => $link) {
@@ -72,7 +85,7 @@ class Table {
 
   /**
    * @param string $baseColumn
-   * @param Joinable $joinable
+   * @param \Civi\Api4\Service\Schema\Joinable\Joinable $joinable
    *
    * @return $this
    */
@@ -80,7 +93,6 @@ class Table {
     $target = $joinable->getTargetTable();
     $targetCol = $joinable->getTargetColumn();
     $alias = $joinable->getAlias();
-
     if (!$this->hasLink($target, $targetCol, $alias)) {
       if (!$joinable->getBaseTable()) {
         $joinable->setBaseTable($this->getName());
@@ -95,17 +107,6 @@ class Table {
   }
 
   /**
-   * @param mixed $tableLinks
-   *
-   * @return $this
-   */
-  public function setTableLinks($tableLinks) {
-    $this->tableLinks = $tableLinks;
-
-    return $this;
-  }
-
-  /**
    * @param $target
    * @param $targetCol
    * @param $alias
@@ -114,10 +115,7 @@ class Table {
    */
   private function hasLink($target, $targetCol, $alias) {
     foreach ($this->tableLinks as $link) {
-      if ($link->getTargetTable() === $target
-        && $link->getTargetColumn() === $targetCol
-        && $link->getAlias() === $alias
-      ) {
+      if ($link->getTargetTable() === $target && $link->getTargetColumn() === $targetCol && $link->getAlias() === $alias) {
         return TRUE;
       }
     }

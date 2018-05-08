@@ -2,8 +2,10 @@
 
 namespace Civi\Api4\Service\Spec;
 
+/**
+ * Class RequestSpec.
+ */
 class RequestSpec {
-
   /**
    * @var string
    */
@@ -28,6 +30,9 @@ class RequestSpec {
     $this->action = $action;
   }
 
+  /**
+   * @param FieldSpec $field
+   */
   public function addFieldSpec(FieldSpec $field) {
     $this->fields[] = $field;
   }
@@ -43,8 +48,6 @@ class RequestSpec {
         return $field;
       }
     }
-
-    return NULL;
   }
 
   /**
@@ -52,8 +55,8 @@ class RequestSpec {
    *   Gets all the field names currently part of the specification
    */
   public function getFieldNames() {
-    return array_map(function(FieldSpec $field) {
-      return $field->getName();
+    return \array_map(function (FieldSpec $field) {
+       return $field->getName();
     }, $this->fields);
   }
 
@@ -61,8 +64,8 @@ class RequestSpec {
    * @return array|FieldSpec[]
    */
   public function getRequiredFields() {
-    return array_filter($this->fields, function (FieldSpec $field) {
-      return $field->isRequired();
+    return \array_filter($this->fields, function (FieldSpec $field) {
+       return $field->isRequired();
     });
   }
 

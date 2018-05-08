@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -35,38 +36,43 @@ class Result extends \ArrayObject {
    * @var string
    */
   public $entity;
+
   /**
    * @var string
    */
   public $action;
+
   /**
-   * Api version
+   * Api version.
+   *
    * @var int
    */
   public $version = 4;
 
   /**
    * Return first result.
+   *
    * @return array|null
    */
   public function first() {
     foreach ($this as $values) {
       return $values;
     }
-    return NULL;
   }
 
   /**
-   * Re-index the results array (which by default is non-associative)
+   * Re-index the results array (which by default is non-associative).
    *
-   * Drops any item from the results that does not contain the specified key
+   * Drops any item from the results that does not contain the specified key.
    *
    * @param string $key
-   * @return $this
+   *
    * @throws \API_Exception
+   *
+   * @return $this
    */
   public function indexBy($key) {
-    if (count($this)) {
+    if (\count($this)) {
       $newResults = [];
       foreach ($this as $values) {
         if (isset($values[$key])) {
@@ -74,10 +80,11 @@ class Result extends \ArrayObject {
         }
       }
       if (!$newResults) {
-        throw new \API_Exception("Key $key not found in api results");
+        throw new \API_Exception("Key ${key} not found in api results");
       }
       $this->exchangeArray($newResults);
     }
+
     return $this;
   }
 

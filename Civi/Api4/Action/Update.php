@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -24,21 +25,25 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
+
 namespace Civi\Api4\Action;
+
 use Civi\Api4\Generic\Result;
 
 /**
- * Update one or more records with new values. Use the where clause to select them.
+ * Update one or more records with new values. Use the where clause to select
+ * them.
  *
- * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
+ * @method $this setValues(array $values)
+ * Set all field values from an array of key => value pairs.
  * @method $this addValue($field, $value) Set field value to update.
  */
 class Update extends Get {
-
   /**
    * Criteria for selecting items to update.
    *
    * @required
+   *
    * @var array
    */
   protected $where = [];
@@ -60,7 +65,11 @@ class Update extends Get {
   }
 
   /**
-   * @inheritDoc
+   * @param \Civi\Api4\Generic\Result $result
+   *
+   * @throws \API_Exception
+   * @throws \CRM_Core_Exception
+   * @throws \Exception
    */
   public function _run(Result $result) {
     if (!empty($this->values['id'])) {
@@ -68,12 +77,12 @@ class Update extends Get {
     }
     // First run the parent action (get)
     $this->select = ['id'];
-    // For some reason the contact bao requires this
-    if ($this->getEntity() == 'Contact') {
+    // For some reason the contact bao requires this.
+    if ('Contact' === $this->getEntity()) {
       $this->select[] = 'contact_type';
     }
     parent::_run($result);
-    // Then act on the result
+    // Then act on the result.
     $updated_results = [];
     foreach ($result as $item) {
       $updated_results[$item['id']] = $this->writeObject($this->values + $item);

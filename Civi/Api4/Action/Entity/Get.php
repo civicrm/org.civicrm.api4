@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -31,30 +32,30 @@ use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 
 /**
- * Get entities
+ * Get entities.
  */
 class Get extends AbstractAction {
 
   /**
-   * Scan all api directories to discover entities
+   * Scan all api directories to discover entities.
    *
-   * @param Result $result
+   * @param \Civi\Api4\Generic\Result $result
    */
   public function _run(Result $result) {
     $entities = [];
-    foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
+    foreach (\explode(PATH_SEPARATOR, \get_include_path()) as $path) {
       $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4';
-      if (is_dir($dir)) {
-        foreach (glob("$dir/*.php") as $file) {
+      if (\is_dir($dir)) {
+        foreach (\glob("${dir}/*.php") as $file) {
           $matches = [];
-          preg_match('/(\w*).php/', $file, $matches);
+          \preg_match('/(\w*).php/', $file, $matches);
           $entities[$matches[1]] = $matches[1];
         }
       }
     }
-    $entities = array_values($entities);
-    if (in_array('BaseEntity', $entities)) {
-      unset($entities[array_search('BaseEntity', $entities)]);
+    $entities = \array_values($entities);
+    if (\in_array('BaseEntity', $entities)) {
+      unset($entities[\array_search('BaseEntity', $entities)]);
     }
     $result->exchangeArray($entities);
   }

@@ -5,19 +5,28 @@ namespace Civi\Api4\Service\Spec\Provider;
 use Civi\Api4\Action\Actions;
 use Civi\Api4\Service\Spec\RequestSpec;
 
+/**
+ * Class CustomGroupCreationSpecProvider.
+ */
 class CustomGroupCreationSpecProvider implements SpecProviderInterface {
+
   /**
-   * @inheritDoc
+   * @param string $entity
+   * @param string $action
+   *
+   * @return bool
    */
-  public function modifySpec(RequestSpec $spec) {
-    return $spec->getFieldByName('extends')->setRequired(TRUE);
+  public function applies($entity, $action) {
+    return 'CustomGroup' === $entity && Actions::CREATE === $action;
   }
 
   /**
-   * @inheritDoc
+   * @param \Civi\Api4\Service\Spec\RequestSpec $spec
+   *
+   * @return \Civi\Api4\Service\Spec\FieldSpec|null
    */
-  public function applies($entity, $action) {
-    return $entity === 'CustomGroup' && $action === Actions::CREATE;
+  public function modifySpec(RequestSpec $spec) {
+    return $spec->getFieldByName('extends')->setRequired(TRUE);
   }
 
 }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -24,42 +25,54 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
+
 namespace Civi\Api4\Action;
+
 use Civi\Api4\Generic\Result;
 
 /**
  * Delete one or more items, based on criteria specified in Where param.
  */
 class Delete extends Get {
-
   /**
    * Criteria for selecting items to delete.
    *
    * @required
+   *
    * @var array
    */
   protected $where = [];
 
   /**
-   * Batch delete function
+   * Batch delete function.
+   *
    * @todo much of this should be abstracted out to a generic batch handler
+   *
+   * @param \Civi\Api4\Generic\Result $result
+   *
+   * @throws \Civi\API\Exception\UnauthorizedException
+   * @throws \API_Exception
+   * @throws \CRM_Core_Exception
+   * @throws \Exception
+   *
+   * @return \Civi\Api4\Generic\Result
    */
   public function _run(Result $result) {
     $baoName = $this->getBaoName();
     $this->setSelect(['id']);
     $defaults = $this->getParamDefaults();
-    if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
+    if ($defaults['where'] && !\array_diff_key($this->where, $defaults['where'])) {
       throw new \API_Exception('Cannot delete with no "where" paramater specified');
     }
-    // run the parent action (get) to get the list
+    // Run the parent action (get) to get the list.
     parent::_run($result);
-    // Then act on the result
+    // Then act on the result.
     $ids = [];
-    if (method_exists($baoName, 'del')) {
+    if (\method_exists($baoName, 'del')) {
       foreach ($result as $item) {
         $args = [$item['id']];
-        $bao = call_user_func_array([$baoName, 'del'], $args);
-        if ($bao !== FALSE) {
+        $bao = \call_user_func_array([$baoName, 'del'], $args);
+        if (FALSE !== $bao) {
           $ids[] = $item['id'];
         }
         else {
@@ -69,9 +82,10 @@ class Delete extends Get {
     }
     else {
       foreach ($result as $item) {
+        /** @var \CRM_Core_DAO $bao */
         $bao = new $baoName();
         $bao->id = $item['id'];
-        // delete it
+        // Delete it.
         $action_result = $bao->delete();
         if ($action_result) {
           $ids[] = $item['id'];
@@ -82,6 +96,7 @@ class Delete extends Get {
       }
     }
     $result->exchangeArray($ids);
+
     return $result;
   }
 

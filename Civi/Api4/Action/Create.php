@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -33,13 +34,13 @@ use Civi\Api4\Generic\Result;
 /**
  * Base class for all create actions.
  *
- * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
+ * @method $this setValues(array $values) Set all field values from an array of
+ *                                        key => value pairs.
  * @method $this addValue($field, $value) Set field value.
  */
 class Create extends AbstractAction {
-
   /**
-   * Field values to set
+   * Field values to set.
    *
    * @var array
    */
@@ -55,16 +56,16 @@ class Create extends AbstractAction {
   }
 
   /**
-   * @inheritDoc
+   * @param \Civi\Api4\Generic\Result $result
+   *
+   * @throws \API_Exception
    */
   public function _run(Result $result) {
     if (!empty($this->values['id'])) {
       throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
     }
-
     $resultArray = $this->writeObject($this->values);
-
-    // fixme should return a single row array???
+    // Fixme should return a single row array???
     $result->exchangeArray($resultArray);
   }
 

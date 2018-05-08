@@ -5,10 +5,13 @@ namespace Civi\Api4\Event\Subscriber;
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\SchemaMapBuildEvent;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
-use Civi\Api4\Service\Schema\Table;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Class ContactSchemaMapSubscriber.
+ */
 class ContactSchemaMapSubscriber implements EventSubscriberInterface {
+
   /**
    * @return array
    */
@@ -19,7 +22,7 @@ class ContactSchemaMapSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * @param SchemaMapBuildEvent $event
+   * @param \Civi\Api4\Event\SchemaMapBuildEvent $event
    */
   public function onSchemaBuild(SchemaMapBuildEvent $event) {
     $schema = $event->getSchemaMap();
@@ -29,23 +32,26 @@ class ContactSchemaMapSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * @param Table $table
+   * @param \Civi\Api4\Service\Schema\Table $table
    */
   private function addCreatedActivitiesLink($table) {
     $alias = 'created_activities';
-    $joinable = new Joinable('civicrm_activity_contact', 'contact_id', $alias);
+    $targetTable = 'civicrm_activity_contact';
+    $targetColumn = 'contact_id';
+    $joinable = new Joinable($targetTable, $targetColumn, $alias);
     $joinable->addCondition($alias . '.record_type_id = 1');
     $joinable->setJoinType($joinable::JOIN_TYPE_ONE_TO_MANY);
     $table->addTableLink('id', $joinable);
   }
 
   /**
-   * @param Table $table
+   * @param \Civi\Api4\Service\Schema\Table $table
    */
   private function fixPreferredLanguageAlias($table) {
     foreach ($table->getExternalLinks() as $link) {
-      if ($link->getAlias() === 'languages') {
+      if ('languages' === $link->getAlias()) {
         $link->setAlias('preferred_language');
+
         return;
       }
     }

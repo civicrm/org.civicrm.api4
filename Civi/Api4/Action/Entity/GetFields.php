@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -27,23 +28,40 @@
 
 namespace Civi\Api4\Action\Entity;
 
+use Civi\API\Exception\UnauthorizedException;
+use Civi\Api4\Action\GetFields as GenericGetFields;
+use Civi\Api4\Entity;
 use Civi\Api4\Generic\Result;
-use \Civi\Api4\Action\GetFields as GenericGetFields;
 
 /**
- * Get fields for all entities
+ * Get fields for all entities.
  */
 class GetFields extends GenericGetFields {
 
+  /**
+   * @param \Civi\Api4\Generic\Result $result
+   *
+   * @throws \API_Exception
+   * @throws \Civi\API\Exception\NotImplementedException
+   * @throws \ReflectionException
+   */
   public function _run(Result $result) {
     $action = $this->getAction();
     $includeCustom = $this->getIncludeCustom();
-    $entities = \Civi\Api4\Entity::get()->execute();
+    try {
+      $entities = Entity::get()->execute();
+    }
+    catch (UnauthorizedException $e) {
+    }
     foreach ($entities as $entity) {
       $data = ['entity' => $entity, 'fields' => []];
-      // Prevent infinite recursion
-      if ($entity != 'Entity') {
-        $data['fields'] = (array) civicrm_api4($entity, 'getFields', ['action' => $action, 'includeCustom' => $includeCustom]);
+      // Prevent infinite recursion.
+      if ('Entity' !== $entity) {
+        $data['fields'] = (array) civicrm_api4(
+         $entity,
+         'getFields',
+         ['action' => $action, 'includeCustom' => $includeCustom]
+        );
       }
       $result[] = $data;
     }

@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -27,6 +28,7 @@
 
 namespace Civi\Api4\Event\Subscriber;
 
+use Civi\API\Event\AuthorizeEvent;
 use Civi\API\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -36,6 +38,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
  * Civi\API\Annotation\Permission.
  */
 class PermissionCheckSubscriber implements EventSubscriberInterface {
+
   /**
    * @return array
    */
@@ -51,14 +54,12 @@ class PermissionCheckSubscriber implements EventSubscriberInterface {
    * @param \Civi\API\Event\AuthorizeEvent $event
    *   API authorization event.
    */
-  public function onApiAuthorize(\Civi\API\Event\AuthorizeEvent $event) {
+  public function onApiAuthorize(AuthorizeEvent $event) {
     /* @var \Civi\Api4\Generic\AbstractAction $apiRequest */
     $apiRequest = $event->getApiRequest();
-    if ($apiRequest['version'] == 4) {
-      if (!$apiRequest->getCheckPermissions() || $apiRequest->isAuthorized()) {
-        $event->authorize();
-        $event->stopPropagation();
-      }
+    if (4 === $apiRequest['version'] && (!$apiRequest->getCheckPermissions() || $apiRequest->isAuthorized())) {
+      $event->authorize();
+      $event->stopPropagation();
     }
   }
 

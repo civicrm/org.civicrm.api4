@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -28,42 +29,50 @@
 namespace Civi\Api4\Event\Subscriber;
 
 use Civi\API\Event\PrepareEvent;
+use Civi\Api4\Generic\AbstractAction;
 
 /**
- * Validate field inputs based on annotations in the action class
+ * Validate field inputs based on annotations in the action class.
  */
 class ValidateFieldsSubscriber extends AbstractPrepareSubscriber {
 
   /**
-   * @param PrepareEvent $event
+   * @param \Civi\API\Event\PrepareEvent $event
+   *
    * @throws \Exception
    */
   public function onApiPrepare(PrepareEvent $event) {
     /** @var \Civi\Api4\Generic\AbstractAction $apiRequest */
     $apiRequest = $event->getApiRequest();
-    if (is_a($apiRequest, 'Civi\Api4\Generic\AbstractAction')) {
+    if (\is_a($apiRequest, AbstractAction::class)) {
       $paramInfo = $apiRequest->getParamInfo();
       foreach ($paramInfo as $param => $info) {
-        $getParam = 'get' . ucfirst($param);
-        $value = $apiRequest->$getParam();
-        // Required fields
-        if (!empty($info['required']) && (!$value && $value !== 0 && $value !== '0')) {
-          throw new \API_Exception('Parameter "' . $param . '" is required.');
+        $getParam = 'get' . \ucfirst($param);
+        $value = $apiRequest->{$getParam}();
+        // Required fields.
+        if (!empty($info['required']) && (!$value && 0 !== $value && '0' !== $value)) {
+          throw new \API_Exception("Parameter \"{$param}\" is required.");
         }
         if (!empty($info['type']) && !self::checkType($value, $info['type'])) {
-          throw new \API_Exception('Parameter "' . $param . '" is not of the correct type. Expecting ' . implode(' or ', $info['type']) . '.');
+          $expecting_type = \implode(' or ', $info['type']);
+
+          $message = "Parameter \"{$param}\" is not of the correct type. Expecting \"{$expecting_type}\"";
+
+          throw new \API_Exception($message);
         }
       }
     }
   }
 
   /**
-   * Validate variable type on input
+   * Validate variable type on input.
    *
-   * @param $value
-   * @param $types
-   * @return bool
+   * @param mixed $value
+   * @param mixed $types
+   *
    * @throws \API_Exception
+   *
+   * @return bool
    */
   public static function checkType($value, $types) {
     foreach ($types as $type) {
@@ -88,6 +97,7 @@ class ValidateFieldsSubscriber extends AbstractPrepareSubscriber {
           throw new \API_Exception('Unknown paramater type: ' . $type);
       }
     }
+
     return FALSE;
   }
 

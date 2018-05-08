@@ -6,7 +6,11 @@ use Civi\API\Event\PrepareEvent;
 use Civi\API\Events;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+/**
+ * Class AbstractPrepareSubscriber.
+ */
 abstract class AbstractPrepareSubscriber implements EventSubscriberInterface {
+
   /**
    * @return array
    */
@@ -17,7 +21,7 @@ abstract class AbstractPrepareSubscriber implements EventSubscriberInterface {
   }
 
   /**
-   * @param PrepareEvent $event
+   * @param \Civi\API\Event\PrepareEvent $event
    */
   abstract public function onApiPrepare(PrepareEvent $event);
 

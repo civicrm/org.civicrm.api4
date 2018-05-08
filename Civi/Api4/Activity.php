@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -31,8 +32,6 @@ use Civi\Api4\Generic\AbstractEntity;
 
 /**
  * Activity entity.
- *
  */
 class Activity extends AbstractEntity {
-
 }

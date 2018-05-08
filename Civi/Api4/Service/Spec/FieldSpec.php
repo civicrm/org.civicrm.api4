@@ -2,7 +2,17 @@
 
 namespace Civi\Api4\Service\Spec;
 
+/**
+ * Class FieldSpec.
+ */
 class FieldSpec {
+  /**
+   * Aliases for the valid data types.
+   *
+   * @var array
+   */
+  public static $typeAliases = ['Int' => 'Integer'];
+
   /**
    * @var mixed
    */
@@ -49,17 +59,10 @@ class FieldSpec {
   protected $serialize;
 
   /**
-   * Aliases for the valid data types
+   * @param        $name
+   * @param string $dataType
    *
-   * @var array
-   */
-  public static $typeAliases = [
-    'Int' => 'Integer',
-  ];
-
-  /**
-   * @param $name
-   * @param $dataType
+   * @throws \Exception
    */
   public function __construct($name, $dataType = 'String') {
     $this->setName($name);
@@ -166,18 +169,17 @@ class FieldSpec {
   /**
    * @param $dataType
    *
-   * @return $this
    * @throws \Exception
+   *
+   * @return $this
    */
   public function setDataType($dataType) {
-    if (array_key_exists($dataType, self::$typeAliases)) {
+    if (\array_key_exists($dataType, self::$typeAliases)) {
       $dataType = self::$typeAliases[$dataType];
     }
-
-    if (!in_array($dataType, $this->getValidDataTypes())) {
-      throw new \Exception(sprintf('Invalid data type "%s', $dataType));
+    if (!\in_array($dataType, $this->getValidDataTypes())) {
+      throw new \Exception(\sprintf('Invalid data type "%s', $dataType));
     }
-
     $this->dataType = $dataType;
 
     return $this;
@@ -198,15 +200,17 @@ class FieldSpec {
   }
 
   /**
-   * Add valid types that are not not part of \CRM_Utils_Type::dataTypes
+   * Add valid types that are not not part of \CRM_Utils_Type::dataTypes.
    *
    * @return array
    */
   private function getValidDataTypes() {
-    $extraTypes = ['Boolean', 'Text', 'Float'];
-    $extraTypes = array_combine($extraTypes, $extraTypes);
+    $extra_types = ['Boolean', 'Text', 'Float', 'Memo'];
+    $valid_types = \array_keys(\CRM_Utils_Type::getValidTypes());
+    $extra_types = \array_merge($extra_types, $valid_types);
+    $extra_types = \array_combine($extra_types, $extra_types);
 
-    return array_merge(\CRM_Utils_Type::dataTypes(), $extraTypes);
+    return \array_merge(\CRM_Utils_Type::dataTypes(), $extra_types);
   }
 
   /**
@@ -252,12 +256,16 @@ class FieldSpec {
     return $this;
   }
 
+  /**
+   * @return array
+   */
   public function toArray() {
     $ret = [];
-    foreach (get_object_vars($this) as $key => $val) {
-      $key = strtolower(preg_replace('/(?=[A-Z])/', '_$0', $key));
+    foreach (\get_object_vars($this) as $key => $val) {
+      $key = \strtolower(\preg_replace('/(?=[A-Z])/', '_$0', $key));
       $ret[$key] = $val;
     }
+
     return $ret;
   }
 

@@ -2,13 +2,18 @@
 
 namespace Civi\Api4\Service\Schema\Joinable;
 
+/**
+ * Class Joinable.
+ */
 class Joinable {
-
   const JOIN_SIDE_LEFT = 'LEFT';
+
   const JOIN_SIDE_INNER = 'INNER';
 
   const JOIN_TYPE_ONE_TO_ONE = '1_to_1';
+
   const JOIN_TYPE_MANY_TO_ONE = 'n_to_1';
+
   const JOIN_TYPE_ONE_TO_MANY = '1_to_n';
 
   /**
@@ -52,18 +57,29 @@ class Joinable {
   protected $joinType = self::JOIN_TYPE_ONE_TO_ONE;
 
   /**
-   * @param $targetTable
-   * @param $targetColumn
+   * @param             $targetTable
+   * @param             $targetColumn
    * @param string|null $alias
    */
   public function __construct($targetTable, $targetColumn, $alias = NULL) {
     $this->targetTable = $targetTable;
     $this->targetColumn = $targetColumn;
-    $this->alias = $alias ?: str_replace('civicrm_', '', $targetTable);
+    $this->alias = $alias ?: \str_replace('civicrm_', '', $targetTable);
   }
 
   /**
-   * Gets conditions required when joining to a base table
+   * @param array $conditions
+   *
+   * @return $this
+   */
+  public function setConditions($conditions) {
+    $this->conditions = $conditions;
+
+    return $this;
+  }
+
+  /**
+   * Gets conditions required when joining to a base table.
    *
    * @param string|null $baseTableAlias
    *   Name of the base table, if aliased.
@@ -71,15 +87,27 @@ class Joinable {
    * @return array
    */
   public function getConditionsForJoin($baseTableAlias = NULL) {
-    $baseCondition = sprintf(
-      '%s.%s =  %s.%s',
-      $baseTableAlias ?: $this->baseTable,
-      $this->baseColumn,
-      $this->getAlias(),
-      $this->targetColumn
-    );
+    $baseCondition = \sprintf('%s.%s =  %s.%s', $baseTableAlias ?: $this->baseTable, $this->baseColumn, $this->getAlias(), $this->targetColumn);
 
-    return array_merge([$baseCondition], $this->conditions);
+    return \array_merge([$baseCondition], $this->conditions);
+  }
+
+  /**
+   * @return string
+   */
+  public function getAlias() {
+    return $this->alias;
+  }
+
+  /**
+   * @param string $alias
+   *
+   * @return $this
+   */
+  public function setAlias($alias) {
+    $this->alias = $alias;
+
+    return $this;
   }
 
   /**
@@ -121,17 +149,17 @@ class Joinable {
   /**
    * @return string
    */
-  public function getAlias() {
-    return $this->alias;
+  public function getTargetTable() {
+    return $this->targetTable;
   }
 
   /**
-   * @param string $alias
+   * @param string $targetTable
    *
    * @return $this
    */
-  public function setAlias($alias) {
-    $this->alias = $alias;
+  public function setTargetTable($targetTable) {
+    $this->targetTable = $targetTable;
 
     return $this;
   }
@@ -139,15 +167,19 @@ class Joinable {
   /**
    * @return string
    */
-  public function getTargetTable() {
-    return $this->targetTable;
+  public function getTargetColumn() {
+    return $this->targetColumn;
   }
 
   /**
-   * @return string
+   * @param string $targetColumn
+   *
+   * @return $this
    */
-  public function getTargetColumn() {
-    return $this->targetColumn;
+  public function setTargetColumn($targetColumn) {
+    $this->targetColumn = $targetColumn;
+
+    return $this;
   }
 
   /**
@@ -166,17 +198,6 @@ class Joinable {
    */
   public function getExtraJoinConditions() {
     return $this->conditions;
-  }
-
-  /**
-   * @param array $conditions
-   *
-   * @return $this
-   */
-  public function setConditions($conditions) {
-    $this->conditions = $conditions;
-
-    return $this;
   }
 
   /**
@@ -216,30 +237,10 @@ class Joinable {
   }
 
   /**
-   * @param string $targetTable
-   * @return $this
-   */
-  public function setTargetTable($targetTable) {
-    $this->targetTable = $targetTable;
-
-    return $this;
-  }
-
-  /**
-   * @param string $targetColumn
-   * @return $this
-   */
-  public function setTargetColumn($targetColumn) {
-    $this->targetColumn = $targetColumn;
-
-    return $this;
-  }
-
-  /**
    * @return array
    */
   public function toArray() {
-    return get_object_vars($this);
+    return \get_object_vars($this);
   }
 
 }

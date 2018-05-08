@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -30,13 +31,13 @@ namespace Civi\Api4\Action\Participant;
 use Civi\Api4\Action\Get as DefaultGet;
 
 /**
- * @inheritDoc
+ * {@inheritdoc}
  */
 class Get extends DefaultGet {
-
   /**
-   * @inheritDoc
-   * $example->addWhere('contact_id.contact_type', 'IN', array('Individual', 'Household'))
+   * {@inheritdoc}
+   * $example->addWhere('contact_id.contact_type', 'IN', array('Individual',
+   * 'Household')).
    */
   protected $where = [
     ['is_test', '=', 0],

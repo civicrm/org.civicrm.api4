@@ -24,49 +24,45 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
+
 namespace Civi\Api4\Generic;
 
 use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\Action\Create;
-use Civi\Api4\Action\Delete;
-use Civi\Api4\Action\Get;
-use Civi\Api4\Action\GetActions;
-use Civi\Api4\Action\GetFields;
-use Civi\Api4\Action\Update;
 
 /**
  * Base class for all api entities.
  *
- * @method static Get get
- * @method static GetFields getFields
- * @method static GetActions getActions
- * @method static Create create
- * @method static Update update
- * @method static Delete delete
+ * @method static \Civi\Api4\Action\Get get
+ * @method static \Civi\Api4\Action\GetFields getFields
+ * @method static \Civi\Api4\Action\GetActions getActions
+ * @method static \Civi\Api4\Action\Create create
+ * @method static \Civi\Api4\Action\Update update
+ * @method static \Civi\Api4\Action\Delete delete
  */
 abstract class AbstractEntity {
-
-  /**
-   * Magic method to return the action object for an api.
-   *
-   * @param string $action
-   * @param null $ignore
-   * @return AbstractAction
-   * @throws NotImplementedException
-   */
-  public static function __callStatic($action, $ignore) {
-    // Get entity name from called class
-    $entity = substr(static::class, strrpos(static::class, '\\') + 1);
-    // Find class for this action
-    $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
-    $genericAction = '\Civi\Api4\Action\\' . ucfirst($action);
-    if (class_exists($entityAction)) {
-      return new $entityAction($entity);
-    }
-    elseif (class_exists($genericAction)) {
-      return new $genericAction($entity);
-    }
-    throw new NotImplementedException("Api $entity $action version 4 does not exist.");
-  }
-
+	/**
+	 * Magic method to return the action object for an api.
+	 *
+	 * @param string $action
+	 * @param null   $ignore
+	 *
+	 * @throws NotImplementedException
+	 *
+	 * @return AbstractAction
+	 */
+	public static function __callStatic($action, $ignore) {
+		// Get entity name from called class.
+		$entity = \substr(static::class, \strrpos(static::class, '\\') + 1);
+		// Find class for this action.
+		$_action = \ucfirst($action);
+		$entityAction = "\\Civi\\Api4\\Action\\{$entity}\\{$_action}";
+		$genericAction = "\\Civi\Api4\Action\\{$_action}";
+		if (\class_exists($entityAction)) {
+			return new $entityAction($entity);
+		}
+		if (\class_exists($genericAction)) {
+			return new $genericAction($entity);
+		}
+		throw new NotImplementedException("Api ${entity} ${action} version 4 does not exist.");
+	}
 }

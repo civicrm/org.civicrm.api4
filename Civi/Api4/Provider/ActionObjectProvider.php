@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -28,14 +29,14 @@
 namespace Civi\Api4\Provider;
 
 use Civi\API\Event\ResolveEvent;
+use Civi\API\Events;
 use Civi\API\Provider\ProviderInterface;
 use Civi\Api4\Generic\AbstractAction;
-use Civi\API\Events;
 use Civi\Api4\Generic\Result;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Accept $apiRequests based on \Civi\API\Action
+ * Accept $apiRequests based on \Civi\API\Action.
  */
 class ActionObjectProvider implements EventSubscriberInterface, ProviderInterface {
 
@@ -48,12 +49,13 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
     // handy for testing/mocking.
     return [
       Events::RESOLVE => [
-        ['onApiResolve', Events::W_EARLY],
+                ['onApiResolve', Events::W_EARLY],
       ],
     ];
   }
+
   /**
-   * @param ResolveEvent $event
+   * @param resolveEvent $event
    *   API resolution event.
    */
   public function onApiResolve(ResolveEvent $event) {
@@ -66,7 +68,7 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
    *
    * @param array|AbstractAction $apiRequest
    *
@@ -77,27 +79,32 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
     $result->action = $apiRequest['action'];
     $result->entity = $apiRequest['entity'];
     $apiRequest->_run($result);
+
     return $result;
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
+   *
    * @param int $version
+   *
    * @return array
    */
   public function getEntityNames($version) {
-    /** FIXME */
+    /* FIXME */
     return [];
   }
 
   /**
-   * @inheritDoc
+   * {@inheritdoc}
+   *
    * @param int $version
    * @param string $entity
+   *
    * @return array
    */
   public function getActionNames($version, $entity) {
-    /** FIXME Civi\API\V4\Action\GetActions */
+    /* FIXME Civi\API\V4\Action\GetActions */
     return [];
   }
 

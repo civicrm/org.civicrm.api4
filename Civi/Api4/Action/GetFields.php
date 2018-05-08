@@ -1,4 +1,5 @@
 <?php
+
 /*
  +--------------------------------------------------------------------+
  | CiviCRM version 4.7                                                |
@@ -28,22 +29,20 @@
 namespace Civi\Api4\Action;
 
 use Civi\Api4\Generic\AbstractAction;
-use Civi\Api4\Service\Spec\SpecGatherer;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Service\Spec\SpecFormatter;
 
 /**
- * Get fields for an entity
+ * Get fields for an entity.
  *
  * @method $this setIncludeCustom(bool $value)
- * @method bool getIncludeCustom()
+ * @method bool  getIncludeCustom()
  * @method $this setAction(string $value)
  */
 class GetFields extends AbstractAction {
-
   /**
    * Override default to allow open access
-   * @inheritDoc
+   * {@inheritdoc}.
    */
   protected $checkPermissions = FALSE;
 
@@ -57,14 +56,22 @@ class GetFields extends AbstractAction {
    */
   protected $action = 'get';
 
+  /**
+   * @param \Civi\Api4\Generic\Result $result
+   *
+   * @throws \API_Exception
+   * @throws \Civi\API\Exception\NotImplementedException
+   * @throws \Civi\API\Exception\UnauthorizedException
+   * @throws \Exception
+   */
   public function _run(Result $result) {
-    /** @var SpecGatherer $gatherer */
+    /** @var \Civi\Api4\Service\Spec\SpecGatherer $gatherer */
     $gatherer = \Civi::container()->get('spec_gatherer');
     $spec = $gatherer->getSpec($this->getEntity(), $this->getAction(), $this->includeCustom);
     $specArray = SpecFormatter::specToArray($spec);
     // Fixme - $this->action ought to already be set. Might be a name conflict upstream causing it to be nullified?
     $result->action = 'getFields';
-    $result->exchangeArray(array_values($specArray['fields']));
+    $result->exchangeArray(\array_values($specArray['fields']));
   }
 
   /**
