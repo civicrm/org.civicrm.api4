@@ -81,14 +81,21 @@ abstract class AbstractAction implements \ArrayAccess {
 
   /* @var array */
   private $thisArrayStorage;
+  
+  /* @var bool */
+  protected $includeCustom = FALSE;
 
   /**
    * Action constructor.
    * @param string $entity
    */
   public function __construct($entity) {
+    $customExtendsEntity = \CRM_Core_SelectValues::customGroupExtends();
     $this->entity = $entity;
     $this->thisReflection = new \ReflectionClass($this);
+    if (array_key_exists($this->entity, $customExtendsEntity)) {
+      $this->includeCustom = TRUE;
+    }
   }
 
   /**
