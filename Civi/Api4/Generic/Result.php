@@ -47,13 +47,55 @@ class Result extends \ArrayObject {
 
   /**
    * Return first result.
-   * @return array|null
+   *
+   * @param callable|null $callback
+   * @param null $default
+   *
+   * @return \Civi\Api4\Generic\Result|mixed|null
    */
-  public function first() {
-    foreach ($this as $values) {
-      return $values;
+  public function first(callable $callback = NULL, $default = NULL) {
+    if (NULL === $callback) {
+      if (FALSE === (bool) $this->count()) {
+        return $default;
+      }
+      $this->exchangeArray(\reset($this));
+
+      return $this;
     }
-    return NULL;
+    foreach ($this as $key => $value) {
+      if (\call_user_func($callback, $key, $value)) {
+        if (\is_array($value)) {
+          $this->exchangeArray($value);
+
+          return $this;
+        }
+
+        return $value;
+      }
+    }
+
+    return $default;
+  }
+  
+  /**
+   * @param mixed $key
+   * @param null  $default
+   *
+   * @return \Civi\Api4\Generic\Result|mixed|null
+   */
+  public function get($key, $default = NULL) {
+    if ($this->offsetExists($key)) {
+      $offset = $this->offsetGet($key);
+      if (\is_array($offset)) {
+        $this->exchangeArray($offset);
+
+        return $this;
+      }
+
+      return $offset;
+    }
+
+    return $default;
   }
 
   /**
