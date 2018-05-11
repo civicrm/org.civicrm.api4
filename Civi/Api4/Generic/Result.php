@@ -58,16 +58,14 @@ class Result extends \ArrayObject {
       if (FALSE === (bool) $this->count()) {
         return $default;
       }
-      $this->exchangeArray(\reset($this));
 
-      return $this;
+      return new self(\reset($this));
     }
     foreach ($this as $key => $value) {
       if (\call_user_func($callback, $key, $value)) {
         if (\is_array($value)) {
-          $this->exchangeArray($value);
 
-          return $this;
+          return new self(\reset($this));
         }
 
         return $value;
@@ -87,9 +85,8 @@ class Result extends \ArrayObject {
     if ($this->offsetExists($key)) {
       $offset = $this->offsetGet($key);
       if (\is_array($offset)) {
-        $this->exchangeArray($offset);
-
-        return $this;
+       
+        return new self(\reset($this));
       }
 
       return $offset;
