@@ -31,7 +31,6 @@ namespace Civi\Api4\Generic;
  * Container for api results.
  */
 class Result extends \ArrayObject {
-
   /**
    * @var string
    */
@@ -82,7 +81,7 @@ class Result extends \ArrayObject {
    * can apply later
    *
    * @param callable|null $callback
-   * @param null $default
+   * @param null          $default
    *
    * @return null|\Civi\Api4\Generic\Result
    */
@@ -91,21 +90,24 @@ class Result extends \ArrayObject {
       if ($this->isEmpty()) {
         return $default;
       }
+
       return new self(\reset($this));
     }
     foreach ($this as $key => $value) {
       if (\call_user_func($callback, $key, $value)) {
-        if (\is_array($value) && !empty($value)) {
+        if ($this->isValidStore($value)) {
           return new self(\reset($this));
         }
+
         return $value;
       }
     }
+
     return $default;
   }
 
   /**
-   * How to use:
+   * How to use:.
    *
    * <code>
    * <?php
@@ -130,14 +132,45 @@ class Result extends \ArrayObject {
    * @return \Civi\Api4\Generic\Result|mixed|null
    */
   public function get($key, $default = NULL) {
-    if (!$this->isEmpty() && $this->offsetExists($key)) {
-      $offset = $this->offsetGet($key);
-      if (\is_array($offset) && !empty($offset)) {
-        return new self($offset);
+    if (!$this->isEmpty()) {
+      if (\strpos($key, '.')) {
+        return $this->parseDotNotationKey($key, $default);
       }
-      return $offset;
+
+      if ($this->offsetExists($key)) {
+        $offset = $this->offsetGet($key);
+        if ($this->isValidStore($offset)) {
+          return new self($offset);
+        }
+
+        return $offset;
+      }
     }
+
     return $default;
+  }
+
+  /**
+   * @param string $index
+   * @param null   $default
+   *
+   * @return \Civi\Api4\Generic\Result|mixed|null
+   */
+  private function parseDotNotationKey($index, $default = NULL) {
+    $store = new self($this->getArrayCopy());
+    $keys = \explode('.', $index);
+    foreach ($keys as $innerKey) {
+      if (!$store->offsetExists($innerKey)) {
+        return $default;
+      }
+      if ($this->isValidStore($store[$innerKey])) {
+        $store = new self($store[$innerKey]);
+      }
+      else {
+        $store = $store[$innerKey];
+      }
+    }
+    return $store;
   }
 
   /**
@@ -145,6 +178,15 @@ class Result extends \ArrayObject {
    */
   public function isEmpty() {
     return FALSE === (bool) $this->count();
+  }
+
+  /**
+   * @param mixed $store
+   *
+   * @return bool
+   */
+  private function isValidStore($store) {
+    return (\is_array($store) || \is_object($store)) && !empty($store);
   }
 
   /**
@@ -171,6 +213,7 @@ class Result extends \ArrayObject {
       }
       $this->exchangeArray($newResults);
     }
+
     return $this;
   }
 }
