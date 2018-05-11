@@ -31,16 +31,20 @@ namespace Civi\Api4\Generic;
  * Container for api results.
  */
 class Result extends \ArrayObject {
+
   /**
    * @var string
    */
   public $entity;
+
   /**
    * @var string
    */
   public $action;
+
   /**
-   * Api version
+   * Api version.
+   *
    * @var int
    */
   public $version = 4;
@@ -48,64 +52,114 @@ class Result extends \ArrayObject {
   /**
    * Return first result.
    *
+   * How to use:
+   *
+   * <code>
+   * <?php
+   * use Civi\Api4\Contact;
+   * try {
+   *   $contacts = Contact::get()
+   *   ->addWhere('contact_type','=','Organization')
+   *   ->setLimit(5)
+   *   ->execute();
+   * } catch (\Exception $e) {
+   *   var_dump($e->getMessage());
+   * }
+   *
+   * var_dump($contacts);
+   *
+   * // take first contact without condition
+   * $first_contact = $contacts->first();
+   *
+   * $condition = $contacts->first(function ($key, $value){
+   *  return $value['display_name'] === 'Some Name';
+   * });
+   *
+   * ?>
+   * </code>
+   *
+   * Thus in the variable $contacts always kept the original data, to which we
+   * can apply later
+   *
    * @param callable|null $callback
    * @param null $default
    *
-   * @return \Civi\Api4\Generic\Result|mixed|null
+   * @return null|\Civi\Api4\Generic\Result
    */
   public function first(callable $callback = NULL, $default = NULL) {
     if (NULL === $callback) {
-      if (FALSE === (bool) $this->count()) {
+      if ($this->isEmpty()) {
         return $default;
       }
-
       return new self(\reset($this));
     }
     foreach ($this as $key => $value) {
       if (\call_user_func($callback, $key, $value)) {
-        if (\is_array($value)) {
-
+        if (\is_array($value) && !empty($value)) {
           return new self(\reset($this));
         }
-
         return $value;
       }
     }
-
     return $default;
   }
-  
+
   /**
+   * How to use:
+   *
+   * <code>
+   * <?php
+   * use Civi\Api4\Contact;
+   * try {
+   *   $contacts = Contact::get()
+   *   ->addWhere('contact_type','=','Organization')
+   *   ->setLimit(5)
+   *   ->execute();
+   * } catch (\Exception $e) {
+   *   var_dump($e->getMessage());
+   * }
+   *
+   * var_dump($contacts->first()->get('display_name'));
+   *
+   * ?>
+   * </code>
+   *
    * @param mixed $key
    * @param null  $default
    *
    * @return \Civi\Api4\Generic\Result|mixed|null
    */
   public function get($key, $default = NULL) {
-    if ($this->offsetExists($key)) {
+    if (!$this->isEmpty() && $this->offsetExists($key)) {
       $offset = $this->offsetGet($key);
-      if (\is_array($offset)) {
-       
-        return new self(\reset($this));
+      if (\is_array($offset) && !empty($offset)) {
+        return new self($offset);
       }
-
       return $offset;
     }
-
     return $default;
   }
 
   /**
-   * Re-index the results array (which by default is non-associative)
+   * @return bool
+   */
+  public function isEmpty() {
+    return FALSE === (bool) $this->count();
+  }
+
+  /**
+   * Re-index the results array (which by default is non-associative).
    *
-   * Drops any item from the results that does not contain the specified key
+   * Drops any item from the results that does not contain the specified key.
    *
    * @param string $key
-   * @return $this
+   *
    * @throws \API_Exception
+   *
+   * @return $this
    */
   public function indexBy($key) {
-    if (count($this)) {
+    if (\count($this)) {
       $newResults = [];
       foreach ($this as $values) {
         if (isset($values[$key])) {
@@ -113,11 +167,10 @@ class Result extends \ArrayObject {
         }
       }
       if (!$newResults) {
-        throw new \API_Exception("Key $key not found in api results");
+        throw new \API_Exception("Key ${key} not found in api results");
       }
       $this->exchangeArray($newResults);
     }
     return $this;
   }
-
 }
