@@ -54,10 +54,11 @@ class SpecFormatter {
     $field->setDefaultValue(ArrayHelper::value('default', $data));
     $field->setDescription(ArrayHelper::value('description', $data));
 
-    $fkClassName = ArrayHelper::value('FKClassName', $data);
     $fkAPIName = ArrayHelper::value('FKApiName', $data);
-    $fkEntity = $fkAPIName ?: TableHelper::getBriefName($fkClassName);
-    $field->setFKEntity($fkEntity);
+    if ($fkAPIName) {
+      $fkClassName = ArrayHelper::value('FKClassName', $data);
+      $field->setFkEntity(TableHelper::getBriefName($fkClassName));
+    }
 
     return $field;
   }

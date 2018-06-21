@@ -13,6 +13,14 @@ class CustomFieldSpec extends FieldSpec {
    */
   protected $customGroupId;
 
+  public function __construct($name, $dataType) {
+    if ($dataType === 'ContactReference') {
+      $dataType = 'Integer';
+      $this->setFkEntity('Contact');
+    }
+    parent::__construct($name, $dataType);
+  }
+
   /**
    * @return int
    */
