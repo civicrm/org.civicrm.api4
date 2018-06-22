@@ -65,4 +65,11 @@ class Entity {
     return new GetLinks('Entity');
   }
 
+  /**
+   * @return array
+   */
+  public static function permissions() {
+    return [];
+  }
+
 }

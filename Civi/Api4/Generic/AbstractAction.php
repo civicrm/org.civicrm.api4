@@ -331,7 +331,26 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return bool
    */
   public function isAuthorized() {
-    return TRUE;
+    $permissions = $this->getPermissions();
+    return \CRM_Core_Permission::check($permissions);
+  }
+
+  public function getPermissions() {
+    $permissions = call_user_func(["\\Civi\\Api4\\" . $this->getEntity(), 'permissions']);
+    $permissions += [
+      // applies to getFields, getActions, etc.
+      'meta' => ['access CiviCRM'],
+      // catch-all, applies to create, get, delete, etc.
+      'default' => ['administer CiviCRM'],
+    ];
+    $action = $this->getAction();
+    if (isset($permissions[$action])) {
+      return $permissions[$action];
+    }
+    elseif (in_array($action, ['getActions', 'getFields'])) {
+      return $permissions['meta'];
+    }
+    return $permissions['default'];
   }
 
   /**

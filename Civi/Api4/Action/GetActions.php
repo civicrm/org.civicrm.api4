@@ -93,11 +93,13 @@ class GetActions extends AbstractAction {
       if (!isset($this->_actions[$actionName])) {
         /* @var AbstractAction $action */
         $action = call_user_func(["\\Civi\\Api4\\" . $this->getEntity(), $actionName]);
-        $actionReflection = new \ReflectionClass($action);
-        $actionInfo = ReflectionUtils::getCodeDocs($actionReflection);
-        unset($actionInfo['method']);
-        $this->_actions[$actionName] = ['name' => $actionName] + $actionInfo;
-        $this->_actions[$actionName]['params'] = $action->getParamInfo();
+        if (is_object($action)) {
+          $actionReflection = new \ReflectionClass($action);
+          $actionInfo = ReflectionUtils::getCodeDocs($actionReflection);
+          unset($actionInfo['method']);
+          $this->_actions[$actionName] = ['name' => $actionName] + $actionInfo;
+          $this->_actions[$actionName]['params'] = $action->getParamInfo();
+        }
       }
     }
     catch (NotImplementedException $e) {
