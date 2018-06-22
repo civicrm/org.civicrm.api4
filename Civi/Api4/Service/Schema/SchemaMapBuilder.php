@@ -2,6 +2,7 @@
 
 namespace Civi\Api4\Service\Schema;
 
+use Civi\Api4\Entity;
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\SchemaMapBuildEvent;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
@@ -9,7 +10,6 @@ use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Civi\Api4\Service\Schema\Joinable\OptionValueJoinable;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
-use CRM_Core_BAO_CustomField as CustomFieldBAO;
 use CRM_Utils_Array as ArrayHelper;
 
 class SchemaMapBuilder {
@@ -17,12 +17,17 @@ class SchemaMapBuilder {
    * @var EventDispatcherInterface
    */
   protected $dispatcher;
+  /**
+   * @var array
+   */
+  protected $apiEntities;
 
   /**
    * @param EventDispatcherInterface $dispatcher
    */
   public function __construct(EventDispatcherInterface $dispatcher) {
     $this->dispatcher = $dispatcher;
+    $this->apiEntities = (array) Entity::get()->execute();
   }
 
   /**
@@ -51,7 +56,9 @@ class SchemaMapBuilder {
         $this->addJoins($table, $field, $fieldData);
       }
       $map->addTable($table);
-      $this->addCustomFields($map, $table, $data['name']);
+      if (in_array($data['name'], $this->apiEntities)) {
+        $this->addCustomFields($map, $table, $data['name']);
+      }
     }
 
     $this->addBackReferences($map);
@@ -155,34 +162,43 @@ class SchemaMapBuilder {
     }
   }
 
-  private function addCustomFields(SchemaMap $map, Table $baseTable, $entityName) {
-
-    $parentTypes = ['Contact', 'Individual', 'Organization', 'Household'];
-    if (in_array($entityName, $parentTypes)) {
-      $entityName = $parentTypes;
+  /**
+   * @param \Civi\Api4\Service\Schema\SchemaMap $map
+   * @param \Civi\Api4\Service\Schema\Table $baseTable
+   * @param string $entity
+   */
+  private function addCustomFields(SchemaMap $map, Table $baseTable, $entity) {
+    // Don't be silly
+    $noCustom = ['CustomField', 'CustomGroup', 'OptionGroup', 'OptionValue'];
+    if (in_array($entity, $noCustom) || !\CRM_Utils_Rule::alphanumeric($entity)) {
+      return;
     }
+    if ($entity == 'Contact') {
+      $entity = ['Contact', 'Individual', 'Organization', 'Household'];
+    }
+    $fieldData = \CRM_Utils_SQL_Select::from('civicrm_custom_field f')
+      ->join('custom_group', 'INNER JOIN civicrm_custom_group g ON g.id = f.custom_group_id')
+      ->select(['g.name as custom_group_name', 'g.table_name', 'g.is_multiple', 'f.name', 'label', 'column_name', 'option_group_id'])
+      ->where('g.extends IN (@entity)', ['@entity' => (array) $entity])
+      ->where('g.is_active')
+      ->execute();
 
-    $customFields = CustomFieldBAO::getFields($entityName, TRUE);
-
-    foreach ($customFields as $fieldData) {
-      $tableName = ArrayHelper::value('table_name', $fieldData);
+    while ($fieldData->fetch()) {
+      $tableName = $fieldData->table_name;
 
       $customTable = $map->getTableByName($tableName);
       if (!$customTable) {
         $customTable = new Table($tableName);
       }
 
-      $group = ArrayHelper::value('option_group_id', $fieldData);
-      if ($group) {
-        $label = ArrayHelper::value('label', $fieldData);
-        $columnName = ArrayHelper::value('column_name', $fieldData);
-        $optionValueJoinable = new OptionValueJoinable($group, $label);
-        $customTable->addTableLink($columnName, $optionValueJoinable);
+      if (!empty($fieldData->option_group_id)) {
+        $optionValueJoinable = new OptionValueJoinable($fieldData->option_group_id, $fieldData->label);
+        $customTable->addTableLink($fieldData->column_name, $optionValueJoinable);
       }
 
       $map->addTable($customTable);
-      $alias = ArrayHelper::value('groupTitle', $fieldData);
-      $isMultiple = ArrayHelper::value('is_multiple', $fieldData);
+      $alias = $fieldData->custom_group_name;
+      $isMultiple = !empty($fieldData->is_multiple);
       $joinable = new CustomGroupJoinable($tableName, $alias, $isMultiple);
       $baseTable->addTableLink('id', $joinable);
     }

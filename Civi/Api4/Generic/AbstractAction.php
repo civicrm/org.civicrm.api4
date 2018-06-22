@@ -421,9 +421,14 @@ abstract class AbstractAction implements \ArrayAccess {
     $fields = $this->getEntityFields();
     foreach ($fields as $name => $field) {
       if (!empty($params[$name])) {
+        $value =& $params[$name];
+        // Ensure we have an array for serialized fields
+        if (!empty($field['serialize'] && !is_array($value))) {
+          $value = (array) $value;
+        }
         switch ($field['data_type']) {
           case 'Timestamp':
-            $params[$name] = date('Y-m-d H:i:s', strtotime($params[$name]));
+            $value = date('Y-m-d H:i:s', strtotime($value));
         }
       }
     }
