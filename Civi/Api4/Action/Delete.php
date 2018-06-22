@@ -85,4 +85,15 @@ class Delete extends Get {
     return $result;
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getParamInfo($param = NULL) {
+    $info = parent::getParamInfo($param);
+    if (!$param) {
+      // Delete doesn't actually let you select fields.
+      unset($info['select']);
+    }
+    return $info;
+  }
 }

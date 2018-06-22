@@ -81,4 +81,16 @@ class Update extends Get {
     $result->exchangeArray($updated_results);
   }
 
+  /**
+   * @inheritDoc
+   */
+  public function getParamInfo($param = NULL) {
+    $info = parent::getParamInfo($param);
+    if (!$param) {
+      // Update doesn't actually let you select fields.
+      unset($info['select']);
+    }
+    return $info;
+  }
+
 }
