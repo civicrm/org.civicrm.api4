@@ -29,6 +29,7 @@ namespace Civi\Api4\Generic;
 use Civi\API\Exception\UnauthorizedException;
 use Civi\API\Kernel;
 use Civi\Api4\Utils\ReflectionUtils;
+use CRM_Utils_Array as UtilsArray;
 
 /**
  * Base class for all api actions.
@@ -81,6 +82,9 @@ abstract class AbstractAction implements \ArrayAccess {
 
   /* @var array */
   private $thisArrayStorage;
+
+  /* @var array */
+  private $entityFields;
 
   /**
    * Action constructor.
@@ -338,8 +342,9 @@ abstract class AbstractAction implements \ArrayAccess {
    * @throws \API_Exception
    */
   protected function writeObject($params) {
-    $entityId = \CRM_Utils_Array::value('id', $params);
-    $params = $this->formatCustomParams($params, $this->getEntity(), $entityId);
+    $entityId = UtilsArray::value('id', $params);
+    $this->formatParams($params);
+    $this->formatCustomParams($params, $entityId);
 
     $baoName = $this->getBaoName();
     $bao = new $baoName();
@@ -353,7 +358,7 @@ abstract class AbstractAction implements \ArrayAccess {
       'Website' => 'add',
       'Address' => 'add',
     ];
-    $method = \CRM_Utils_Array::value($this->getEntity(), $oddballs, 'create');
+    $method = UtilsArray::value($this->getEntity(), $oddballs, 'create');
     if (!method_exists($bao, $method)) {
       $method = 'add';
     }
@@ -383,7 +388,8 @@ abstract class AbstractAction implements \ArrayAccess {
     $baoName = $this->getBaoName();
     $hook = empty($params['id']) ? 'create' : 'edit';
 
-    \CRM_Utils_Hook::pre($hook, $this->getEntity(), \CRM_Utils_Array::value('id', $params), $params);
+    \CRM_Utils_Hook::pre($hook, $this->getEntity(), UtilsArray::value('id', $params), $params);
+    /** @var \CRM_Core_DAO $instance */
     $instance = new $baoName();
     $instance->copyValues($params, TRUE);
     $instance->save();
@@ -393,13 +399,43 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   /**
+   * Returns schema fields for this entity & action.
+   *
+   * @return array
+   * @throws \API_Exception
+   */
+  public function getEntityFields() {
+    if (!$this->entityFields) {
+      $this->entityFields = civicrm_api4($this->getEntity(), 'getFields', ['action' => $this->getAction(), 'includeCustom' => FALSE])
+        ->indexBy('name');
+    }
+    return $this->entityFields;
+  }
+
+  /**
+   * Massage values into the format the BAO expects
+   *
    * @param $params
-   * @param $entity
+   */
+  private function formatParams(&$params) {
+    $fields = $this->getEntityFields();
+    foreach ($fields as $name => $field) {
+      if (!empty($params[$name])) {
+        switch ($field['data_type']) {
+          case 'Timestamp':
+            $params[$name] = date('Y-m-d H:i:s', strtotime($params[$name]));
+        }
+      }
+    }
+  }
+
+  /**
+   * @param $params
    * @param $entityId
    * @return mixed
    */
-  private function formatCustomParams($params, $entity, $entityId) {
-    $params['custom'] = $customParams = [];
+  private function formatCustomParams(&$params, $entityId) {
+    $customParams = [];
 
     // $customValueID is the ID of the custom value in the custom table for this
     // entity (i guess this assumes it's not a multi value entity)
@@ -434,7 +470,7 @@ abstract class AbstractAction implements \ArrayAccess {
 
         if ($customFieldType == 'CheckBox') {
           // this function should be part of a class
-          formatCheckBoxField($value, 'custom_' . $customFieldId, $entity);
+          formatCheckBoxField($value, 'custom_' . $customFieldId, $this->getEntity());
         }
 
         \CRM_Core_BAO_CustomField::formatCustomField(
@@ -451,11 +487,9 @@ abstract class AbstractAction implements \ArrayAccess {
       }
     }
 
-    if (!empty($customParams)) {
+    if ($customParams) {
       $params['custom'] = $customParams;
     }
-
-    return $params;
   }
 
 }
