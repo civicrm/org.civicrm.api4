@@ -387,4 +387,15 @@ class Api4SelectQuery extends SelectQuery {
     return $this->joinedTables;
   }
 
+  /**
+   * @return Joinable
+   */
+  public function getJoinedTable($alias) {
+    foreach ($this->joinedTables as $join) {
+      if ($join->getAlias() == $alias) {
+        return $join;
+      }
+    }
+  }
+
 }

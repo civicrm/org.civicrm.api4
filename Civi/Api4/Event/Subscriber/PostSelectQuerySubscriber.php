@@ -51,8 +51,8 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
       $joinPath = $this->getJoinPathInfo($selects[0], $query);
       $selects = $this->formatSelects($finalAlias, $selects, $query);
       $joinResults = $this->getJoinResults($query, $finalAlias, $selects);
+      $this->formatJoinResults($joinResults, $query, $finalAlias);
 
-      // todo: call formatResults to unserialize joinResults
       // Insert join results into original result
       foreach ($results as &$primaryResult) {
         $baseId = $primaryResult['id'];
@@ -65,6 +65,23 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
     }
 
     return array_values($results);
+  }
+
+  /**
+   * @param array $joinResults
+   * @param Api4SelectQuery $query
+   * @param string $alias
+   */
+  private function formatJoinResults(&$joinResults, $query, $alias) {
+    $join = $query->getJoinedTable($alias);
+    $fields = [];
+    foreach ($join->getEntityFields() as $field) {
+      $name = explode('.', $field->getName());
+      $fields[array_pop($name)] = $field->toArray();
+    }
+    if ($fields) {
+      $this->unserializeFields($joinResults, NULL, $fields);
+    }
   }
 
   /**

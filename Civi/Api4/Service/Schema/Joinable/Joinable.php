@@ -2,6 +2,8 @@
 
 namespace Civi\Api4\Service\Schema\Joinable;
 
+use Civi\Api4\Service\Spec\FieldSpec;
+
 class Joinable {
 
   const JOIN_SIDE_LEFT = 'LEFT';
@@ -50,6 +52,11 @@ class Joinable {
    * @var int
    */
   protected $joinType = self::JOIN_TYPE_ONE_TO_ONE;
+
+  /**
+   * @var array
+   */
+  protected $entityFields;
 
   /**
    * @param $targetTable
@@ -240,6 +247,21 @@ class Joinable {
    */
   public function toArray() {
     return get_object_vars($this);
+  }
+
+  /**
+   * @return FieldSpec[]
+   */
+  public function getEntityFields() {
+    if (!$this->entityFields) {
+      $bao = \CRM_Core_DAO_AllCoreTables::getClassForTable($this->getTargetTable());
+      if ($bao) {
+        foreach ($bao::fields() as $field) {
+          $this->entityFields[] = \Civi\Api4\Service\Spec\SpecFormatter::arrayToField($field);
+        }
+      }
+    }
+    return $this->entityFields;
   }
 
 }
