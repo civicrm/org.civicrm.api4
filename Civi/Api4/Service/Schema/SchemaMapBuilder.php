@@ -173,13 +173,14 @@ class SchemaMapBuilder {
     if (in_array($entity, $noCustom) || !\CRM_Utils_Rule::alphanumeric($entity)) {
       return;
     }
+    $queryEntity = (array) $entity;
     if ($entity == 'Contact') {
-      $entity = ['Contact', 'Individual', 'Organization', 'Household'];
+      $queryEntity = ['Contact', 'Individual', 'Organization', 'Household'];
     }
     $fieldData = \CRM_Utils_SQL_Select::from('civicrm_custom_field f')
       ->join('custom_group', 'INNER JOIN civicrm_custom_group g ON g.id = f.custom_group_id')
       ->select(['g.name as custom_group_name', 'g.table_name', 'g.is_multiple', 'f.name', 'label', 'column_name', 'option_group_id'])
-      ->where('g.extends IN (@entity)', ['@entity' => (array) $entity])
+      ->where('g.extends IN (@entity)', ['@entity' => $queryEntity])
       ->where('g.is_active')
       ->execute();
 
@@ -199,7 +200,7 @@ class SchemaMapBuilder {
       $map->addTable($customTable);
       $alias = $fieldData->custom_group_name;
       $isMultiple = !empty($fieldData->is_multiple);
-      $joinable = new CustomGroupJoinable($tableName, $alias, $isMultiple);
+      $joinable = new CustomGroupJoinable($tableName, $alias, $isMultiple, $entity);
       $baseTable->addTableLink('id', $joinable);
     }
   }

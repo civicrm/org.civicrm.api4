@@ -2,7 +2,7 @@
 
 namespace Civi\Api4\Utils;
 
-use CRM_Utils_Array as ArrayHelper;
+use CRM_Utils_Array as UtilsArray;
 
 class ArrayInsertionUtil {
   /**
@@ -47,11 +47,11 @@ class ArrayInsertionUtil {
    * @return array|mixed
    */
   private static function filterValues($parentArray, $isMulti, $values) {
-    $parentID = ArrayHelper::value('id', $parentArray);
+    $parentID = UtilsArray::value('id', $parentArray);
 
     if ($parentID) {
       $values = array_filter($values, function ($value) use ($parentID) {
-        return ArrayHelper::value('_parent_id', $value) == $parentID;
+        return UtilsArray::value('_parent_id', $value) == $parentID;
       });
     }
 

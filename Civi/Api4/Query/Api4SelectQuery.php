@@ -32,8 +32,10 @@ use Civi\Api4\Event\Events;
 use Civi\Api4\Event\PostSelectQueryEvent;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
+use Civi\Api4\Utils\FormattingUtil;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
 use CRM_Core_DAO_CustomField as CustomFieldDAO;
+use CRM_Utils_Array as UtilsArray;
 
 /**
  * A query `node` may be in one of three formats:
@@ -168,9 +170,8 @@ class Api4SelectQuery extends SelectQuery {
    * @throws \Exception
    */
   protected function validateClauseAndComposeSql($clause) {
-    list($key, $operator, $criteria) = $clause;
-    $value = [$operator => $criteria];
-    // $field = $this->getField($key); // <<-- unused
+    list($key, $operator, $value) = $clause;
+    $fieldSpec = $this->getField($key);
     // derive table and column:
     $table_name = NULL;
     $column_name = NULL;
@@ -182,11 +183,13 @@ class Api4SelectQuery extends SelectQuery {
       list($table_name, $column_name) = explode('.', $this->fkSelectAliases[$key]);
     }
 
-    if (!$table_name || !$column_name || is_null($value)) {
+    if (!$table_name || !$column_name) {
       throw new \API_Exception("Invalid field '$key' in where clause.");
     }
 
-    $sql_clause = \CRM_Core_DAO::createSQLFilter("`$table_name`.`$column_name`", $value);
+    FormattingUtil::formatValue($value, $fieldSpec, $this->getEntity());
+
+    $sql_clause = \CRM_Core_DAO::createSQLFilter("`$table_name`.`$column_name`", [$operator => $value]);
     if ($sql_clause === NULL) {
       throw new \API_Exception("Invalid value in where clause for field '$key'");
     }
@@ -209,8 +212,12 @@ class Api4SelectQuery extends SelectQuery {
    * @return string|null
    */
   protected function getField($fieldName) {
-    if ($fieldName && isset($this->apiFieldSpec[$fieldName])) {
-      return $this->apiFieldSpec[$fieldName];
+    if ($fieldName) {
+      $fieldPath = explode('.', $fieldName);
+      if (count($fieldPath) > 1) {
+        $fieldName = implode('.', array_slice($fieldPath, -2));
+      }
+      return UtilsArray::value($fieldName, $this->apiFieldSpec);
     }
     return NULL;
   }
@@ -226,16 +233,30 @@ class Api4SelectQuery extends SelectQuery {
     }
 
     $joiner = \Civi::container()->get('joiner');
-    $finalDot = strrpos($key, '.');
-    $pathString = substr($key, 0, $finalDot);
-    $field = substr($key, $finalDot + 1);
+    $pathArray = explode('.', $key);
+    $field = array_pop($pathArray);
+    $pathString = implode('.', $pathArray);
 
     if (!$joiner->canJoin($this, $pathString)) {
       return;
     }
 
     $joinPath = $joiner->join($this, $pathString);
-    $lastLink = end($joinPath);
+    /** @var Joinable $lastLink */
+    $lastLink = array_pop($joinPath);
+
+    // Cache field info for retrieval by $this->getField()
+    $prefix = array_pop($pathArray) . '.';
+    if (!isset($this->apiFieldSpec[$prefix . $field])) {
+      $joinEntity = $lastLink->getEntity();
+      // Custom fields are already prefixed
+      if ($lastLink instanceof CustomGroupJoinable) {
+        $prefix = '';
+      }
+      foreach ($lastLink->getEntityFields() as $fieldObject) {
+        $this->apiFieldSpec[$prefix . $fieldObject->getName()] = $fieldObject->toArray() + ['entity' => $joinEntity];
+      }
+    }
 
     // custom groups use aliases for field names
     if ($lastLink instanceof CustomGroupJoinable) {

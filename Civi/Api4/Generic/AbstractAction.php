@@ -28,6 +28,7 @@ namespace Civi\Api4\Generic;
 
 use Civi\API\Exception\UnauthorizedException;
 use Civi\API\Kernel;
+use Civi\Api4\Utils\FormattingUtil;
 use Civi\Api4\Utils\ReflectionUtils;
 use CRM_Utils_Array as UtilsArray;
 
@@ -441,13 +442,10 @@ abstract class AbstractAction implements \ArrayAccess {
     foreach ($fields as $name => $field) {
       if (!empty($params[$name])) {
         $value =& $params[$name];
+        FormattingUtil::formatValue($value, $field, $this->getEntity());
         // Ensure we have an array for serialized fields
         if (!empty($field['serialize'] && !is_array($value))) {
           $value = (array) $value;
-        }
-        switch ($field['data_type']) {
-          case 'Timestamp':
-            $value = date('Y-m-d H:i:s', strtotime($value));
         }
       }
     }

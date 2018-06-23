@@ -3,6 +3,7 @@
 namespace Civi\Api4\Service\Schema\Joinable;
 
 use Civi\Api4\Service\Spec\FieldSpec;
+use CRM_Core_DAO_AllCoreTables as Tables;
 
 class Joinable {
 
@@ -54,6 +55,11 @@ class Joinable {
   protected $joinType = self::JOIN_TYPE_ONE_TO_ONE;
 
   /**
+   * @var string
+   */
+  protected $entity;
+
+  /**
    * @var array
    */
   protected $entityFields;
@@ -66,6 +72,9 @@ class Joinable {
   public function __construct($targetTable, $targetColumn, $alias = NULL) {
     $this->targetTable = $targetTable;
     $this->targetColumn = $targetColumn;
+    if (!$this->entity) {
+      $this->entity = Tables::getBriefName(Tables::getClassForTable($targetTable));
+    }
     $this->alias = $alias ?: str_replace('civicrm_', '', $targetTable);
   }
 
@@ -158,6 +167,13 @@ class Joinable {
   }
 
   /**
+   * @return string
+   */
+  public function getEntity() {
+    return $this->entity;
+  }
+
+  /**
    * @param $condition
    *
    * @return $this
@@ -223,26 +239,6 @@ class Joinable {
   }
 
   /**
-   * @param string $targetTable
-   * @return $this
-   */
-  public function setTargetTable($targetTable) {
-    $this->targetTable = $targetTable;
-
-    return $this;
-  }
-
-  /**
-   * @param string $targetColumn
-   * @return $this
-   */
-  public function setTargetColumn($targetColumn) {
-    $this->targetColumn = $targetColumn;
-
-    return $this;
-  }
-
-  /**
    * @return array
    */
   public function toArray() {
@@ -254,7 +250,7 @@ class Joinable {
    */
   public function getEntityFields() {
     if (!$this->entityFields) {
-      $bao = \CRM_Core_DAO_AllCoreTables::getClassForTable($this->getTargetTable());
+      $bao = Tables::getClassForTable($this->getTargetTable());
       if ($bao) {
         foreach ($bao::fields() as $field) {
           $this->entityFields[] = \Civi\Api4\Service\Spec\SpecFormatter::arrayToField($field);
