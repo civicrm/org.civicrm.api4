@@ -66,7 +66,7 @@ class SpecGathererTest extends UnitTestCase {
       ->addValue('extends', 'Contact')
       ->execute()['id'];
 
-    $options = ['Red', 'Green', 'Pink'];
+    $options = ['r' => 'Red', 'g' => 'Green', 'p' => 'Pink'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
@@ -78,12 +78,16 @@ class SpecGathererTest extends UnitTestCase {
       ->execute();
 
     $gatherer = new SpecGatherer();
-    $spec = $gatherer->getSpec('Contact', 'get', FALSE);
+    $spec = $gatherer->getSpec('Contact', 'get', TRUE);
 
     $regularField = $spec->getFieldByName('contact_type');
-
     $this->assertNotEmpty($regularField->getOptions());
     $this->assertContains('Individual', $regularField->getOptions());
+
+    $customField = $spec->getFieldByName('FavoriteThings.FavColor');
+    $this->assertNotEmpty($customField->getOptions());
+    $this->assertContains('Green', $customField->getOptions());
+    $this->assertEquals('Pink', $customField->getOptions()['p']);
   }
 
 }
