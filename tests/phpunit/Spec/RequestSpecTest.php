@@ -13,9 +13,9 @@ class RequestSpecTest extends UnitTestCase {
 
   public function testRequiredFieldFetching() {
     $spec = new RequestSpec('Contact', 'get');
-    $requiredField = new FieldSpec('name');
+    $requiredField = new FieldSpec('name', 'Contact');
     $requiredField->setRequired(TRUE);
-    $nonRequiredField = new FieldSpec('age', 'Integer');
+    $nonRequiredField = new FieldSpec('age', 'Contact', 'Integer');
     $nonRequiredField->setRequired(FALSE);
     $spec->addFieldSpec($requiredField);
     $spec->addFieldSpec($nonRequiredField);
@@ -28,8 +28,8 @@ class RequestSpecTest extends UnitTestCase {
 
   public function testGettingFieldNames() {
     $spec = new RequestSpec('Contact', 'get');
-    $nameField = new FieldSpec('name');
-    $ageField = new FieldSpec('age', 'Integer');
+    $nameField = new FieldSpec('name', 'Contact');
+    $ageField = new FieldSpec('age', 'Contact', 'Integer');
     $spec->addFieldSpec($nameField);
     $spec->addFieldSpec($ageField);
 

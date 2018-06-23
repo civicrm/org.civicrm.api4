@@ -39,7 +39,7 @@ class CustomGroupJoinable extends Joinable {
         ->addWhere('custom_group.table_name', '=', $this->getTargetTable())
         ->execute();
       foreach ($fields as $field) {
-        $this->entityFields[] = \Civi\Api4\Service\Spec\SpecFormatter::arrayToField($field);
+        $this->entityFields[] = \Civi\Api4\Service\Spec\SpecFormatter::arrayToField($field, $this->getEntity());
       }
     }
     return $this->entityFields;

@@ -49,7 +49,7 @@ class SpecGathererTest extends UnitTestCase {
     $provider->modifySpec(Argument::any())->will(function ($args) {
       /** @var RequestSpec $spec */
       $spec = $args[0];
-      $spec->addFieldSpec(new FieldSpec('foo'));
+      $spec->addFieldSpec(new FieldSpec('foo', 'Contact'));
     });
     $gather->addSpecProvider($provider->reveal());
 

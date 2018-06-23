@@ -29,13 +29,15 @@ class ContactCreationSpecProvider implements SpecProviderInterface {
   }
 
   /**
+   * @fixme: shouldn't this be an option not a field?
+   *
    * @param RequestSpec $specification
    */
   protected function addDedupeField(RequestSpec $specification) {
     $dedupeField = $specification->getFieldByName('dupe_check');
 
     if (!$dedupeField) {
-      $dedupeField = new FieldSpec('dupe_check', 'Boolean');
+      $dedupeField = new FieldSpec('dupe_check', 'Contact', 'Boolean');
     }
 
     $dedupeField

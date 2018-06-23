@@ -8,17 +8,26 @@ use CRM_Core_DAO_AllCoreTables as TableHelper;
 class SpecFormatter {
   /**
    * @param RequestSpec $spec
+   * @param bool $includeFieldOptions
    *
    * @return array
    */
-  public static function specToArray(RequestSpec $spec) {
+  public static function specToArray(RequestSpec $spec, $includeFieldOptions = FALSE) {
     $specArray = [];
     $specArray['entity'] = $spec->getEntity();
     $specArray['action'] = $spec->getAction();
     $specArray['fields'] = [];
 
     foreach ($spec->getFields() as $field) {
+      if ($includeFieldOptions) {
+        $field->getOptions();
+      }
       $specArray['fields'][$field->getName()] = $field->toArray();
+    }
+    if (!$includeFieldOptions) {
+      foreach ($specArray['fields'] as &$field) {
+        unset($field['options']);
+      }
     }
 
     return $specArray;
@@ -26,15 +35,16 @@ class SpecFormatter {
 
   /**
    * @param array $data
+   * @param string $entity
    *
    * @return FieldSpec
    */
-  public static function arrayToField(array $data) {
+  public static function arrayToField(array $data, $entity) {
     $dataTypeName = self::getDataType($data);
 
     if (!empty($data['custom_group_id'])) {
       $name = $data['custom_group']['name'] . '.' . $data['name'];
-      $field = new CustomFieldSpec($name, $dataTypeName);
+      $field = new CustomFieldSpec($name, $entity, $dataTypeName);
       $field->setCustomFieldId(ArrayHelper::value('id', $data));
       $field->setCustomGroupId($data['custom_group_id']);
       $field->setRequired((bool) ArrayHelper::value('is_required', $data, FALSE));
@@ -45,7 +55,7 @@ class SpecFormatter {
     }
     else {
       $name = ArrayHelper::value('name', $data);
-      $field = new FieldSpec($name, $dataTypeName);
+      $field = new FieldSpec($name, $entity, $dataTypeName);
       $field->setRequired((bool) ArrayHelper::value('required', $data, FALSE));
       $field->setTitle(ArrayHelper::value('title', $data));
       $field->setSerialize(ArrayHelper::value('serialize', $data));

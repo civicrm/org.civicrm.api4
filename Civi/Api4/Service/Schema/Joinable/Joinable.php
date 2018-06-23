@@ -255,7 +255,7 @@ class Joinable {
       $bao = Tables::getClassForTable($this->getTargetTable());
       if ($bao) {
         foreach ($bao::fields() as $field) {
-          $this->entityFields[] = \Civi\Api4\Service\Spec\SpecFormatter::arrayToField($field);
+          $this->entityFields[] = \Civi\Api4\Service\Spec\SpecFormatter::arrayToField($field, $this->getEntity());
         }
       }
     }

@@ -2,6 +2,8 @@
 
 namespace Civi\Api4\Service\Spec;
 
+use Civi\Api4\Utils\CoreUtil;
+
 class FieldSpec {
   /**
    * @var mixed
@@ -21,6 +23,11 @@ class FieldSpec {
   /**
    * @var string
    */
+  protected $entity;
+
+  /**
+   * @var string
+   */
   protected $description;
 
   /**
@@ -31,7 +38,7 @@ class FieldSpec {
   /**
    * @var array
    */
-  protected $options = [];
+  protected $options;
 
   /**
    * @var string
@@ -58,10 +65,12 @@ class FieldSpec {
   ];
 
   /**
-   * @param $name
-   * @param $dataType
+   * @param string $name
+   * @param string $entity
+   * @param string $dataType
    */
-  public function __construct($name, $dataType = 'String') {
+  public function __construct($name, $entity, $dataType = 'String') {
+    $this->entity = $entity;
     $this->setName($name);
     $this->setDataType($dataType);
   }
@@ -118,6 +127,13 @@ class FieldSpec {
     $this->title = $title;
 
     return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getEntity() {
+    return $this->entity;
   }
 
   /**
@@ -213,6 +229,23 @@ class FieldSpec {
    * @return array
    */
   public function getOptions() {
+    if (!isset($this->options)) {
+      $fieldName = $this->getName();
+
+      if ($this instanceof CustomFieldSpec) {
+        // buildOptions relies on the custom_* type of field names
+        $fieldName = sprintf('custom_%d', $this->getCustomFieldId());
+      }
+
+      $dao = CoreUtil::getDAOFromApiName($this->getEntity());
+      $options = $dao::buildOptions($fieldName);
+
+      if (!is_array($options) || !$options) {
+        $options = FALSE;
+      }
+
+      $this->setOptions($options);
+    }
     return $this->options;
   }
 
@@ -223,15 +256,7 @@ class FieldSpec {
    */
   public function setOptions($options) {
     $this->options = $options;
-
     return $this;
-  }
-
-  /**
-   * @param $option
-   */
-  public function addOption($option) {
-    $this->options[] = $option;
   }
 
   /**

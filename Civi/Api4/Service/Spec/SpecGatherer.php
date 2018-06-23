@@ -4,6 +4,7 @@ namespace Civi\Api4\Service\Spec;
 
 use Civi\Api4\CustomField;
 use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
+use Civi\Api4\Utils\CoreUtil;
 
 class SpecGatherer {
 
@@ -44,8 +45,6 @@ class SpecGatherer {
       }
     }
 
-    $this->addFieldOptions($specification);
-
     return $specification;
   }
 
@@ -67,7 +66,7 @@ class SpecGatherer {
       if ($DAOField['name'] == 'id' && $action == 'create') {
         continue;
       }
-      $field = SpecFormatter::arrayToField($DAOField);
+      $field = SpecFormatter::arrayToField($DAOField, $entity);
       $specification->addFieldSpec($field);
     }
   }
@@ -77,16 +76,14 @@ class SpecGatherer {
    * @param RequestSpec $specification
    */
   private function addCustomFields($entity, RequestSpec $specification) {
-    if ($entity == 'Contact') {
-      $entity = ['Contact', 'Individual', 'Organization', 'Household'];
-    }
+    $extends = ($entity == 'Contact') ? ['Contact', 'Individual', 'Organization', 'Household'] : [$entity];
     $customFields = CustomField::get()
-      ->addWhere('custom_group.extends', 'IN', $entity)
+      ->addWhere('custom_group.extends', 'IN', $extends)
       ->setSelect(['custom_group.name', 'custom_group_id', 'name', 'label', 'data_type', 'html_type', 'is_required', 'is_searchable', 'is_search_range', 'weight', 'is_active', 'is_view', 'option_group_id', 'default_value'])
       ->execute();
 
     foreach ($customFields as $fieldArray) {
-      $field = SpecFormatter::arrayToField($fieldArray);
+      $field = SpecFormatter::arrayToField($fieldArray, $entity);
       $specification->addFieldSpec($field);
     }
   }
@@ -97,52 +94,9 @@ class SpecGatherer {
    * @return array
    */
   private function getDAOFields($entityName) {
-    $dao = $this->getDAO($entityName);
+    $dao = CoreUtil::getDAOFromApiName($entityName);
 
     return $dao::fields();
-  }
-
-  /**
-   * @param RequestSpec $spec
-   */
-  private function addFieldOptions(RequestSpec $spec) {
-    $dao = $this->getDAO($spec->getEntity());
-
-    foreach ($spec->getFields() as $field) {
-      $fieldName = $field->getName();
-
-      if ($field instanceof CustomFieldSpec) {
-        // buildOptions relies on the custom_* type of field names
-        $fieldName = sprintf('custom_%d', $field->getCustomFieldId());
-      }
-
-      $options = $dao::buildOptions($fieldName);
-
-      if (!is_array($options)) {
-        continue;
-      }
-
-      $field->setOptions($options);
-    }
-  }
-
-  /**
-   * todo this class should not rely on api3 code
-   *
-   * @param $entityName
-   *
-   * @return \CRM_Core_DAO|string
-   *   The DAO name for use in static calls. Return doc block is hacked to allow
-   *   auto-completion of static methods
-   */
-  private function getDAO($entityName) {
-    if (!isset($this->DAONames[$entityName])) {
-      require_once 'api/v3/utils.php';
-      $daoName = \_civicrm_api3_get_DAO($entityName);
-      $this->DAONames[$entityName] = $daoName;
-    }
-
-    return $this->DAONames[$entityName];
   }
 
 }

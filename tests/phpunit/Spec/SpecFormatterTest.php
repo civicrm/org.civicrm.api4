@@ -16,7 +16,7 @@ class SpecFormatterTest extends UnitTestCase {
   public function testSpecToArray() {
     $spec = new RequestSpec('Contact', 'get');
     $fieldName = 'lastname';
-    $field = new FieldSpec($fieldName);
+    $field = new FieldSpec($fieldName, 'Contact');
     $spec->addFieldSpec($field);
     $arraySpec = SpecFormatter::specToArray($spec);
 
@@ -32,7 +32,7 @@ class SpecFormatterTest extends UnitTestCase {
    * @param string $expectedType
    */
   public function testArrayToField($fieldData, $expectedName, $expectedType) {
-    $field = SpecFormatter::arrayToField($fieldData);
+    $field = SpecFormatter::arrayToField($fieldData, 'TestEntity');
 
     $this->assertEquals($expectedName, $field->getName());
     $this->assertEquals($expectedType, $field->getDataType());
@@ -53,7 +53,7 @@ class SpecFormatterTest extends UnitTestCase {
     ];
 
     /** @var CustomFieldSpec $field */
-    $field = SpecFormatter::arrayToField($data);
+    $field = SpecFormatter::arrayToField($data, 'TestEntity');
 
     $this->assertInstanceOf(CustomFieldSpec::class, $field);
     $this->assertEquals($customGroupId, $field->getCustomGroupId());

@@ -13,7 +13,7 @@ class ActivityCreationSpecProvider implements SpecProviderInterface {
   public function modifySpec(RequestSpec $spec) {
     $spec->getFieldByName('subject')->setRequired(TRUE);
 
-    $sourceContactField = new FieldSpec('source_contact_id', 'Integer');
+    $sourceContactField = new FieldSpec('source_contact_id', 'Activity', 'Integer');
     $sourceContactField->setRequired(TRUE);
     $sourceContactField->setFkEntity('Contact');
 
