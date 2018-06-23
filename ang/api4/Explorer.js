@@ -25,7 +25,7 @@
     $scope.operators = arrayToSelect2(CRM.vars.api4.operators);
     $scope.actions = actions;
     $scope.fields = [];
-    $scope.availableParams = [];
+    $scope.availableParams = {};
     $scope.params = {};
     var richParams = {where: 'array', values: 'object', orderBy: 'object'};
     var getMetaParams = schema.length ? {} : {schema: ['Entity', 'getFields'], links: ['Entity', 'getLinks']};
@@ -87,7 +87,7 @@
     function getFieldList() {
       var fields = [],
         fks = _.findWhere(links, {entity: $scope.entity}) || {};
-      formatForSelect2(entityFields($scope.entity), fields, 'name', ['description']);
+      formatForSelect2(entityFields($scope.entity), fields, 'name', ['description', 'required', 'default_value']);
       _.each(fks.links, function(link) {
         var linkFields = entityFields(link.entity);
         if (linkFields) {
@@ -99,6 +99,30 @@
         }
       });
       return fields;
+    }
+
+    $scope.valuesFields = function() {
+      var fields = [];
+      _.each(_.cloneDeep($scope.fields), function(field, index) {
+        if (field.id === 'id') {
+          return;
+        }
+        if ($scope.params.values && typeof $scope.params.values[field.id] !== 'undefined') {
+          field.disabled = true;
+        }
+        fields.push(field);
+      });
+      return fields;
+    };
+
+    $scope.formatSelect2Item = function(row) {
+      return _.escape(row.text) +
+        (isFieldRequiredForCreate(row) ? '<span class="crm-marker"> *</span>' : '') +
+        (row.description ? '<div class="crm-select2-row-description"><p>' + _.escape(row.description) + '</p></div>' : '');
+    };
+
+    function isFieldRequiredForCreate(field) {
+      return field.required && !field.default_value;
     }
 
     // Get all params that have been set
