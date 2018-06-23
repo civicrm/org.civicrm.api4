@@ -10,7 +10,7 @@ use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Civi\Api4\Service\Schema\Joinable\OptionValueJoinable;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
-use CRM_Utils_Array as ArrayHelper;
+use CRM_Utils_Array as UtilsArray;
 
 class SchemaMapBuilder {
   /**
@@ -70,17 +70,17 @@ class SchemaMapBuilder {
    * @param array $data
    */
   private function addJoins(Table $table, $field, array $data) {
-    $fkClass = ArrayHelper::value('FKClassName', $data);
+    $fkClass = UtilsArray::value('FKClassName', $data);
 
     // can there be multiple methods e.g. pseudoconstant and fkclass
     if ($fkClass) {
       $tableName = TableHelper::getTableForClass($fkClass);
-      $fkKey = ArrayHelper::value('FKKeyColumn', $data, 'id');
+      $fkKey = UtilsArray::value('FKKeyColumn', $data, 'id');
       $joinable = new Joinable($tableName, $fkKey);
       $joinable->setJoinType($joinable::JOIN_TYPE_MANY_TO_ONE);
       $table->addTableLink($field, $joinable);
     }
-    elseif (ArrayHelper::value('pseudoconstant', $data)) {
+    elseif (UtilsArray::value('pseudoconstant', $data)) {
       $this->addPseudoConstantJoin($table, $field, $data);
     }
   }
@@ -91,22 +91,22 @@ class SchemaMapBuilder {
    * @param array $data
    */
   private function addPseudoConstantJoin(Table $table, $field, array $data) {
-    $pseudoConstant = ArrayHelper::value('pseudoconstant', $data);
-    $tableName = ArrayHelper::value('table', $pseudoConstant);
-    $optionGroupName = ArrayHelper::value('optionGroupName', $pseudoConstant);
-    $keyColumn = ArrayHelper::value('keyColumn', $pseudoConstant, 'id');
+    $pseudoConstant = UtilsArray::value('pseudoconstant', $data);
+    $tableName = UtilsArray::value('table', $pseudoConstant);
+    $optionGroupName = UtilsArray::value('optionGroupName', $pseudoConstant);
+    $keyColumn = UtilsArray::value('keyColumn', $pseudoConstant, 'id');
 
     if ($tableName) {
       $alias = str_replace('civicrm_', '', $tableName);
       $joinable = new Joinable($tableName, $keyColumn, $alias);
-      $condition = ArrayHelper::value('condition', $pseudoConstant);
+      $condition = UtilsArray::value('condition', $pseudoConstant);
       if ($condition) {
         $joinable->addCondition($condition);
       }
       $table->addTableLink($field, $joinable);
     }
     elseif ($optionGroupName) {
-      $keyColumn = ArrayHelper::value('keyColumn', $pseudoConstant, 'value');
+      $keyColumn = UtilsArray::value('keyColumn', $pseudoConstant, 'value');
       $joinable = new OptionValueJoinable($optionGroupName, NULL, $keyColumn);
 
       if (!empty($data['serialize'])) {
@@ -200,7 +200,7 @@ class SchemaMapBuilder {
       $map->addTable($customTable);
       $alias = $fieldData->custom_group_name;
       $isMultiple = !empty($fieldData->is_multiple);
-      $joinable = new CustomGroupJoinable($tableName, $alias, $isMultiple, $entity);
+      $joinable = new CustomGroupJoinable($tableName, $alias, $isMultiple, $entity, $fieldData->column_name);
       $baseTable->addTableLink('id', $joinable);
     }
   }

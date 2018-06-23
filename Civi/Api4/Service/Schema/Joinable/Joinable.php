@@ -31,6 +31,8 @@ class Joinable {
 
   /**
    * @var string
+   *
+   * Name (or alias) of the target column)
    */
   protected $targetColumn;
 
