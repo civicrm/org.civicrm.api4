@@ -76,7 +76,7 @@ class Update extends Get {
     // Then act on the result
     $updated_results = [];
     foreach ($result as $item) {
-      $updated_results[$item['id']] = $this->writeObject($this->values + $item);
+      $updated_results[] = $this->writeObject($this->values + $item);
     }
     $result->exchangeArray($updated_results);
   }
