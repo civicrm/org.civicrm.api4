@@ -35,7 +35,6 @@ use CRM_Utils_Array as UtilsArray;
 /**
  * Base class for all api actions.
  *
- * @method $this addChain(AbstractAction $apiCall)
  * @method $this setCheckPermissions(bool $value)
  * @method bool getCheckPermissions()
  */
@@ -48,12 +47,13 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   protected $version = 4;
 
-  /**
+  /*
    * Todo: not implemented.
    *
    * @var array
-   */
+   *
   protected $chain = [];
+   */
 
   /**
    * Whether to enforce acl permissions based on the current user.
@@ -64,13 +64,6 @@ abstract class AbstractAction implements \ArrayAccess {
    * @var bool
    */
   protected $checkPermissions = TRUE;
-
-  /**
-   * Rarely used options.
-   *
-   * @var array
-   */
-  protected $options = [];
 
   /* @var string */
   private $entity;
