@@ -2,7 +2,6 @@
 
 namespace Civi\Api4\Service\Spec\Provider;
 
-use Civi\Api4\Action\Actions;
 use Civi\Api4\Service\Spec\FieldSpec;
 use Civi\Api4\Service\Spec\RequestSpec;
 
@@ -22,7 +21,7 @@ class ActivityCreationSpecProvider implements SpecProviderInterface {
    * @inheritDoc
    */
   public function applies($entity, $action) {
-    return $entity === 'Activity' && $action === Actions::CREATE;
+    return $entity === 'Activity' && $action === 'create';
   }
 
 }

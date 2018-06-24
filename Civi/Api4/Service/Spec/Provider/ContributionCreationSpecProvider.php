@@ -2,7 +2,6 @@
 
 namespace Civi\Api4\Service\Spec\Provider;
 
-use Civi\Api4\Action\Actions;
 use Civi\Api4\Service\Spec\RequestSpec;
 
 class ContributionCreationSpecProvider implements SpecProviderInterface {
@@ -18,7 +17,7 @@ class ContributionCreationSpecProvider implements SpecProviderInterface {
    * @inheritDoc
    */
   public function applies($entity, $action) {
-    return $entity === 'Contribution' && $action === Actions::CREATE;
+    return $entity === 'Contribution' && $action === 'create';
   }
 
 }

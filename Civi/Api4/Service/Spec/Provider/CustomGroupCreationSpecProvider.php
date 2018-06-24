@@ -2,7 +2,6 @@
 
 namespace Civi\Api4\Service\Spec\Provider;
 
-use Civi\Api4\Action\Actions;
 use Civi\Api4\Service\Spec\RequestSpec;
 
 class CustomGroupCreationSpecProvider implements SpecProviderInterface {
@@ -17,7 +16,7 @@ class CustomGroupCreationSpecProvider implements SpecProviderInterface {
    * @inheritDoc
    */
   public function applies($entity, $action) {
-    return $entity === 'CustomGroup' && $action === Actions::CREATE;
+    return $entity === 'CustomGroup' && $action === 'create';
   }
 
 }

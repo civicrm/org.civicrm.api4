@@ -2,7 +2,6 @@
 
 namespace Civi\Api4\Service\Spec\Provider;
 
-use Civi\Api4\Action\Actions;
 use Civi\Api4\Service\Spec\RequestSpec;
 
 class ContactCreationSpecProvider implements SpecProviderInterface {
@@ -27,7 +26,7 @@ class ContactCreationSpecProvider implements SpecProviderInterface {
    * @return bool
    */
   public function applies($entity, $action) {
-    return $entity === 'Contact' && $action === Actions::CREATE;
+    return $entity === 'Contact' && $action === 'create';
   }
 
 }
