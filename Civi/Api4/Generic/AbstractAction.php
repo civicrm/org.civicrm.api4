@@ -245,7 +245,7 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   /**
-   * @return null|string
+   * @return \CRM_Core_DAO|string
    */
   protected function getBaoName() {
     require_once 'api/v3/utils.php';

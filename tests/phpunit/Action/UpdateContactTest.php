@@ -18,7 +18,8 @@ class UpdateContactTest extends UnitTestCase {
       ->addValue('first_name', 'Johann')
       ->addValue('last_name', 'Tester')
       ->addValue('contact_type', 'Individual')
-      ->execute()['id'];
+      ->execute()
+      ->first()['id'];
 
     $contact = Contact::update()
       ->setCheckPermissions(FALSE)
@@ -29,4 +30,5 @@ class UpdateContactTest extends UnitTestCase {
     $this->assertEquals('Testy', $contact['first_name']);
     $this->assertEquals('Tester', $contact['last_name']);
   }
+
 }

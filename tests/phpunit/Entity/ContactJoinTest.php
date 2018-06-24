@@ -53,8 +53,9 @@ class ContactJoinTest extends UnitTestCase {
     $contact = Contact::create()->setValues([
       'preferred_communication_method' => [1, 2, 3],
       'contact_type' => 'Individual',
-      'first_name' => 'Test', 'last_name' => 'PCM'
-    ])->execute();
+      'first_name' => 'Test',
+      'last_name' => 'PCM',
+    ])->execute()->first();
 
     $fetchedContact = Contact::get()
       ->addWhere('id', '=', $contact['id'])
@@ -77,14 +78,16 @@ class ContactJoinTest extends UnitTestCase {
     $contact = Contact::create()->setValues([
       'preferred_communication_method' => $optionValues,
       'contact_type' => 'Individual',
-      'first_name' => 'Test', 'last_name' => 'PCM'
-    ])->execute()->getArrayCopy();
+      'first_name' => 'Test',
+      'last_name' => 'PCM',
+    ])->execute()->first();
 
     $contact2 = Contact::create()->setValues([
       'preferred_communication_method' => $optionValues,
       'contact_type' => 'Individual',
-      'first_name' => 'Test', 'last_name' => 'PCM2'
-    ])->execute()->getArrayCopy();
+      'first_name' => 'Test',
+      'last_name' => 'PCM2',
+    ])->execute()->first();
 
     $contactIds = array_column([$contact, $contact2], 'id');
 

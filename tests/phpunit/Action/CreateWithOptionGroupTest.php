@@ -21,13 +21,12 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
   }
 
   public function testGetWithCustomData() {
-    $customGroup = CustomGroup::create()
+    $customGroupId = CustomGroup::create()
       ->setCheckPermissions(FALSE)
       ->addValue('name', 'FavoriteThings')
       ->addValue('extends', 'Contact')
-      ->execute();
-
-    $customGroupId = $customGroup->getArrayCopy()['id'];
+      ->execute()
+      ->first()['id'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
@@ -47,13 +46,12 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       ->addValue('data_type', 'String')
       ->execute();
 
-    $customGroup = CustomGroup::create()
+    $customGroupId = CustomGroup::create()
       ->setCheckPermissions(FALSE)
       ->addValue('name', 'FinancialStuff')
       ->addValue('extends', 'Contact')
-      ->execute();
-
-    $customGroupId = $customGroup->getArrayCopy()['id'];
+      ->execute()
+      ->first()['id'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
@@ -95,13 +93,12 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
   }
 
   public function testWithCustomDataForMultipleContacts() {
-    $customGroup = CustomGroup::create()
+    $customGroupId = CustomGroup::create()
       ->setCheckPermissions(FALSE)
       ->addValue('name', 'FavoriteThings')
       ->addValue('extends', 'Contact')
-      ->execute();
-
-    $customGroupId = $customGroup->getArrayCopy()['id'];
+      ->execute()
+      ->first()['id'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
@@ -121,13 +118,12 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       ->addValue('data_type', 'String')
       ->execute();
 
-    $customGroup = CustomGroup::create()
+    $customGroupId = CustomGroup::create()
       ->setCheckPermissions(FALSE)
       ->addValue('name', 'FinancialStuff')
       ->addValue('extends', 'Contact')
-      ->execute();
-
-    $customGroupId = $customGroup->getArrayCopy()['id'];
+      ->execute()
+      ->first()['id'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
@@ -167,7 +163,7 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       ->addWhere('FavoriteThings.FavFood.label', 'IN', ['Corn', 'Cheese'])
       ->execute();
 
-    $blueCheese = null;
+    $blueCheese = NULL;
     foreach ($result as $contact) {
       if ($contact['first_name'] === 'Blue') {
         $blueCheese = $contact;
@@ -178,4 +174,5 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
     $this->assertEquals('Cheese', $blueCheese['FavoriteThings']['FavFood']['label']);
     $this->assertEquals(500000, $blueCheese['FinancialStuff']['Salary']);
   }
+
 }

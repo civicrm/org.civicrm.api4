@@ -31,24 +31,24 @@
       "option_group": "activity_type"
     },
     {
-      "name": "Activity Source",
+      "label": "Activity Source",
       "option_group": "activity_contacts"
     },
     {
-      "name": "Activity Assignees",
+      "label": "Activity Assignees",
       "option_group": "activity_contacts"
     },
     {
-      "name": "Activity Targets",
+      "label": "Activity Targets",
       "option_group": "activity_contacts"
     },
     {
-      "name": "Phone",
+      "label": "Phone",
       "value": "phone",
       "option_group": "preferred_communication_method"
     },
     {
-      "name": "Email",
+      "label": "Email",
       "value": "email",
       "option_group": "preferred_communication_method"
     }
@@ -112,6 +112,7 @@
     {
       "contact_id": "@ref test_contact_1.id",
       "openid": "123",
+      "allowed_to_login": 1,
       "location_type_id": 1
     }
   ],

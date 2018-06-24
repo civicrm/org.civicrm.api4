@@ -16,14 +16,13 @@ class CustomValuePerformanceTest extends BaseCustomValueTest {
 
   public function testQueryCount() {
 
-    $customGroup = CustomGroup::create()
+    $customGroupId = CustomGroup::create()
       ->setCheckPermissions(FALSE)
       ->addValue('name', 'MyContactFields')
       ->addValue('title', 'MyContactFields')
       ->addValue('extends', 'Contact')
-      ->execute();
-
-    $customGroupId = $customGroup->getArrayCopy()['id'];
+      ->execute()
+      ->first()['id'];
 
     CustomField::create()
       ->setCheckPermissions(FALSE)

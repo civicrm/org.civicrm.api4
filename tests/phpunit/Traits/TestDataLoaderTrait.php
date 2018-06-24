@@ -32,7 +32,7 @@ trait TestDataLoaderTrait {
         $params = ['values' => $entityValues, 'checkPermissions' => FALSE];
         $result = civicrm_api4($entityName, 'create', $params);
         if (isset($entityValues['@ref'])) {
-          $this->references[$entityValues['@ref']] = $result->getArrayCopy();
+          $this->references[$entityValues['@ref']] = $result->first();
         }
       }
     }

@@ -11,6 +11,7 @@ class ContributionCreationSpecProvider implements SpecProviderInterface {
    */
   public function modifySpec(RequestSpec $spec) {
     $spec->getFieldByName('financial_type_id')->setRequired(TRUE);
+    $spec->getFieldByName('receive_date')->setDefaultValue('now');
   }
 
   /**

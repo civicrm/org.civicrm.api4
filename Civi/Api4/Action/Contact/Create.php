@@ -25,7 +25,7 @@
  +--------------------------------------------------------------------+
  */
 
-namespace Civi\Api4\Action\Contribution;
+namespace Civi\Api4\Action\Contact;
 
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Action\Create as DefaultCreate;
@@ -35,10 +35,16 @@ use Civi\Api4\Action\Create as DefaultCreate;
  */
 class Create extends DefaultCreate {
 
-  public function _run(Result $result) {
-    // Required by Contribution BAO
-    $this->values['skipCleanMoney'] = TRUE;
-    parent::_run($result);
+  protected function fillDefaults(&$params) {
+    // Guess which type of contact is being created
+    if (empty($params['contact_type']) && !empty($params['organization_name'])) {
+      $params['contact_type'] = 'Organization';
+    }
+    if (empty($params['contact_type']) && !empty($params['household_name'])) {
+      $params['contact_type'] = 'Household';
+    }
+    // Will default to Individual per fieldSpec
+    parent::fillDefaults($params);
   }
 
 }

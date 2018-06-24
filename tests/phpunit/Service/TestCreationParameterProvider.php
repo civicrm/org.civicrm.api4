@@ -119,6 +119,9 @@ class TestCreationParameterProvider {
    */
   private function getRandomValue($dataType) {
     switch ($dataType) {
+      case 'Boolean':
+        return TRUE;
+
       case 'Integer':
         return rand(1, 2000);
 

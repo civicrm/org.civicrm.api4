@@ -18,7 +18,7 @@ class OneToOneJoinTest extends UnitTestCase {
     $languageGroupId = OptionGroup::create()
       ->addValue('name', 'languages')
       ->execute()
-      ->getArrayCopy()['id'];
+      ->first()['id'];
 
     OptionValue::create()
       ->addValue('option_group_id', $languageGroupId)
@@ -40,7 +40,7 @@ class OneToOneJoinTest extends UnitTestCase {
       ->addValue('contact_type', 'Individual')
       ->addValue('preferred_language', 'hy_AM')
       ->execute()
-      ->getArrayCopy();
+      ->first();
 
     $basqueContact = Contact::create()
       ->addValue('first_name', 'Contact')
@@ -48,7 +48,7 @@ class OneToOneJoinTest extends UnitTestCase {
       ->addValue('contact_type', 'Individual')
       ->addValue('preferred_language', 'eu_ES')
       ->execute()
-      ->getArrayCopy();
+      ->first();
 
     $contacts = Contact::get()
       ->addWhere('id', 'IN', [$armenianContact['id'], $basqueContact['id']])

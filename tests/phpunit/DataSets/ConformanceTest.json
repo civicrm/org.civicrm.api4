@@ -32,24 +32,24 @@
   "OptionValue": [
     {
       "option_group": "contribution_status",
-      "name": "Completed"
+      "label": "Completed"
     },
     {
       "option_group": "payment_instrument",
-      "name": "cash",
+      "label": "cash",
       "is_default": 1
     },
     {
       "option_group": "account_relationship",
-      "name": "Sales Tax Account is"
+      "label": "Sales Tax Account is"
     },
     {
       "option_group": "event_type",
-      "name": "major_historical_event"
+      "label": "major_historical_event"
     },
     {
       "option_group": "activity_type",
-      "name": "Contribution"
+      "label": "Contribution"
     }
   ],
   "Event": [

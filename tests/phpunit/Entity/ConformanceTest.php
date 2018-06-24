@@ -2,6 +2,7 @@
 
 namespace Civi\Test\Api4\Entity;
 
+use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\AbstractEntity;
 use Civi\Api4\Entity;
 use Civi\Test\Api4\Service\TestCreationParameterProvider;
@@ -41,7 +42,7 @@ class ConformanceTest extends UnitTestCase {
   public function getEntities() {
     $result = [];
     $entities = Entity::get()->setCheckPermissions(FALSE)->execute();
-    foreach($entities as $entity) {
+    foreach ($entities as $entity) {
       if ($entity != 'Entity') {
         $result[] = [$entity];
       }
@@ -103,7 +104,7 @@ class ConformanceTest extends UnitTestCase {
 
   /**
    * @param string $entity
-   * @param string $entityClass
+   * @param AbstractEntity|string $entityClass
    *
    * @return mixed
    */
@@ -112,7 +113,8 @@ class ConformanceTest extends UnitTestCase {
     $createResult = $entityClass::create()
       ->setValues($requiredParams)
       ->setCheckPermissions(FALSE)
-      ->execute();
+      ->execute()
+      ->first();
 
     $this->assertArrayHasKey('id', $createResult, "create missing ID");
     $id = $createResult['id'];
@@ -123,7 +125,25 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param string $entityClass
+   * @param AbstractEntity|string $entityClass
+   * @param int $id
+   */
+  protected function checkUpdateFailsFromCreate($entityClass, $id) {
+    $exceptionThrown = '';
+    try {
+      $entityClass::create()
+        ->setCheckPermissions(FALSE)
+        ->addValue('id', $id)
+        ->execute();
+    }
+    catch (\API_Exception $e) {
+      $exceptionThrown = $e->getMessage();
+    }
+    $this->assertContains('id', $exceptionThrown);
+  }
+
+  /**
+   * @param AbstractEntity|string $entityClass
    * @param int $id
    * @param string $entity
    */
@@ -138,26 +158,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param string $entityClass
-   * @param int $id
-   * @param string $entity
-   */
-  protected function checkUpdateFailsFromCreate($entityClass, $id) {
-      $exceptionThrown = '';
-      try {
-        $entityClass::create()
-          ->setCheckPermissions(FALSE)
-          ->addValue('id', $id)
-          ->execute();
-      }
-      catch (\API_Exception $e) {
-        $exceptionThrown = $e->getMessage();
-      }
-      $this->assertContains('id', $exceptionThrown);
-  }
-
-  /**
-   * @param string $entityClass
+   * @param AbstractEntity|string $entityClass
    */
   protected function checkDeleteWithNoId($entityClass) {
     $exceptionThrown = '';
@@ -172,7 +173,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param string $entityClass
+   * @param AbstractEntity|string $entityClass
    */
   protected function checkWrongParamType($entityClass) {
     $exceptionThrown = '';
@@ -189,7 +190,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param string $entityClass
+   * @param AbstractEntity|string $entityClass
    * @param int $id
    */
   protected function checkDeletion($entityClass, $id) {
@@ -203,7 +204,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param string $entityClass
+   * @param AbstractEntity|string $entityClass
    * @param int $id
    * @param string $entity
    */

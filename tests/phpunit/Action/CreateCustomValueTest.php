@@ -19,13 +19,14 @@ class CreateCustomValueTest extends BaseCustomValueTest {
       ->setCheckPermissions(FALSE)
       ->addValue('name', 'MyContactFields')
       ->addValue('extends', 'Contact')
-      ->execute();
+      ->execute()
+      ->first();
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
       ->addValue('label', 'Color')
       ->addValue('options', $optionValues)
-      ->addValue('custom_group_id', $customGroup->getArrayCopy()['id'])
+      ->addValue('custom_group_id', $customGroup['id'])
       ->addValue('html_type', 'Select')
       ->addValue('data_type', 'String')
       ->execute();

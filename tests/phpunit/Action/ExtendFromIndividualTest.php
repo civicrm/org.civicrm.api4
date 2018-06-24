@@ -18,7 +18,7 @@ class ExtendFromIndividualTest extends BaseCustomValueTest {
       ->addValue('name', 'MyContactFields')
       ->addValue('extends', 'Individual') // not Contact
       ->execute()
-      ->getArrayCopy();
+      ->first();
 
     CustomField::create()
       ->setCheckPermissions(FALSE)
@@ -35,7 +35,7 @@ class ExtendFromIndividualTest extends BaseCustomValueTest {
       ->addValue('contact_type', 'Individual')
       ->addValue('MyContactFields.FavColor', 'Red')
       ->execute()
-      ->getArrayCopy()['id'];
+      ->first()['id'];
 
     $contact = Contact::get()
       ->setCheckPermissions(FALSE)

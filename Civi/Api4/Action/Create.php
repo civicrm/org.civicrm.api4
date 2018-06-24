@@ -58,14 +58,51 @@ class Create extends AbstractAction {
    * @inheritDoc
    */
   public function _run(Result $result) {
+    $this->validateValues();
+    $params = $this->values;
+    $this->fillDefaults($params);
+
+    $resultArray = $this->writeObject($params);
+
+    $result->exchangeArray([$resultArray]);
+  }
+
+  /**
+   * @throws \API_Exception
+   */
+  protected function validateValues() {
     if (!empty($this->values['id'])) {
       throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
     }
+    $unmatched = [];
+    foreach ($this->getEntityFields() as $fieldName => $fieldInfo) {
+      if (!$this->getValue($fieldName) && !empty($fieldInfo['required']) && empty($fieldInfo['default_value'])) {
+        $unmatched[] = $fieldName;
+      }
+    }
+    if ($unmatched) {
+      throw new \API_Exception("Mandatory values missing from Api4 {$this->getEntity()}::{$this->getAction()}: '" . implode("', '", $unmatched) . "'", "mandatory_missing", array("fields" => $unmatched));
+    }
+  }
 
-    $resultArray = $this->writeObject($this->values);
+  /**
+   * Fill field defaults which were declared by the api.
+   *
+   * Note: default values from core are ignored because the BAO or database layer will supply them.
+   *
+   * @param array $params
+   */
+  protected function fillDefaults(&$params) {
+    $fields = $this->getEntityFields();
+    $bao = $this->getBaoName();
+    $coreFields = array_column($bao::fields(), NULL, 'name');
 
-    // fixme should return a single row array???
-    $result->exchangeArray($resultArray);
+    foreach ($fields as $name => $field) {
+      // If a default value is set in the api but not in core, the api should supply it.
+      if (!isset($params[$name]) && !empty($field['default_value']) && empty($coreFields[$name]['default'])) {
+        $params[$name] = $field['default_value'];
+      }
+    }
   }
 
 }

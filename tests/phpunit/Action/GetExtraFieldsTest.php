@@ -23,18 +23,4 @@ class GetExtraFieldsTest extends UnitTestCase {
     $this->assertEmpty($notReturned);
   }
 
-  public function testExtraFieldsWillBeAddedFromSpec() {
-    $returnedFields = Contact::getFields()
-      ->setAction('create')
-      ->execute()
-      ->getArrayCopy();
-
-    $returnedFieldNames = array_column($returnedFields, 'name');
-
-    $this->assertContains('dupe_check', $returnedFieldNames);
-  }
-
-  public function testCustomFieldsWillBeAdded() {
-    // todo
-  }
 }

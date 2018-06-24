@@ -64,7 +64,8 @@ class SpecGathererTest extends UnitTestCase {
       ->setCheckPermissions(FALSE)
       ->addValue('name', 'FavoriteThings')
       ->addValue('extends', 'Contact')
-      ->execute()['id'];
+      ->execute()
+      ->first()['id'];
 
     $options = ['r' => 'Red', 'g' => 'Green', 'p' => 'Pink'];
 
