@@ -14,18 +14,23 @@ class CustomFieldSpec extends FieldSpec {
   protected $customGroupId;
 
   /**
-   * CustomFieldSpec constructor.
-   *
-   * @param string $name
-   * @param string $entity
-   * @param string $dataType
+   * @inheritDoc
    */
-  public function __construct($name, $entity, $dataType) {
-    if ($dataType === 'ContactReference') {
-      $dataType = 'Integer';
-      $this->setFkEntity('Contact');
+  public function setDataType($dataType) {
+    switch ($dataType) {
+      case 'ContactReference':
+        $this->setFkEntity('Contact');
+        $dataType = 'Integer';
+        break;
+
+      case 'File':
+      case 'StateProvince':
+      case 'Country':
+        $this->setFkEntity($dataType);
+        $dataType = 'Integer';
+        break;
     }
-    parent::__construct($name, $entity, $dataType);
+    return parent::setDataType($dataType);
   }
 
   /**
