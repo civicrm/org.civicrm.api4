@@ -94,7 +94,7 @@ class ParticipantTest extends UnitTestCase {
 
     $firstOnlyResult = Participant::get()
       ->setCheckPermissions(FALSE)
-      ->addClause(['event_id', '=', $firstEventId])
+      ->addClause('AND', ['event_id', '=', $firstEventId])
       ->execute();
 
     $this->assertEquals($expectedFirstEventCount, count($firstOnlyResult),
@@ -136,10 +136,11 @@ class ParticipantTest extends UnitTestCase {
     $otherParticipantResult = Participant::get()
       ->setCheckPermissions(FALSE)
       ->setSelect(['id'])
-      ->addClause(['NOT',
-        ['AND', [
+      ->addClause('NOT', 'AND', [
           ['event_id', '=', $firstEventId],
-          ['contact_id', '=', $firstContactId]]]])
+          ['contact_id', '=', $firstContactId],
+        ]
+      )
       ->execute()
       ->indexBy('id');
 

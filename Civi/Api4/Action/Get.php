@@ -98,12 +98,14 @@ class Get extends AbstractAction {
   }
 
   /**
-   * @param array $clause
+   * @param string $operator
+   * @param mixed $condition1,... $conditionN
+   *
    * @return $this
    * @throws \API_Exception
    */
-  public function addClause($clause) {
-    $this->where[] = $clause;
+  public function addClause($operator, $condition1) {
+    $this->where[] = [$operator, array_slice(func_get_args(), 1)];
     return $this;
   }
 
