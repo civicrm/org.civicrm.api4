@@ -170,7 +170,8 @@ class Api4SelectQuery extends SelectQuery {
    * @throws \Exception
    */
   protected function validateClauseAndComposeSql($clause) {
-    list($key, $operator, $value) = $clause;
+    // Pad array for unary operators
+    list($key, $operator, $value) = array_pad($clause, 3, NULL);
     $fieldSpec = $this->getField($key);
     // derive table and column:
     $table_name = NULL;

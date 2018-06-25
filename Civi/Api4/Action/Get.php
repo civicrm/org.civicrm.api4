@@ -89,7 +89,7 @@ class Get extends AbstractAction {
    * @return $this
    * @throws \API_Exception
    */
-  public function addWhere($field, $op, $value) {
+  public function addWhere($field, $op, $value = NULL) {
     if (!in_array($op, \CRM_Core_DAO::acceptedSQLOperators())) {
       throw new \API_Exception('Unsupported operator');
     }
