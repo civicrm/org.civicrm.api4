@@ -25,6 +25,10 @@
             <tag name="spec_provider"/>
         </service>
 
+        <service class="Civi\Api4\Service\Spec\Provider\ContactTypeCreationSpecProvider">
+            <tag name="spec_provider"/>
+        </service>
+
         <service id="option_value_creation.spec_provider" class="Civi\Api4\Service\Spec\Provider\OptionValueCreationSpecProvider">
             <tag name="spec_provider"/>
         </service>

@@ -104,7 +104,7 @@
     $scope.valuesFields = function() {
       var fields = [];
       _.each(_.cloneDeep($scope.fields), function(field, index) {
-        if (field.id === 'id') {
+        if (field.id === 'id' || field.children) {
           return;
         }
         if ($scope.params.values && typeof $scope.params.values[field.id] !== 'undefined') {
@@ -224,10 +224,13 @@
         if (action.slice(0, 3) === 'get') {
           result = lcfirst(action.replace(/s$/, '').slice(3) || entity);
         }
-        var results = lcfirst(pluralize(result));
+        var results = lcfirst(pluralize(result)),
+          paramCount = _.size(params),
+          i = 0;
         code.javascript = "CRM.api4('" + entity + "', '" + action + "', {";
         _.each(params, function(param, key) {
-          code.javascript += "\n  " + key + ': ' + JSON.stringify(param) + ',';
+          code.javascript += "\n  " + key + ': ' + JSON.stringify(param) +
+            (++i < paramCount ? ',' : '');
           if (key === 'checkPermissions') {
             code.javascript += ' // IGNORED: permissions are always enforced from client-side requests';
           }
