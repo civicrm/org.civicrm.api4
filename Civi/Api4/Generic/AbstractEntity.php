@@ -33,6 +33,7 @@ use Civi\Api4\Action\Get;
 use Civi\Api4\Action\GetActions;
 use Civi\Api4\Action\GetFields;
 use Civi\Api4\Action\Update;
+use Civi\Api4\Action\Replace;
 
 /**
  * Base class for all api entities.
@@ -43,6 +44,7 @@ use Civi\Api4\Action\Update;
  * @method static Create create
  * @method static Update update
  * @method static Delete delete
+ * @method static Replace replace
  */
 abstract class AbstractEntity {
 
