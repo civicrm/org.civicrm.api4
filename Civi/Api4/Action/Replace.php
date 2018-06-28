@@ -49,15 +49,14 @@ class Replace extends Get {
   public function _run(Result $result) {
     // First run the parent action (get)
     $this->select = ['id'];
-    // For some reason the contact bao requires this
-    if ($this->getEntity() == 'Contact') {
-      $this->select[] = 'contact_type';
-    }
     parent::_run($result);
-    $toDelete = (array) $result->indexBy('id');
 
+    $toDelete = (array) $result->indexBy('id');
+    $saved = [];
+
+    // Save all items
     foreach ($this->records as $idx => $record) {
-      $this->writeObject($record);
+      $saved[] = $this->writeObject($record);
       if (!empty($record['id'])) {
         unset($toDelete[$record['id']]);
       }
@@ -66,7 +65,7 @@ class Replace extends Get {
     if ($toDelete) {
       civicrm_api4($this->getEntity(), 'Delete', ['where' => [['id', 'IN', array_keys($toDelete)]]]);
     }
-    $result->exchangeArray([]);
+    $result->exchangeArray($saved);
   }
 
   /**

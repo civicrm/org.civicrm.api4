@@ -38,10 +38,11 @@ class ReplaceTest extends UnitTestCase {
       ['email' => 'firstedited@example.com', 'id' => $e1],
       ['contact_id' => $cid1, 'email' => 'third@example.com', 'location_type_id' => 1]
     ];
-    Email::replace()
+    $replaced = Email::replace()
       ->setRecords($replacement)
       ->addWhere('contact_id', '=', $cid1)
       ->execute();
+    $this->assertEquals(2, $replaced->count());
     $results = Email::get()
       ->addWhere('contact_id', '=', $cid1)
       ->execute()
