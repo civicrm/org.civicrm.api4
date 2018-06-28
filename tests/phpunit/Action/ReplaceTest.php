@@ -42,7 +42,11 @@ class ReplaceTest extends UnitTestCase {
       ->setRecords($replacement)
       ->addWhere('contact_id', '=', $cid1)
       ->execute();
+    // Should have saved 2 records
     $this->assertEquals(2, $replaced->count());
+    // Should have deleted email2
+    $this->assertEquals([$e2], $replaced->deleted);
+    // Verify contact now has the new email records
     $results = Email::get()
       ->addWhere('contact_id', '=', $cid1)
       ->execute()
@@ -55,7 +59,7 @@ class ReplaceTest extends UnitTestCase {
     foreach ($results as $result) {
       $this->assertEquals('third@example.com', $result['email']);
     }
-    // Validate our other email address did not get deleted
+    // Validate our other contact's email did not get deleted
     $c2email = Email::get()
       ->addWhere('contact_id', '=', $cid2)
       ->execute()

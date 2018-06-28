@@ -105,7 +105,10 @@ class Get extends AbstractAction {
    * @throws \API_Exception
    */
   public function addClause($operator, $condition1) {
-    $this->where[] = [$operator, array_slice(func_get_args(), 1)];
+    if (!is_array($condition1[0])) {
+      $condition1 = array_slice(func_get_args(), 1);
+    }
+    $this->where[] = [$operator, $condition1];
     return $this;
   }
 

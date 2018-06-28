@@ -65,6 +65,7 @@ class Replace extends Get {
     if ($toDelete) {
       civicrm_api4($this->getEntity(), 'Delete', ['where' => [['id', 'IN', array_keys($toDelete)]]]);
     }
+    $result->deleted = array_keys($toDelete);
     $result->exchangeArray($saved);
   }
 
