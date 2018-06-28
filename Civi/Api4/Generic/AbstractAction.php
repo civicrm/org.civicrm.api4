@@ -356,7 +356,7 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   protected function writeObject($params) {
     $entityId = UtilsArray::value('id', $params);
-    $this->formatParams($params);
+    FormattingUtil::formatWriteParams($params, $this->getEntity(), $this->getEntityFields());
     $this->formatCustomParams($params, $entityId);
 
     $baoName = $this->getBaoName();
@@ -423,25 +423,6 @@ abstract class AbstractAction implements \ArrayAccess {
         ->indexBy('name');
     }
     return $this->entityFields;
-  }
-
-  /**
-   * Massage values into the format the BAO expects
-   *
-   * @param $params
-   */
-  private function formatParams(&$params) {
-    $fields = $this->getEntityFields();
-    foreach ($fields as $name => $field) {
-      if (!empty($params[$name])) {
-        $value =& $params[$name];
-        FormattingUtil::formatValue($value, $field, $this->getEntity());
-        // Ensure we have an array for serialized fields
-        if (!empty($field['serialize'] && !is_array($value))) {
-          $value = (array) $value;
-        }
-      }
-    }
   }
 
   /**

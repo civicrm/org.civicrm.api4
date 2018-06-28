@@ -65,10 +65,6 @@
             <tag name="event_subscriber"/>
         </service>
 
-        <service id="null_value.presave.subscriber" class="Civi\Api4\Event\Subscriber\NullValueFormattingPresaveSubscriber">
-            <tag name="event_subscriber"/>
-        </service>
-
         <service id="option_value.pre_creation.subscriber" class="Civi\Api4\Event\Subscriber\OptionValuePreCreationSubscriber">
             <tag name="event_subscriber"/>
         </service>
