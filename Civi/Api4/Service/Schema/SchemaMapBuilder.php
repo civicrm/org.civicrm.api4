@@ -76,7 +76,8 @@ class SchemaMapBuilder {
     if ($fkClass) {
       $tableName = TableHelper::getTableForClass($fkClass);
       $fkKey = UtilsArray::value('FKKeyColumn', $data, 'id');
-      $joinable = new Joinable($tableName, $fkKey);
+      $alias = str_replace('_id', '', $field);
+      $joinable = new Joinable($tableName, $fkKey, $alias);
       $joinable->setJoinType($joinable::JOIN_TYPE_MANY_TO_ONE);
       $table->addTableLink($field, $joinable);
     }
