@@ -170,8 +170,7 @@ class SchemaMapBuilder {
    */
   private function addCustomFields(SchemaMap $map, Table $baseTable, $entity) {
     // Don't be silly
-    $noCustom = ['CustomField', 'CustomGroup', 'OptionGroup', 'OptionValue'];
-    if (in_array($entity, $noCustom) || !\CRM_Utils_Rule::alphanumeric($entity)) {
+    if (!array_key_exists($entity, \CRM_Core_SelectValues::customGroupExtends())) {
       return;
     }
     $queryEntity = (array) $entity;
