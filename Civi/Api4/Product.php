@@ -8,4 +8,5 @@ use Civi\Api4\Generic\AbstractEntity;
  * Class Product.
  */
 class Product extends AbstractEntity {
+
 }
