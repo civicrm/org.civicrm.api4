@@ -35,38 +35,173 @@ class Result extends \ArrayObject {
    * @var string
    */
   public $entity;
+
   /**
    * @var string
    */
   public $action;
+
   /**
-   * Api version
+   * Api version.
+   *
    * @var int
    */
   public $version = 4;
 
   /**
    * Return first result.
-   * @return array|null
+   *
+   * How to use:
+   *
+   * <code>
+   * <?php
+   * use Civi\Api4\Contact;
+   * try {
+   *   $contacts = Contact::get()
+   *   ->addWhere('contact_type','=','Organization')
+   *   ->setLimit(5)
+   *   ->execute();
+   * } catch (\Exception $e) {
+   *   var_dump($e->getMessage());
+   * }
+   *
+   * var_dump($contacts);
+   *
+   * // take first contact without condition
+   * $first_contact = $contacts->first();
+   *
+   * $condition = $contacts->first(function ($key, $value){
+   *  return $value['display_name'] === 'Some Name';
+   * });
+   *
+   * ?>
+   * </code>
+   *
+   * Thus in the variable $contacts always kept the original data, to which we
+   * can apply later
+   *
+   * @param callable|null $callback
+   * @param null          $default
+   *
+   * @return null|\Civi\Api4\Generic\Result
    */
-  public function first() {
-    foreach ($this as $values) {
-      return $values;
+  public function first(callable $callback = NULL, $default = NULL) {
+    if (NULL === $callback) {
+      if ($this->isEmpty()) {
+        return $default;
+      }
+
+      return new self(\reset($this));
     }
-    return NULL;
+    foreach ($this as $key => $value) {
+      if (\call_user_func($callback, $key, $value)) {
+        if ($this->isValidStore($value)) {
+          return new self(\reset($this));
+        }
+
+        return $value;
+      }
+    }
+
+    return $default;
   }
 
   /**
-   * Re-index the results array (which by default is non-associative)
+   * How to use:.
    *
-   * Drops any item from the results that does not contain the specified key
+   * <code>
+   * <?php
+   * use Civi\Api4\Contact;
+   * try {
+   *   $contacts = Contact::get()
+   *   ->addWhere('contact_type','=','Organization')
+   *   ->setLimit(5)
+   *   ->execute();
+   * } catch (\Exception $e) {
+   *   var_dump($e->getMessage());
+   * }
+   *
+   * var_dump($contacts->first()->get('display_name'));
+   *
+   * ?>
+   * </code>
+   *
+   * @param mixed $key
+   * @param null  $default
+   *
+   * @return \Civi\Api4\Generic\Result|mixed|null
+   */
+  public function get($key, $default = NULL) {
+    if (!$this->isEmpty()) {
+      if (\strpos($key, '.')) {
+        return $this->parseDotNotationKey($key, $default);
+      }
+
+      if ($this->offsetExists($key)) {
+        $offset = $this->offsetGet($key);
+        if ($this->isValidStore($offset)) {
+          return new self($offset);
+        }
+
+        return $offset;
+      }
+    }
+
+    return $default;
+  }
+
+  /**
+   * @param string $index
+   * @param null   $default
+   *
+   * @return \Civi\Api4\Generic\Result|mixed|null
+   */
+  private function parseDotNotationKey($index, $default = NULL) {
+    $store = new self($this->getArrayCopy());
+    $keys = \explode('.', $index);
+    foreach ($keys as $innerKey) {
+      if (!$store->offsetExists($innerKey)) {
+        return $default;
+      }
+      if ($this->isValidStore($store[$innerKey])) {
+        $store = new self($store[$innerKey]);
+      }
+      else {
+        $store = $store[$innerKey];
+      }
+    }
+    return $store;
+  }
+
+  /**
+   * @return bool
+   */
+  public function isEmpty() {
+    return FALSE === (bool) $this->count();
+  }
+
+  /**
+   * @param mixed $store
+   *
+   * @return bool
+   */
+  private function isValidStore($store) {
+    return (\is_array($store) || \is_object($store)) && !empty($store);
+  }
+
+  /**
+   * Re-index the results array (which by default is non-associative).
+   *
+   * Drops any item from the results that does not contain the specified key.
    *
    * @param string $key
-   * @return $this
+   *
    * @throws \API_Exception
+   *
+   * @return $this
    */
   public function indexBy($key) {
-    if (count($this)) {
+    if (\count($this)) {
       $newResults = [];
       foreach ($this as $values) {
         if (isset($values[$key])) {
@@ -74,11 +209,11 @@ class Result extends \ArrayObject {
         }
       }
       if (!$newResults) {
-        throw new \API_Exception("Key $key not found in api results");
+        throw new \API_Exception("Key ${key} not found in api results");
       }
       $this->exchangeArray($newResults);
     }
+
     return $this;
   }
-
 }
