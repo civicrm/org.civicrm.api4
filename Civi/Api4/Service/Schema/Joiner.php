@@ -83,10 +83,17 @@ class Joiner {
           throw new \Exception(sprintf('Cannot join %s to %s', $baseTable, $targetAlias));
         }
         else {
-          $fullPath = array_merge($fullPath, $links);
+          $fullPath[] = $links;
           $lastLink = end($links);
           $baseTable = $lastLink->getTargetTable();
         }
+      }
+      
+      if (PHP_VERSION_ID < 50600) {
+        $fullPath = call_user_func_array('array_merge', $fullPath);
+      }
+      else {
+        $fullPath = array_merge(...$fullPath);
       }
 
       $this->cache[$cacheKey] = $fullPath;
