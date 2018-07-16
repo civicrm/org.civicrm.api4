@@ -76,7 +76,7 @@ class Create extends AbstractAction {
     }
     $unmatched = [];
     foreach ($this->getEntityFields() as $fieldName => $fieldInfo) {
-      if (!$this->getValue($fieldName) && !empty($fieldInfo['required']) && empty($fieldInfo['default_value'])) {
+      if (!$this->getValue($fieldName) && !empty($fieldInfo['required']) && !isset($fieldInfo['default_value'])) {
         $unmatched[] = $fieldName;
       }
     }
