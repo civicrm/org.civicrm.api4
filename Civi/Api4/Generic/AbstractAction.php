@@ -111,7 +111,7 @@ abstract class AbstractAction implements \ArrayAccess {
    *
    * @param $name
    * @param $arguments
-   * @return $this|mixed
+   * @return static|mixed
    * @throws \API_Exception
    */
   public function __call($name, $arguments) {

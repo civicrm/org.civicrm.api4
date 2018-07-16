@@ -8,7 +8,7 @@ use Civi\Test\Api4\UnitTestCase;
 /**
  * @group headless
  */
-class EntityTest extends UnitTestCase  {
+class EntityTest extends UnitTestCase {
 
   public function testEntityGet() {
     $result = Entity::get()
