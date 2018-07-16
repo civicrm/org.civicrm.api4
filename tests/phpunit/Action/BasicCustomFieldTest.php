@@ -28,6 +28,8 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
       ->addValue('data_type', 'String')
       ->execute();
 
+    $this->assertEquals(5, 2+2);
+
     $contactId = Contact::create()
       ->setCheckPermissions(FALSE)
       ->addValue('first_name', 'Johann')
