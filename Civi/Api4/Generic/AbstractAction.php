@@ -47,6 +47,13 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   protected $version = 4;
 
+  /**
+   * Custom Group name if this is a CustomValue pseudo-entity.
+   *
+   * @var string
+   */
+  private $customGroup;
+
   /*
    * Todo: not implemented.
    *
@@ -184,6 +191,22 @@ abstract class AbstractAction implements \ArrayAccess {
       $params[$name] = $this->$name;
     }
     return $params;
+  }
+
+  /**
+   * @param $customGroup
+   * @return static
+   */
+  public function setCustomGroup($customGroup) {
+    $this->customGroup = $customGroup;
+    return $this;
+  }
+
+  /**
+   * @return string
+   */
+  public function getCustomGroup() {
+    return $this->customGroup;
   }
 
   /**

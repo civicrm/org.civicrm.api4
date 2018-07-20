@@ -27,6 +27,7 @@
 
 namespace Civi\Api4\Action\Entity;
 
+use Civi\Api4\CustomGroup;
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Utils\ReflectionUtils;
@@ -66,14 +67,38 @@ class Get extends AbstractAction {
           if (!$this->select || $this->select != ['name']) {
             $this->addDocs($entity);
           }
-          if ($this->select) {
-            $entity = array_intersect_key($entity, array_flip($this->select));
-          }
           $entities[$matches[1]] = $entity;
         }
       }
     }
+    unset($entities['CustomValue']);
+    // Add custom-field pseudo-entities
+    $customEntities = CustomGroup::get()
+      ->addWhere('is_multiple', '=', 1)
+      ->addWhere('is_active', '=', 1)
+      ->setSelect(['name', 'title', 'help_pre', 'help_post'])
+      ->setCheckPermissions(FALSE)
+      ->execute();
+    foreach ($customEntities as $customEntity) {
+      $fieldName = 'Custom_' . $customEntity['name'];
+      $entities[$fieldName] = [
+        'name' => $fieldName,
+        'description' => $customEntity['title'],
+      ];
+      if (!empty($customEntity['help_pre'])) {
+        $entities[$fieldName]['comment'] = $customEntity['help_pre'];
+      }
+      if (!empty($customEntity['help_post'])) {
+        $pre = empty($customEntity['help_pre']) ? '' : $customEntity['help_pre'] . "\n\n";
+        $entities[$fieldName]['comment'] = $pre . $customEntity['help_post'];
+      }
+    }
     ksort($entities);
+    if ($this->select) {
+      foreach ($entities as &$entity) {
+        $entity = array_intersect_key($entity, array_flip($this->select));
+      }
+    }
     $result->exchangeArray(array_values($entities));
   }
 
