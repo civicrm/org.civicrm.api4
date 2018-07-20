@@ -35,6 +35,8 @@ use Civi\Api4\Utils\ReflectionUtils;
 /**
  * Get entities
  *
+ * @method $this setIncludeCustom(bool $value)
+ * @method bool getIncludeCustom()
  * @method $this setSelect(array $value)
  * @method $this addSelect(string $value)
  * @method array getSelect()
@@ -49,6 +51,13 @@ class Get extends AbstractAction {
    * @var array
    */
   protected $select = [];
+
+  /**
+   * Include custom-field-based pseudo-entities?
+   *
+   * @var bool
+   */
+  protected $includeCustom = TRUE;
 
   /**
    * Scan all api directories to discover entities
@@ -72,7 +81,27 @@ class Get extends AbstractAction {
       }
     }
     unset($entities['CustomValue']);
-    // Add custom-field pseudo-entities
+
+    if ($this->includeCustom) {
+      $this->addCustomEntities($entities);
+    }
+
+    ksort($entities);
+    if ($this->select) {
+      foreach ($entities as &$entity) {
+        $entity = array_intersect_key($entity, array_flip($this->select));
+      }
+    }
+    $result->exchangeArray(array_values($entities));
+  }
+
+  /**
+   * Add custom-field pseudo-entities
+   *
+   * @param $entities
+   * @throws \API_Exception
+   */
+  private function addCustomEntities(&$entities) {
     $customEntities = CustomGroup::get()
       ->addWhere('is_multiple', '=', 1)
       ->addWhere('is_active', '=', 1)
@@ -86,22 +115,30 @@ class Get extends AbstractAction {
         'description' => $customEntity['title'],
       ];
       if (!empty($customEntity['help_pre'])) {
-        $entities[$fieldName]['comment'] = $customEntity['help_pre'];
+        $entities[$fieldName]['comment'] = $this->plainTextify($customEntity['help_pre']);
       }
       if (!empty($customEntity['help_post'])) {
-        $pre = empty($customEntity['help_pre']) ? '' : $customEntity['help_pre'] . "\n\n";
-        $entities[$fieldName]['comment'] = $pre . $customEntity['help_post'];
+        $pre = empty($entities[$fieldName]['comment']) ? '' : $entities[$fieldName]['comment'] . "\n\n";
+        $entities[$fieldName]['comment'] = $pre . $this->plainTextify($customEntity['help_post']);
       }
     }
-    ksort($entities);
-    if ($this->select) {
-      foreach ($entities as &$entity) {
-        $entity = array_intersect_key($entity, array_flip($this->select));
-      }
-    }
-    $result->exchangeArray(array_values($entities));
   }
 
+  /**
+   * Convert html to plain text.
+   *
+   * @param $input
+   * @return mixed
+   */
+  private function plainTextify($input) {
+    return html_entity_decode(strip_tags($input), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+  }
+
+  /**
+   * Add info from code docblock.
+   *
+   * @param $entity
+   */
   private function addDocs(&$entity) {
     $reflection = new \ReflectionClass("\\Civi\\Api4\\" . $entity['name']);
     $entity += ReflectionUtils::getCodeDocs($reflection);

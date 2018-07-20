@@ -16,6 +16,9 @@ class CoreUtil {
    *   auto-completion of static methods
    */
   public static function getDAOFromApiName($entityName) {
+    if ($entityName === 'CustomValue' || strpos($entityName, 'Custom_') === 0) {
+      return 'CRM_Contact_BAO_Contact';
+    }
     return \_civicrm_api3_get_DAO($entityName);
   }
 
