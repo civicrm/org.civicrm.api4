@@ -7,7 +7,7 @@ use Civi\Api4\Generic\Result;
 use Civi\Api4\Service\Spec\SpecFormatter;
 
 /**
- * Get fields for an entity
+ * Get fields for a custom group.
  *
  * @method $this setIncludeCustom(bool $value)
  * @method bool getIncludeCustom()

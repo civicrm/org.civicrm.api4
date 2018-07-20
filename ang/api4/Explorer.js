@@ -276,7 +276,11 @@
           }
         });
         code.javascript += "\n}).done(function(" + results + ") {\n  // do something with " + results + " array\n});";
-        code.php = '$' + results + " = \\Civi\\Api4\\" + entity + '::' + action + '()';
+        if (entity.substr(0, 7) !== 'Custom_') {
+          code.php = '$' + results + " = \\Civi\\Api4\\" + entity + '::' + action + '()';
+        } else {
+          code.php = '$' + results + " = \\Civi\\Api4\\CustomValue()::" + action + "('" + entity.substr(7) + "')";
+        }
         _.each(params, function(param, key) {
           var val = '';
           if (typeof objectParams[key] !== 'undefined') {
