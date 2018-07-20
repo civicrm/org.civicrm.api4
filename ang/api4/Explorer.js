@@ -179,7 +179,8 @@
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
         _.each(actionInfo.params, function (param, name) {
-          var format, defaultVal;
+          var format,
+            defaultVal = _.cloneDeep(param.default);
           if (param.type) {
             switch (param.type[0]) {
               case 'int':
@@ -197,13 +198,6 @@
             }
             if (name == 'limit') {
               defaultVal = 25;
-            }
-            if (name == 'checkPermissions') {
-              defaultVal = true;
-            }
-            if (name === 'where') {
-              $scope.params.where = [];
-              defaultVal = [];
             }
             $scope.$bindToRoute({
               expr: 'params["' + name + '"]',
