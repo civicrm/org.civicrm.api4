@@ -16,74 +16,47 @@
           </div>
         </div>
         <div class="panel-body">
-          <div class="api4-input" ng-if="availableParams.select">
-            <label for="api4-param-select">select<span class="crm-marker" ng-if="availableParams.select.required"> *</span></label>
-            <input class="collapsible-optgroups form-control" ng-list crm-ui-select="{data: fields, multiple: true}" id="api4-param-select" ng-model="params.select"/>
+          <div class="api4-input form-inline">
+            <div class="form-control" ng-class="{'api4-option-selected': params[name]}" ng-repeat="(name, param) in availableParams" ng-if="param.type[0] === 'bool'">
+              <input type="checkbox" id="api4-param-{{ name }}" ng-model="params[name]"/>
+              <label for="api4-param-{{ name }}">{{ name }}<span class="crm-marker" ng-if="param.required"> *</span></label>
+            </div>
           </div>
-          <div class="api4-input" ng-if="availableParams.action">
+          <div class="api4-input form-inline" ng-if="availableParams.select">
+            <label for="api4-param-select">select<span class="crm-marker" ng-if="availableParams.select.required"> *</span></label>
+            <input class="collapsible-optgroups form-control" ng-list crm-ui-select="{data: fields, multiple: true}" id="api4-param-select" ng-model="params.select" style="width: 85%;"/>
+          </div>
+          <div class="api4-input form-inline" ng-if="availableParams.action">
             <label for="api4-param-action">action<span class="crm-marker" ng-if="availableParams.action.required"> *</span></label>
             <input class="form-control" crm-ui-select="{data: actions}" id="api4-param-action" ng-model="params.action"/>
           </div>
-          <div class="api4-input" ng-repeat="(name, param) in availableParams" ng-if="param.type[0] === 'bool'">
-            <label for="api4-param-{{ name }}">{{ name }}<span class="crm-marker" ng-if="param.required"> *</span></label>
-            <input type="checkbox" id="api4-param-{{ name }}" ng-model="params[name]"/>
-          </div>
-          <div class="api4-input" ng-repeat="(name, param) in availableParams" ng-if="name !== 'action' && (param.type[0] === 'string' || param.type[0] === 'int')">
+          <div class="api4-input form-inline" ng-repeat="(name, param) in availableParams" ng-if="name !== 'action' && (param.type[0] === 'string' || param.type[0] === 'int')">
             <label for="api4-param-{{ name }}">{{ name }}<span class="crm-marker" ng-if="param.required"> *</span></label>
             <input class="form-control" type="{{ param.type[0] === 'int' ? 'number' : 'text' }}" id="api4-param-{{ name }}" ng-model="params[name]"/>
           </div>
-          <fieldset ng-if="availableParams.where">
-            <legend>where<span class="crm-marker" ng-if="availableParams.where.required"> *</span></legend>
-            <div class="api4-input row" ng-repeat="(index, clause) in params.where">
-              <div class="col-md-4">
-                <input class="collapsible-optgroups form-control" ng-model="clause[0]" crm-ui-select="{data: fields, allowClear: true, placeholder: 'Field'}" />
-              </div>
-              <div class="col-md-2">
-                <input class="form-control" ng-model="clause[1]" crm-ui-select="{data: operators}" />
-              </div>
-              <div class="col-md-6">
-                <input class="form-control" ng-model="clause[2]" />
-              </div>
-            </div>
-            <div class="api4-input row">
-              <div class="col-md-4">
-                <input class="collapsible-optgroups form-control" ng-model="controls.where" crm-ui-select="{data: fields}" placeholder="Add where" />
-              </div>
-            </div>
+          <fieldset ng-if="availableParams.where" class="api4-where-fieldset" crm-api4-where-clause="{where: params.where, required: availableParams.where.required, op: 'AND', label: 'where', fields: fields, operators: operators}">
           </fieldset>
           <fieldset ng-if="availableParams.values">
             <legend>values<span class="crm-marker" ng-if="availableParams.values.required"> *</span></legend>
-            <div class="api4-input row" ng-repeat="(index, clause) in params.values">
-              <div class="col-md-4">
-                <input class="collapsible-optgroups form-control" ng-model="clause[0]" crm-ui-select="{formatResult: formatSelect2Item, formatSelection: formatSelect2Item, data: valuesFields(), allowClear: true, placeholder: 'Field'}" />
-              </div>
-              <div class="col-md-6">
-                <input class="form-control" ng-model="clause[1]" />
-              </div>
+            <div class="api4-input form-inline" ng-repeat="(index, clause) in params.values">
+              <input class="collapsible-optgroups form-control" ng-model="clause[0]" crm-ui-select="{formatResult: formatSelect2Item, formatSelection: formatSelect2Item, data: valuesFields(), allowClear: true, placeholder: 'Field'}" />
+              <input class="form-control" ng-model="clause[1]" />
             </div>
-            <div class="api4-input row">
-              <div class="col-md-4">
-                <input class="collapsible-optgroups form-control" ng-model="controls.values" crm-ui-select="{formatResult: formatSelect2Item, formatSelection: formatSelect2Item, data: valuesFields()}" placeholder="Add value" />
-              </div>
+            <div class="api4-input form-inline">
+              <input class="collapsible-optgroups form-control" ng-model="controls.values" crm-ui-select="{formatResult: formatSelect2Item, formatSelection: formatSelect2Item, data: valuesFields()}" placeholder="Add value" />
             </div>
           </fieldset>
           <fieldset ng-if="availableParams.orderBy">
             <legend>orderBy<span class="crm-marker" ng-if="availableParams.orderBy.required"> *</span></legend>
-            <div class="api4-input row" ng-repeat="(index, clause) in params.orderBy">
-              <div class="col-md-4">
-                <input class="collapsible-optgroups form-control" ng-model="clause[0]" crm-ui-select="{data: fields, allowClear: true, placeholder: 'Field'}" />
-              </div>
-              <div class="col-md-2">
-                <select class="form-control" ng-model="clause[1]">
-                  <option value="ASC">ASC</option>
-                  <option value="DESC">DESC</option>
-                </select>
-              </div>
+            <div class="api4-input form-inline" ng-repeat="(index, clause) in params.orderBy">
+              <input class="collapsible-optgroups form-control" ng-model="clause[0]" crm-ui-select="{data: fields, allowClear: true, placeholder: 'Field'}" />
+              <select class="form-control" ng-model="clause[1]">
+                <option value="ASC">ASC</option>
+                <option value="DESC">DESC</option>
+              </select>
             </div>
-            <div class="api4-input row">
-              <div class="col-md-4">
-                <input class="collapsible-optgroups form-control" ng-model="controls.orderBy" crm-ui-select="{data: fields}" placeholder="Add orderBy" />
-              </div>
+            <div class="api4-input form-inline">
+              <input class="collapsible-optgroups form-control" ng-model="controls.orderBy" crm-ui-select="{data: fields}" placeholder="Add orderBy" />
             </div>
           </fieldset>
           <!--<input class="form-control" ng-repeat="(name, param) in availableParams" placeholder="{{ name }}" ng-model="params[name]"/>-->
@@ -103,7 +76,7 @@
   </div>
   <div class="row">
     <div class="col-md-6">
-      <div class="panel panel-primary explorer-code-panel">
+      <div class="panel panel-warning explorer-code-panel">
         <div class="panel-heading">
           <h3 class="panel-title" crm-icon="fa-code">{{ ts('Code') }}</h3>
         </div>

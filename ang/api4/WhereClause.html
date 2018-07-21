@@ -1,0 +1,34 @@
+<legend>{{ data.label || data.op + ' group' }}<span class="crm-marker" ng-if="data.required"> *</span></legend>
+<div class="btn-group btn-group-xs" ng-if="data.groupParent">
+  <button class="btn btn-danger-outline" ng-click="removeGroup(data.groupParent, data.groupIndex)" title="{{ ts('Remove group') }}">
+    <i class="crm-i fa-trash"></i>
+  </button>
+</div>
+<div class="api4-input form-inline clearfix" ng-repeat="(index, clause) in data.where">
+  <div class="api4-clause-badge">
+    <span class="badge badge-info" ng-if="!index && data.op !== 'NOT'">Where</span>
+    <span class="badge badge-info" ng-if="index || data.op === 'NOT'">{{ data.op }}</span>
+  </div>
+  <div ng-if="clause[0] !== 'AND' && clause[0] !== 'OR' && clause[0] !== 'NOT'" class="api4-input-group">
+    <input class="collapsible-optgroups form-control" ng-model="clause[0]" crm-ui-select="{data: data.fields, allowClear: true, placeholder: 'Field'}" />
+    <input class="form-control api4-operator" ng-model="clause[1]" crm-ui-select="{data: data.operators}" />
+    <input class="form-control" ng-model="clause[2]" />
+  </div>
+  <fieldset class="clearfix" ng-if="clause[0] === 'AND' || clause[0] === 'OR' || clause[0] === 'NOT'" crm-api4-where-clause="{where: clause[1], op: clause[0], fields: data.fields, operators: data.operators, groupParent: data.where, groupIndex: index}">
+  </fieldset>
+</div>
+<div class="api4-input form-inline">
+  <div class="api4-clause-badge">
+    <div class="btn-group btn-group-xs">
+      <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        {{ data.op }} <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu api4-add-where-group-menu">
+        <li><a href ng-click="addGroup('AND')">AND</a></li>
+        <li><a href ng-click="addGroup('OR')">OR</a></li>
+        <li><a href ng-click="addGroup('NOT')">NOT</a></li>
+      </ul>
+    </div>
+  </div>
+  <input class="collapsible-optgroups form-control" ng-model="newClause" crm-ui-select="{data: data.fields, placeholder: 'Add clause'}" />
+</div>

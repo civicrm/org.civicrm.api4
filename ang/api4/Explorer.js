@@ -27,7 +27,7 @@
     $scope.fields = [];
     $scope.availableParams = {};
     $scope.params = {};
-    var richParams = {where: 'array', values: 'object', orderBy: 'object'};
+    var objectParams = {orderBy: 'ASC', values: ''};
     var getMetaParams = schema.length ? {} : {schema: ['Entity', 'getFields'], links: ['Entity', 'getLinks']};
     $scope.entity = $routeParams.api4entity;
     $scope.result = [];
@@ -133,8 +133,8 @@
           params[key] = param;
         }
       });
-      _.each(richParams, function(type, key) {
-        if (params[key] && type === 'object') {
+      _.each(objectParams, function(defaultVal, key) {
+        if (params[key]) {
           var newParam = {};
           _.each(params[key], function(item) {
             newParam[item[0]] = item[1];
@@ -173,6 +173,10 @@
             if (name == 'checkPermissions') {
               defaultVal = true;
             }
+            if (name === 'where') {
+              $scope.params.where = [];
+              defaultVal = [];
+            }
             $scope.$bindToRoute({
               expr: 'params["' + name + '"]',
               param: name,
@@ -181,7 +185,7 @@
               deep: name === 'where'
             });
           }
-          if (richParams[name]) {
+          if (typeof objectParams[name] !== 'undefined') {
             $scope.$watch('params.' + name, function(values) {
               // Remove empty values
               _.each(values, function(clause, index) {
@@ -194,7 +198,7 @@
               var field = value;
               $timeout(function() {
                 if (field) {
-                  var defaultOp = {orderBy: 'ASC', where: '=', values: ''}[name];
+                  var defaultOp = objectParams[name];
                   if (_.isEmpty($scope.params[name])) {
                     $scope.params[name] = [[field, defaultOp]];
                   } else {
@@ -209,6 +213,14 @@
         $scope.availableParams = actionInfo.params;
       }
       writeCode();
+    }
+
+    function stringify(value, trim) {
+      var str = JSON.stringify(value).replace(/,/g, ', ');
+      if (trim) {
+        str = str.slice(1, -1);
+      }
+      return str.trim();
     }
 
     function writeCode() {
@@ -229,7 +241,7 @@
           i = 0;
         code.javascript = "CRM.api4('" + entity + "', '" + action + "', {";
         _.each(params, function(param, key) {
-          code.javascript += "\n  " + key + ': ' + JSON.stringify(param) +
+          code.javascript += "\n  " + key + ': ' + stringify(param) +
             (++i < paramCount ? ',' : '');
           if (key === 'checkPermissions') {
             code.javascript += ' // IGNORED: permissions are always enforced from client-side requests';
@@ -238,20 +250,22 @@
         code.javascript += "\n}).done(function(" + results + ") {\n  // do something with " + results + " array\n});";
         code.php = '$' + results + " = \\Civi\\Api4\\" + entity + '::' + action + '()';
         _.each(params, function(param, key) {
-          if (richParams[key]) {
+          var val = '';
+          if (typeof objectParams[key] !== 'undefined') {
             _.each(param, function(item, index) {
-              var val = '';
-              if (richParams[key] === 'array') {
-                _.each(item, function (it) {
-                  val += ((val.length ? ', ' : '') + JSON.stringify(it));
-                });
-              } else {
-                val = JSON.stringify(index) + ', ' + JSON.stringify(item);
-              }
+              val = stringify(index) + ', ' + stringify(item);
               code.php += "\n  ->add" + ucfirst(key).replace(/s$/, '') + '(' + val + ')';
             });
+          } else if (key === 'where') {
+            _.each(param, function (clause) {
+              if (clause[0] === 'AND' || clause[0] === 'OR' || clause[0] === 'NOT') {
+                code.php += "\n  ->addClause('" + clause[0] + "', " + stringify(clause[1], true) + ')';
+              } else {
+                code.php += "\n  ->addWhere(" + stringify(clause, true) + ")";
+              }
+            });
           } else {
-            code.php += "\n  ->set" + ucfirst(key) + '(' + JSON.stringify(param) + ')';
+            code.php += "\n  ->set" + ucfirst(key) + '(' + stringify(param) + ')';
           }
         });
         code.php += "\n  ->execute();\nforeach ($" + results + ' as $' + result + ') {\n  // do something\n}';
@@ -339,6 +353,47 @@
     $scope.$watch('params', writeCode, true);
     writeCode();
 
+  });
+
+  angular.module('api4').directive('crmApi4WhereClause', function($timeout) {
+    return {
+      scope: {
+        data: '=crmApi4WhereClause'
+      },
+      templateUrl: '~/api4/WhereClause.html',
+      link: function (scope, element, attrs) {
+        var ts = scope.ts = CRM.ts('api4');
+        scope.newClause = '';
+
+        scope.addGroup = function(op) {
+          scope.data.where = scope.data.where || [];
+          scope.data.where.push([op, []]);
+        };
+
+        scope.removeGroup = function(parent, index) {
+          parent.splice(index, 1);
+        };
+
+        scope.$watch('newClause', function(value) {
+          var field = value;
+          $timeout(function() {
+            if (field) {
+              scope.data.where = scope.data.where || [];
+              scope.data.where.push([field, '=']);
+              scope.newClause = null;
+            }
+          });
+        });
+        scope.$watch('data.where', function(values) {
+          // Remove empty values
+          _.each(values, function(clause, index) {
+            if (!clause[0]) {
+              values.splice(index, 1);
+            }
+          });
+        }, true);
+      }
+    };
   });
 
   // Collapsible optgroups for select2

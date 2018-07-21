@@ -154,7 +154,10 @@ class Api4SelectQuery extends SelectQuery {
         }
 
       case 'NOT':
-        // possibly these brackets are redundant
+        // If we get a group of clauses with no operator, assume AND
+        if (!is_string($clause[1][0])) {
+          $clause[1] = ['AND', $clause[1]];
+        }
         return 'NOT (' . $this->treeWalkWhereClause($clause[1]) . ')';
 
       default:
