@@ -366,20 +366,32 @@
         scope.newClause = '';
 
         scope.addGroup = function(op) {
-          scope.data.where = scope.data.where || [];
           scope.data.where.push([op, []]);
         };
 
-        scope.removeGroup = function(parent, index) {
-          parent.splice(index, 1);
+        scope.removeGroup = function() {
+          scope.data.groupParent.splice(scope.data.groupIndex, 1);
+        };
+
+        scope.onSort = function(event, ui) {
+          $('.api4-where-fieldset').toggleClass('api4-sorting', event.type === 'sortstart');
+          $('.api4-input.form-inline').css('margin-left', '');
+        };
+
+        // Indent clause while dragging between nested groups
+        scope.onSortOver = function(event, ui) {
+          var offset = 0;
+          if (ui.sender) {
+            offset = $(ui.placeholder).offset().left - $(ui.sender).offset().left;
+          }
+          $('.api4-input.form-inline.ui-sortable-helper').css('margin-left', '' + offset + 'px');
         };
 
         scope.$watch('newClause', function(value) {
           var field = value;
           $timeout(function() {
             if (field) {
-              scope.data.where = scope.data.where || [];
-              scope.data.where.push([field, '=']);
+              scope.data.where.push([field, '=', '']);
               scope.newClause = null;
             }
           });
@@ -387,7 +399,7 @@
         scope.$watch('data.where', function(values) {
           // Remove empty values
           _.each(values, function(clause, index) {
-            if (!clause[0]) {
+            if (typeof clause !== 'undefined' && !clause[0]) {
               values.splice(index, 1);
             }
           });

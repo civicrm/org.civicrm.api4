@@ -65,6 +65,14 @@
   margin-bottom: 10px;
 }
 
+#bootstrap-theme.api4-explorer-page fieldset div.api4-input.ui-sortable-helper {
+  background-color: rgba(255, 255, 255, .9);
+}
+
+#bootstrap-theme.api4-explorer-page fieldset div.api4-input.ui-sortable-helper {
+  background-color: rgba(255, 255, 255, .9);
+}
+
 #bootstrap-theme.api4-explorer-page div.api4-input.form-inline .form-control {
   margin-right: 6px;
 }
@@ -88,6 +96,10 @@
   margin-top: -8px;
 }
 
+#bootstrap-theme.api4-explorer-page .api4-where-fieldset.api4-sorting fieldset .api4-where-group-sortable {
+  min-height: 3.5em;
+}
+
 #bootstrap-theme.api4-explorer-page .api4-input-group {
   display: inline-block;
 }
@@ -95,12 +107,24 @@
 #bootstrap-theme.api4-explorer-page .api4-clause-badge {
   width: 55px;
   display: inline-block;
+  cursor: move;
 }
 #bootstrap-theme.api4-explorer-page .api4-clause-badge .badge {
   opacity: .5;
+  position: relative;
 }
 #bootstrap-theme.api4-explorer-page .api4-clause-badge .caret {
   margin: 0;
+}
+#bootstrap-theme.api4-explorer-page .api4-clause-badge .crm-i {
+  display: none;
+  padding: 0 6px;
+}
+#bootstrap-theme.api4-explorer-page .ui-sortable-helper .api4-clause-badge .badge span {
+  display: none;
+}
+#bootstrap-theme.api4-explorer-page .ui-sortable-helper .api4-clause-badge .crm-i {
+  display: inline-block;
 }
 
 #bootstrap-theme.api4-explorer-page .api4-operator {
