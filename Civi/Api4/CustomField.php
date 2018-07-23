@@ -1,12 +1,11 @@
 <?php
 
 namespace Civi\Api4;
+
 use Civi\Api4\Generic\AbstractEntity;
 
 /**
- * CustomField entity.
- *
- * @package Civi\Api4
+ * Class CustomField.
  */
 class CustomField extends AbstractEntity {
 

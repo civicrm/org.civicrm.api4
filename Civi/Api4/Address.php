@@ -1,12 +1,11 @@
 <?php
 
 namespace Civi\Api4;
+
 use Civi\Api4\Generic\AbstractEntity;
 
 /**
- * Address Entity.
- *
- * @package Civi\Api4
+ * Class Address.
  */
 class Address extends AbstractEntity {
 

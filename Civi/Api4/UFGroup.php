@@ -1,12 +1,11 @@
 <?php
 
 namespace Civi\Api4;
+
 use Civi\Api4\Generic\AbstractEntity;
 
 /**
- * UFGroup entity - AKA profiles.
- *
- * @package Civi\Api4
+ * Class UFGroup.
  */
 class UFGroup extends AbstractEntity {
 
