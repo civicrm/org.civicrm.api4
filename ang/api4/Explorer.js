@@ -20,7 +20,6 @@
 
   angular.module('api4').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, crmUiHelp, crmApi4) {
     var ts = $scope.ts = CRM.ts('api4');
-    var hs = $scope.hs = crmUiHelp({file: 'CRM/Api4/Explorer'});
     $scope.entities = entities;
     $scope.operators = arrayToSelect2(CRM.vars.api4.operators);
     $scope.actions = actions;
@@ -28,8 +27,12 @@
     $scope.fieldsAndJoins = [];
     $scope.availableParams = {};
     $scope.params = {};
-    var objectParams = {orderBy: 'ASC', values: ''};
-    var getMetaParams = schema.length ? {} : {schema: ['Entity', 'getFields'], links: ['Entity', 'getLinks']};
+    var getMetaParams = schema.length ? {} : {schema: ['Entity', 'getFields'], links: ['Entity', 'getLinks']},
+      objectParams = {orderBy: 'ASC', values: ''},
+      helpTitle = '',
+      helpContent = {};
+    $scope.helpTitle = '';
+    $scope.helpContent = {};
     $scope.entity = $routeParams.api4entity;
     $scope.result = [];
     $scope.status = 'default';
@@ -106,6 +109,16 @@
       });
       return fields;
     }
+
+    $scope.help = function(title, param) {
+      if (!param) {
+        $scope.helpTitle = helpTitle;
+        $scope.helpContent = helpContent;
+      } else {
+        $scope.helpTitle = title;
+        $scope.helpContent = param;
+      }
+    };
 
     $scope.valuesFields = function() {
       var fields = [];
@@ -326,8 +339,8 @@
     }
 
     if (!$scope.entity) {
-      $scope.helpTitle = ts('Help');
-      $scope.helpText = [ts('Welcome to the api explorer.'), ts('Select an entity to begin.')];
+      $scope.helpTitle = helpTitle = ts('Help');
+      $scope.helpContent = helpContent = {description: ts('Welcome to the api explorer.'), comment: ts('Select an entity to begin.')};
       if (getMetaParams.schema) {
         fetchMeta();
       }
@@ -342,8 +355,8 @@
     }
 
     if ($scope.entity) {
-      $scope.helpTitle = $scope.entity;
-      $scope.helpText = [ts('Select an action')];
+      $scope.helpTitle = helpTitle = $scope.entity;
+      $scope.helpContent = helpContent = {description: ts('Welcome to the api explorer.'), comment: ts('Select an action.')};
     }
 
     // Update route when changing entity
@@ -360,8 +373,8 @@
       if ($scope.entity && $routeParams.api4action !== newVal && !_.isUndefined(newVal)) {
         $location.url('/api4/' + $scope.entity + '/' + newVal);
       } else if (newVal) {
-        $scope.helpTitle = $scope.entity + '::' + newVal;
-        $scope.helpText = [_.findWhere(actions, {id: newVal}).description];
+        $scope.helpTitle = helpTitle = $scope.entity + '::' + newVal;
+        $scope.helpContent = helpContent = _.pick(_.findWhere(actions, {id: newVal}), ['description', 'comment']);
       }
     });
 
