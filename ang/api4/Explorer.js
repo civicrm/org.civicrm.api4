@@ -25,6 +25,7 @@
     $scope.operators = arrayToSelect2(CRM.vars.api4.operators);
     $scope.actions = actions;
     $scope.fields = [];
+    $scope.fieldsAndJoins = [];
     $scope.availableParams = {};
     $scope.params = {};
     var objectParams = {orderBy: 'ASC', values: ''};
@@ -85,9 +86,14 @@
     }
 
     function getFieldList() {
-      var fields = [],
-        fks = _.findWhere(links, {entity: $scope.entity}) || {};
+      var fields = [];
       formatForSelect2(entityFields($scope.entity), fields, 'name', ['description', 'required', 'default_value']);
+      return fields;
+    }
+
+    function addJoins(fieldList) {
+      var fields = _.cloneDeep(fieldList),
+        fks = _.findWhere(links, {entity: $scope.entity}) || {};
       _.each(fks.links, function(link) {
         var linkFields = entityFields(link.entity);
         if (linkFields) {
@@ -113,6 +119,14 @@
         fields.push(field);
       });
       return fields;
+    };
+
+    $scope.selectOptions = function() {
+      if ($scope.availableParams.select.options) {
+        return arrayToSelect2($scope.availableParams.select.options);
+      } else {
+        return $scope.fieldsAndJoins;
+      }
     };
 
     $scope.formatSelect2Item = function(row) {
@@ -148,6 +162,7 @@
     function selectAction() {
       $scope.action = $routeParams.api4action;
       $scope.fields = getFieldList();
+      $scope.fieldsAndJoins = addJoins($scope.fields);
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
         _.each(actionInfo.params, function (param, name) {

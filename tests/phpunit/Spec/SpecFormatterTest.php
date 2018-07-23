@@ -15,13 +15,12 @@ class SpecFormatterTest extends UnitTestCase {
 
   public function testSpecToArray() {
     $spec = new RequestSpec('Contact', 'get');
-    $fieldName = 'lastname';
+    $fieldName = 'last_name';
     $field = new FieldSpec($fieldName, 'Contact');
     $spec->addFieldSpec($field);
-    $arraySpec = SpecFormatter::specToArray($spec);
+    $arraySpec = SpecFormatter::specToArray($spec->getFields());
 
-    $this->assertArrayHasKey($fieldName, $arraySpec['fields']);
-    $this->assertEquals('String', $arraySpec['fields'][$fieldName]['data_type']);
+    $this->assertEquals('String', $arraySpec[$fieldName]['data_type']);
   }
 
   /**

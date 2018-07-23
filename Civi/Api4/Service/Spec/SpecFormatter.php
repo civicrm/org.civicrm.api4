@@ -7,30 +7,23 @@ use CRM_Core_DAO_AllCoreTables as TableHelper;
 
 class SpecFormatter {
   /**
-   * @param RequestSpec $spec
+   * @param FieldSpec[] $fields
+   * @param array $return
    * @param bool $includeFieldOptions
    *
    * @return array
    */
-  public static function specToArray(RequestSpec $spec, $includeFieldOptions = FALSE) {
-    $specArray = [];
-    $specArray['entity'] = $spec->getEntity();
-    $specArray['action'] = $spec->getAction();
-    $specArray['fields'] = [];
+  public static function specToArray($fields, $return = [], $includeFieldOptions = FALSE) {
+    $fieldArray = [];
 
-    foreach ($spec->getFields() as $field) {
-      if ($includeFieldOptions) {
+    foreach ($fields as $field) {
+      if ($includeFieldOptions || in_array('options', $return)) {
         $field->getOptions();
       }
-      $specArray['fields'][$field->getName()] = $field->toArray();
-    }
-    if (!$includeFieldOptions) {
-      foreach ($specArray['fields'] as &$field) {
-        unset($field['options']);
-      }
+      $fieldArray[$field->getName()] = $field->toArray($return);
     }
 
-    return $specArray;
+    return $fieldArray;
   }
 
   /**
@@ -49,6 +42,7 @@ class SpecFormatter {
       $field->setCustomGroupId($data['custom_group_id']);
       $field->setRequired((bool) ArrayHelper::value('is_required', $data, FALSE));
       $field->setTitle(ArrayHelper::value('label', $data));
+      $field->setOptions(!empty($data['option_group_id']));
       if (\CRM_Core_BAO_CustomField::isSerialized($data)) {
         $field->setSerialize(\CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND);
       }
@@ -58,6 +52,7 @@ class SpecFormatter {
       $field = new FieldSpec($name, $entity, $dataTypeName);
       $field->setRequired((bool) ArrayHelper::value('required', $data, FALSE));
       $field->setTitle(ArrayHelper::value('title', $data));
+      $field->setOptions(!empty($data['pseudoconstant']));
       $field->setSerialize(ArrayHelper::value('serialize', $data));
     }
 
