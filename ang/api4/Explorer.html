@@ -74,7 +74,9 @@
         </div>
         <div class="panel-body">
           <h4>{{ helpContent.description }}</h4>
-          <p>{{ helpContent.comment }}</p>
+          <div ng-if="helpContent.comment">
+            <p ng-repeat='text in helpContent.comment.split("\n\n")'>{{ text }}</p>
+          </div>
           <p ng-repeat="(key, item) in helpContent" ng-if="key !== 'description' && key !== 'comment'">
             <strong>{{ key }}:</strong> {{ item }}
           </p>

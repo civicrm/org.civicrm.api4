@@ -29,11 +29,25 @@ namespace Civi\Api4\Action\Entity;
 
 use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
+use Civi\Api4\Utils\ReflectionUtils;
 
 /**
  * Get entities
+ *
+ * @method $this setSelect(array $value)
+ * @method $this addSelect(string $value)
+ * @method array getSelect()
  */
 class Get extends AbstractAction {
+
+  /**
+   * Which attributes of the entities should be returned?
+   *
+   * @options name, description, comment
+   *
+   * @var array
+   */
+  protected $select = [];
 
   /**
    * Scan all api directories to discover entities
@@ -48,16 +62,25 @@ class Get extends AbstractAction {
         foreach (glob("$dir/*.php") as $file) {
           $matches = [];
           preg_match('/(\w*).php/', $file, $matches);
-          $entities[$matches[1]] = $matches[1];
+          $entity = ['name' => $matches[1]];
+          if (!$this->select || $this->select != ['name']) {
+            $this->addDocs($entity);
+          }
+          if ($this->select) {
+            $entity = array_intersect_key($entity, array_flip($this->select));
+          }
+          $entities[$matches[1]] = $entity;
         }
       }
     }
-    $entities = array_values($entities);
-    if (in_array('BaseEntity', $entities)) {
-      unset($entities[array_search('BaseEntity', $entities)]);
-    }
-    sort($entities);
-    $result->exchangeArray($entities);
+    ksort($entities);
+    $result->exchangeArray(array_values($entities));
+  }
+
+  private function addDocs(&$entity) {
+    $reflection = new \ReflectionClass("\\Civi\\Api4\\" . $entity['name']);
+    $entity += ReflectionUtils::getCodeDocs($reflection);
+    unset($entity['package'], $entity['method']);
   }
 
 }

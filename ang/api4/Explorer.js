@@ -85,7 +85,7 @@
     }
 
     function entityFields(entity) {
-      return _.result(_.findWhere(schema, {entity: entity}), 'fields');
+      return _.result(_.findWhere(schema, {name: entity}), 'fields');
     }
 
     function getFieldList() {
@@ -326,7 +326,10 @@
           if (data.schema) {
             schema = data.schema;
             entities.length = 0;
-            formatForSelect2(schema, entities, 'entity');
+            formatForSelect2(schema, entities, 'name', ['description']);
+            if ($scope.entity && !$scope.action) {
+              showEntityHelp($scope.entity);
+            }
           }
           if (data.links) {
             links = data.links;
@@ -336,6 +339,16 @@
             selectAction();
           }
         });
+    }
+
+    // Help for an entity with no action selected
+    function showEntityHelp(entity) {
+      var entityInfo = _.findWhere(schema, {name: entity});
+      $scope.helpTitle = helpTitle = $scope.entity;
+      $scope.helpContent = helpContent = {
+        description: entityInfo.description,
+        comment: entityInfo.comment
+      };
     }
 
     if (!$scope.entity) {
@@ -354,9 +367,8 @@
       selectAction();
     }
 
-    if ($scope.entity) {
-      $scope.helpTitle = helpTitle = $scope.entity;
-      $scope.helpContent = helpContent = {description: ts('Welcome to the api explorer.'), comment: ts('Select an action.')};
+    if ($scope.entity && schema.length) {
+      showEntityHelp($scope.entity);
     }
 
     // Update route when changing entity

@@ -37,7 +37,15 @@ use Civi\Api4\Service\Spec\SpecFormatter;
  *
  * @method $this setIncludeCustom(bool $value)
  * @method bool getIncludeCustom()
+ * @method $this setOptions(bool $value)
+ * @method bool getOptions()
  * @method $this setAction(string $value)
+ * @method $this setSelect(array $value)
+ * @method $this addSelect(string $value)
+ * @method array getSelect()
+ * @method $this setFields(array $value)
+ * @method $this addField(string $value)
+ * @method array getFields()
  */
 class GetFields extends AbstractAction {
 
@@ -68,7 +76,7 @@ class GetFields extends AbstractAction {
    *
    * @var array
    */
-  protected $fields;
+  protected $fields = [];
 
   /**
    * Which attributes of the fields should be returned?
@@ -77,7 +85,7 @@ class GetFields extends AbstractAction {
    *
    * @var array
    */
-  protected $select;
+  protected $select = [];
 
   /**
    * @var string
