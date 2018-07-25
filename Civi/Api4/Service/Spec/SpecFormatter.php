@@ -42,7 +42,7 @@ class SpecFormatter {
       $field->setCustomGroupId($data['custom_group_id']);
       $field->setRequired((bool) ArrayHelper::value('is_required', $data, FALSE));
       $field->setTitle(ArrayHelper::value('label', $data));
-      $field->setOptions(!empty($data['option_group_id']));
+      $field->setOptions(self::customFieldHasOptions($data));
       if (\CRM_Core_BAO_CustomField::isSerialized($data)) {
         $field->setSerialize(\CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND);
       }
@@ -66,6 +66,28 @@ class SpecFormatter {
     }
 
     return $field;
+  }
+
+  /**
+   * Does this custom field have options
+   *
+   * @param array $field
+   * @return bool
+   */
+  private static function customFieldHasOptions($field) {
+    // This will include boolean fields with Yes/No options.
+    if (in_array($field['html_type'], ['Radio', 'CheckBox'])) {
+      return TRUE;
+    }
+    // Do this before the "Select" string search because date fields have a "Select Date" html_type
+    // and contactRef fields have an "Autocomplete-Select" html_type - contacts are an FK not an option list.
+    if (in_array($field['data_type'], ['ContactReference', 'Date'])) {
+      return FALSE;
+    }
+    if (strpos($field['html_type'], 'Select')) {
+      return TRUE;
+    }
+    return !empty($field['option_group_id']);
   }
 
   /**
