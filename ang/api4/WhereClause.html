@@ -29,9 +29,9 @@
         {{ data.op }} <span class="caret"></span>
       </button>
       <ul class="dropdown-menu api4-add-where-group-menu">
-        <li><a href ng-if="data.op !== 'AND'" ng-click="addGroup('AND')">AND</a></li>
-        <li><a href ng-if="data.op !== 'OR'" ng-click="addGroup('OR')">OR</a></li>
-        <li><a href ng-if="data.op !== 'NOT'" ng-click="addGroup('NOT')">NOT</a></li>
+        <li ng-repeat="con in conjunctions" ng-if="data.op !== con">
+          <a href ng-click="addGroup(con)">{{ con }}</a>
+        </li>
       </ul>
     </div>
   </div>

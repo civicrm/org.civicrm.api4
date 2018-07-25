@@ -404,6 +404,7 @@
       link: function (scope, element, attrs) {
         var ts = scope.ts = CRM.ts('api4');
         scope.newClause = '';
+        scope.conjunctions = ['AND', 'OR', 'NOT'];
 
         scope.addGroup = function(op) {
           scope.data.where.push([op, []]);
