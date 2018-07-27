@@ -41,7 +41,9 @@ class SpecFormatter {
         $field->setName($data['custom_group']['name'] . '.' . $data['name']);
       }
       $field->setCustomFieldId(ArrayHelper::value('id', $data));
-      $field->setCustomGroupId($data['custom_group_id']);
+      $field->setCustomGroupName($data['custom_group']['name']);
+      $field->setCustomTableName($data['custom_group']['table_name']);
+      $field->setCustomFieldColumnName($data['column_name']);
       $field->setRequired((bool) ArrayHelper::value('is_required', $data, FALSE));
       $field->setTitle(ArrayHelper::value('label', $data));
       $field->setOptions(self::customFieldHasOptions($data));

@@ -97,5 +97,9 @@
             <tag name="event_subscriber"/>
         </service>
 
+        <service class="Civi\Api4\Service\Spec\Provider\CustomValueSpecProvider">
+            <tag name="spec_provider"/>
+        </service>
+
     </services>
 </container>
