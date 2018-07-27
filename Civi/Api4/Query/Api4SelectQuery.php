@@ -28,11 +28,13 @@
 namespace Civi\Api4\Query;
 
 use Civi\API\SelectQuery;
+use Civi\Api4\CustomGroup;
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\PostSelectQueryEvent;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Civi\Api4\Utils\FormattingUtil;
+use Civi\Api4\Utils\CoreUtil;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
 use CRM_Core_DAO_CustomField as CustomFieldDAO;
 use CRM_Utils_Array as UtilsArray;
@@ -70,6 +72,27 @@ class Api4SelectQuery extends SelectQuery {
   protected $joinedTables = [];
 
   /**
+   * @param string $entity
+   * @param bool $checkPermissions
+   */
+  public function __construct($entity, $checkPermissions) {
+    require_once 'api/v3/utils.php';
+    $this->entity = $entity;
+
+    $baoName = CoreUtil::getDAOFromApiName($entity);
+    $bao = new $baoName();
+
+    $this->entityFieldNames = _civicrm_api3_field_names(_civicrm_api3_build_fields_array($bao));
+    $this->apiFieldSpec = $this->getFields();
+
+    \CRM_Utils_SQL_Select::from($this->getTableName($baoName) . ' ' . self::MAIN_TABLE_ALIAS);
+
+    // Add ACLs first to avoid redundant subclauses
+    $this->checkPermissions = $checkPermissions;
+    $this->query->where($this->getAclClause(self::MAIN_TABLE_ALIAS, $baoName));
+  }
+
+  /**
    * Why walk when you can
    *
    * @return array|int
@@ -95,6 +118,58 @@ class Api4SelectQuery extends SelectQuery {
 
     foreach ($dotFields as $dotField) {
       $this->joinFK($dotField);
+    }
+  }
+
+  /**
+   * Populate $this->selectFields
+   *
+   * @throws \Civi\API\Exception\UnauthorizedException
+   */
+  protected function buildSelectFields() {
+    $return_all_fields = (empty($this->select) || !is_array($this->select));
+    $return = $return_all_fields ? $this->entityFieldNames : $this->select;
+    if ($return_all_fields || in_array('custom', $this->select)) {
+      foreach (array_keys($this->apiFieldSpec) as $fieldName) {
+        if (strpos($fieldName, 'custom_') === 0) {
+          $return[] = $fieldName;
+        }
+      }
+    }
+
+    // Always select the ID if the table has one.
+    if (array_key_exists('id', $this->apiFieldSpec) || strstr($this->entity, 'Custom_')) {
+      $this->selectFields[self::MAIN_TABLE_ALIAS . ".id"] = "id";
+    }
+
+    // core return fields
+    foreach ($return as $fieldName) {
+      $field = $this->getField($fieldName);
+      if ($field && in_array($field['name'], $this->entityFieldNames)) {
+        $this->selectFields[self::MAIN_TABLE_ALIAS . "." . UtilsArray::value('column_name', $field, $field['name'])] = $field['name'];
+      }
+      elseif (strpos($fieldName, '.')) {
+        $fkField = $this->addFkField($fieldName, 'LEFT');
+        if ($fkField) {
+          $this->selectFields[implode('.', $fkField)] = $fieldName;
+        }
+      }
+      elseif ($field && strpos($fieldName, 'custom_') === 0) {
+        list($table_name, $column_name) = $this->addCustomField($field, 'LEFT');
+
+        if ($field['data_type'] != 'ContactReference') {
+          // 'ordinary' custom field. We will select the value as custom_XX.
+          $this->selectFields["$table_name.$column_name"] = $fieldName;
+        }
+        else {
+          // contact reference custom field. The ID will be stored in custom_XX_id.
+          // custom_XX will contain the sort name of the contact.
+          $this->query->join("c_$fieldName", "LEFT JOIN civicrm_contact c_$fieldName ON c_$fieldName.id = `$table_name`.`$column_name`");
+          $this->selectFields["$table_name.$column_name"] = $fieldName . "_id";
+          // We will call the contact table for the join c_XX.
+          $this->selectFields["c_$fieldName.sort_name"] = $fieldName;
+        }
+      }
     }
   }
 
@@ -415,6 +490,29 @@ class Api4SelectQuery extends SelectQuery {
       if ($join->getAlias() == $alias) {
         return $join;
       }
+    }
+  }
+
+  /**
+   * Get table name on basis of entity
+   *
+   * @param string $baoName
+   *
+   * @return void
+   */
+  public function getTableName($baoName) {
+    if (strstr($this->entity, 'Custom_')) {
+      $customTable = CustomGroup::get()
+        ->addWhere('name', '=', str_replace('Custom_', '', $this->entity))
+        ->execute()
+        ->first()['table_name'];
+      $this->query = \CRM_Utils_SQL_Select::from($customTable . ' ' . self::MAIN_TABLE_ALIAS);
+      $this->entityFieldNames = array_keys($this->apiFieldSpec);
+    }
+    else {
+      $bao = new $baoName();
+      $this->query = \CRM_Utils_SQL_Select::from($bao->tableName() . ' ' . self::MAIN_TABLE_ALIAS);
+      $bao->free();
     }
   }
 

@@ -232,6 +232,13 @@ abstract class AbstractAction implements \ArrayAccess {
   /**
    * @return string
    */
+  public function setEntity($entity) {
+    $this->entity = $entity;
+  }
+
+  /**
+   * @return string
+   */
   public function getEntity() {
     return $this->entity;
   }
@@ -353,7 +360,7 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   public function getPermissions() {
-    $permissions = call_user_func(["\\Civi\\Api4\\" . $this->getEntity(), 'permissions']);
+    $permissions = call_user_func(["\\Civi\\Api4\\" . $this->entity, 'permissions']);
     $permissions += [
       // applies to getFields, getActions, etc.
       'meta' => ['access CiviCRM'],
@@ -453,7 +460,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @param $entityId
    * @return mixed
    */
-  private function formatCustomParams(&$params, $entityId) {
+  public function formatCustomParams(&$params, $entityId) {
     $customParams = [];
 
     // $customValueID is the ID of the custom value in the custom table for this
