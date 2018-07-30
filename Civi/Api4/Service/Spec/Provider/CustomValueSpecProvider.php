@@ -13,7 +13,7 @@ class CustomValueSpecProvider implements SpecProviderInterface {
     $action = $spec->getAction();
     $extraFields = [
       'id' => [
-        'required' => in_array($action, ['update', 'delete']),
+        'required' => ($action === 'update'),
         'title' => ts('Custom Table Unique ID'),
         'fk_entity' => NULL,
       ],

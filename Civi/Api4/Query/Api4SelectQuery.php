@@ -28,7 +28,6 @@
 namespace Civi\Api4\Query;
 
 use Civi\API\SelectQuery;
-use Civi\Api4\CustomGroup;
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\PostSelectQueryEvent;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
@@ -502,11 +501,7 @@ class Api4SelectQuery extends SelectQuery {
    */
   public function getTableName($baoName) {
     if (strstr($this->entity, 'Custom_')) {
-      $customTable = CustomGroup::get()
-        ->addWhere('name', '=', str_replace('Custom_', '', $this->entity))
-        ->execute()
-        ->first()['table_name'];
-      $this->query = \CRM_Utils_SQL_Select::from($customTable . ' ' . self::MAIN_TABLE_ALIAS);
+      $this->query = \CRM_Utils_SQL_Select::from(CoreUtil::getCustomTableByName(str_replace('Custom_', '', $this->entity)) . ' ' . self::MAIN_TABLE_ALIAS);
       $this->entityFieldNames = array_keys($this->apiFieldSpec);
     }
     else {
