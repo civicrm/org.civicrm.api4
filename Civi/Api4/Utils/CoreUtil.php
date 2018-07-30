@@ -2,6 +2,8 @@
 
 namespace Civi\Api4\Utils;
 
+use Civi\Api4\CustomGroup;
+
 require_once 'api/v3/utils.php';
 
 class CoreUtil {
@@ -20,6 +22,20 @@ class CoreUtil {
       return 'CRM_Contact_BAO_Contact';
     }
     return \_civicrm_api3_get_DAO($entityName);
+  }
+
+  /**
+   * Get table name of given Custom group
+   *
+   * @param string $customGroupName
+   *
+   * @return string
+   */
+  public static function getCustomTableByName($customGroupName) {
+    return CustomGroup::get()
+      ->addWhere('name', '=', $customGroupName)
+      ->execute()
+      ->first()['table_name'];
   }
 
 }
