@@ -15,11 +15,11 @@ use Civi\Api4\CustomValue;
  */
 class Get extends \Civi\Api4\Action\Get {
 
-   /**
-    * @inheritDoc
-    */
-   function getEntity() {
-     return 'Custom_' . $this->getCustomGroup();
-   }
+  /**
+   * @inheritDoc
+   */
+  public function getEntity() {
+    return 'Custom_' . $this->getCustomGroup();
+  }
 
 }

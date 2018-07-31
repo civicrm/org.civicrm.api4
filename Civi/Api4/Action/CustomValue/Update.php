@@ -45,7 +45,7 @@ class Update extends DefaultUpdate {
   /**
    * @inheritDoc
    */
-  function getEntity() {
+  public function getEntity() {
     return 'Custom_' . $this->getCustomGroup();
   }
 

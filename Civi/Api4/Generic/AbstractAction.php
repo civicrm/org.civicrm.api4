@@ -230,7 +230,7 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   /**
-   * @return string
+   * @inheritDoc
    */
   public function setEntity($entity) {
     $this->entity = $entity;

@@ -69,7 +69,7 @@ class CustomFieldSpec extends FieldSpec {
   }
 
   /**
-   * @param int $customGroupId
+   * @param string $customGroupName
    *
    * @return $this
    */
@@ -87,7 +87,7 @@ class CustomFieldSpec extends FieldSpec {
   }
 
   /**
-   * @param int $customFieldId
+   * @param string $customFieldColumnName
    *
    * @return $this
    */

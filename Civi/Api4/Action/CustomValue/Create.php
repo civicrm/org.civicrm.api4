@@ -39,7 +39,7 @@ class Create extends DefaultCreate {
   /**
    * @inheritDoc
    */
-  function getEntity() {
+  public function getEntity() {
     return 'Custom_' . $this->getCustomGroup();
   }
 
