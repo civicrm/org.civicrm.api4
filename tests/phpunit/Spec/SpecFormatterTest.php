@@ -55,7 +55,7 @@ class SpecFormatterTest extends UnitTestCase {
     $field = SpecFormatter::arrayToField($data, 'TestEntity');
 
     $this->assertInstanceOf(CustomFieldSpec::class, $field);
-    $this->assertEquals($customGroupId, $field->getCustomGroupId());
+    $this->assertEquals('my_group', $field->getCustomGroupName());
     $this->assertEquals($customFieldId, $field->getCustomFieldId());
     $this->assertEquals(\CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND, $field->getSerialize());
   }
