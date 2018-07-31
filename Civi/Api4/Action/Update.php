@@ -28,7 +28,9 @@ namespace Civi\Api4\Action;
 use Civi\Api4\Generic\Result;
 
 /**
- * Update one or more records with new values. Use the where clause to select them.
+ * Update one or more records with new values.
+ *
+ * Use the where clause (required) to select them.
  *
  * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
  * @method $this addValue($field, $value) Set field value to update.
