@@ -460,7 +460,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @param $entityId
    * @return mixed
    */
-  public function formatCustomParams(&$params, $entityId) {
+  private function formatCustomParams(&$params, $entityId) {
     $customParams = [];
 
     // $customValueID is the ID of the custom value in the custom table for this
