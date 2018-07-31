@@ -24,6 +24,10 @@ class CustomValueSpecProvider implements SpecProviderInterface {
       ],
     ];
     foreach ($extraFields as $name => $field) {
+      // Do not add id field on create action
+      if ('create' === $action && 'id' === $name) {
+        continue;
+      }
       $fieldSpec = new FieldSpec($name, 'CustomValue', 'Integer');
       $fieldSpec->setTitle($field['title']);
       $fieldSpec->setRequired($field['required']);

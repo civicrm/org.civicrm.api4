@@ -24,80 +24,38 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Action\CustomValue;
 use Civi\Api4\Generic\Result;
+use Civi\Api4\Utils\FormattingUtil;
+use Civi\Api4\Action\Update as DefaultUpdate;
 
 /**
- * Update one or more records with new values.
- *
- * Use the where clause (required) to select them.
+ * Update one or more records with new values. Use the where clause to select them.
  *
  * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
  * @method $this addValue($field, $value) Set field value to update.
  */
-class Update extends Get {
+class Update extends DefaultUpdate {
 
   /**
-   * Criteria for get to fetch id against which the update will occur
-   *
-   * @var array
+   * @inheritDoc
    */
-  protected $select = ['id'];
+  protected $select = ['id', 'entity_id'];
 
   /**
-   * Criteria for selecting items to update.
-   *
-   * @required
-   * @var array
+   * @inheritDoc
    */
-  protected $where = [];
-
-  /**
-   * Field values to update.
-   *
-   * @var array
-   */
-  protected $values = [];
-
-  /**
-   * @param $key
-   *
-   * @return mixed|null
-   */
-  public function getValue($key) {
-    return isset($this->values[$key]) ? $this->values[$key] : NULL;
+  function getEntity() {
+    return 'Custom_' . $this->getCustomGroup();
   }
 
   /**
    * @inheritDoc
    */
-  public function _run(Result $result) {
-    if (!empty($this->values['id'])) {
-      throw new \Exception('Cannot update the id of an existing object.');
-    }
-    // For some reason the contact bao requires this
-    if ($this->getEntity() == 'Contact') {
-      $this->select[] = 'contact_type';
-    }
-    parent::_run($result);
-    // Then act on the result
-    $updated_results = [];
-    foreach ($result as $item) {
-      $updated_results[] = $this->writeObject($this->values + $item);
-    }
-    $result->exchangeArray($updated_results);
-  }
+  protected function writeObject($params) {
+    FormattingUtil::formatWriteParams($params, $this->getEntity(), $this->getEntityFields());
 
-  /**
-   * @inheritDoc
-   */
-  public function getParamInfo($param = NULL) {
-    $info = parent::getParamInfo($param);
-    if (!$param) {
-      // Update doesn't actually let you select fields.
-      unset($info['select']);
-    }
-    return $info;
+    return \CRM_Core_BAO_CustomValueTable::setValues($params);
   }
 
 }
