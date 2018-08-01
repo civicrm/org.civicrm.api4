@@ -33,6 +33,7 @@ class CoreUtil {
    */
   public static function getCustomTableByName($customGroupName) {
     return CustomGroup::get()
+      ->addSelect('table_name')
       ->addWhere('name', '=', $customGroupName)
       ->execute()
       ->first()['table_name'];

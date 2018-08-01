@@ -230,13 +230,6 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   /**
-   * @inheritDoc
-   */
-  public function setEntity($entity) {
-    $this->entity = $entity;
-  }
-
-  /**
    * @return string
    */
   public function getEntity() {

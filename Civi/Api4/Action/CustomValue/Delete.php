@@ -47,10 +47,12 @@ class Delete extends Get {
     $customTable = CoreUtil::getCustomTableByName($this->getCustomGroup());
     $ids = [];
     foreach ($result as $item) {
+      \CRM_Utils_Hook::pre('delete', $this->getEntity(), $item['id'], \CRM_Core_DAO::$_nullArray);
       \CRM_Utils_SQL_Delete::from($customTable)
         ->where('id = #value')
         ->param('#value', $item['id'])
         ->execute();
+      \CRM_Utils_Hook::post('delete', $this->getEntity(), $item['id'], \CRM_Core_DAO::$_nullArray);
       $ids[] = $item['id'];
     }
 
