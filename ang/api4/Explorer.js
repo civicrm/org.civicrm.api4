@@ -123,7 +123,7 @@
     $scope.valuesFields = function() {
       var fields = [];
       _.each(_.cloneDeep($scope.fields), function(field, index) {
-        if (field.id === 'id' || field.children) {
+        if ((field.id === 'id' && $scope.action === 'create') || field.children) {
           return;
         }
         if ($scope.params.values && typeof $scope.params.values[field.id] !== 'undefined') {
@@ -179,7 +179,8 @@
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
         _.each(actionInfo.params, function (param, name) {
-          var format, defaultVal;
+          var format,
+            defaultVal = _.cloneDeep(param.default);
           if (param.type) {
             switch (param.type[0]) {
               case 'int':
@@ -197,13 +198,6 @@
             }
             if (name == 'limit') {
               defaultVal = 25;
-            }
-            if (name == 'checkPermissions') {
-              defaultVal = true;
-            }
-            if (name === 'where') {
-              $scope.params.where = [];
-              defaultVal = [];
             }
             $scope.$bindToRoute({
               expr: 'params["' + name + '"]',
@@ -276,7 +270,11 @@
           }
         });
         code.javascript += "\n}).done(function(" + results + ") {\n  // do something with " + results + " array\n});";
-        code.php = '$' + results + " = \\Civi\\Api4\\" + entity + '::' + action + '()';
+        if (entity.substr(0, 7) !== 'Custom_') {
+          code.php = '$' + results + " = \\Civi\\Api4\\" + entity + '::' + action + '()';
+        } else {
+          code.php = '$' + results + " = \\Civi\\Api4\\CustomValue()::" + action + "('" + entity.substr(7) + "')";
+        }
         _.each(params, function(param, key) {
           var val = '';
           if (typeof objectParams[key] !== 'undefined') {

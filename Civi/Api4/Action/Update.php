@@ -38,6 +38,13 @@ use Civi\Api4\Generic\Result;
 class Update extends Get {
 
   /**
+   * Criteria for get to fetch id against which the update will occur
+   *
+   * @var array
+   */
+  protected $select = ['id'];
+
+  /**
    * Criteria for selecting items to update.
    *
    * @required
@@ -68,8 +75,6 @@ class Update extends Get {
     if (!empty($this->values['id'])) {
       throw new \Exception('Cannot update the id of an existing object.');
     }
-    // First run the parent action (get)
-    $this->select = ['id'];
     // For some reason the contact bao requires this
     if ($this->getEntity() == 'Contact') {
       $this->select[] = 'contact_type';

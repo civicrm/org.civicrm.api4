@@ -36,10 +36,16 @@ class SpecFormatter {
     $dataTypeName = self::getDataType($data);
 
     if (!empty($data['custom_group_id'])) {
-      $name = $data['custom_group']['name'] . '.' . $data['name'];
-      $field = new CustomFieldSpec($name, $entity, $dataTypeName);
+      $field = new CustomFieldSpec($data['name'], $entity, $dataTypeName);
+      if (strpos($entity, 'Custom_') !== 0) {
+        $field->setName($data['custom_group']['name'] . '.' . $data['name']);
+      }
+      else {
+        $field->setCustomTableName($data['custom_group']['table_name']);
+        $field->setCustomFieldColumnName($data['column_name']);
+      }
       $field->setCustomFieldId(ArrayHelper::value('id', $data));
-      $field->setCustomGroupId($data['custom_group_id']);
+      $field->setCustomGroupName($data['custom_group']['name']);
       $field->setRequired((bool) ArrayHelper::value('is_required', $data, FALSE));
       $field->setTitle(ArrayHelper::value('label', $data));
       $field->setOptions(self::customFieldHasOptions($data));

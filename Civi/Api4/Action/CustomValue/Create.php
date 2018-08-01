@@ -24,68 +24,43 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
-namespace Civi\Api4\Action;
+
+namespace Civi\Api4\Action\CustomValue;
+
+use Civi\Api4\Utils\FormattingUtil;
 use Civi\Api4\Generic\Result;
+use Civi\Api4\Action\Create as DefaultCreate;
 
 /**
- * Given a set of records, will appropriately update the database.
- *
- * @method $this setRecords(array $records) Array of records.
- * @method $this addRecord($record) Add a record to update.
+ * @inheritDoc
  */
-class Replace extends Get {
-
-  /**
-   * Array of records.
-   *
-   * @required
-   * @var array
-   */
-  protected $records = [];
-
-  /**
-   * Array of select elements
-   *
-   * @required
-   * @var array
-   */
-  protected $select = ['id'];
+class Create extends DefaultCreate {
 
   /**
    * @inheritDoc
    */
-  public function _run(Result $result) {
-    // First run the parent action (get)
-    parent::_run($result);
-
-    $toDelete = (array) $result->indexBy('id');
-    $saved = [];
-
-    // Save all items
-    foreach ($this->records as $idx => $record) {
-      $saved[] = $this->writeObject($record);
-      if (!empty($record['id'])) {
-        unset($toDelete[$record['id']]);
-      }
-    }
-
-    if ($toDelete) {
-      civicrm_api4($this->getEntity(), 'Delete', ['where' => [['id', 'IN', array_keys($toDelete)]]]);
-    }
-    $result->deleted = array_keys($toDelete);
-    $result->exchangeArray($saved);
+  public function getEntity() {
+    return 'Custom_' . $this->getCustomGroup();
   }
 
   /**
    * @inheritDoc
    */
-  public function getParamInfo($param = NULL) {
-    $info = parent::getParamInfo($param);
-    if (!$param) {
-      // This action doesn't actually let you select fields.
-      unset($info['select']);
+  protected function fillDefaults(&$params) {
+    foreach ($this->getEntityFields() as $name => $field) {
+      if (empty($params[$name])) {
+        $params[$name] = $field['default_value'];
+      }
     }
-    return $info;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected function writeObject($params) {
+    FormattingUtil::formatWriteParams($params, $this->getEntity(), $this->getEntityFields());
+
+    return \CRM_Core_BAO_CustomValueTable::setValues($params);
   }
 
 }

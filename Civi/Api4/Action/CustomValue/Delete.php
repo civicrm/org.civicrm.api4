@@ -24,68 +24,40 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Action\CustomValue;
 use Civi\Api4\Generic\Result;
+use Civi\Api4\Utils\CoreUtil;
 
 /**
- * Given a set of records, will appropriately update the database.
- *
- * @method $this setRecords(array $records) Array of records.
- * @method $this addRecord($record) Add a record to update.
+ * Delete one or more items, based on criteria specified in Where param.
  */
-class Replace extends Get {
-
-  /**
-   * Array of records.
-   *
-   * @required
-   * @var array
-   */
-  protected $records = [];
-
-  /**
-   * Array of select elements
-   *
-   * @required
-   * @var array
-   */
-  protected $select = ['id'];
+class Delete extends Get {
 
   /**
    * @inheritDoc
    */
   public function _run(Result $result) {
-    // First run the parent action (get)
+    $defaults = $this->getParamDefaults();
+    if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
+      throw new \API_Exception('Cannot delete with no "where" paramater specified');
+    }
+    // run the parent action (get) to get the list
     parent::_run($result);
-
-    $toDelete = (array) $result->indexBy('id');
-    $saved = [];
-
-    // Save all items
-    foreach ($this->records as $idx => $record) {
-      $saved[] = $this->writeObject($record);
-      if (!empty($record['id'])) {
-        unset($toDelete[$record['id']]);
-      }
+    // Then act on the result
+    $customTable = CoreUtil::getCustomTableByName($this->getCustomGroup());
+    $ids = [];
+    foreach ($result as $item) {
+      \CRM_Utils_Hook::pre('delete', $this->getEntity(), $item['id'], \CRM_Core_DAO::$_nullArray);
+      \CRM_Utils_SQL_Delete::from($customTable)
+        ->where('id = #value')
+        ->param('#value', $item['id'])
+        ->execute();
+      \CRM_Utils_Hook::post('delete', $this->getEntity(), $item['id'], \CRM_Core_DAO::$_nullArray);
+      $ids[] = $item['id'];
     }
 
-    if ($toDelete) {
-      civicrm_api4($this->getEntity(), 'Delete', ['where' => [['id', 'IN', array_keys($toDelete)]]]);
-    }
-    $result->deleted = array_keys($toDelete);
-    $result->exchangeArray($saved);
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function getParamInfo($param = NULL) {
-    $info = parent::getParamInfo($param);
-    if (!$param) {
-      // This action doesn't actually let you select fields.
-      unset($info['select']);
-    }
-    return $info;
+    $result->exchangeArray($ids);
+    return $result;
   }
 
 }

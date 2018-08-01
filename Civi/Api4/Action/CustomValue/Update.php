@@ -24,68 +24,38 @@
  | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
  +--------------------------------------------------------------------+
  */
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Action\CustomValue;
 use Civi\Api4\Generic\Result;
+use Civi\Api4\Utils\FormattingUtil;
+use Civi\Api4\Action\Update as DefaultUpdate;
 
 /**
- * Given a set of records, will appropriately update the database.
+ * Update one or more records with new values. Use the where clause to select them.
  *
- * @method $this setRecords(array $records) Array of records.
- * @method $this addRecord($record) Add a record to update.
+ * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
+ * @method $this addValue($field, $value) Set field value to update.
  */
-class Replace extends Get {
-
-  /**
-   * Array of records.
-   *
-   * @required
-   * @var array
-   */
-  protected $records = [];
-
-  /**
-   * Array of select elements
-   *
-   * @required
-   * @var array
-   */
-  protected $select = ['id'];
+class Update extends DefaultUpdate {
 
   /**
    * @inheritDoc
    */
-  public function _run(Result $result) {
-    // First run the parent action (get)
-    parent::_run($result);
+  protected $select = ['id', 'entity_id'];
 
-    $toDelete = (array) $result->indexBy('id');
-    $saved = [];
-
-    // Save all items
-    foreach ($this->records as $idx => $record) {
-      $saved[] = $this->writeObject($record);
-      if (!empty($record['id'])) {
-        unset($toDelete[$record['id']]);
-      }
-    }
-
-    if ($toDelete) {
-      civicrm_api4($this->getEntity(), 'Delete', ['where' => [['id', 'IN', array_keys($toDelete)]]]);
-    }
-    $result->deleted = array_keys($toDelete);
-    $result->exchangeArray($saved);
+  /**
+   * @inheritDoc
+   */
+  public function getEntity() {
+    return 'Custom_' . $this->getCustomGroup();
   }
 
   /**
    * @inheritDoc
    */
-  public function getParamInfo($param = NULL) {
-    $info = parent::getParamInfo($param);
-    if (!$param) {
-      // This action doesn't actually let you select fields.
-      unset($info['select']);
-    }
-    return $info;
+  protected function writeObject($params) {
+    FormattingUtil::formatWriteParams($params, $this->getEntity(), $this->getEntityFields());
+
+    return \CRM_Core_BAO_CustomValueTable::setValues($params);
   }
 
 }
