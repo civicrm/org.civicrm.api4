@@ -49,7 +49,7 @@ class Replace extends Get {
    * @required
    * @var array
    */
-   protected $select = ['id'];
+  protected $select = ['id'];
 
   /**
    * @inheritDoc

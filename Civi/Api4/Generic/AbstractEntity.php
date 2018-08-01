@@ -71,7 +71,7 @@ abstract class AbstractEntity {
     else {
       throw new NotImplementedException("Api $entity $action version 4 does not exist.");
     }
-    if ($entity === 'CustomValue') {
+    if ($entity === 'CustomValue' && !empty($args[0])) {
       $actionObject->setCustomGroup($args[0]);
     }
     return $actionObject;

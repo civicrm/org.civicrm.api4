@@ -28,7 +28,7 @@ class CustomValueSpecProvider implements SpecProviderInterface {
       if ('create' === $action && 'id' === $name) {
         continue;
       }
-      $fieldSpec = new FieldSpec($name, 'CustomValue', 'Integer');
+      $fieldSpec = new FieldSpec($name, $spec->getEntity(), 'Integer');
       $fieldSpec->setTitle($field['title']);
       $fieldSpec->setRequired($field['required']);
       if (!empty($field['fk_entity'])) {
