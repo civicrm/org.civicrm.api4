@@ -92,3 +92,8 @@ Tests
 
 Tests are located in the `tests` directory (surprise!)
 To run the entire Api4 test suite go to the api4 extension directory and type `phpunit4` from the command line.
+
+DO NOT MERGE
+------------
+
+This is superfluous text.
