@@ -1,9 +1,16 @@
 <div id="bootstrap-theme" class="api4-explorer-page">
-  <div crm-ui-debug="availableParams"></div>
-
   <h1 crm-page-title>
     {{ ts('CiviCRM API v4') }}{{ entity ? (' (' + entity + '::' + action + ')') : '' }}
   </h1>
+
+  <!--This warning will show if bootstrap is unavailable. Normally it will be hidden by the bootstrap .collapse class.-->
+  <div class="messages warning no-popup collapse">
+    <p>
+      <i class="crm-i fa-exclamation-triangle"></i>
+      <strong>{{ ts('Bootstrap theme not found.') }}</strong>
+    </p>
+    <p>{{ ts('This screen may not work correctly without a bootstrap-based theme such as Shoreditch installed.') }}</p>
+  </div>
 
   <div class="row">
     <div class="col-md-8">
