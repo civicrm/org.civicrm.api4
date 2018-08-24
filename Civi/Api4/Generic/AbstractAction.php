@@ -350,4 +350,14 @@ abstract class AbstractAction implements \ArrayAccess {
     return $this->thisReflection;
   }
 
+  /**
+   * @param string $expr
+   * @param array $vars
+   * @return bool
+   */
+  public function evaluateExpression($expr, $vars) {
+    $tpl = "{if $expr}1{else}0{/if}";
+    return (bool) trim(\CRM_Core_Smarty::singleton()->fetchWith('string:' . $tpl, $vars));
+  }
+
 }

@@ -42,6 +42,10 @@
             <tag name="spec_provider"/>
         </service>
 
+        <service class="Civi\Api4\Service\Spec\Provider\ActionScheduleCreationSpecProvider">
+            <tag name="spec_provider"/>
+        </service>
+
         <service class="Civi\Api4\Service\Spec\Provider\EmailCreationSpecProvider">
             <tag name="spec_provider"/>
         </service>

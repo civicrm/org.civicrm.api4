@@ -14,6 +14,11 @@ class ContactCreationSpecProvider implements SpecProviderInterface {
       ->setRequired(TRUE)
       ->setDefaultValue('Individual');
 
+    $spec->getFieldByName('first_name')->setRequiredIf('$contact_type eq \'Individual\' && !$email');
+    $spec->getFieldByName('last_name')->setRequiredIf('$contact_type eq \'Individual\' && !$email');
+    $spec->getFieldByName('organization_name')->setRequiredIf('$contact_type eq \'Organization\' && !$email');
+    $spec->getFieldByName('household_name')->setRequiredIf('$contact_type eq \'Household\' && !$email');
+
     $spec->getFieldByName('is_opt_out')->setRequired(FALSE);
     $spec->getFieldByName('is_deleted')->setRequired(FALSE);
 

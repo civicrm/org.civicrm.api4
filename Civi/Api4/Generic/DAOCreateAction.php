@@ -34,8 +34,13 @@ class DAOCreateAction extends AbstractCreateAction {
     }
     $unmatched = [];
     foreach ($this->getEntityFields() as $fieldName => $fieldInfo) {
-      if (!$this->getValue($fieldName) && !empty($fieldInfo['required']) && !isset($fieldInfo['default_value'])) {
-        $unmatched[] = $fieldName;
+      if (!$this->getValue($fieldName)) {
+        if (!empty($fieldInfo['required']) && !isset($fieldInfo['default_value'])) {
+          $unmatched[] = $fieldName;
+        }
+        elseif (!empty($fieldInfo['required_if']) && $this->evaluateExpression($fieldInfo['required_if'], $this->values)) {
+          $unmatched[] = $fieldName;
+        }
       }
     }
     if ($unmatched) {
