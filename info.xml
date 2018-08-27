@@ -26,7 +26,4 @@
   <civix>
     <namespace>CRM/Api4</namespace>
   </civix>
-  <requires>
-    <ext>org.civicrm.shoreditch</ext>
-  </requires>
 </extension>
