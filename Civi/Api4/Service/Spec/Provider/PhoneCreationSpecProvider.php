@@ -4,22 +4,21 @@ namespace Civi\Api4\Service\Spec\Provider;
 
 use Civi\Api4\Service\Spec\RequestSpec;
 
-class EmailCreationSpecProvider implements SpecProviderInterface {
+class PhoneCreationSpecProvider implements SpecProviderInterface {
   /**
    * @inheritDoc
    */
   public function modifySpec(RequestSpec $spec) {
     $spec->getFieldByName('contact_id')->setRequired(TRUE);
-    $spec->getFieldByName('email')->setRequired(TRUE);
-    $spec->getFieldByName('on_hold')->setRequired(FALSE);
-    $spec->getFieldByName('is_bulkmail')->setRequired(FALSE);
+    $spec->getFieldByName('location_type_id')->setRequired(TRUE);
+    $spec->getFieldByName('phone')->setRequired(TRUE);
   }
 
   /**
    * @inheritDoc
    */
   public function applies($entity, $action) {
-    return $entity === 'Email' && $action === 'create';
+    return $entity === 'Phone' && $action === 'create';
   }
 
 }
