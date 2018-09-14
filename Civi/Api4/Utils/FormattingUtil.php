@@ -95,6 +95,11 @@ class FormattingUtil {
     switch ($dataType) {
       case 'Timestamp':
         $value = date('Y-m-d H:i:s', strtotime($value));
+        break;
+
+      case 'Date':
+        $value = date('Ymd', strtotime($value));
+        break;
     }
   }
 
