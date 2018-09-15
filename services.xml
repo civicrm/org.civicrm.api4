@@ -53,6 +53,10 @@
             <tag name="spec_provider"/>
         </service>
 
+        <service class="Civi\Api4\Service\Spec\Provider\NoteCreationSpecProvider">
+            <tag name="spec_provider"/>
+        </service>
+
         <service class="Civi\Api4\Service\Spec\Provider\ContributionCreationSpecProvider">
             <tag name="spec_provider"/>
         </service>
