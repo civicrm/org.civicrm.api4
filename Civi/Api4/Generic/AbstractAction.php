@@ -391,8 +391,9 @@ abstract class AbstractAction implements \ArrayAccess {
     }
     // Some BAOs are weird and don't support a straightforward "create" method.
     $oddballs = [
-      'Website' => 'add',
       'Address' => 'add',
+      'GroupContact' => 'add',
+      'Website' => 'add',
     ];
     $method = UtilsArray::value($this->getEntity(), $oddballs, 'create');
     if (!method_exists($bao, $method)) {
@@ -408,6 +409,10 @@ abstract class AbstractAction implements \ArrayAccess {
     if (!$createResult) {
       $errMessage = sprintf('%s write operation failed', $this->getEntity());
       throw new \API_Exception($errMessage);
+    }
+
+    if (!empty($this->reload) && is_a($createResult, 'CRM_Core_DAO')) {
+      $createResult->find(TRUE);
     }
 
     // trim back the junk and just get the array:
@@ -449,8 +454,8 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   /**
-   * @param $params
-   * @param $entityId
+   * @param array $params
+   * @param int $entityId
    * @return mixed
    */
   private function formatCustomParams(&$params, $entityId) {
