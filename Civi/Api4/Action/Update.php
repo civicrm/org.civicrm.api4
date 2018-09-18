@@ -34,6 +34,7 @@ use Civi\Api4\Generic\Result;
  *
  * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
  * @method $this addValue($field, $value) Set field value to update.
+ * @method $this setReload(bool $reload) Specify whether complete objects will be returned after saving.
  */
 class Update extends Get {
 
@@ -58,6 +59,16 @@ class Update extends Get {
    * @var array
    */
   protected $values = [];
+
+  /**
+   * Reload object after saving.
+   *
+   * Setting to TRUE will load complete records and return them as the api result.
+   * If FALSE the api usually returns only the fields specified to be updated.
+   *
+   * @var bool
+   */
+  protected $reload = FALSE;
 
   /**
    * @param $key
