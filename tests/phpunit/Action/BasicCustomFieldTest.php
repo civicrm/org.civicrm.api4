@@ -112,7 +112,7 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
       ->addWhere('MyContactFields.FavFood', '=', 'Cherry')
       ->execute()
       ->first();
-    print_r($contact);
+
     $this->assertArrayHasKey('MyContactFields', $contact);
     $contactFields = $contact['MyContactFields'];
     $this->assertArrayHasKey('FavColor', $contactFields);
