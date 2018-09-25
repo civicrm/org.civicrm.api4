@@ -304,14 +304,14 @@ class Api4SelectQuery extends SelectQuery {
    * @param $key
    */
   protected function joinFK($key) {
-    $stack = explode('.', $key);
+    $pathArray = explode('.', $key);
 
-    if (count($stack) < 2) {
+    if (count($pathArray) < 2) {
       return;
     }
 
+    /** @var \Civi\Api4\Service\Schema\Joiner $joiner */
     $joiner = \Civi::container()->get('joiner');
-    $pathArray = explode('.', $key);
     $field = array_pop($pathArray);
     $pathString = implode('.', $pathArray);
 
