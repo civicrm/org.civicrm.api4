@@ -9,16 +9,16 @@
   // Cache list of actions
   var actions = [];
 
-  angular.module('api4').config(function($routeProvider) {
+  angular.module('api4Explorer').config(function($routeProvider) {
       $routeProvider.when('/api4/:api4entity?/:api4action?', {
         controller: 'Api4Explorer',
-        templateUrl: '~/api4/Explorer.html',
+        templateUrl: '~/api4Explorer/Explorer.html',
         reloadOnSearch: false
       });
     }
   );
 
-  angular.module('api4').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, crmUiHelp, crmApi4) {
+  angular.module('api4Explorer').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, crmUiHelp, crmApi4) {
     var ts = $scope.ts = CRM.ts('api4');
     $scope.entities = entities;
     $scope.operators = arrayToSelect2(CRM.vars.api4.operators);
@@ -402,12 +402,12 @@
 
   });
 
-  angular.module('api4').directive('crmApi4WhereClause', function($timeout) {
+  angular.module('api4Explorer').directive('crmApi4WhereClause', function($timeout) {
     return {
       scope: {
         data: '=crmApi4WhereClause'
       },
-      templateUrl: '~/api4/WhereClause.html',
+      templateUrl: '~/api4Explorer/WhereClause.html',
       link: function (scope, element, attrs) {
         var ts = scope.ts = CRM.ts('api4');
         scope.newClause = '';
