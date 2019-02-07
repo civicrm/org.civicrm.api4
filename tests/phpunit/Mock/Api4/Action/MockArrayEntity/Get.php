@@ -11,7 +11,7 @@ use \Civi\Api4\Action\Get as DefaultGet;
 class Get extends DefaultGet {
   use ArrayRetrievalTrait;
 
-  public function _run(Result $result) {
+  public function getObjects() {
     $data = [
       [
         'field1' => 1,
@@ -52,7 +52,7 @@ class Get extends DefaultGet {
         'field6' => 0,
       ],
     ];
-    $this->processArrayData($data, $result);
+    return $this->processArrayData($data);
   }
 
 }
