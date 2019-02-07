@@ -40,7 +40,8 @@
     $scope.controls = {};
     $scope.code = {
       php: '',
-      javascript: ''
+      javascript: '',
+      cli: ''
     };
 
     function ucfirst(str) {
@@ -248,7 +249,8 @@
     function writeCode() {
       var code = {
         php: ts('Select an entity and action'),
-        javascript: ''
+        javascript: '',
+        cli: ''
       },
         entity = $scope.entity,
         action = $scope.action,
@@ -261,6 +263,8 @@
         var results = lcfirst(pluralize(result)),
           paramCount = _.size(params),
           i = 0;
+
+        // Write javascript
         code.javascript = "CRM.api4('" + entity + "', '" + action + "', {";
         _.each(params, function(param, key) {
           code.javascript += "\n  " + key + ': ' + stringify(param) +
@@ -270,6 +274,8 @@
           }
         });
         code.javascript += "\n}).done(function(" + results + ") {\n  // do something with " + results + " array\n});";
+
+        // Write php code
         if (entity.substr(0, 7) !== 'Custom_') {
           code.php = '$' + results + " = \\Civi\\Api4\\" + entity + '::' + action + '()';
         } else {
@@ -295,6 +301,9 @@
           }
         });
         code.php += "\n  ->execute();\nforeach ($" + results + ' as $' + result + ') {\n  // do something\n}';
+
+        // Write cli code
+        code.cli = 'cv api4 ' + entity + '.' + action + " '" + stringify(params) + "'";
       }
       $scope.code = code;
     }
