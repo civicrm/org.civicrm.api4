@@ -131,13 +131,20 @@ class Get extends AbstractAction {
   }
 
   public function _run(Result $result) {
+    $result->exchangeArray($this->getObjects());
+  }
+
+  /**
+   * @return array|int
+   */
+  protected function getObjects() {
     $query = new Api4SelectQuery($this->getEntity(), $this->checkPermissions);
     $query->select = $this->select;
     $query->where = $this->where;
     $query->orderBy = $this->orderBy;
     $query->limit = $this->limit;
     $query->offset = $this->offset;
-    $result->exchangeArray($query->run());
+    return $query->run();
   }
 
 }
