@@ -11,15 +11,17 @@ use Civi\API\Exception\NotImplementedException;
 trait ArrayRetrievalTrait {
 
   /**
-   * @param $values
-   * @param Result $result
+   * @param array $values
+   *   List of all rows
+   * @return array
+   *   Filtered list of rows
    */
-  protected function processArrayData($values, Result $result) {
+  protected function processArrayData($values) {
     $values = $this->filterArray($values);
     $values = $this->sortArray($values);
     $values = $this->selectArray($values);
     $values = $this->limitArray($values);
-    $result->exchangeArray($values);
+    return $values;
   }
 
   /**
