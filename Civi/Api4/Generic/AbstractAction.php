@@ -373,8 +373,10 @@ abstract class AbstractAction implements \ArrayAccess {
   /**
    * Write a bao object as part of a create/update action.
    *
-   * @param $params
+   * @param array $params
+   *   The record to write to the DB.
    * @return array
+   *   The record after being written to the DB (e.g. including newly assigned "id").
    * @throws \API_Exception
    */
   protected function writeObject($params) {
