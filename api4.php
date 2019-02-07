@@ -1,6 +1,7 @@
 <?php
 
 require_once 'api4.civix.php';
+require_once 'api/Exception.php';
 
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
