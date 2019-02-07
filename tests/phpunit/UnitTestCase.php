@@ -63,7 +63,7 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
    * @returns int record count
    */
   public function getRowCount($table_name) {
-    $sql = "SELECT count(*) FROM $table_name";
+    $sql = "SELECT count(id) FROM $table_name";
     return (int) \CRM_Core_DAO::singleValueQuery($sql);
   }
 
