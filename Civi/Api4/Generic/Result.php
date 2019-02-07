@@ -57,6 +57,17 @@ class Result extends \ArrayObject {
   }
 
   /**
+   * Return last result.
+   * @return array|null
+   */
+  public function last() {
+    foreach (array_slice((array) $this, -1) as $values) {
+      return $values;
+    }
+    return NULL;
+  }
+
+  /**
    * Re-index the results array (which by default is non-associative)
    *
    * Drops any item from the results that does not contain the specified key

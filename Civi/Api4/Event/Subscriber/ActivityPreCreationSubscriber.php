@@ -24,7 +24,7 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber {
         throw new \Exception('Activity type must match a *single* type');
       }
 
-      $request->addValue('activity_type_id', $result->first()['id']);
+      $request->addValue('activity_type_id', $result->first()['value']);
     }
   }
 

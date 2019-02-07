@@ -103,13 +103,17 @@ class TestCreationParameterProvider {
   private function getFkID(FieldSpec $field) {
     $fkEntity = $field->getFkEntity();
     $params = ['checkPermissions' => FALSE];
+    // Be predictable about what type of contact we select
+    if ($fkEntity === 'Contact') {
+      $params['where'] = [['contact_type', '=', 'Individual']];
+    }
     $entityList = civicrm_api4($fkEntity, 'get', $params);
     if ($entityList->count() < 1) {
       $msg = sprintf('At least one %s is required in test', $fkEntity);
       throw new \Exception($msg);
     }
 
-    return $entityList->first()['id'];
+    return $entityList->last()['id'];
   }
 
   /**
