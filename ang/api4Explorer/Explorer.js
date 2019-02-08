@@ -164,12 +164,29 @@
         if (params[key]) {
           var newParam = {};
           _.each(params[key], function(item) {
-            newParam[item[0]] = item[1];
+            newParam[item[0]] = parseYaml(item[1]);
           });
           params[key] = newParam;
         }
       });
+      if (params.where) {
+        params.where = parseYaml(_.cloneDeep(params.where));
+      }
       return params;
+    }
+
+    function parseYaml(input) {
+      if (_.isObject(input) || _.isArray(input)) {
+        _.each(input, function(item, index) {
+          input[index] = parseYaml(item);
+        });
+        return input;
+      }
+      try {
+        return input === '>' ? '>' : jsyaml.safeLoad(input);
+      } catch (e) {
+        return input;
+      }
     }
 
     function selectAction() {
@@ -238,6 +255,9 @@
     }
 
     function stringify(value, trim) {
+      if (typeof value === 'undefined') {
+        return '';
+      }
       var str = JSON.stringify(value).replace(/,/g, ', ');
       if (trim) {
         str = str.slice(1, -1);

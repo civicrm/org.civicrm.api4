@@ -9,6 +9,7 @@ return [
     'ang/api4Explorer.js',
     'ang/api4Explorer/*.js',
     'ang/api4Explorer/*/*.js',
+    'lib/*.js',
   ],
   'css' => [
     'css/explorer.css',
