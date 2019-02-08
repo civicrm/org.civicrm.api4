@@ -8,6 +8,9 @@
   var entities = [];
   // Cache list of actions
   var actions = [];
+  // Field options
+  var fieldOptions = {};
+
 
   angular.module('api4Explorer').config(function($routeProvider) {
       $routeProvider.when('/api4/:api4entity?/:api4action?', {
@@ -83,10 +86,6 @@
         container.push(formatted);
       });
       return container;
-    }
-
-    function entityFields(entity) {
-      return _.result(_.findWhere(schema, {name: entity}), 'fields');
     }
 
     function getFieldList() {
@@ -165,12 +164,29 @@
         if (params[key]) {
           var newParam = {};
           _.each(params[key], function(item) {
-            newParam[item[0]] = item[1];
+            newParam[item[0]] = parseYaml(item[1]);
           });
           params[key] = newParam;
         }
       });
+      if (params.where) {
+        params.where = parseYaml(_.cloneDeep(params.where));
+      }
       return params;
+    }
+
+    function parseYaml(input) {
+      if (_.isObject(input) || _.isArray(input)) {
+        _.each(input, function(item, index) {
+          input[index] = parseYaml(item);
+        });
+        return input;
+      }
+      try {
+        return input === '>' ? '>' : jsyaml.safeLoad(input);
+      } catch (e) {
+        return input;
+      }
     }
 
     function selectAction() {
@@ -212,7 +228,7 @@
             $scope.$watch('params.' + name, function(values) {
               // Remove empty values
               _.each(values, function(clause, index) {
-                if (!clause[0]) {
+                if (!clause || !clause[0]) {
                   $scope.params[name].splice(index, 1);
                 }
               });
@@ -239,6 +255,9 @@
     }
 
     function stringify(value, trim) {
+      if (typeof value === 'undefined') {
+        return '';
+      }
       var str = JSON.stringify(value).replace(/,/g, ', ');
       if (trim) {
         str = str.slice(1, -1);
@@ -455,6 +474,102 @@
       }
     };
   });
+
+  angular.module('api4Explorer').directive('api4ExpValue', function($routeParams, crmApi4) {
+    return {
+      scope: {
+        data: '=api4ExpValue'
+      },
+      link: function (scope, element, attrs) {
+        var ts = scope.ts = CRM.ts('api4'),
+          entity = $routeParams.api4entity;
+
+        function getField(fieldName) {
+          var fieldNames = fieldName.split('.');
+          return get(entity, fieldNames);
+
+          function get(entity, fieldNames) {
+            if (fieldNames.length === 1) {
+              return _.findWhere(entityFields(entity), {name: fieldNames[0]});
+            }
+            var comboName = _.findWhere(entityFields(entity), {name: fieldNames[0] + '.' + fieldNames[1]});
+            if (comboName) {
+              return comboName;
+            }
+            var linkName = fieldNames.shift(),
+              entityLinks = _.findWhere(links, {entity: entity}).links,
+              newEntity = _.findWhere(entityLinks, {alias: linkName}).entity;
+            return get(newEntity, fieldNames);
+          }
+        }
+
+        function destroyWidget() {
+          var $el = $(element);
+          if ($el.is('.crm-form-date-wrapper .crm-hidden-date')) {
+            $el.crmDatepicker('destroy');
+          }
+          if ($el.is('.select2-container + input')) {
+            $el.crmEntityRef('destroy');
+          }
+          $(element).removeData().removeAttr('type').removeAttr('placeholder').show();
+        }
+
+        function makeWidget(field, op) {
+          var $el = $(element),
+            dataType = field.data_type;
+          if (op === 'IS NULL' || op === 'IS NOT NULL') {
+            $el.hide();
+            return;
+          }
+          if (dataType === 'Timestamp' || dataType === 'Date') {
+            if (_.includes(['=', '!=', '<>', '<', '>=', '<', '<='], op)) {
+              $el.crmDatepicker({time: dataType === 'Timestamp'});
+            }
+          } else if (_.includes(['=', '!=', '<>'], op)) {
+            if (field.fk_entity) {
+              $el.crmEntityRef({entity: field.fk_entity});
+            } else if (field.options) {
+              $el.addClass('loading').attr('placeholder', ts('- select -')).crmSelect2({allowClear: false, data: [{id: '', text: ''}]});
+              loadFieldOptions(field.entity).then(function(data) {
+                var options = [];
+                _.each(_.findWhere(data, {name: field.name}).options, function(val, key) {
+                  options.push({id: key, text: val});
+                });
+                $el.removeClass('loading').select2({data: options});
+              });
+            } else if (dataType === 'Boolean') {
+              $el.attr('placeholder', ts('- select -')).crmSelect2({allowClear: false, placeholder: ts('- select -'), data: [
+                {id: '1', text: ts('Yes')},
+                {id: '0', text: ts('No')}
+              ]});
+            }
+          }
+        }
+
+        function loadFieldOptions(entity) {
+          if (!fieldOptions[entity]) {
+            fieldOptions[entity] = crmApi4(entity, 'getFields', {
+              getOptions: true,
+              select: ["name", "options"]
+            });
+          }
+          return fieldOptions[entity];
+        }
+
+        scope.$watchCollection('data', function(data) {
+          destroyWidget();
+          var field = getField(data.field);
+          if (field) {
+            makeWidget(field, data.op || '=');
+          }
+        });
+      }
+    };
+  });
+
+  function entityFields(entity) {
+    return _.result(_.findWhere(schema, {name: entity}), 'fields');
+  }
 
   // Collapsible optgroups for select2
   $(function() {

@@ -9,6 +9,7 @@ return [
     'ang/api4Explorer.js',
     'ang/api4Explorer/*.js',
     'ang/api4Explorer/*/*.js',
+    'lib/*.js',
   ],
   'css' => [
     'css/explorer.css',
@@ -16,5 +17,6 @@ return [
   'partials' => [
     'ang/api4Explorer',
   ],
+  'basePages' => [],
   'requires' => ['crmUi', 'crmUtil', 'ngRoute', 'crmRouteBinder', 'ui.sortable', 'api4'],
 ];
