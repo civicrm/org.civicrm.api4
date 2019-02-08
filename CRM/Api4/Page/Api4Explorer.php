@@ -8,12 +8,11 @@ class CRM_Api4_Page_Api4Explorer extends CRM_Core_Page {
     $loader->setModules(array('api4Explorer'));
     $loader->setPageName('civicrm/api4');
     $loader->useApp(array(
-      'defaultRoute' => '/api4',
+      'defaultRoute' => '/explorer',
     ));
     $loader->load();
     CRM_Utils_System::setTitle('CiviCRM');
     parent::run();
   }
-
 
 }

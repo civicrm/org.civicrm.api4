@@ -13,7 +13,7 @@
 
 
   angular.module('api4Explorer').config(function($routeProvider) {
-      $routeProvider.when('/api4/:api4entity?/:api4action?', {
+      $routeProvider.when('/explorer/:api4entity?/:api4action?', {
         controller: 'Api4Explorer',
         templateUrl: '~/api4Explorer/Explorer.html',
         reloadOnSearch: false
@@ -402,14 +402,14 @@
       if (oldVal !== newVal) {
         // Flush actions cache to re-fetch for new entity
         actions = [];
-        $location.url('/api4/' + newVal);
+        $location.url('/explorer/' + newVal);
       }
     });
 
     // Update route when changing actions
     $scope.$watch('action', function(newVal, oldVal) {
       if ($scope.entity && $routeParams.api4action !== newVal && !_.isUndefined(newVal)) {
-        $location.url('/api4/' + $scope.entity + '/' + newVal);
+        $location.url('/explorer/' + $scope.entity + '/' + newVal);
       } else if (newVal) {
         $scope.helpTitle = helpTitle = $scope.entity + '::' + newVal;
         $scope.helpContent = helpContent = _.pick(_.findWhere(actions, {id: newVal}), ['description', 'comment']);
