@@ -14,10 +14,10 @@ trait OptionCleanupTrait {
 
   public function tearDown() {
     if ($this->optionValueMaxId) {
-      \CRM_Core_DAO::singleValueQuery('DELETE FROM civicrm_option_value WHERE id > ' . $this->optionValueMaxId);
+      \CRM_Core_DAO::executeQuery('DELETE FROM civicrm_option_value WHERE id > ' . $this->optionValueMaxId);
     }
     if ($this->optionGroupMaxId) {
-      \CRM_Core_DAO::singleValueQuery('DELETE FROM civicrm_option_group WHERE id > ' . $this->optionGroupMaxId);
+      \CRM_Core_DAO::executeQuery('DELETE FROM civicrm_option_group WHERE id > ' . $this->optionGroupMaxId);
     }
   }
 
