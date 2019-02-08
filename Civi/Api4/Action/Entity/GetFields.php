@@ -45,6 +45,25 @@ class GetFields extends GenericGetFields {
       if ($entity['name'] != 'Entity') {
         $entity['fields'] = (array) civicrm_api4($entity['name'], 'getFields', ['action' => $action, 'includeCustom' => $includeCustom, 'select' => $this->select]);
       }
+      else {
+        $entity['fields'] = [
+          [
+            'name' => 'name',
+            'title' => 'Name',
+            'data_type' => 'String',
+          ],
+          [
+            'name' => 'description',
+            'title' => 'Description',
+            'data_type' => 'String',
+          ],
+          [
+            'name' => 'comment',
+            'title' => 'Comment',
+            'data_type' => 'String',
+          ],
+        ];
+      }
       $result[] = $entity;
     }
   }

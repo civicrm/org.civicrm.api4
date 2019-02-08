@@ -28,8 +28,7 @@
 namespace Civi\Api4\Action\Entity;
 
 use Civi\Api4\CustomGroup;
-use Civi\Api4\Generic\AbstractAction;
-use Civi\Api4\Generic\Result;
+use Civi\Api4\Action\Get as GenericGet;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**
@@ -37,20 +36,9 @@ use Civi\Api4\Utils\ReflectionUtils;
  *
  * @method $this setIncludeCustom(bool $value)
  * @method bool getIncludeCustom()
- * @method $this setSelect(array $value)
- * @method $this addSelect(string $value)
- * @method array getSelect()
  */
-class Get extends AbstractAction {
-
-  /**
-   * Which attributes of the entities should be returned?
-   *
-   * @options name, description, comment
-   *
-   * @var array
-   */
-  protected $select = [];
+class Get extends GenericGet {
+  use \Civi\Api4\Generic\ArrayRetrievalTrait;
 
   /**
    * Include custom-field-based pseudo-entities?
@@ -61,10 +49,8 @@ class Get extends AbstractAction {
 
   /**
    * Scan all api directories to discover entities
-   *
-   * @param Result $result
    */
-  public function _run(Result $result) {
+  public function getObjects() {
     $entities = [];
     foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
       $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4';
@@ -87,12 +73,7 @@ class Get extends AbstractAction {
     }
 
     ksort($entities);
-    if ($this->select) {
-      foreach ($entities as &$entity) {
-        $entity = array_intersect_key($entity, array_flip($this->select));
-      }
-    }
-    $result->exchangeArray(array_values($entities));
+    return $this->processArrayData($entities);
   }
 
   /**
