@@ -16,5 +16,6 @@ return [
   'partials' => [
     'ang/api4Explorer',
   ],
+  'basePages' => [],
   'requires' => ['crmUi', 'crmUtil', 'ngRoute', 'crmRouteBinder', 'ui.sortable', 'api4'],
 ];
