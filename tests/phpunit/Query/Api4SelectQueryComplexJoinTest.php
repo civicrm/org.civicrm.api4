@@ -75,6 +75,7 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
     $query->select[] = 'first_name';
     $query->select[] = 'emails.location_type.name'; // before emails selection
     $query->select[] = 'emails.email';
+    $query->where[] = ['emails.email', 'IS NOT NULL'];
     $results = $query->run();
     $firstResult = array_shift($results);
 

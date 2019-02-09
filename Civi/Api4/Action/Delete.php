@@ -26,7 +26,7 @@ class Delete extends Get {
     $this->setSelect([$this->idField]);
     $defaults = $this->getParamDefaults();
     if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
-      throw new \API_Exception('Cannot delete with no "where" paramater specified');
+      throw new \API_Exception('Cannot delete with no "where" parameter specified');
     }
 
     $items = $this->getObjects();
