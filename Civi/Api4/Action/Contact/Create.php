@@ -2,7 +2,6 @@
 
 namespace Civi\Api4\Action\Contact;
 
-use Civi\Api4\Generic\Result;
 use Civi\Api4\Action\Create as DefaultCreate;
 
 /**

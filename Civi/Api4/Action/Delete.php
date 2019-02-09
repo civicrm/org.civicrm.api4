@@ -1,36 +1,15 @@
 <?php
-/*
- +--------------------------------------------------------------------+
- | CiviCRM version 4.7                                                |
- +--------------------------------------------------------------------+
- | Copyright CiviCRM LLC (c) 2004-2015                                |
- +--------------------------------------------------------------------+
- | This file is a part of CiviCRM.                                    |
- |                                                                    |
- | CiviCRM is free software; you can copy, modify, and distribute it  |
- | under the terms of the GNU Affero General Public License           |
- | Version 3, 19 November 2007 and the CiviCRM Licensing Exception.   |
- |                                                                    |
- | CiviCRM is distributed in the hope that it will be useful, but     |
- | WITHOUT ANY WARRANTY; without even the implied warranty of         |
- | MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.               |
- | See the GNU Affero General Public License for more details.        |
- |                                                                    |
- | You should have received a copy of the GNU Affero General Public   |
- | License and the CiviCRM Licensing Exception along                  |
- | with this program; if not, contact CiviCRM LLC                     |
- | at info[AT]civicrm[DOT]org. If you have questions about the        |
- | GNU Affero General Public License or the licensing of CiviCRM,     |
- | see the CiviCRM license FAQ at http://civicrm.org/licensing        |
- +--------------------------------------------------------------------+
- */
+
 namespace Civi\Api4\Action;
+
 use Civi\Api4\Generic\Result;
 
 /**
  * Delete one or more items, based on criteria specified in Where param.
  */
 class Delete extends Get {
+
+  use \Civi\Api4\Generic\BulkActionTrait;
 
   /**
    * Criteria for selecting items to delete.
@@ -39,13 +18,6 @@ class Delete extends Get {
    * @var array
    */
   protected $where = [];
-
-  /**
-   * Field by which objects are identified.
-   *
-   * @var string
-   */
-  private $idField = 'id';
 
   /**
    * Batch delete function
@@ -99,20 +71,6 @@ class Delete extends Get {
       }
     }
     return $ids;
-  }
-
-  /**
-   * @return string
-   */
-  protected function getIdField() {
-    return $this->idField;
-  }
-
-  /**
-   * @param string $idField
-   */
-  protected function setIdField($idField) {
-    $this->idField = $idField;
   }
 
   /**
