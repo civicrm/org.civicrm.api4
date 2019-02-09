@@ -39,13 +39,6 @@ use Civi\Api4\Generic\Result;
 class Update extends Get {
 
   /**
-   * Criteria for get to fetch id against which the update will occur
-   *
-   * @var array
-   */
-  protected $select = ['id'];
-
-  /**
    * Criteria for selecting items to update.
    *
    * @required
@@ -71,6 +64,13 @@ class Update extends Get {
   protected $reload = FALSE;
 
   /**
+   * Field by which objects are identified.
+   *
+   * @var string
+   */
+  private $idField = 'id';
+
+  /**
    * @param $key
    *
    * @return mixed|null
@@ -83,20 +83,20 @@ class Update extends Get {
    * @inheritDoc
    */
   public function _run(Result $result) {
-    if (!empty($this->values['id'])) {
-      throw new \Exception('Cannot update the id of an existing object.');
+    if (!empty($this->values[$this->idField])) {
+      throw new \Exception("Cannot update the {$this->idField} of an existing " . $this->getEntity() . '.');
     }
+    $this->setSelect([$this->idField]);
     // For some reason the contact bao requires this
     if ($this->getEntity() == 'Contact') {
       $this->select[] = 'contact_type';
     }
-    parent::_run($result);
-    // Then act on the result
-    $updated_results = [];
-    foreach ($result as $item) {
-      $updated_results[] = $this->writeObject($this->values + $item);
+
+    $items = $this->getObjects();
+
+    foreach ($items as $item) {
+      $result[] = $this->writeObject($this->values + $item);
     }
-    $result->exchangeArray($updated_results);
   }
 
   /**
@@ -109,6 +109,20 @@ class Update extends Get {
       unset($info['select']);
     }
     return $info;
+  }
+
+  /**
+   * @return string
+   */
+  protected function getIdField() {
+    return $this->idField;
+  }
+
+  /**
+   * @param string $idField
+   */
+  protected function setIdField($idField) {
+    $this->idField = $idField;
   }
 
 }

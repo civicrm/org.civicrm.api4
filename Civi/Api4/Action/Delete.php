@@ -41,48 +41,78 @@ class Delete extends Get {
   protected $where = [];
 
   /**
+   * Field by which objects are identified.
+   *
+   * @var string
+   */
+  private $idField = 'id';
+
+  /**
    * Batch delete function
-   * @todo much of this should be abstracted out to a generic batch handler
    */
   public function _run(Result $result) {
-    $baoName = $this->getBaoName();
-    $this->setSelect(['id']);
+    $this->setSelect([$this->idField]);
     $defaults = $this->getParamDefaults();
     if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
       throw new \API_Exception('Cannot delete with no "where" paramater specified');
     }
-    // run the parent action (get) to get the list
-    parent::_run($result);
-    // Then act on the result
+
+    $items = $this->getObjects();
+
+    $ids = $this->deleteObjects($items);
+
+    $result->exchangeArray($ids);
+  }
+
+  /**
+   * @param $items
+   * @return array
+   * @throws \API_Exception
+   */
+  protected function deleteObjects($items) {
     $ids = [];
+    $baoName = $this->getBaoName();
     if (method_exists($baoName, 'del')) {
-      foreach ($result as $item) {
-        $args = [$item['id']];
+      foreach ($items as $item) {
+        $args = [$item[$this->idField]];
         $bao = call_user_func_array([$baoName, 'del'], $args);
         if ($bao !== FALSE) {
-          $ids[] = $item['id'];
+          $ids[] = $item[$this->idField];
         }
         else {
-          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
+          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item[$this->idField]}");
         }
       }
     }
     else {
-      foreach ($result as $item) {
+      foreach ($items as $item) {
         $bao = new $baoName();
-        $bao->id = $item['id'];
+        $bao->id = $item[$this->idField];
         // delete it
         $action_result = $bao->delete();
         if ($action_result) {
-          $ids[] = $item['id'];
+          $ids[] = $item[$this->idField];
         }
         else {
-          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
+          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item[$this->idField]}");
         }
       }
     }
-    $result->exchangeArray($ids);
-    return $result;
+    return $ids;
+  }
+
+  /**
+   * @return string
+   */
+  protected function getIdField() {
+    return $this->idField;
+  }
+
+  /**
+   * @param string $idField
+   */
+  protected function setIdField($idField) {
+    $this->idField = $idField;
   }
 
   /**
