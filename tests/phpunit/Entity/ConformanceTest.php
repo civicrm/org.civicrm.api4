@@ -12,10 +12,11 @@ use Civi\Test\Api4\UnitTestCase;
  * @group headless
  */
 class ConformanceTest extends UnitTestCase {
+
+  use TableDropperTrait;
   use \Civi\Test\Api4\Traits\OptionCleanupTrait {
     setUp as setUpOptionCleanup;
   }
-  use TableDropperTrait;
 
   /**
    * @var TestCreationParameterProvider
@@ -29,13 +30,16 @@ class ConformanceTest extends UnitTestCase {
     $tablesToTruncate = [
       'civicrm_custom_group',
       'civicrm_custom_field',
+      'civicrm_group',
+      'civicrm_event',
+      'civicrm_participant',
     ];
     $this->dropByPrefix('civicrm_value_myfavorite');
     $this->cleanup(['tablesToTruncate' => $tablesToTruncate]);
+    $this->setUpOptionCleanup();
     $this->loadDataSet('ConformanceTest');
     $this->creationParamProvider = \Civi::container()->get('test.param_provider');
     parent::setUp();
-    $this->setUpOptionCleanup();
     // calculateTaxAmount() for contribution triggers a deprecation notice
     \PHPUnit_Framework_Error_Deprecated::$enabled = FALSE;
   }
