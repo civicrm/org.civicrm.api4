@@ -47,13 +47,6 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   protected $version = 4;
 
-  /**
-   * Custom Group name if this is a CustomValue pseudo-entity.
-   *
-   * @var string
-   */
-  private $customGroup;
-
   /*
    * Todo: not implemented.
    *
@@ -191,22 +184,6 @@ abstract class AbstractAction implements \ArrayAccess {
       $params[$name] = $this->$name;
     }
     return $params;
-  }
-
-  /**
-   * @param $customGroup
-   * @return static
-   */
-  public function setCustomGroup($customGroup) {
-    $this->customGroup = $customGroup;
-    return $this;
-  }
-
-  /**
-   * @return string
-   */
-  public function getCustomGroup() {
-    return $this->customGroup;
   }
 
   /**
@@ -373,24 +350,15 @@ abstract class AbstractAction implements \ArrayAccess {
   /**
    * Write a bao object as part of a create/update action.
    *
-   * @param array $params
+   * @param array $items
    *   The record to write to the DB.
    * @return array
    *   The record after being written to the DB (e.g. including newly assigned "id").
    * @throws \API_Exception
    */
-  protected function writeObject($params) {
-    $entityId = UtilsArray::value('id', $params);
-    FormattingUtil::formatWriteParams($params, $this->getEntity(), $this->getEntityFields());
-    $this->formatCustomParams($params, $entityId);
-
+  protected function writeObjects($items) {
     $baoName = $this->getBaoName();
-    $bao = new $baoName();
 
-    // For some reason the contact bao requires this
-    if ($entityId && $this->getEntity() == 'Contact') {
-      $params['contact_id'] = $entityId;
-    }
     // Some BAOs are weird and don't support a straightforward "create" method.
     $oddballs = [
       'Address' => 'add',
@@ -398,27 +366,41 @@ abstract class AbstractAction implements \ArrayAccess {
       'Website' => 'add',
     ];
     $method = UtilsArray::value($this->getEntity(), $oddballs, 'create');
-    if (!method_exists($bao, $method)) {
+    if (!method_exists($baoName, $method)) {
       $method = 'add';
     }
-    if (method_exists($bao, $method)) {
-      $createResult = $bao->$method($params);
-    }
-    else {
-      $createResult = $this->genericCreateMethod($params);
-    }
 
-    if (!$createResult) {
-      $errMessage = sprintf('%s write operation failed', $this->getEntity());
-      throw new \API_Exception($errMessage);
-    }
+    $result = [];
 
-    if (!empty($this->reload) && is_a($createResult, 'CRM_Core_DAO')) {
-      $createResult->find(TRUE);
-    }
+    foreach ($items as $item) {
+      $entityId = UtilsArray::value('id', $item);
+      FormattingUtil::formatWriteParams($item, $this->getEntity(), $this->getEntityFields());
+      $this->formatCustomParams($item, $entityId);
 
-    // trim back the junk and just get the array:
-    return $this->baoToArray($createResult);
+      // For some reason the contact bao requires this
+      if ($entityId && $this->getEntity() == 'Contact') {
+        $item['contact_id'] = $entityId;
+      }
+      if (method_exists($baoName, $method)) {
+        $createResult = $baoName::$method($item);
+      }
+      else {
+        $createResult = $this->genericCreateMethod($item);
+      }
+
+      if (!$createResult) {
+        $errMessage = sprintf('%s write operation failed', $this->getEntity());
+        throw new \API_Exception($errMessage);
+      }
+
+      if (!empty($this->reload) && is_a($createResult, 'CRM_Core_DAO')) {
+        $createResult->find(TRUE);
+      }
+
+      // trim back the junk and just get the array:
+      $result[] = $this->baoToArray($createResult);
+    }
+    return $result;
   }
 
   /**

@@ -10,6 +10,7 @@ use Civi\Api4\Service\Spec\SpecFormatter;
  * Get fields for a custom group.
  */
 class GetFields extends \Civi\Api4\Action\GetFields {
+  use \Civi\Api4\Generic\CustomValueCRUD;
 
   public function _run(Result $result) {
     /** @var SpecGatherer $gatherer */

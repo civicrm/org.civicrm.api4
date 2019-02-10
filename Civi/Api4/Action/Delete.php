@@ -19,11 +19,12 @@ class Delete extends Get {
    */
   protected $where = [];
 
+  protected $select = ['id'];
+
   /**
    * Batch delete function
    */
   public function _run(Result $result) {
-    $this->setSelect([$this->idField]);
     $defaults = $this->getParamDefaults();
     if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
       throw new \API_Exception('Cannot delete with no "where" parameter specified');
@@ -71,18 +72,6 @@ class Delete extends Get {
       }
     }
     return $ids;
-  }
-
-  /**
-   * @inheritDoc
-   */
-  public function getParamInfo($param = NULL) {
-    $info = parent::getParamInfo($param);
-    if (!$param) {
-      // Delete doesn't actually let you select fields.
-      unset($info['select']);
-    }
-    return $info;
   }
 
 }

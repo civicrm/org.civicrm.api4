@@ -30,4 +30,24 @@ trait BulkActionTrait {
     $this->idField = $idField;
   }
 
+  public function setSelect($items) {
+    throw new \API_Exception('Cannot set select for bulk actions');
+  }
+
+  public function addSelect($item) {
+    throw new \API_Exception('Cannot set select for bulk actions');
+  }
+
+  /**
+   * @inheritDoc
+   */
+  public function getParamInfo($param = NULL) {
+    $info = parent::getParamInfo($param);
+    if (!$param) {
+      // Bulk actions don't actually let you select fields.
+      unset($info['select']);
+    }
+    return $info;
+  }
+
 }

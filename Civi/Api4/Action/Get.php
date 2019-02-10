@@ -21,20 +21,23 @@ use Civi\Api4\Generic\Result;
  * @method $this setOffset(int $offset)
  */
 class Get extends AbstractAction {
+
   /**
    * Fields to return. Defaults to all non-custom fields.
    *
    * @var array
    */
   protected $select = [];
+
   /**
-   * Array of conditions keyed by field.
+   * Criteria for selecting items.
    *
    * $example->addWhere('contact_type', 'IN', array('Individual', 'Household'))
    *
    * @var array
    */
   protected $where = [];
+
   /**
    * Array of field(s) to use in ordering the results
    *
@@ -45,6 +48,7 @@ class Get extends AbstractAction {
    * @var array
    */
   protected $orderBy = [];
+
   /**
    * Maximum number of results to return.
    *
@@ -53,6 +57,7 @@ class Get extends AbstractAction {
    * @var int
    */
   protected $limit = 0;
+
   /**
    * Zero-based index of first result to return.
    *

@@ -18,6 +18,13 @@ class Update extends Get {
   use \Civi\Api4\Generic\BulkActionTrait;
 
   /**
+   * Fields to be selected by get action
+   *
+   * @var array
+   */
+  protected $select = ['id'];
+
+  /**
    * Criteria for selecting items to update.
    *
    * @required
@@ -58,29 +65,13 @@ class Update extends Get {
     if (!empty($this->values[$this->idField])) {
       throw new \Exception("Cannot update the {$this->idField} of an existing " . $this->getEntity() . '.');
     }
-    $this->setSelect([$this->idField]);
-    // For some reason the contact bao requires this
-    if ($this->getEntity() == 'Contact') {
-      $this->select[] = 'contact_type';
-    }
 
     $items = $this->getObjects();
-
-    foreach ($items as $item) {
-      $result[] = $this->writeObject($this->values + $item);
+    foreach ($items as &$item) {
+      $item = $this->values + $item;
     }
-  }
 
-  /**
-   * @inheritDoc
-   */
-  public function getParamInfo($param = NULL) {
-    $info = parent::getParamInfo($param);
-    if (!$param) {
-      // Update doesn't actually let you select fields.
-      unset($info['select']);
-    }
-    return $info;
+    $result->exchangeArray($this->writeObjects($items));
   }
 
 }

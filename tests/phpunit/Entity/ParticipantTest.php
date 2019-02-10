@@ -28,7 +28,7 @@ class ParticipantTest extends UnitTestCase {
       ->indexBy('name');
 
     $getParams = $result['get']['params'];
-    $whereDescription = 'Array of conditions keyed by field.';
+    $whereDescription = 'Criteria for selecting items.';
 
     $this->assertEquals(TRUE, $getParams['checkPermissions']['default']);
     $this->assertEquals($whereDescription, $getParams['where']['description']);

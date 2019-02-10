@@ -39,9 +39,9 @@ class Create extends AbstractAction {
     $params = $this->values;
     $this->fillDefaults($params);
 
-    $resultArray = $this->writeObject($params);
+    $resultArray = $this->writeObjects([$params]);
 
-    $result->exchangeArray([$resultArray]);
+    $result->exchangeArray($resultArray);
   }
 
   /**
