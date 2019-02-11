@@ -15,13 +15,6 @@ class Replace extends Delete {
   use \Civi\Api4\Generic\BulkActionTrait;
 
   /**
-   * Fields to be selected by get action
-   *
-   * @var array
-   */
-  protected $select = ['id'];
-
-  /**
    * Array of records.
    *
    * @required
