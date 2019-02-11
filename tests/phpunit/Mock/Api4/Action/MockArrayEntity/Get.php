@@ -1,7 +1,7 @@
 <?php
 
 namespace Civi\Api4\Action\MockArrayEntity;
-use Civi\Api4\Generic\ArrayRetrievalTrait;
+use Civi\Api4\Generic\ArrayQueryTrait;
 use \Civi\Api4\Generic\Result;
 use \Civi\Api4\Action\Get as DefaultGet;
 
@@ -9,7 +9,7 @@ use \Civi\Api4\Action\Get as DefaultGet;
  * Get
  */
 class Get extends DefaultGet {
-  use ArrayRetrievalTrait;
+  use ArrayQueryTrait;
 
   public function getObjects() {
     $data = [
@@ -52,7 +52,7 @@ class Get extends DefaultGet {
         'field6' => 0,
       ],
     ];
-    return $this->processArrayData($data);
+    return $this->queryArray($data);
   }
 
 }

@@ -13,7 +13,7 @@ use Civi\Api4\Utils\ReflectionUtils;
  * @method bool getIncludeCustom()
  */
 class Get extends GenericGet {
-  use \Civi\Api4\Generic\ArrayRetrievalTrait;
+  use \Civi\Api4\Generic\ArrayQueryTrait;
 
   /**
    * Include custom-field-based pseudo-entities?
@@ -48,7 +48,7 @@ class Get extends GenericGet {
     }
 
     ksort($entities);
-    return $this->processArrayData($entities);
+    return $this->queryArray($entities);
   }
 
   /**

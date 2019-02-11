@@ -8,7 +8,7 @@ use Civi\API\Exception\NotImplementedException;
  *
  * @package Civi\Api4\Generic
  */
-trait ArrayRetrievalTrait {
+trait ArrayQueryTrait {
 
   /**
    * @param array $values
@@ -16,7 +16,7 @@ trait ArrayRetrievalTrait {
    * @return array
    *   Filtered list of rows
    */
-  protected function processArrayData($values) {
+  protected function queryArray($values) {
     $values = $this->filterArray($values);
     $values = $this->sortArray($values);
     $values = $this->selectArray($values);
