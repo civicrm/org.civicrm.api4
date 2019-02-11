@@ -9,6 +9,13 @@ use Civi\API\Exception\NotImplementedException;
  * CustomGroup entity.
  *
  * @package Civi\Api4
+ *
+ * @method static \Civi\Api4\Action\CustomValue\Get get(string $customGroupName)
+ * @method static \Civi\Api4\Action\CustomValue\GetFields getFields(string $customGroupName)
+ * @method static \Civi\Api4\Action\CustomValue\Create create(string $customGroupName)
+ * @method static \Civi\Api4\Action\CustomValue\Update update(string $customGroupName)
+ * @method static \Civi\Api4\Action\CustomValue\Delete delete(string $customGroupName)
+ * @method static \Civi\Api4\Action\CustomValue\Replace replace(string $customGroupName)
  */
 class CustomValue extends AbstractEntity {
 

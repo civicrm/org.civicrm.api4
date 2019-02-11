@@ -28,8 +28,17 @@ class Replace extends Delete {
   public function _run(Result $result) {
     $items = $this->getObjects();
 
+    // Copy params from where clause if the operator is =
+    $paramsFromWhere = [];
+    foreach ($this->where as $clause) {
+      if (is_array($clause) && $clause[1] === '=') {
+        $paramsFromWhere[$clause[0]] = $clause[2];
+      }
+    }
+
     $toDelete = array_column($items, NULL, $this->idField);
-    foreach ($this->records as $record) {
+    foreach ($this->records as &$record) {
+      $record += $paramsFromWhere;
       if (!empty($record[$this->idField])) {
         unset($toDelete[$record[$this->idField]]);
       }
