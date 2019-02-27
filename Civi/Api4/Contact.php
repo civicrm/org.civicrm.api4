@@ -1,7 +1,7 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\AbstractEntity;
+use Civi\Api4\Generic\DAOEntity;
 
 /**
  * Contacts - Individuals, Organizations, Households.
@@ -13,6 +13,20 @@ use Civi\Api4\Generic\AbstractEntity;
  *
  * @package Civi\Api4
  */
-class Contact extends AbstractEntity {
+class Contact extends DAOEntity {
+
+  /**
+   * @return \Civi\Api4\Action\Contact\Create
+   */
+  public static function create() {
+    return new \Civi\Api4\Action\Contact\Create('Contact');
+  }
+
+  /**
+   * @return \Civi\Api4\Action\Contact\Update
+   */
+  public static function update() {
+    return new \Civi\Api4\Action\Contact\Update('Contact');
+  }
 
 }

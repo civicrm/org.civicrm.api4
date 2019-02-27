@@ -2,8 +2,6 @@
 
 namespace Civi\Api4;
 use Civi\Api4\Generic\AbstractEntity;
-use Civi\Api4\Generic\AbstractAction;
-use Civi\API\Exception\NotImplementedException;
 
 /**
  * CustomGroup entity.

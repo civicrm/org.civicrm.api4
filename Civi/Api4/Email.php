@@ -1,7 +1,7 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\AbstractEntity;
+use Civi\Api4\Generic\DAOEntity;
 
 /**
  * Email entity.
@@ -12,6 +12,6 @@ use Civi\Api4\Generic\AbstractEntity;
  *
  * @package Civi\Api4
  */
-class Email extends AbstractEntity {
+class Email extends DAOEntity {
 
 }

@@ -1,13 +1,13 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\AbstractEntity;
+use Civi\Api4\Generic\DAOEntity;
 
 /**
  * Activity entity.
  *
  * @package Civi\Api4
  */
-class Activity extends AbstractEntity {
+class Activity extends DAOEntity {
 
 }

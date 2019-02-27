@@ -1,7 +1,7 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\AbstractEntity;
+use Civi\Api4\Generic\DAOEntity;
 
 /**
  * ContactType entity.
@@ -14,6 +14,6 @@ use Civi\Api4\Generic\AbstractEntity;
  *
  * @package Civi\Api4
  */
-class ContactType extends AbstractEntity {
+class ContactType extends DAOEntity {
 
 }

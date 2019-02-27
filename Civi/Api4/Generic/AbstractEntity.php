@@ -27,24 +27,9 @@
 namespace Civi\Api4\Generic;
 
 use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\Action\Create;
-use Civi\Api4\Action\Delete;
-use Civi\Api4\Action\Get;
-use Civi\Api4\Action\GetActions;
-use Civi\Api4\Action\GetFields;
-use Civi\Api4\Action\Update;
-use Civi\Api4\Action\Replace;
 
 /**
  * Base class for all api entities.
- *
- * @method static Get get
- * @method static GetFields getFields
- * @method static GetActions getActions
- * @method static Create create
- * @method static Update update
- * @method static Delete delete
- * @method static Replace replace
  */
 abstract class AbstractEntity {
 
@@ -60,12 +45,8 @@ abstract class AbstractEntity {
     $entity = self::getEntityName();
     // Find class for this action
     $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
-    $genericAction = '\Civi\Api4\Action\\' . ucfirst($action);
     if (class_exists($entityAction)) {
       $actionObject = new $entityAction($entity);
-    }
-    elseif (class_exists($genericAction)) {
-      $actionObject = new $genericAction($entity);
     }
     else {
       throw new NotImplementedException("Api $entity $action version 4 does not exist.");
@@ -74,6 +55,13 @@ abstract class AbstractEntity {
       $actionObject->setCustomGroup($args[0]);
     }
     return $actionObject;
+  }
+
+  /**
+   * @return \Civi\Api4\Action\GetActions
+   */
+  public static function getActions() {
+    return new \Civi\Api4\Action\GetActions(self::getEntityName());
   }
 
   /**

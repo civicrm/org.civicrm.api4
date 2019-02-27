@@ -1,7 +1,7 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\AbstractEntity;
+use Civi\Api4\Generic\DAOEntity;
 
 /**
  * GroupContact entity - link between groups and contacts.
@@ -9,11 +9,22 @@ use Civi\Api4\Generic\AbstractEntity;
  * A contact can either be "Added" "Removed" or "Pending" in a group.
  * CiviCRM only considers them to be "in" a group if their status is "Added".
  *
- * @method static Action\GroupContact\Create create
- * @method static Action\GroupContact\Update update
- *
  * @package Civi\Api4
  */
-class GroupContact extends AbstractEntity {
+class GroupContact extends DAOEntity {
+
+  /**
+   * @return \Civi\Api4\Action\GroupContact\Create
+   */
+  public static function create() {
+    return new \Civi\Api4\Action\GroupContact\Create('GroupContact');
+  }
+
+  /**
+   * @return \Civi\Api4\Action\GroupContact\Update
+   */
+  public static function update() {
+    return new \Civi\Api4\Action\GroupContact\Update('GroupContact');
+  }
 
 }

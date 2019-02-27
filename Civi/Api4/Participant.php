@@ -1,15 +1,20 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Action\Participant\Get;
-use Civi\Api4\Generic\AbstractEntity;
+use Civi\Api4\Generic\DAOEntity;
 
 /**
  * Participant entity.
  *
- * @method static Get get
  * @package Civi\Api4
  */
-class Participant extends AbstractEntity {
+class Participant extends DAOEntity {
+
+  /**
+   * @return \Civi\Api4\Action\Participant\Get
+   */
+  public static function get() {
+    return new \Civi\Api4\Action\Participant\Get('Participant');
+  }
 
 }

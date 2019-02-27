@@ -23,24 +23,18 @@ class GetActions extends AbstractAction {
   public function _run(Result $result) {
     $includePaths = array_unique(explode(PATH_SEPARATOR, get_include_path()));
     $entityReflection = new \ReflectionClass('\Civi\Api4\\' . $this->getEntity());
-    // First search entity-specific actions (including those provided by extensions
+    // Search entity-specific actions (including those provided by extensions)
     foreach ($includePaths as $path) {
       $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Action/' . $this->getEntity();
       $this->scanDir($dir);
     }
-    // Scan all generic actions unless this entity does not extend generic entity
-    if ($entityReflection->getParentClass()) {
-      foreach ($includePaths as $path) {
-        $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Action';
-        $this->scanDir($dir);
+    foreach ($entityReflection->getMethods(\ReflectionMethod::IS_STATIC | \ReflectionMethod::IS_PUBLIC) as $method) {
+      $actionName = $method->getName();
+      if ($actionName != 'permissions' && $actionName[0] != '_') {
+        $this->loadAction($actionName);
       }
     }
-    // For oddball entities, just return their static methods
-    else {
-      foreach ($entityReflection->getMethods(\ReflectionMethod::IS_STATIC) as $method) {
-        $this->loadAction($method->getName());
-      }
-    }
+    ksort($this->_actions);
     $result->exchangeArray(array_values($this->_actions));
   }
 
@@ -53,9 +47,7 @@ class GetActions extends AbstractAction {
         $matches = [];
         preg_match('/(\w*).php/', $file, $matches);
         $actionName = array_pop($matches);
-        if ($actionName !== 'AbstractAction') {
-          $this->loadAction(lcfirst($actionName));
-        }
+        $this->loadAction(lcfirst($actionName));
       }
     }
   }
