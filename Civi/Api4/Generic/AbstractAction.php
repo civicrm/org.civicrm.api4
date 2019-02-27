@@ -84,8 +84,16 @@ abstract class AbstractAction implements \ArrayAccess {
    * Action constructor.
    * @param string $entity
    */
-  public function __construct($entity) {
-    $this->entity = $entity;
+  public function __construct($entity = NULL) {
+    // For generic actions we need the entity passed explicitly
+    if ($entity) {
+      $this->entity = $entity;
+    }
+    // For entity-specific actions we can figure out the entity from the namespace
+    else {
+      $namespace = substr(get_class($this), 0, strrpos(get_class($this), '\\'));
+      $this->entity = substr($namespace, strrpos($namespace, '\\') + 1);
+    }
     $this->thisReflection = new \ReflectionClass($this);
   }
 

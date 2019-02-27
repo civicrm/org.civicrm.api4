@@ -20,14 +20,14 @@ class Address extends DAOEntity {
    * @return \Civi\Api4\Action\Address\Create
    */
   public static function create() {
-    return new \Civi\Api4\Action\Address\Create('Address');
+    return new \Civi\Api4\Action\Address\Create();
   }
 
   /**
    * @return \Civi\Api4\Action\Address\Update
    */
   public static function update() {
-    return new \Civi\Api4\Action\Address\Update('Address');
+    return new \Civi\Api4\Action\Address\Update();
   }
 
 }

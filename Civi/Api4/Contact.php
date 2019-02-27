@@ -19,14 +19,14 @@ class Contact extends DAOEntity {
    * @return \Civi\Api4\Action\Contact\Create
    */
   public static function create() {
-    return new \Civi\Api4\Action\Contact\Create('Contact');
+    return new \Civi\Api4\Action\Contact\Create();
   }
 
   /**
    * @return \Civi\Api4\Action\Contact\Update
    */
   public static function update() {
-    return new \Civi\Api4\Action\Contact\Update('Contact');
+    return new \Civi\Api4\Action\Contact\Update();
   }
 
 }

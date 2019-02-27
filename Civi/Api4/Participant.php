@@ -14,7 +14,7 @@ class Participant extends DAOEntity {
    * @return \Civi\Api4\Action\Participant\Get
    */
   public static function get() {
-    return new \Civi\Api4\Action\Participant\Get('Participant');
+    return new \Civi\Api4\Action\Participant\Get();
   }
 
 }

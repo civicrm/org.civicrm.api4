@@ -17,14 +17,14 @@ class GroupContact extends DAOEntity {
    * @return \Civi\Api4\Action\GroupContact\Create
    */
   public static function create() {
-    return new \Civi\Api4\Action\GroupContact\Create('GroupContact');
+    return new \Civi\Api4\Action\GroupContact\Create();
   }
 
   /**
    * @return \Civi\Api4\Action\GroupContact\Update
    */
   public static function update() {
-    return new \Civi\Api4\Action\GroupContact\Update('GroupContact');
+    return new \Civi\Api4\Action\GroupContact\Update();
   }
 
 }
