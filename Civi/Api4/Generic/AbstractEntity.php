@@ -57,8 +57,7 @@ abstract class AbstractEntity {
    * @throws NotImplementedException
    */
   public static function __callStatic($action, $args) {
-    // Get entity name from called class
-    $entity = substr(static::class, strrpos(static::class, '\\') + 1);
+    $entity = self::getEntityName();
     // Find class for this action
     $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
     $genericAction = '\Civi\Api4\Action\\' . ucfirst($action);
@@ -83,14 +82,21 @@ abstract class AbstractEntity {
    * @return array
    */
   public static function permissions() {
-    // Get entity name from called class
-    $entity = substr(static::class, strrpos(static::class, '\\') + 1);
     $permissions = \CRM_Core_Permission::getEntityActionPermissions();
 
     // For legacy reasons the permissions are keyed by lowercase entity name
-    $lcentity = _civicrm_api_get_entity_name_from_camel($entity);
+    $lcentity = _civicrm_api_get_entity_name_from_camel(self::getEntityName());
     // Merge permissions for this entity with the defaults
     return \CRM_Utils_Array::value($lcentity, $permissions, []) + $permissions['default'];
+  }
+
+  /**
+   * Get entity name from called class
+   *
+   * @return string
+   */
+  protected static function getEntityName() {
+    return substr(static::class, strrpos(static::class, '\\') + 1);
   }
 
 }
