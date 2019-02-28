@@ -3,7 +3,7 @@
 namespace Civi\Api4\Action\Address;
 
 use Civi\Api4\Generic\Result;
-use Civi\Api4\Action\Update as DefaultUpdate;
+use Civi\Api4\Generic\Action\DAO\Update as DefaultUpdate;
 
 /**
  * @inheritDoc

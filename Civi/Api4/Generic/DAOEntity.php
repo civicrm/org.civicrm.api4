@@ -8,45 +8,45 @@ namespace Civi\Api4\Generic;
 abstract class DAOEntity extends AbstractEntity {
 
   /**
-   * @return \Civi\Api4\Action\Get
+   * @return \Civi\Api4\Generic\Action\DAO\Get
    */
   public static function get() {
-    return new \Civi\Api4\Action\Get(self::getEntityName());
+    return new Action\DAO\Get(self::getEntityName());
   }
 
   /**
-   * @return \Civi\Api4\Action\GetFields
+   * @return \Civi\Api4\Generic\Action\DAO\GetFields
    */
   public static function getFields() {
-    return new \Civi\Api4\Action\GetFields(self::getEntityName());
+    return new Action\DAO\GetFields(self::getEntityName());
   }
 
   /**
-   * @return \Civi\Api4\Action\Create
+   * @return \Civi\Api4\Generic\Action\DAO\Create
    */
   public static function create() {
-    return new \Civi\Api4\Action\Create(self::getEntityName());
+    return new Action\DAO\Create(self::getEntityName());
   }
 
   /**
-   * @return \Civi\Api4\Action\Update
+   * @return \Civi\Api4\Generic\Action\DAO\Update
    */
   public static function update() {
-    return new \Civi\Api4\Action\Update(self::getEntityName());
+    return new Action\DAO\Update(self::getEntityName());
   }
 
   /**
-   * @return \Civi\Api4\Action\Delete
+   * @return \Civi\Api4\Generic\Action\DAO\Delete
    */
   public static function delete() {
-    return new \Civi\Api4\Action\Delete(self::getEntityName());
+    return new Action\DAO\Delete(self::getEntityName());
   }
 
   /**
-   * @return \Civi\Api4\Action\Replace
+   * @return \Civi\Api4\Generic\Action\DAO\Replace
    */
   public static function replace() {
-    return new \Civi\Api4\Action\Replace(self::getEntityName());
+    return new Action\DAO\Replace(self::getEntityName());
   }
 
 }

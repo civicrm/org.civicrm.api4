@@ -3,7 +3,7 @@
 namespace Civi\Api4\Action\MockArrayEntity;
 use Civi\Api4\Generic\ArrayQueryTrait;
 use \Civi\Api4\Generic\Result;
-use \Civi\Api4\Action\Get as DefaultGet;
+use Civi\Api4\Generic\Action\DAO\Get as DefaultGet;
 
 /**
  * Get

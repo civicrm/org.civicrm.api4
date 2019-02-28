@@ -2,7 +2,7 @@
 
 namespace Civi\Api4\Action\Entity;
 
-use Civi\Api4\Generic\AbstractAction;
+use Civi\Api4\Generic\Action\AbstractAction;
 use \CRM_Core_DAO_AllCoreTables as AllTables;
 use Civi\Api4\Generic\Result;
 

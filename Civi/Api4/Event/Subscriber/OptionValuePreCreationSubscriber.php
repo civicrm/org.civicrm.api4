@@ -2,7 +2,7 @@
 
 namespace Civi\Api4\Event\Subscriber;
 
-use Civi\Api4\Action\Create;
+use Civi\Api4\Generic\Action\DAO\Create;
 use Civi\Api4\OptionGroup;
 
 class OptionValuePreCreationSubscriber extends PreCreationSubscriber {

@@ -1,8 +1,7 @@
 <?php
 
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Generic\Action\DAO;
 
-use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 
 /**
@@ -13,7 +12,7 @@ use Civi\Api4\Generic\Result;
  * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
  * @method $this addValue($field, $value) Set field value.
  */
-class Create extends AbstractAction {
+class Create extends DAOAction {
 
   /**
    * Field values to set

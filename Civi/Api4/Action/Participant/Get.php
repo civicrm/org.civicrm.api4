@@ -2,7 +2,7 @@
 
 namespace Civi\Api4\Action\Participant;
 
-use Civi\Api4\Action\Get as DefaultGet;
+use Civi\Api4\Generic\Action\DAO\Get as DefaultGet;
 
 /**
  * @inheritDoc

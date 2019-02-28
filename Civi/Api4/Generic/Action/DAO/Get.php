@@ -1,8 +1,7 @@
 <?php
 
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Generic\Action\DAO;
 
-use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Query\Api4SelectQuery;
 use Civi\Api4\Generic\Result;
 
@@ -20,7 +19,7 @@ use Civi\Api4\Generic\Result;
  * @method $this setLimit(int $limit)
  * @method $this setOffset(int $offset)
  */
-class Get extends AbstractAction {
+class Get extends DAOAction {
 
   /**
    * Fields to return. Defaults to all non-custom fields.

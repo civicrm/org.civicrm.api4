@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Generic\Action\DAO;
 
 use Civi\Api4\Generic\Result;
 

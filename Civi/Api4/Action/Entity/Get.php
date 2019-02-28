@@ -3,7 +3,7 @@
 namespace Civi\Api4\Action\Entity;
 
 use Civi\Api4\CustomGroup;
-use Civi\Api4\Action\Get as GenericGet;
+use Civi\Api4\Generic\Action\DAO\Get as GenericGet;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**

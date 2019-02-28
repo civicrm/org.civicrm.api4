@@ -2,7 +2,7 @@
 
 namespace Civi\Api4\Action\Contact;
 
-use Civi\Api4\Action\Update as DefaultUpdate;
+use Civi\Api4\Generic\Action\DAO\Update as DefaultUpdate;
 
 /**
  * @inheritDoc

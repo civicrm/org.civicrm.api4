@@ -3,7 +3,7 @@
 namespace Civi\Api4\Event\Subscriber;
 
 use Civi\API\Event\PrepareEvent;
-use Civi\Api4\Action\Create;
+use Civi\Api4\Generic\Action\DAO\Create;
 
 abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**

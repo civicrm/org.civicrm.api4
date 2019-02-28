@@ -3,7 +3,7 @@
 namespace Civi\Api4\Action\Entity;
 
 use Civi\Api4\Generic\Result;
-use \Civi\Api4\Action\GetFields as GenericGetFields;
+use Civi\Api4\Generic\Action\DAO\GetFields as GenericGetFields;
 
 /**
  * Get fields for all entities

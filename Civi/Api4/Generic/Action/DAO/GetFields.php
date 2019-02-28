@@ -1,8 +1,8 @@
 <?php
 
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Generic\Action\DAO;
 
-use Civi\Api4\Generic\AbstractAction;
+use Civi\Api4\Generic\Action\AbstractAction;
 use Civi\Api4\Service\Spec\SpecGatherer;
 use Civi\Api4\Generic\Result;
 use Civi\Api4\Service\Spec\SpecFormatter;
