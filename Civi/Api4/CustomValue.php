@@ -7,15 +7,56 @@ use Civi\Api4\Generic\AbstractEntity;
  * CustomGroup entity.
  *
  * @package Civi\Api4
- *
- * @method static \Civi\Api4\Action\CustomValue\Get get(string $customGroupName)
- * @method static \Civi\Api4\Action\CustomValue\GetFields getFields(string $customGroupName)
- * @method static \Civi\Api4\Action\CustomValue\Create create(string $customGroupName)
- * @method static \Civi\Api4\Action\CustomValue\Update update(string $customGroupName)
- * @method static \Civi\Api4\Action\CustomValue\Delete delete(string $customGroupName)
- * @method static \Civi\Api4\Action\CustomValue\Replace replace(string $customGroupName)
  */
 class CustomValue extends AbstractEntity {
+
+  /**
+   * @param string $customGroup
+   * @return \Civi\Api4\Action\CustomValue\Get
+   */
+  public static function get($customGroup) {
+    return new Action\CustomValue\Get($customGroup);
+  }
+
+  /**
+   * @param string $customGroup
+   * @return \Civi\Api4\Action\CustomValue\GetFields
+   */
+  public static function getFields($customGroup) {
+    return new Action\CustomValue\GetFields($customGroup);
+  }
+
+  /**
+   * @param string $customGroup
+   * @return \Civi\Api4\Action\CustomValue\Create
+   */
+  public static function create($customGroup) {
+    return new Action\CustomValue\Create($customGroup);
+  }
+
+  /**
+   * @param string $customGroup
+   * @return \Civi\Api4\Action\CustomValue\Update
+   */
+  public static function update($customGroup) {
+    return new Action\CustomValue\Update($customGroup);
+  }
+
+  /**
+   * @param string $customGroup
+   * @return \Civi\Api4\Action\CustomValue\Delete
+   */
+  public static function delete($customGroup) {
+    return new Action\CustomValue\Delete($customGroup);
+  }
+
+  /**
+   * @param string $customGroup
+   * @return \Civi\Api4\Action\CustomValue\Replace
+   */
+  public static function replace($customGroup) {
+    return new \Civi\Api4\Action\CustomValue\Replace($customGroup);
+  }
 
   /**
    * @inheritDoc

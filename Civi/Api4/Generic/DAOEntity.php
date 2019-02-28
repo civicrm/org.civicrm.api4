@@ -43,10 +43,10 @@ abstract class DAOEntity extends AbstractEntity {
   }
 
   /**
-   * @return \Civi\Api4\Generic\Action\DAO\Replace
+   * @return \Civi\Api4\Generic\Action\Basic\Replace
    */
   public static function replace() {
-    return new Action\DAO\Replace(self::getEntityName());
+    return new Action\Basic\Replace(self::getEntityName());
   }
 
 }

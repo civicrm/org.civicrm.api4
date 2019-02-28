@@ -18,14 +18,22 @@ use Symfony\Component\Config\FileLocator;
  * @return \Civi\Api4\Generic\Result
  */
 function civicrm_api4($entity, $action, $params = []) {
-  $params['version'] = 4;
   // For custom pseudo-entities
   if (strpos($entity, 'Custom_') === 0) {
-    $params['customGroup'] = substr($entity, 7);
-    $entity = 'CustomValue';
+    $apiCall = Civi\Api4\CustomValue::$action(substr($entity, 7));
   }
-  $request = \Civi\API\Request::create($entity, $action, $params);
-  return \Civi::service('civi_api_kernel')->runRequest($request);
+  else {
+    $callable = ["Civi\\Api4\\$entity", $action];
+    if (!is_callable($callable)) {
+      throw new Exception\NotImplementedException("API ($entity, $action) does not exist (join the API team and implement it!)");
+    }
+    $apiCall = call_user_func($callable);
+  }
+  foreach ($params as $name => $param) {
+    $setter = 'set' . ucfirst($name);
+    $apiCall->$setter($param);
+  }
+  return $apiCall->execute();
 }
 
 /**

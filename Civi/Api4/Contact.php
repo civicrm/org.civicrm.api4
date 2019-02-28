@@ -23,10 +23,11 @@ class Contact extends DAOEntity {
   }
 
   /**
-   * @return \Civi\Api4\Action\Contact\Update
+   * @return \Civi\Api4\Generic\Action\DAO\Update
    */
   public static function update() {
-    return new \Civi\Api4\Action\Contact\Update();
+    // For some reason the contact bao requires this for updating
+    return new \Civi\Api4\Generic\Action\DAO\Update('Contact', ['id', 'contact_type']);
   }
 
 }

@@ -1,11 +1,11 @@
 <?php
-namespace Civi\Api4\Generic\Action\DAO;
+namespace Civi\Api4\Generic\Action\Traits;
 
-use Civi\Api4\Generic\Action\AbstractAction;
 use CRM_Utils_Array as UtilsArray;
 use Civi\Api4\Utils\FormattingUtil;
+use Civi\Api4\Query\Api4SelectQuery;
 
-abstract class DAOAction extends AbstractAction {
+trait DAOTrait {
 
   /* @var array */
   private $entityFields;
@@ -35,6 +35,19 @@ abstract class DAOAction extends AbstractAction {
       }
     }
     return $values;
+  }
+
+  /**
+   * @return array|int
+   */
+  protected function getObjects() {
+    $query = new Api4SelectQuery($this->getEntity(), $this->getCheckPermissions());
+    $query->select = $this->getSelect();
+    $query->where = $this->getWhere();
+    $query->orderBy = $this->getOrderBy();
+    $query->limit = $this->getLimit();
+    $query->offset = $this->getOffset();
+    return $query->run();
   }
 
   /**

@@ -4,13 +4,13 @@ namespace Civi\Api4\Action;
 
 use Civi\API\Exception\NotImplementedException;
 use Civi\Api4\Generic\Action\AbstractAction;
-use Civi\Api4\Generic\Result;
+use Civi\Api4\Generic\Action\Basic\Get;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**
  * Get actions for an entity with a list of accepted params
  */
-class GetActions extends AbstractAction {
+class GetActions extends Get {
 
   /**
    * Override default to allow open access
@@ -20,7 +20,7 @@ class GetActions extends AbstractAction {
 
   private $_actions = [];
 
-  public function _run(Result $result) {
+  protected function getObjects() {
     $includePaths = array_unique(explode(PATH_SEPARATOR, get_include_path()));
     $entityReflection = new \ReflectionClass('\Civi\Api4\\' . $this->getEntity());
     // Search entity-specific actions (including those provided by extensions)
@@ -35,7 +35,7 @@ class GetActions extends AbstractAction {
       }
     }
     ksort($this->_actions);
-    $result->exchangeArray(array_values($this->_actions));
+    return $this->_actions;
   }
 
   /**
@@ -59,7 +59,7 @@ class GetActions extends AbstractAction {
     try {
       if (!isset($this->_actions[$actionName])) {
         /* @var AbstractAction $action */
-        $action = call_user_func(["\\Civi\\Api4\\" . $this->getEntity(), $actionName]);
+        $action = call_user_func(["\\Civi\\Api4\\" . $this->getEntity(), $actionName], NULL);
         if (is_object($action)) {
           $actionReflection = new \ReflectionClass($action);
           $actionInfo = ReflectionUtils::getCodeDocs($actionReflection);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic;
+namespace Civi\Api4\Generic\Action\Traits;
 use Civi\API\Exception\NotImplementedException;
 
 /**
@@ -29,7 +29,7 @@ trait ArrayQueryTrait {
    * @return array
    */
   protected function filterArray($values) {
-    if ($this->where) {
+    if ($this->getWhere()) {
       $values = array_filter($values, [$this, 'evaluateFilters']);
     }
     return array_values($values);
@@ -40,7 +40,8 @@ trait ArrayQueryTrait {
    * @return bool
    */
   private function evaluateFilters($row) {
-    $allConditions = in_array($this->where[0], ['AND', 'OR', 'NOT']) ? $this->where : ['AND', $this->where];
+    $where = $this->getWhere();
+    $allConditions = in_array($where[0], ['AND', 'OR', 'NOT']) ? $where : ['AND', $where];
     return $this->walkFilters($row, $allConditions);
   }
 
@@ -131,6 +132,12 @@ trait ArrayQueryTrait {
         $pattern = '/^' . str_replace('%', '.*', preg_quote($expected, '/')) . '$/i';
         return !preg_match($pattern, $value) == ($operator != 'LIKE');
 
+      case 'IN':
+        return in_array($value, $expected);
+
+      case 'NOT IN':
+        return !in_array($value, $expected);
+
       default:
         throw new NotImplementedException("Unsupported operator: '$operator' cannot be used with array data");
     }
@@ -141,14 +148,14 @@ trait ArrayQueryTrait {
    * @return array
    */
   protected function sortArray($values) {
-    if ($this->orderBy) {
+    if ($this->getOrderBy()) {
       usort($values, [$this, 'sortCompare']);
     }
     return $values;
   }
 
   private function sortCompare($a, $b) {
-    foreach ($this->orderBy as $field => $dir) {
+    foreach ($this->getOrderBy() as $field => $dir) {
       $modifier = $dir == 'ASC' ? 1 : -1;
       if (isset($a[$field]) && isset($b[$field])) {
         if ($a[$field] == $b[$field]) {
@@ -168,9 +175,9 @@ trait ArrayQueryTrait {
    * @return array
    */
   protected function selectArray($values) {
-    if ($this->select) {
+    if ($this->getSelect()) {
       foreach ($values as &$value) {
-        $value = array_intersect_key($value, array_flip($this->select));
+        $value = array_intersect_key($value, array_flip($this->getSelect()));
       }
     }
     return $values;
@@ -181,8 +188,8 @@ trait ArrayQueryTrait {
    * @return array
    */
   protected function limitArray($values) {
-    if ($this->offset || $this->limit) {
-      $values = array_slice($values, $this->offset ?: 0, $this->limit ?: NULL);
+    if ($this->getOffset() || $this->getLimit()) {
+      $values = array_slice($values, $this->getOffset() ?: 0, $this->getLimit() ?: NULL);
     }
     return $values;
   }

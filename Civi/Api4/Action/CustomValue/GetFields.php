@@ -10,7 +10,7 @@ use Civi\Api4\Service\Spec\SpecFormatter;
  * Get fields for a custom group.
  */
 class GetFields extends \Civi\Api4\Generic\Action\DAO\GetFields {
-  use \Civi\Api4\Generic\CustomValueCRUD;
+  use \Civi\Api4\Generic\Action\Traits\CustomValueTrait;
 
   public function _run(Result $result) {
     /** @var SpecGatherer $gatherer */

@@ -2,33 +2,16 @@
 
 namespace Civi\Api4\Generic\Action\DAO;
 
+use Civi\Api4\Generic\Action\AbstractCreate;
 use Civi\Api4\Generic\Result;
 
 /**
  * Create a new object from supplied values.
  *
  * This function will create 1 new object. It cannot be used to update existing objects. Use the Update or Replace actions for that.
- *
- * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
- * @method $this addValue($field, $value) Set field value.
  */
-class Create extends DAOAction {
-
-  /**
-   * Field values to set
-   *
-   * @var array
-   */
-  protected $values = [];
-
-  /**
-   * @param $key
-   *
-   * @return mixed|null
-   */
-  public function getValue($key) {
-    return isset($this->values[$key]) ? $this->values[$key] : NULL;
-  }
+class Create extends AbstractCreate {
+  use \Civi\Api4\Generic\Action\Traits\DAOTrait;
 
   /**
    * @inheritDoc

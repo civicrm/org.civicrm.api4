@@ -1,18 +1,14 @@
 <?php
 
 namespace Civi\Api4\Action\MockArrayEntity;
-use Civi\Api4\Generic\ArrayQueryTrait;
-use \Civi\Api4\Generic\Result;
-use Civi\Api4\Generic\Action\DAO\Get as DefaultGet;
 
 /**
  * Get
  */
-class Get extends DefaultGet {
-  use ArrayQueryTrait;
+class Get extends \Civi\Api4\Generic\Action\Basic\Get {
 
   public function getObjects() {
-    $data = [
+    return [
       [
         'field1' => 1,
         'field2' => 'zebra',
@@ -52,7 +48,6 @@ class Get extends DefaultGet {
         'field6' => 0,
       ],
     ];
-    return $this->queryArray($data);
   }
 
 }
