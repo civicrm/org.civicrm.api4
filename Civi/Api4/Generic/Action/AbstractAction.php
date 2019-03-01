@@ -79,10 +79,15 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   /**
+   * @param int $val
+   * @return $this
    * @throws \API_Exception
    */
-  public function setVersion() {
-    throw new \API_Exception('Cannot modify api version');
+  public function setVersion($val) {
+    if ($val != 4) {
+      throw new \API_Exception('Cannot modify api version');
+    }
+    return $this;
   }
 
   /**
