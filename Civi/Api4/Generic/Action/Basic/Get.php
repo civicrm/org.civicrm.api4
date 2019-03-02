@@ -20,23 +20,37 @@ class Get extends AbstractGet {
 
   public function __construct($entity, $getter = NULL) {
     parent::__construct($entity);
-    if ($getter) {
-      $this->getter = $getter;
-    }
-    else {
-      $this->getter = [$this, 'getObjects'];
-    }
+    $this->getter = $getter;
   }
 
   /**
-   * We expect an array of arrays from the getter.
-   * We pass it the params array in case it wants to do any pre-filtering for performance.
+   * Fetch results from the getter then apply filter/sort/select/limit.
    *
    * @param \Civi\Api4\Generic\Result $result
    */
   public function _run(Result $result) {
-    $values = call_user_func($this->getter, $this->getParams());
+    $values = $this->getRecords();
     $result->exchangeArray($this->queryArray($values));
+  }
+
+  /**
+   * This Basic Get class can be used in one of two ways:
+   *
+   * 1. Use this class directly by passing a callable getter from the Entity class.
+   * 2. Extend this class and override this function.
+   *
+   * Either way, this function should return an array of arrays, each representing one retrieved object.
+   *
+   * The getter/override for this function will have $this available if it wishes to do any pre-filtering.
+   * Depending on the expense of fetching objects that may be worthwhile,
+   * but note the WHERE clause can potentially be very complex.
+   * Be careful not to make assumptions, e.g. if LIMIT 100 is specified and your getter "helpfully" truncates the list
+   * at 100 without accounting for the WHERE clause, the final result may be less than expected.
+   *
+   * @return array
+   */
+  protected function getRecords() {
+    return call_user_func($this->getter, $this);
   }
 
 }

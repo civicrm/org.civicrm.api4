@@ -19,12 +19,7 @@ class Create extends AbstractCreate {
 
   public function __construct($entity, $setter = NULL) {
     parent::__construct($entity);
-    if ($setter) {
-      $this->setter = $setter;
-    }
-    else {
-      $this->setter = [$this, 'writeObject'];
-    }
+    $this->setter = $setter;
   }
 
   /**
@@ -34,9 +29,22 @@ class Create extends AbstractCreate {
    * @param \Civi\Api4\Generic\Result $result
    */
   public function _run(Result $result) {
-    $params = $this->getParams();
-    unset($params['values']);
-    $result->exchangeArray([call_user_func($this->setter, $this->values, $params)]);
+    $result->exchangeArray([$this->writeRecord($this->values)]);
+  }
+
+  /**
+   * This Basic Create class can be used in one of two ways:
+   *
+   * 1. Use this class directly by passing a callable setter from the Entity class.
+   * 2. Extend this class and override this function.
+   *
+   * Either way, this function should return an array representing the one new object.
+   *
+   * @param array $item
+   * @return array
+   */
+  protected function writeRecord($item) {
+    return call_user_func($this->setter, $item, $this);
   }
 
 }

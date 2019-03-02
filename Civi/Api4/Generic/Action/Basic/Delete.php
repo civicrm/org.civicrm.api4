@@ -17,12 +17,7 @@ class Delete extends AbstractBatch {
 
   public function __construct($entity, $deleter = NULL, $idField = 'id') {
     parent::__construct($entity, $idField);
-    if ($deleter) {
-      $this->deleter = $deleter;
-    }
-    else {
-      $this->deleter = [$this, 'deleteObject'];
-    }
+    $this->deleter = $deleter;
   }
 
   /**
@@ -32,14 +27,28 @@ class Delete extends AbstractBatch {
    * @param \Civi\Api4\Generic\Result $result
    */
   public function _run(Result $result) {
-    $params = $this->getParams();
-    $items = $this->getBatchItems();
+    $items = $this->getBatchRecords();
 
     foreach ($items as &$item) {
-      call_user_func($this->deleter, $item, $params);
+      $this->deleteRecord($item);
     }
 
     $result->exchangeArray($items);
+  }
+
+  /**
+   * This Basic Delete class can be used in one of two ways:
+   *
+   * 1. Use this class directly by passing a callable deleter from the Entity class.
+   * 2. Extend this class and override this function.
+   *
+   * Either way, this function should return an array representing the one new object.
+   *
+   * @param array $item
+   * @return array
+   */
+  protected function deleteRecord($item) {
+    return call_user_func($this->deleter, $item, $this);
   }
 
 }

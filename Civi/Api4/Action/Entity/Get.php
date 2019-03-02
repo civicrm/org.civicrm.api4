@@ -24,7 +24,7 @@ class Get extends BasicGet {
   /**
    * Scan all api directories to discover entities
    */
-  protected function getObjects() {
+  protected function getRecords() {
     $entities = [];
     foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
       $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4';

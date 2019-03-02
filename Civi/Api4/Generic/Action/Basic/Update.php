@@ -19,12 +19,7 @@ class Update extends AbstractUpdate {
 
   public function __construct($entity, $setter = NULL, $idField = 'id') {
     parent::__construct($entity, $idField);
-    if ($setter) {
-      $this->setter = $setter;
-    }
-    else {
-      $this->setter = [$this, 'writeObject'];
-    }
+    $this->setter = $setter;
   }
 
   /**
@@ -34,13 +29,26 @@ class Update extends AbstractUpdate {
    * @param \Civi\Api4\Generic\Result $result
    */
   public function _run(Result $result) {
-    $params = $this->getParams();
-    unset($params['values']);
-    $items = $this->getBatchItems();
+    $items = $this->getBatchRecords();
 
     foreach ($items as $item) {
-      $result[] = call_user_func($this->setter, $this->values + $item, $params);
+      $result[] = $this->writeRecord($this->values + $item);
     }
+  }
+
+  /**
+   * This Basic Update class can be used in one of two ways:
+   *
+   * 1. Use this class directly by passing a callable setter from the Entity class.
+   * 2. Extend this class and override this function.
+   *
+   * Either way, this function should return an array representing the one modified object.
+   *
+   * @param array $item
+   * @return array
+   */
+  protected function writeRecord($item) {
+    return call_user_func($this->setter, $item, $this);
   }
 
 }

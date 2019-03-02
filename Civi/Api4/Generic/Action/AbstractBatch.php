@@ -32,14 +32,17 @@ abstract class AbstractBatch extends AbstractQuery {
   /**
    * @return array
    */
-  protected function getBatchItems() {
-    $params = $this->getParams();
+  protected function getBatchRecords() {
+    $params = [
+      'checkPermissions' => $this->checkPermissions,
+      'where' => $this->where,
+      'orderBy' => $this->orderBy,
+      'limit' => $this->limit,
+      'offset' => $this->offset,
+    ];
     if (empty($this->reload)) {
-      $params['select'] = $this->getSelect();
+      $params['select'] = $this->select;
     }
-
-    $action = civicrm_api4($this->getEntity(), 'getActions', ['where' => [['name', '=', 'get']], 'select' => ['params']])->first();
-    $params = array_intersect_key($params, $action['params']);
 
     return (array) civicrm_api4($this->getEntity(), 'get', $params);
   }

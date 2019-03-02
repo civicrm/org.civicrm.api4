@@ -20,7 +20,7 @@ class GetActions extends Get {
 
   private $_actions = [];
 
-  protected function getObjects() {
+  protected function getRecords() {
     $includePaths = array_unique(explode(PATH_SEPARATOR, get_include_path()));
     $entityReflection = new \ReflectionClass('\Civi\Api4\\' . $this->getEntity());
     // Search entity-specific actions (including those provided by extensions)

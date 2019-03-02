@@ -20,7 +20,7 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
    * @param array $data
    * @param string $dataName
    */
-  public function __construct($name = NULL, array$data = [], $dataName = '') {
+  public function __construct($name = NULL, array $data = [], $dataName = '') {
     parent::__construct($name, $data, $dataName);
     error_reporting(E_ALL & ~E_NOTICE);
   }

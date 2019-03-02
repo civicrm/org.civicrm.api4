@@ -36,7 +36,7 @@ class Replace extends AbstractBatch {
    * @inheritDoc
    */
   public function _run(Result $result) {
-    $items = $this->getBatchItems();
+    $items = $this->getBatchRecords();
 
     // Copy params from where clause if the operator is =
     $paramsFromWhere = [];
