@@ -65,7 +65,6 @@ abstract class AbstractAction implements \ArrayAccess {
       $namespace = substr(get_class($this), 0, strrpos(get_class($this), '\\'));
       $this->entity = substr($namespace, strrpos($namespace, '\\') + 1);
     }
-    $this->thisReflection = new \ReflectionClass($this);
   }
 
   /**
@@ -163,7 +162,7 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   public function getParams() {
     $params = [];
-    foreach ($this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+    foreach ($this->getReflection()->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
       $name = $property->getName();
       $params[$name] = $this->$name;
     }
@@ -179,7 +178,7 @@ abstract class AbstractAction implements \ArrayAccess {
   public function getParamInfo($param = NULL) {
     if (!isset($this->thisParamInfo)) {
       $defaults = $this->getParamDefaults();
-      foreach ($this->thisReflection->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+      foreach ($this->getReflection()->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
         $name = $property->getName();
         if ($name != 'version') {
           $this->thisParamInfo[$name] = ReflectionUtils::getCodeDocs($property, 'Property');
@@ -218,7 +217,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return array
    */
   protected function getParamDefaults() {
-    return array_intersect_key($this->thisReflection->getDefaultProperties(), $this->getParams());
+    return array_intersect_key($this->getReflection()->getDefaultProperties(), $this->getParams());
   }
 
   /**
@@ -302,6 +301,16 @@ abstract class AbstractAction implements \ArrayAccess {
       return $permissions['meta'];
     }
     return $permissions['default'];
+  }
+
+  /**
+   * @return \ReflectionClass
+   */
+  protected function getReflection() {
+    if (!$this->thisReflection) {
+      $this->thisReflection = new \ReflectionClass($this);
+    }
+    return $this->thisReflection;
   }
 
 }
