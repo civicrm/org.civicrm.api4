@@ -21,7 +21,7 @@ class DAOGet extends AbstractGet {
   /**
    * @return string
    */
-  public function getAction() {
+  public function getActionName() {
     return 'get';
   }
 

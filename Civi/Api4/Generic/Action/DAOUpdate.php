@@ -17,7 +17,7 @@ class DAOUpdate extends AbstractUpdate {
    */
   public function _run(Result $result) {
     if (!empty($this->values['id'])) {
-      throw new \Exception("Cannot update the id of an existing " . $this->getEntity() . '.');
+      throw new \Exception("Cannot update the id of an existing " . $this->getEntityName() . '.');
     }
 
     $items = $this->getObjects();
@@ -31,7 +31,7 @@ class DAOUpdate extends AbstractUpdate {
   /**
    * @return string
    */
-  public function getAction() {
+  public function getActionName() {
     return 'update';
   }
 

@@ -23,7 +23,7 @@ class CustomGroupPreCreationSubscriber extends PreCreationSubscriber {
   }
 
   protected function applies(DAOCreate $request) {
-    return $request->getEntity() === 'CustomGroup';
+    return $request->getEntityName() === 'CustomGroup';
   }
 
 }

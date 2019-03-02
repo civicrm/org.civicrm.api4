@@ -53,7 +53,7 @@ class BasicDelete extends AbstractBatch {
   /**
    * @return string
    */
-  public function getAction() {
+  public function getActionName() {
     return 'delete';
   }
 

@@ -15,7 +15,7 @@ trait DAOTrait {
    */
   protected function getBaoName() {
     require_once 'api/v3/utils.php';
-    return \_civicrm_api3_get_BAO($this->getEntity());
+    return \_civicrm_api3_get_BAO($this->getEntityName());
   }
 
   /**
@@ -41,7 +41,7 @@ trait DAOTrait {
    * @return array|int
    */
   protected function getObjects() {
-    $query = new Api4SelectQuery($this->getEntity(), $this->getCheckPermissions());
+    $query = new Api4SelectQuery($this->getEntityName(), $this->getCheckPermissions());
     $query->select = $this->getSelect();
     $query->where = $this->getWhere();
     $query->orderBy = $this->getOrderBy();
@@ -68,7 +68,7 @@ trait DAOTrait {
       'GroupContact' => 'add',
       'Website' => 'add',
     ];
-    $method = UtilsArray::value($this->getEntity(), $oddballs, 'create');
+    $method = UtilsArray::value($this->getEntityName(), $oddballs, 'create');
     if (!method_exists($baoName, $method)) {
       $method = 'add';
     }
@@ -77,11 +77,11 @@ trait DAOTrait {
 
     foreach ($items as $item) {
       $entityId = UtilsArray::value('id', $item);
-      FormattingUtil::formatWriteParams($item, $this->getEntity(), $this->getEntityFields());
+      FormattingUtil::formatWriteParams($item, $this->getEntityName(), $this->getEntityFields());
       $this->formatCustomParams($item, $entityId);
 
       // For some reason the contact bao requires this
-      if ($entityId && $this->getEntity() == 'Contact') {
+      if ($entityId && $this->getEntityName() == 'Contact') {
         $item['contact_id'] = $entityId;
       }
       if (method_exists($baoName, $method)) {
@@ -92,7 +92,7 @@ trait DAOTrait {
       }
 
       if (!$createResult) {
-        $errMessage = sprintf('%s write operation failed', $this->getEntity());
+        $errMessage = sprintf('%s write operation failed', $this->getEntityName());
         throw new \API_Exception($errMessage);
       }
 
@@ -116,12 +116,12 @@ trait DAOTrait {
     $baoName = $this->getBaoName();
     $hook = empty($params['id']) ? 'create' : 'edit';
 
-    \CRM_Utils_Hook::pre($hook, $this->getEntity(), UtilsArray::value('id', $params), $params);
+    \CRM_Utils_Hook::pre($hook, $this->getEntityName(), UtilsArray::value('id', $params), $params);
     /** @var \CRM_Core_DAO $instance */
     $instance = new $baoName();
     $instance->copyValues($params, TRUE);
     $instance->save();
-    \CRM_Utils_Hook::post($hook, $this->getEntity(), $instance->id, $instance);
+    \CRM_Utils_Hook::post($hook, $this->getEntityName(), $instance->id, $instance);
 
     return $instance;
   }
@@ -134,7 +134,7 @@ trait DAOTrait {
    */
   public function getEntityFields() {
     if (!$this->entityFields) {
-      $this->entityFields = civicrm_api4($this->getEntity(), 'getFields', ['action' => $this->getAction(), 'includeCustom' => FALSE])
+      $this->entityFields = civicrm_api4($this->getEntityName(), 'getFields', ['action' => $this->getActionName(), 'includeCustom' => FALSE])
         ->indexBy('name');
     }
     return $this->entityFields;
@@ -181,7 +181,7 @@ trait DAOTrait {
 
         if ($customFieldType == 'CheckBox') {
           // this function should be part of a class
-          formatCheckBoxField($value, 'custom_' . $customFieldId, $this->getEntity());
+          formatCheckBoxField($value, 'custom_' . $customFieldId, $this->getEntityName());
         }
 
         \CRM_Core_BAO_CustomField::formatCustomField(

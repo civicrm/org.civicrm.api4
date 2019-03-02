@@ -40,7 +40,7 @@ abstract class AbstractAction implements \ArrayAccess {
   protected $checkPermissions = TRUE;
 
   /* @var string */
-  private $entity;
+  private $entityName;
 
   /* @var \ReflectionClass */
   private $thisReflection;
@@ -58,12 +58,12 @@ abstract class AbstractAction implements \ArrayAccess {
   public function __construct($entity = NULL) {
     // For generic actions we need the entity passed explicitly
     if ($entity) {
-      $this->entity = $entity;
+      $this->entityName = $entity;
     }
     // For entity-specific actions we can figure out the entity from the namespace
     else {
       $namespace = substr(get_class($this), 0, strrpos(get_class($this), '\\'));
-      $this->entity = substr($namespace, strrpos($namespace, '\\') + 1);
+      $this->entityName = substr($namespace, strrpos($namespace, '\\') + 1);
     }
   }
 
@@ -198,15 +198,15 @@ abstract class AbstractAction implements \ArrayAccess {
   /**
    * @return string
    */
-  public function getEntity() {
-    return $this->entity;
+  public function getEntityName() {
+    return $this->entityName;
   }
 
   /**
    *
    * @return string
    */
-  public function getAction() {
+  public function getActionName() {
     $name = get_class($this);
     return lcfirst(substr($name, strrpos($name, '\\') + 1));
   }
@@ -238,7 +238,10 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   public function &offsetGet($offset) {
     $val = NULL;
-    if (in_array($offset, ['entity', 'action', 'params', 'version'])) {
+    if (in_array($offset, ['entity', 'action'])) {
+      $offset .= 'Name';
+    }
+    if (in_array($offset, ['entityName', 'actionName', 'params', 'version'])) {
       $getter = 'get' . ucfirst($offset);
       $val = $this->$getter();
       return $val;
@@ -249,16 +252,14 @@ abstract class AbstractAction implements \ArrayAccess {
     if (isset ($this->thisArrayStorage[$offset])) {
       return $this->thisArrayStorage[$offset];
     }
-    else {
-      return $val;
-    }
+    return $val;
   }
 
   /**
    * @inheritDoc
    */
   public function offsetSet($offset, $value) {
-    if (in_array($offset, ['entity', 'action', 'params', 'version'])) {
+    if (in_array($offset, ['entity', 'action', 'entityName', 'actionName', 'params', 'version'])) {
       throw new \API_Exception('Cannot modify api4 state via array access');
     }
     if ($offset == 'check_permissions') {
@@ -273,7 +274,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @inheritDoc
    */
   public function offsetUnset($offset) {
-    if (in_array($offset, ['entity', 'action', 'params', 'check_permissions', 'version'])) {
+    if (in_array($offset, ['entity', 'action', 'entityName', 'actionName', 'params', 'check_permissions', 'version'])) {
       throw new \API_Exception('Cannot modify api4 state via array access');
     }
     unset($this->thisArrayStorage[$offset]);
@@ -292,14 +293,14 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   public function getPermissions() {
-    $permissions = call_user_func(["\\Civi\\Api4\\" . $this->entity, 'permissions']);
+    $permissions = call_user_func(["\\Civi\\Api4\\" . $this->entityName, 'permissions']);
     $permissions += [
       // applies to getFields, getActions, etc.
       'meta' => ['access CiviCRM'],
       // catch-all, applies to create, get, delete, etc.
       'default' => ['administer CiviCRM'],
     ];
-    $action = $this->getAction();
+    $action = $this->getActionName();
     if (isset($permissions[$action])) {
       return $permissions[$action];
     }

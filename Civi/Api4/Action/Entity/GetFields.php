@@ -11,7 +11,7 @@ use Civi\Api4\Generic\Action\DAOGetFields;
 class GetFields extends DAOGetFields {
 
   public function _run(Result $result) {
-    $action = $this->getAction();
+    $action = $this->getActionName();
     $includeCustom = $this->getIncludeCustom();
     $entities = \Civi\Api4\Entity::get()->execute();
     foreach ($entities as $entity) {

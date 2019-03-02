@@ -44,7 +44,7 @@ abstract class AbstractBatch extends AbstractQuery {
       $params['select'] = $this->select;
     }
 
-    return (array) civicrm_api4($this->getEntity(), 'get', $params);
+    return (array) civicrm_api4($this->getEntityName(), 'get', $params);
   }
 
   /**

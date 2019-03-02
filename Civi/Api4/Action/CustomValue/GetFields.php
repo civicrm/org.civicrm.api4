@@ -17,7 +17,6 @@ class GetFields extends \Civi\Api4\Generic\Action\DAOGetFields {
     $gatherer = \Civi::container()->get('spec_gatherer');
     $spec = $gatherer->getSpec('Custom_' . $this->getCustomGroup(), $this->getAction(), $this->includeCustom);
     $specArray = SpecFormatter::specToArray($spec->getFields($this->fields), (array) $this->select, $this->getOptions);
-    $result->action = 'getFields';
     $result->exchangeArray(array_values($specArray));
   }
 

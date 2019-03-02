@@ -34,7 +34,7 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber {
    * @return bool
    */
   protected function applies(DAOCreate $request) {
-    return $request->getEntity() === 'Activity';
+    return $request->getEntityName() === 'Activity';
   }
 
 }

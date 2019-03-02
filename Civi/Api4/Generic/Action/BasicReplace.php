@@ -53,14 +53,14 @@ class BasicReplace extends AbstractBatch {
       if (!empty($record[$idField])) {
         $id = $record[$idField];
         unset($toDelete[$id], $record[$idField]);
-        $result[] = civicrm_api4($this->getEntity(), 'update', [
+        $result[] = civicrm_api4($this->getEntityName(), 'update', [
           'reload' => $this->reload,
           'where' => [[$idField, '=', $id]],
           'values' => $record,
         ])->first();
       }
       else {
-        $result[] = civicrm_api4($this->getEntity(), 'create', [
+        $result[] = civicrm_api4($this->getEntityName(), 'create', [
           'values' => $record,
         ])->first();
       }
@@ -68,7 +68,7 @@ class BasicReplace extends AbstractBatch {
 
     $result->deleted = [];
     if ($toDelete) {
-      $result->deleted = (array) civicrm_api4($this->getEntity(), 'delete', [
+      $result->deleted = (array) civicrm_api4($this->getEntityName(), 'delete', [
         'where' => [[$idField, 'IN', array_keys($toDelete)]],
       ]);
     }
@@ -77,7 +77,7 @@ class BasicReplace extends AbstractBatch {
   /**
    * @return string
    */
-  public function getAction() {
+  public function getActionName() {
     return 'replace';
   }
 

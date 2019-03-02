@@ -53,7 +53,7 @@ class BasicUpdate extends AbstractUpdate {
   /**
    * @return string
    */
-  public function getAction() {
+  public function getActionName() {
     return 'update';
   }
 

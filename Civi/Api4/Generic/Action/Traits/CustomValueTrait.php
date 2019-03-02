@@ -27,7 +27,7 @@ trait CustomValueTrait {
   /**
    * @inheritDoc
    */
-  public function getEntity() {
+  public function getEntityName() {
     return 'Custom_' . $this->getCustomGroup();
   }
 
@@ -37,7 +37,7 @@ trait CustomValueTrait {
   protected function writeObjects($items) {
     $result = [];
     foreach ($items as $item) {
-      FormattingUtil::formatWriteParams($item, $this->getEntity(), $this->getEntityFields());
+      FormattingUtil::formatWriteParams($item, $this->getEntityName(), $this->getEntityFields());
 
       $result[] = \CRM_Core_BAO_CustomValueTable::setValues($item);
     }
@@ -51,12 +51,12 @@ trait CustomValueTrait {
     $customTable = CoreUtil::getCustomTableByName($this->getCustomGroup());
     $ids = [];
     foreach ($items as $item) {
-      \CRM_Utils_Hook::pre('delete', $this->getEntity(), $item['id'], \CRM_Core_DAO::$_nullArray);
+      \CRM_Utils_Hook::pre('delete', $this->getEntityName(), $item['id'], \CRM_Core_DAO::$_nullArray);
       \CRM_Utils_SQL_Delete::from($customTable)
         ->where('id = #value')
         ->param('#value', $item['id'])
         ->execute();
-      \CRM_Utils_Hook::post('delete', $this->getEntity(), $item['id'], \CRM_Core_DAO::$_nullArray);
+      \CRM_Utils_Hook::post('delete', $this->getEntityName(), $item['id'], \CRM_Core_DAO::$_nullArray);
       $ids[] = $item['id'];
     }
     return $ids;
@@ -67,7 +67,7 @@ trait CustomValueTrait {
    */
   protected function fillDefaults(&$params) {
     foreach ($this->getEntityFields() as $name => $field) {
-      if (empty($params[$name])) {
+      if (!isset($params[$name]) && isset($field['default_value'])) {
         $params[$name] = $field['default_value'];
       }
     }

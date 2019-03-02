@@ -23,7 +23,7 @@ class CustomFieldPreCreationSubscriber extends PreCreationSubscriber {
    * @return bool
    */
   protected function applies(DAOCreate $request) {
-    return $request->getEntity() === 'CustomField';
+    return $request->getEntityName() === 'CustomField';
   }
 
   /**

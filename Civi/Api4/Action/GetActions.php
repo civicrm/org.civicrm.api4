@@ -28,7 +28,7 @@ class GetActions extends BasicGet {
         $this->_actionsToGet = (array) $clause[2];
       }
     }
-    $entityReflection = new \ReflectionClass('\Civi\Api4\\' . $this->getEntity());
+    $entityReflection = new \ReflectionClass('\Civi\Api4\\' . $this->getEntityName());
     foreach ($entityReflection->getMethods(\ReflectionMethod::IS_STATIC | \ReflectionMethod::IS_PUBLIC) as $method) {
       $actionName = $method->getName();
       if ($actionName != 'permissions' && $actionName[0] != '_') {
@@ -39,7 +39,7 @@ class GetActions extends BasicGet {
       $includePaths = array_unique(explode(PATH_SEPARATOR, get_include_path()));
       // Search entity-specific actions (including those provided by extensions)
       foreach ($includePaths as $path) {
-        $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Action/' . $this->getEntity();
+        $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Action/' . $this->getEntityName();
         $this->scanDir($dir);
       }
     }
@@ -68,7 +68,7 @@ class GetActions extends BasicGet {
     try {
       if (!isset($this->_actions[$actionName]) && (!$this->_actionsToGet || in_array($actionName, $this->_actionsToGet))) {
         /* @var AbstractAction $action */
-        $action = call_user_func(["\\Civi\\Api4\\" . $this->getEntity(), $actionName], NULL);
+        $action = call_user_func(["\\Civi\\Api4\\" . $this->getEntityName(), $actionName], NULL);
         if (is_object($action)) {
           $this->_actions[$actionName] = ['name' => $actionName];
           if (!$this->select || array_diff($this->select, ['params', 'name'])) {

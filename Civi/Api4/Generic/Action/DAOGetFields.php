@@ -73,10 +73,8 @@ class DAOGetFields extends AbstractAction {
     if ($this->fields) {
       $this->includeCustom = strpos(implode('', $this->fields), '.') !== FALSE;
     }
-    $spec = $gatherer->getSpec($this->getEntity(), $this->getAction(), $this->includeCustom);
+    $spec = $gatherer->getSpec($this->getEntityName(), $this->action, $this->includeCustom);
     $fields = SpecFormatter::specToArray($spec->getFields($this->fields), (array) $this->select, $this->getOptions);
-    // Fixme - $this->action ought to already be set. Might be a name conflict upstream causing it to be nullified?
-    $result->action = 'getFields';
     $result->exchangeArray(array_values($fields));
   }
 
@@ -85,6 +83,13 @@ class DAOGetFields extends AbstractAction {
    */
   public function getAction() {
     return $this->action;
+  }
+
+  /**
+   * @return string
+   */
+  public function getActionName() {
+    return 'getFields';
   }
 
 }

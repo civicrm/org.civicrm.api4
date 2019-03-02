@@ -42,7 +42,7 @@ class DAODelete extends AbstractBatch {
           $ids[] = $item['id'];
         }
         else {
-          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
+          throw new \API_Exception("Could not delete {$this->getEntityName()} id {$item['id']}");
         }
       }
     }
@@ -56,7 +56,7 @@ class DAODelete extends AbstractBatch {
           $ids[] = $item['id'];
         }
         else {
-          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item['id']}");
+          throw new \API_Exception("Could not delete {$this->getEntityName()} id {$item['id']}");
         }
       }
     }
@@ -66,7 +66,7 @@ class DAODelete extends AbstractBatch {
   /**
    * @return string
    */
-  public function getAction() {
+  public function getActionName() {
     return 'delete';
   }
 

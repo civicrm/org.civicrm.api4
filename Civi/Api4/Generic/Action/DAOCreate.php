@@ -39,7 +39,7 @@ class DAOCreate extends AbstractCreate {
       }
     }
     if ($unmatched) {
-      throw new \API_Exception("Mandatory values missing from Api4 {$this->getEntity()}::{$this->getAction()}: '" . implode("', '", $unmatched) . "'", "mandatory_missing", array("fields" => $unmatched));
+      throw new \API_Exception("Mandatory values missing from Api4 {$this->getEntityName()}::{$this->getActionName()}: '" . implode("', '", $unmatched) . "'", "mandatory_missing", array("fields" => $unmatched));
     }
   }
 
@@ -66,7 +66,7 @@ class DAOCreate extends AbstractCreate {
   /**
    * @return string
    */
-  public function getAction() {
+  public function getActionName() {
     return 'create';
   }
 

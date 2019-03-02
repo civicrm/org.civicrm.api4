@@ -49,7 +49,7 @@ class BasicCreate extends AbstractCreate {
   /**
    * @return string
    */
-  public function getAction() {
+  public function getActionName() {
     return 'create';
   }
 

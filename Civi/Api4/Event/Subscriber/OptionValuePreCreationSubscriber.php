@@ -20,7 +20,7 @@ class OptionValuePreCreationSubscriber extends PreCreationSubscriber {
    * @return bool
    */
   protected function applies(DAOCreate $request) {
-    return $request->getEntity() === 'OptionValue';
+    return $request->getEntityName() === 'OptionValue';
   }
 
   /**
