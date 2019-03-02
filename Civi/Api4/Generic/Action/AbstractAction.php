@@ -99,6 +99,9 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   public function __call($name, $arguments) {
     $param = lcfirst(substr($name, 3));
+    if (!$param || $param[0] == '_') {
+      throw new \API_Exception('Unknown api parameter: ' . $name);
+    }
     $mode = substr($name, 0, 3);
     // Handle plural when adding to e.g. $values with "addValue" method.
     if ($mode == 'add' && $this->paramExists($param . 's')) {
@@ -164,7 +167,10 @@ abstract class AbstractAction implements \ArrayAccess {
     $params = [];
     foreach ($this->getReflection()->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
       $name = $property->getName();
-      $params[$name] = $this->$name;
+      // Skip variables starting with an underscore
+      if ($name[0] != '_') {
+        $params[$name] = $this->$name;
+      }
     }
     return $params;
   }
@@ -180,7 +186,7 @@ abstract class AbstractAction implements \ArrayAccess {
       $defaults = $this->getParamDefaults();
       foreach ($this->getReflection()->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
         $name = $property->getName();
-        if ($name != 'version') {
+        if ($name != 'version' && $name[0] != '_') {
           $this->thisParamInfo[$name] = ReflectionUtils::getCodeDocs($property, 'Property');
           $this->thisParamInfo[$name]['default'] = $defaults[$name];
         }
