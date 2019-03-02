@@ -2,12 +2,10 @@
 
 namespace Civi\Api4\Action\Participant;
 
-use Civi\Api4\Generic\Action\DAO\Get as DefaultGet;
-
 /**
  * @inheritDoc
  */
-class Get extends DefaultGet {
+class Get extends \Civi\Api4\Generic\Action\DAOGet {
 
   /**
    * @inheritDoc

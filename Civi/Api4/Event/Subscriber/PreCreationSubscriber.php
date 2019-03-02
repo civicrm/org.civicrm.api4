@@ -3,7 +3,7 @@
 namespace Civi\Api4\Event\Subscriber;
 
 use Civi\API\Event\PrepareEvent;
-use Civi\Api4\Generic\Action\DAO\Create;
+use Civi\Api4\Generic\Action\DAOCreate;
 
 abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
@@ -11,7 +11,7 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
    */
   public function onApiPrepare(PrepareEvent $event) {
     $apiRequest = $event->getApiRequest();
-    if (!$apiRequest instanceof Create) {
+    if (!$apiRequest instanceof DAOCreate) {
       return;
     }
 
@@ -24,27 +24,27 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
    * Modify the request
    *
-   * @param Create $request
+   * @param DAOCreate $request
    *
    * @return void
    */
-  abstract protected function modify(Create $request);
+  abstract protected function modify(DAOCreate $request);
 
   /**
    * Check if this subscriber should be applied to the request
    *
-   * @param Create $request
+   * @param DAOCreate $request
    *
    * @return bool
    */
-  abstract protected function applies(Create $request);
+  abstract protected function applies(DAOCreate $request);
 
   /**
    * Sets default values common to all creation requests
    *
-   * @param Create $request
+   * @param DAOCreate $request
    */
-  protected function addDefaultCreationValues(Create $request) {
+  protected function addDefaultCreationValues(DAOCreate $request) {
     if (NULL === $request->getValue('is_active')) {
       $request->addValue('is_active', 1);
     }

@@ -11,38 +11,38 @@ require_once 'tests/phpunit/Mock/MockEntityDataStorage.php';
 class MockBasicEntity extends Generic\AbstractEntity {
 
   /**
-   * @return Generic\Action\Basic\Get
+   * @return Generic\Action\BasicGet
    */
   public static function get() {
-    return new Generic\Action\Basic\Get('MockBasicEntity', ['MockEntityDataStorage', 'get']);
+    return new Generic\Action\BasicGet('MockBasicEntity', ['MockEntityDataStorage', 'get']);
   }
 
   /**
-   * @return Generic\Action\Basic\Create
+   * @return Generic\Action\BasicCreate
    */
   public static function create() {
-    return new Generic\Action\Basic\Create('MockBasicEntity', ['MockEntityDataStorage', 'write']);
+    return new Generic\Action\BasicCreate('MockBasicEntity', ['MockEntityDataStorage', 'write']);
   }
 
   /**
-   * @return Generic\Action\Basic\Update
+   * @return Generic\Action\BasicUpdate
    */
   public static function update() {
-    return new Generic\Action\Basic\Update('MockBasicEntity', ['MockEntityDataStorage', 'write']);
+    return new Generic\Action\BasicUpdate('MockBasicEntity', ['MockEntityDataStorage', 'write']);
   }
 
   /**
-   * @return Generic\Action\Basic\Delete
+   * @return Generic\Action\BasicDelete
    */
   public static function delete() {
-    return new Generic\Action\Basic\Delete('MockBasicEntity', ['MockEntityDataStorage', 'delete']);
+    return new Generic\Action\BasicDelete('MockBasicEntity', ['MockEntityDataStorage', 'delete']);
   }
 
   /**
-   * @return Generic\Action\Basic\Replace
+   * @return Generic\Action\BasicReplace
    */
   public static function replace() {
-    return new Generic\Action\Basic\Replace('MockBasicEntity');
+    return new Generic\Action\BasicReplace('MockBasicEntity');
   }
 
 }

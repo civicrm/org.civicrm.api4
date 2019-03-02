@@ -1,8 +1,7 @@
 <?php
 
-namespace Civi\Api4\Generic\Action\Basic;
+namespace Civi\Api4\Generic\Action;
 
-use Civi\Api4\Generic\Action\AbstractBatch;
 use Civi\Api4\Generic\Result;
 
 /**
@@ -12,7 +11,7 @@ use Civi\Api4\Generic\Result;
  * @method $this addRecord($record) Add a record to update.
  * @method $this setReload(bool $reload) Specify whether complete objects will be returned after saving.
  */
-class Replace extends AbstractBatch {
+class BasicReplace extends AbstractBatch {
 
   /**
    * Array of records.
@@ -73,6 +72,13 @@ class Replace extends AbstractBatch {
         'where' => [[$idField, 'IN', array_keys($toDelete)]],
       ]);
     }
+  }
+
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return 'replace';
   }
 
 }

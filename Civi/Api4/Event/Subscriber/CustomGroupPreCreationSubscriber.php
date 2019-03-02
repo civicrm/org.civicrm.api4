@@ -2,13 +2,13 @@
 
 namespace Civi\Api4\Event\Subscriber;
 
-use Civi\Api4\Generic\Action\DAO\Create;
+use Civi\Api4\Generic\Action\DAOCreate;
 
 class CustomGroupPreCreationSubscriber extends PreCreationSubscriber {
   /**
-   * @param Create $request
+   * @param DAOCreate $request
    */
-  protected function modify(Create $request) {
+  protected function modify(DAOCreate $request) {
     $extends = $request->getValue('extends');
     $title = $request->getValue('title');
     $name = $request->getValue('name');
@@ -22,7 +22,7 @@ class CustomGroupPreCreationSubscriber extends PreCreationSubscriber {
     }
   }
 
-  protected function applies(Create $request) {
+  protected function applies(DAOCreate $request) {
     return $request->getEntity() === 'CustomGroup';
   }
 

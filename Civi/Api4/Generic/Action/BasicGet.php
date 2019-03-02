@@ -1,8 +1,7 @@
 <?php
 
-namespace Civi\Api4\Generic\Action\Basic;
+namespace Civi\Api4\Generic\Action;
 
-use Civi\Api4\Generic\Action\AbstractGet;
 use Civi\Api4\Generic\Result;
 
 /**
@@ -10,7 +9,7 @@ use Civi\Api4\Generic\Result;
  *
  * Use the 'select' param to determine which fields are returned, defaults to *.
  */
-class Get extends AbstractGet {
+class BasicGet extends AbstractGet {
   use \Civi\Api4\Generic\Action\Traits\ArrayQueryTrait;
 
   /**
@@ -45,12 +44,22 @@ class Get extends AbstractGet {
    * Depending on the expense of fetching objects that may be worthwhile,
    * but note the WHERE clause can potentially be very complex.
    * Be careful not to make assumptions, e.g. if LIMIT 100 is specified and your getter "helpfully" truncates the list
-   * at 100 without accounting for the WHERE clause, the final result may be less than expected.
+   * at 100 without accounting for the WHERE clause, the final filtered result may be less than expected.
+   * $this->select is a simple array of fields to return. If any fields are expensive to retrieve,
+   * you can check (!$this->select || in_array('fieldName', $this->select) before doing so.
+   * Note that if $this->select is empty you should return every field.
    *
    * @return array
    */
   protected function getRecords() {
     return call_user_func($this->getter, $this);
+  }
+
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return 'get';
   }
 
 }

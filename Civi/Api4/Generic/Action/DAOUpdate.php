@@ -1,8 +1,7 @@
 <?php
 
-namespace Civi\Api4\Generic\Action\DAO;
+namespace Civi\Api4\Generic\Action;
 
-use Civi\Api4\Generic\Action\AbstractUpdate;
 use Civi\Api4\Generic\Result;
 
 /**
@@ -10,8 +9,8 @@ use Civi\Api4\Generic\Result;
  *
  * Use the where clause (required) to select them.
  */
-class Update extends AbstractUpdate {
-  use \Civi\Api4\Generic\Action\Traits\DAOTrait;
+class DAOUpdate extends AbstractUpdate {
+  use Traits\DAOTrait;
 
   /**
    * @inheritDoc
@@ -27,6 +26,13 @@ class Update extends AbstractUpdate {
     }
 
     $result->exchangeArray($this->writeObjects($items));
+  }
+
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return 'update';
   }
 
 }

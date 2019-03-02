@@ -5,7 +5,7 @@ namespace Civi\Api4\Action\MockArrayEntity;
 /**
  * This class demonstrates how the getRecords method of Basic\Get can be overridden.
  */
-class Get extends \Civi\Api4\Generic\Action\Basic\Get {
+class Get extends \Civi\Api4\Generic\Action\BasicGet {
 
   public function getRecords() {
     return [

@@ -1,8 +1,7 @@
 <?php
 
-namespace Civi\Api4\Generic\Action\Basic;
+namespace Civi\Api4\Generic\Action;
 
-use Civi\Api4\Generic\Action\AbstractUpdate;
 use Civi\Api4\Generic\Result;
 
 /**
@@ -10,7 +9,7 @@ use Civi\Api4\Generic\Result;
  *
  * Use the where clause (required) to select them.
  */
-class Update extends AbstractUpdate {
+class BasicUpdate extends AbstractUpdate {
 
   /**
    * @var callable
@@ -49,6 +48,13 @@ class Update extends AbstractUpdate {
    */
   protected function writeRecord($item) {
     return call_user_func($this->setter, $item, $this);
+  }
+
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return 'update';
   }
 
 }

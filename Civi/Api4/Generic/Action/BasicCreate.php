@@ -1,8 +1,7 @@
 <?php
 
-namespace Civi\Api4\Generic\Action\Basic;
+namespace Civi\Api4\Generic\Action;
 
-use Civi\Api4\Generic\Action\AbstractCreate;
 use Civi\Api4\Generic\Result;
 
 /**
@@ -10,7 +9,7 @@ use Civi\Api4\Generic\Result;
  *
  * This function will create 1 new object. It cannot be used to update existing objects. Use the Update or Replace actions for that.
  */
-class Create extends AbstractCreate {
+class BasicCreate extends AbstractCreate {
 
   /**
    * @var callable
@@ -45,6 +44,13 @@ class Create extends AbstractCreate {
    */
   protected function writeRecord($item) {
     return call_user_func($this->setter, $item, $this);
+  }
+
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return 'create';
   }
 
 }

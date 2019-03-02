@@ -6,6 +6,15 @@ namespace Civi\Api4\Generic\Action;
  * Base class for all actions that need to fetch records (Get, Update, Delete, etc)
  *
  * @package Civi\Api4\Generic
+ *
+ * @method $this setWhere(array $wheres)
+ * @method array getWhere()
+ * @method $this setOrderBy(array $order)
+ * @method array getOrderBy()
+ * @method $this setLimit(int $limit)
+ * @method int getLimit()
+ * @method $this setOffset(int $offset)
+ * @method int getOffset()
  */
 abstract class AbstractQuery extends AbstractAction {
 

@@ -1,14 +1,13 @@
 <?php
 
-namespace Civi\Api4\Generic\Action\Basic;
+namespace Civi\Api4\Generic\Action;
 
-use Civi\Api4\Generic\Action\AbstractBatch;
 use Civi\Api4\Generic\Result;
 
 /**
  * Delete one or more items, based on criteria specified in Where param (required).
  */
-class Delete extends AbstractBatch {
+class BasicDelete extends AbstractBatch {
 
   /**
    * @var callable
@@ -49,6 +48,13 @@ class Delete extends AbstractBatch {
    */
   protected function deleteRecord($item) {
     return call_user_func($this->deleter, $item, $this);
+  }
+
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return 'delete';
   }
 
 }

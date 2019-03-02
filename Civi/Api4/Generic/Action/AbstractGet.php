@@ -9,10 +9,7 @@ namespace Civi\Api4\Generic\Action;
  *
  * @method $this addSelect(string $select)
  * @method $this setSelect(array $selects)
- * @method $this setWhere(array $wheres)
- * @method $this setOrderBy(array $order)
- * @method $this setLimit(int $limit)
- * @method $this setOffset(int $offset)
+ * @method array getSelect()
  */
 abstract class AbstractGet extends AbstractQuery {
 

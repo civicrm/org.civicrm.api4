@@ -1,11 +1,10 @@
 <?php
 
-namespace Civi\Api4\Generic\Action\DAO;
+namespace Civi\Api4\Generic\Action;
 
-use Civi\Api4\Generic\Action\AbstractAction;
 use Civi\Api4\Service\Spec\SpecGatherer;
-use Civi\Api4\Generic\Result;
 use Civi\Api4\Service\Spec\SpecFormatter;
+use Civi\Api4\Generic\Result;
 
 /**
  * Get fields for an entity.
@@ -22,7 +21,7 @@ use Civi\Api4\Service\Spec\SpecFormatter;
  * @method $this addField(string $value)
  * @method array getFields()
  */
-class GetFields extends AbstractAction {
+class DAOGetFields extends AbstractAction {
 
   /**
    * Override default to allow open access

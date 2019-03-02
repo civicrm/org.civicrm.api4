@@ -1,7 +1,6 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\DAOEntity;
 
 /**
  * Address Entity.
@@ -14,7 +13,7 @@ use Civi\Api4\Generic\DAOEntity;
  *
  * @package Civi\Api4
  */
-class Address extends DAOEntity {
+class Address extends Generic\DAOEntity {
 
   /**
    * @return \Civi\Api4\Action\Address\Create

@@ -3,7 +3,7 @@
 namespace Civi\Api4\Action\Entity;
 
 use Civi\Api4\CustomGroup;
-use Civi\Api4\Generic\Action\Basic\Get as BasicGet;
+use Civi\Api4\Generic\Action\BasicGet as BasicGet;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**

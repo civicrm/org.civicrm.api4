@@ -1,14 +1,13 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\DAOEntity;
 
 /**
  * Contribution entity.
  *
  * @package Civi\Api4
  */
-class Contribution extends DAOEntity {
+class Contribution extends Generic\DAOEntity {
 
   /**
    * @return \Civi\Api4\Action\Contribution\Create

@@ -8,45 +8,45 @@ namespace Civi\Api4\Generic;
 abstract class DAOEntity extends AbstractEntity {
 
   /**
-   * @return \Civi\Api4\Generic\Action\DAO\Get
+   * @return Action\DAOGet
    */
   public static function get() {
-    return new Action\DAO\Get(self::getEntityName());
+    return new Action\DAOGet(self::getEntityName());
   }
 
   /**
-   * @return \Civi\Api4\Generic\Action\DAO\GetFields
+   * @return Action\DAOGetFields
    */
   public static function getFields() {
-    return new Action\DAO\GetFields(self::getEntityName());
+    return new Action\DAOGetFields(self::getEntityName());
   }
 
   /**
-   * @return \Civi\Api4\Generic\Action\DAO\Create
+   * @return Action\DAOCreate
    */
   public static function create() {
-    return new Action\DAO\Create(self::getEntityName());
+    return new Action\DAOCreate(self::getEntityName());
   }
 
   /**
-   * @return \Civi\Api4\Generic\Action\DAO\Update
+   * @return Action\DAOUpdate
    */
   public static function update() {
-    return new Action\DAO\Update(self::getEntityName());
+    return new Action\DAOUpdate(self::getEntityName());
   }
 
   /**
-   * @return \Civi\Api4\Generic\Action\DAO\Delete
+   * @return Action\DAODelete
    */
   public static function delete() {
-    return new Action\DAO\Delete(self::getEntityName());
+    return new Action\DAODelete(self::getEntityName());
   }
 
   /**
-   * @return \Civi\Api4\Generic\Action\Basic\Replace
+   * @return Action\BasicReplace
    */
   public static function replace() {
-    return new Action\Basic\Replace(self::getEntityName());
+    return new Action\BasicReplace(self::getEntityName());
   }
 
 }

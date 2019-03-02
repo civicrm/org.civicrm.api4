@@ -1,7 +1,6 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\DAOEntity;
 
 /**
  * Contacts - Individuals, Organizations, Households.
@@ -13,21 +12,21 @@ use Civi\Api4\Generic\DAOEntity;
  *
  * @package Civi\Api4
  */
-class Contact extends DAOEntity {
+class Contact extends Generic\DAOEntity {
 
   /**
-   * @return \Civi\Api4\Action\Contact\Create
+   * @return Action\Contact\Create
    */
   public static function create() {
-    return new \Civi\Api4\Action\Contact\Create();
+    return new Action\Contact\Create();
   }
 
   /**
-   * @return \Civi\Api4\Generic\Action\DAO\Update
+   * @return \Civi\Api4\Generic\Action\DAOUpdate
    */
   public static function update() {
     // For some reason the contact bao requires this for updating
-    return new \Civi\Api4\Generic\Action\DAO\Update('Contact', ['id', 'contact_type']);
+    return new Generic\Action\DAOUpdate('Contact', ['id', 'contact_type']);
   }
 
 }

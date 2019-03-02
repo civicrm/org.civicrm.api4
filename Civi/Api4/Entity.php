@@ -2,37 +2,32 @@
 
 namespace Civi\Api4;
 
-use Civi\Api4\Action\Entity\Get;
-use Civi\Api4\Action\Entity\GetFields;
-use Civi\Api4\Action\Entity\GetLinks;
-use Civi\Api4\Generic\AbstractEntity;
-
 /**
  * Retrieves information about all Api4 entities.
  *
  * @package Civi\Api4
  */
-class Entity extends AbstractEntity {
+class Entity extends Generic\AbstractEntity {
 
   /**
-   * @return Get
+   * @return Action\Entity\Get
    */
   public static function get() {
-    return new Get('Entity');
+    return new Action\Entity\Get('Entity');
   }
 
   /**
-   * @return GetFields
+   * @return Action\Entity\GetFields
    */
   public static function getFields() {
-    return new GetFields('Entity');
+    return new Action\Entity\GetFields('Entity');
   }
 
   /**
-   * @return GetFields
+   * @return Action\Entity\GetFields
    */
   public static function getLinks() {
-    return new GetLinks('Entity');
+    return new Action\Entity\GetLinks('Entity');
   }
 
   /**

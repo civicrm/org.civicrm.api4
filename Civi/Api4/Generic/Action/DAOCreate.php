@@ -1,8 +1,7 @@
 <?php
 
-namespace Civi\Api4\Generic\Action\DAO;
+namespace Civi\Api4\Generic\Action;
 
-use Civi\Api4\Generic\Action\AbstractCreate;
 use Civi\Api4\Generic\Result;
 
 /**
@@ -10,8 +9,8 @@ use Civi\Api4\Generic\Result;
  *
  * This function will create 1 new object. It cannot be used to update existing objects. Use the Update or Replace actions for that.
  */
-class Create extends AbstractCreate {
-  use \Civi\Api4\Generic\Action\Traits\DAOTrait;
+class DAOCreate extends AbstractCreate {
+  use Traits\DAOTrait;
 
   /**
    * @inheritDoc
@@ -62,6 +61,13 @@ class Create extends AbstractCreate {
         $params[$name] = $field['default_value'];
       }
     }
+  }
+
+  /**
+   * @return string
+   */
+  public function getAction() {
+    return 'create';
   }
 
 }

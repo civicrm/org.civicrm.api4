@@ -3,12 +3,11 @@
 namespace Civi\Api4\Action\Contribution;
 
 use Civi\Api4\Generic\Result;
-use Civi\Api4\Generic\Action\DAO\Create as DefaultCreate;
 
 /**
  * @inheritDoc
  */
-class Create extends DefaultCreate {
+class Create extends \Civi\Api4\Generic\Action\DAOCreate {
 
   public function _run(Result $result) {
     // Required by Contribution BAO

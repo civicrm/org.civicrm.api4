@@ -7,7 +7,9 @@ namespace Civi\Api4\Generic\Action;
  *
  * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
  * @method $this addValue($field, $value) Set field value.
+ * @method array getValues() Get field values.
  * @method $this setReload(bool $reload) Specify whether complete objects will be returned after saving.
+ * @method bool getReload()
  *
  * @package Civi\Api4\Generic
  */

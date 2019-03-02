@@ -1,7 +1,6 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\DAOEntity;
 
 /**
  * GroupContact entity - link between groups and contacts.
@@ -11,20 +10,20 @@ use Civi\Api4\Generic\DAOEntity;
  *
  * @package Civi\Api4
  */
-class GroupContact extends DAOEntity {
+class GroupContact extends Generic\DAOEntity {
 
   /**
-   * @return \Civi\Api4\Action\GroupContact\Create
+   * @return Action\GroupContact\Create
    */
   public static function create() {
-    return new \Civi\Api4\Action\GroupContact\Create();
+    return new Action\GroupContact\Create();
   }
 
   /**
-   * @return \Civi\Api4\Action\GroupContact\Update
+   * @return Action\GroupContact\Update
    */
   public static function update() {
-    return new \Civi\Api4\Action\GroupContact\Update();
+    return new Action\GroupContact\Update();
   }
 
 }
