@@ -70,4 +70,15 @@ class BasicActionsTest extends UnitTestCase {
     $this->assertEquals('two', $newObjects[$objects[3]['id']]['group']);
   }
 
+  public function testRequiredEntityName() {
+    $exceptionThrown = '';
+    try {
+      MockBasicEntity::invalid();
+    }
+    catch (\API_Exception $e) {
+      $exceptionThrown = $e->getMessage();
+    }
+    $this->assertContains('requires entity name', $exceptionThrown);
+  }
+
 }

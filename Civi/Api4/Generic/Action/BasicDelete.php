@@ -14,7 +14,7 @@ class BasicDelete extends AbstractBatch {
    */
   private $deleter;
 
-  public function __construct($entity, $deleter = NULL, $idField = 'id') {
+  public function __construct($entity = NULL, $deleter = NULL, $idField = 'id') {
     parent::__construct($entity, $idField);
     $this->deleter = $deleter;
   }

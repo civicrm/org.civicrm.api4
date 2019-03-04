@@ -16,7 +16,12 @@ class BasicCreate extends AbstractCreate {
    */
   private $setter;
 
-  public function __construct($entity, $setter = NULL) {
+  /**
+   * BasicCreate constructor.
+   * @param string $entity
+   * @param callable $setter
+   */
+  public function __construct($entity = NULL, $setter = NULL) {
     parent::__construct($entity);
     $this->setter = $setter;
   }

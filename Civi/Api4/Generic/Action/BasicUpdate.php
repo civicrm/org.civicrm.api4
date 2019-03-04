@@ -16,7 +16,7 @@ class BasicUpdate extends AbstractUpdate {
    */
   private $setter;
 
-  public function __construct($entity, $setter = NULL, $idField = 'id') {
+  public function __construct($entity = NULL, $setter = NULL, $idField = 'id') {
     parent::__construct($entity, $idField);
     $this->setter = $setter;
   }

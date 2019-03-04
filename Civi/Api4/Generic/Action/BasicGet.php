@@ -17,7 +17,7 @@ class BasicGet extends AbstractGet {
    */
   private $getter;
 
-  public function __construct($entity, $getter = NULL) {
+  public function __construct($entity = NULL, $getter = NULL) {
     parent::__construct($entity);
     $this->getter = $getter;
   }

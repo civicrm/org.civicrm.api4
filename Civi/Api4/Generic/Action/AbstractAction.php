@@ -54,6 +54,7 @@ abstract class AbstractAction implements \ArrayAccess {
   /**
    * Action constructor.
    * @param string $entity
+   * @throws \API_Exception
    */
   public function __construct($entity = NULL) {
     // For generic actions we need the entity passed explicitly
@@ -64,6 +65,10 @@ abstract class AbstractAction implements \ArrayAccess {
     else {
       $namespace = substr(get_class($this), 0, strrpos(get_class($this), '\\'));
       $this->entityName = substr($namespace, strrpos($namespace, '\\') + 1);
+      // Oops, someone constructed a generic action without passing the name of their entity.
+      if ($this->entityName == 'Action') {
+        throw new \API_Exception('Constructing a generic action class requires entity name.');
+      }
     }
   }
 

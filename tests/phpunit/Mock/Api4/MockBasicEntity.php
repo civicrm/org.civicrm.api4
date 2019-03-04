@@ -46,4 +46,12 @@ class MockBasicEntity extends Generic\AbstractEntity {
     return new Generic\Action\BasicReplace('MockBasicEntity');
   }
 
+  /**
+   * @return Generic\Action\BasicGet
+   */
+  public static function invalid() {
+    // This is expected to fail because the entity name is a required param when constructing basic actions directly.
+    return new Generic\Action\BasicGet();
+  }
+
 }
