@@ -1,5 +1,7 @@
 <?php
 
+namespace Civi\Test\Api4\Mock;
+
 /**
  * Simple data backend for mock basic api.
  */

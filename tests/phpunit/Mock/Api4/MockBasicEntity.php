@@ -1,7 +1,6 @@
 <?php
 
 namespace Civi\Api4;
-require_once 'tests/phpunit/Mock/MockEntityDataStorage.php';
 
 /**
  * MockBasicEntity entity.
@@ -10,32 +9,34 @@ require_once 'tests/phpunit/Mock/MockEntityDataStorage.php';
  */
 class MockBasicEntity extends Generic\AbstractEntity {
 
+  const STORAGE_CLASS = '\\Civi\\Test\\Api4\\Mock\\MockEntityDataStorage';
+
   /**
    * @return Generic\Action\BasicGet
    */
   public static function get() {
-    return new Generic\Action\BasicGet('MockBasicEntity', ['MockEntityDataStorage', 'get']);
+    return new Generic\Action\BasicGet('MockBasicEntity', [self::STORAGE_CLASS, 'get']);
   }
 
   /**
    * @return Generic\Action\BasicCreate
    */
   public static function create() {
-    return new Generic\Action\BasicCreate('MockBasicEntity', ['MockEntityDataStorage', 'write']);
+    return new Generic\Action\BasicCreate('MockBasicEntity', [self::STORAGE_CLASS, 'write']);
   }
 
   /**
    * @return Generic\Action\BasicUpdate
    */
   public static function update() {
-    return new Generic\Action\BasicUpdate('MockBasicEntity', ['MockEntityDataStorage', 'write']);
+    return new Generic\Action\BasicUpdate('MockBasicEntity', [self::STORAGE_CLASS, 'write']);
   }
 
   /**
    * @return Generic\Action\BasicDelete
    */
   public static function delete() {
-    return new Generic\Action\BasicDelete('MockBasicEntity', ['MockEntityDataStorage', 'delete']);
+    return new Generic\Action\BasicDelete('MockBasicEntity', [self::STORAGE_CLASS, 'delete']);
   }
 
   /**
