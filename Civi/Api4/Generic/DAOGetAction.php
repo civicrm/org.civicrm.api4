@@ -18,11 +18,4 @@ class DAOGetAction extends AbstractGetAction {
     $result->exchangeArray($this->getObjects());
   }
 
-  /**
-   * @return string
-   */
-  public function getActionName() {
-    return 'get';
-  }
-
 }

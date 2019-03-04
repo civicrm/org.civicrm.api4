@@ -18,11 +18,12 @@ class BasicCreateAction extends AbstractCreateAction {
 
   /**
    * BasicCreate constructor.
-   * @param string $entity
+   * @param string $entityName
+   * @param string $actionName
    * @param callable $setter
    */
-  public function __construct($entity = NULL, $setter = NULL) {
-    parent::__construct($entity);
+  public function __construct($entityName, $actionName, $setter = NULL) {
+    parent::__construct($entityName, $actionName);
     $this->setter = $setter;
   }
 
@@ -49,13 +50,6 @@ class BasicCreateAction extends AbstractCreateAction {
    */
   protected function writeRecord($item) {
     return call_user_func($this->setter, $item, $this);
-  }
-
-  /**
-   * @return string
-   */
-  public function getActionName() {
-    return 'create';
   }
 
 }

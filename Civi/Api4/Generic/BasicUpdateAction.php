@@ -16,8 +16,8 @@ class BasicUpdateAction extends AbstractUpdateAction {
    */
   private $setter;
 
-  public function __construct($entity = NULL, $setter = NULL, $idField = 'id') {
-    parent::__construct($entity, $idField);
+  public function __construct($entityName, $actionName, $setter = NULL, $idField = 'id') {
+    parent::__construct($entityName, $actionName, $idField);
     $this->setter = $setter;
   }
 
@@ -48,13 +48,6 @@ class BasicUpdateAction extends AbstractUpdateAction {
    */
   protected function writeRecord($item) {
     return call_user_func($this->setter, $item, $this);
-  }
-
-  /**
-   * @return string
-   */
-  public function getActionName() {
-    return 'update';
   }
 
 }

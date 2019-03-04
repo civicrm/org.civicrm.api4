@@ -16,14 +16,14 @@ class GroupContact extends Generic\DAOEntity {
    * @return Action\GroupContact\Create
    */
   public static function create() {
-    return new Action\GroupContact\Create();
+    return new Action\GroupContact\Create(__CLASS__, __FUNCTION__);
   }
 
   /**
    * @return Action\GroupContact\Update
    */
   public static function update() {
-    return new Action\GroupContact\Update();
+    return new Action\GroupContact\Update(__CLASS__, __FUNCTION__);
   }
 
 }

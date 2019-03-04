@@ -63,11 +63,4 @@ class DAOCreateAction extends AbstractCreateAction {
     }
   }
 
-  /**
-   * @return string
-   */
-  public function getActionName() {
-    return 'create';
-  }
-
 }

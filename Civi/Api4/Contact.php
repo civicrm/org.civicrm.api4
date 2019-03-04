@@ -18,7 +18,7 @@ class Contact extends Generic\DAOEntity {
    * @return Action\Contact\Create
    */
   public static function create() {
-    return new Action\Contact\Create();
+    return new Action\Contact\Create(__CLASS__, __FUNCTION__);
   }
 
   /**
@@ -26,7 +26,7 @@ class Contact extends Generic\DAOEntity {
    */
   public static function update() {
     // For some reason the contact bao requires this for updating
-    return new Generic\DAOUpdateAction('Contact', ['id', 'contact_type']);
+    return new Generic\DAOUpdateAction(__CLASS__, __FUNCTION__, ['id', 'contact_type']);
   }
 
 }

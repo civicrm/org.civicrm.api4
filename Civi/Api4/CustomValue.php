@@ -11,50 +11,50 @@ class CustomValue extends Generic\AbstractEntity {
 
   /**
    * @param string $customGroup
-   * @return \Civi\Api4\Action\CustomValue\Get
+   * @return Action\CustomValue\Get
    */
   public static function get($customGroup) {
-    return new Action\CustomValue\Get($customGroup);
+    return new Action\CustomValue\Get($customGroup, __FUNCTION__);
   }
 
   /**
    * @param string $customGroup
-   * @return \Civi\Api4\Action\CustomValue\GetFields
+   * @return Action\CustomValue\GetFields
    */
   public static function getFields($customGroup) {
-    return new Action\CustomValue\GetFields($customGroup);
+    return new Action\CustomValue\GetFields($customGroup, __FUNCTION__);
   }
 
   /**
    * @param string $customGroup
-   * @return \Civi\Api4\Action\CustomValue\Create
+   * @return Action\CustomValue\Create
    */
   public static function create($customGroup) {
-    return new Action\CustomValue\Create($customGroup);
+    return new Action\CustomValue\Create($customGroup, __FUNCTION__);
   }
 
   /**
    * @param string $customGroup
-   * @return \Civi\Api4\Action\CustomValue\Update
+   * @return Action\CustomValue\Update
    */
   public static function update($customGroup) {
-    return new Action\CustomValue\Update($customGroup);
+    return new Action\CustomValue\Update($customGroup, __FUNCTION__);
   }
 
   /**
    * @param string $customGroup
-   * @return \Civi\Api4\Action\CustomValue\Delete
+   * @return Action\CustomValue\Delete
    */
   public static function delete($customGroup) {
-    return new Action\CustomValue\Delete($customGroup);
+    return new Action\CustomValue\Delete($customGroup, __FUNCTION__);
   }
 
   /**
    * @param string $customGroup
-   * @return \Civi\Api4\Action\CustomValue\Replace
+   * @return Action\CustomValue\Replace
    */
   public static function replace($customGroup) {
-    return new \Civi\Api4\Action\CustomValue\Replace($customGroup);
+    return new Action\CustomValue\Replace($customGroup, __FUNCTION__);
   }
 
   /**

@@ -13,7 +13,7 @@ class Participant extends Generic\DAOEntity {
    * @return Action\Participant\Get
    */
   public static function get() {
-    return new Action\Participant\Get();
+    return new Action\Participant\Get(__CLASS__, __FUNCTION__);
   }
 
 }

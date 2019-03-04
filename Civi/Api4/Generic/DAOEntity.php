@@ -11,42 +11,42 @@ abstract class DAOEntity extends AbstractEntity {
    * @return DAOGetAction
    */
   public static function get() {
-    return new DAOGetAction(self::getEntityName());
+    return new DAOGetAction(static::class, __FUNCTION__);
   }
 
   /**
    * @return DAOGetFieldsAction
    */
   public static function getFields() {
-    return new DAOGetFieldsAction(self::getEntityName());
+    return new DAOGetFieldsAction(static::class, __FUNCTION__);
   }
 
   /**
    * @return DAOCreateAction
    */
   public static function create() {
-    return new DAOCreateAction(self::getEntityName());
+    return new DAOCreateAction(static::class, __FUNCTION__);
   }
 
   /**
    * @return DAOUpdateAction
    */
   public static function update() {
-    return new DAOUpdateAction(self::getEntityName());
+    return new DAOUpdateAction(static::class, __FUNCTION__);
   }
 
   /**
    * @return DAODeleteAction
    */
   public static function delete() {
-    return new DAODeleteAction(self::getEntityName());
+    return new DAODeleteAction(static::class, __FUNCTION__);
   }
 
   /**
    * @return BasicReplaceAction
    */
   public static function replace() {
-    return new BasicReplaceAction(self::getEntityName());
+    return new BasicReplaceAction(static::class, __FUNCTION__);
   }
 
 }

@@ -47,7 +47,7 @@ abstract class AbstractEntity {
     // Find class for this action
     $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
     if (class_exists($entityAction)) {
-      $actionObject = new $entityAction($entity);
+      $actionObject = new $entityAction($entity, $action);
     }
     else {
       throw new NotImplementedException("Api $entity $action version 4 does not exist.");
@@ -59,7 +59,7 @@ abstract class AbstractEntity {
    * @return \Civi\Api4\Action\GetActions
    */
   public static function getActions() {
-    return new \Civi\Api4\Action\GetActions(self::getEntityName());
+    return new \Civi\Api4\Action\GetActions(self::getEntityName(), __FUNCTION__);
   }
 
   /**

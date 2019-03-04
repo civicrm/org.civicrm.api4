@@ -13,7 +13,7 @@ class Navigation extends Generic\DAOEntity {
    * @return Action\Navigation\Get
    */
   public static function get() {
-    return new Action\Navigation\Get();
+    return new Action\Navigation\Get(__CLASS__, __FUNCTION__);
   }
 
 }

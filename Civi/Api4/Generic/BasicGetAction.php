@@ -17,8 +17,8 @@ class BasicGetAction extends AbstractGetAction {
    */
   private $getter;
 
-  public function __construct($entity = NULL, $getter = NULL) {
-    parent::__construct($entity);
+  public function __construct($entityName, $actionName, $getter = NULL) {
+    parent::__construct($entityName, $actionName);
     $this->getter = $getter;
   }
 
@@ -53,13 +53,6 @@ class BasicGetAction extends AbstractGetAction {
    */
   protected function getRecords() {
     return call_user_func($this->getter, $this);
-  }
-
-  /**
-   * @return string
-   */
-  public function getActionName() {
-    return 'get';
   }
 
 }

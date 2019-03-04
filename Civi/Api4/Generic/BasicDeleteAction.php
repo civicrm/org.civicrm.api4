@@ -14,8 +14,8 @@ class BasicDeleteAction extends AbstractBatchAction {
    */
   private $deleter;
 
-  public function __construct($entity = NULL, $deleter = NULL, $idField = 'id') {
-    parent::__construct($entity, $idField);
+  public function __construct($entityName, $actionName, $deleter = NULL, $idField = 'id') {
+    parent::__construct($entityName, $actionName, $idField);
     $this->deleter = $deleter;
   }
 
@@ -48,13 +48,6 @@ class BasicDeleteAction extends AbstractBatchAction {
    */
   protected function deleteRecord($item) {
     return call_user_func($this->deleter, $item, $this);
-  }
-
-  /**
-   * @return string
-   */
-  public function getActionName() {
-    return 'delete';
   }
 
 }

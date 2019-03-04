@@ -85,11 +85,4 @@ class DAOGetFieldsAction extends AbstractAction {
     return $this->action;
   }
 
-  /**
-   * @return string
-   */
-  public function getActionName() {
-    return 'getFields';
-  }
-
 }

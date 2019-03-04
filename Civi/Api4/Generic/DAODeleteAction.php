@@ -63,11 +63,4 @@ class DAODeleteAction extends AbstractBatchAction {
     return $ids;
   }
 
-  /**
-   * @return string
-   */
-  public function getActionName() {
-    return 'delete';
-  }
-
 }

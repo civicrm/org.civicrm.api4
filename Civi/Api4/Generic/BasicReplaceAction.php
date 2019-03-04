@@ -74,11 +74,4 @@ class BasicReplaceAction extends AbstractBatchAction {
     }
   }
 
-  /**
-   * @return string
-   */
-  public function getActionName() {
-    return 'replace';
-  }
-
 }

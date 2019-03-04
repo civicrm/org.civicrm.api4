@@ -19,14 +19,14 @@ class Address extends Generic\DAOEntity {
    * @return \Civi\Api4\Action\Address\Create
    */
   public static function create() {
-    return new \Civi\Api4\Action\Address\Create();
+    return new \Civi\Api4\Action\Address\Create(__CLASS__, __FUNCTION__);
   }
 
   /**
    * @return \Civi\Api4\Action\Address\Update
    */
   public static function update() {
-    return new \Civi\Api4\Action\Address\Update();
+    return new \Civi\Api4\Action\Address\Update(__CLASS__, __FUNCTION__);
   }
 
 }

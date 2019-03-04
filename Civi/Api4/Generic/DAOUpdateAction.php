@@ -28,11 +28,4 @@ class DAOUpdateAction extends AbstractUpdateAction {
     $result->exchangeArray($this->writeObjects($items));
   }
 
-  /**
-   * @return string
-   */
-  public function getActionName() {
-    return 'update';
-  }
-
 }

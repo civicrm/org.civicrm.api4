@@ -13,21 +13,21 @@ class Entity extends Generic\AbstractEntity {
    * @return Action\Entity\Get
    */
   public static function get() {
-    return new Action\Entity\Get('Entity');
+    return new Action\Entity\Get('Entity', __FUNCTION__);
   }
 
   /**
    * @return Action\Entity\GetFields
    */
   public static function getFields() {
-    return new Action\Entity\GetFields('Entity');
+    return new Action\Entity\GetFields('Entity', __FUNCTION__);
   }
 
   /**
    * @return Action\Entity\GetFields
    */
   public static function getLinks() {
-    return new Action\Entity\GetLinks('Entity');
+    return new Action\Entity\GetLinks('Entity', __FUNCTION__);
   }
 
   /**

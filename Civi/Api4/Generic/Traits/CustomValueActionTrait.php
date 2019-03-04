@@ -12,9 +12,9 @@ use Civi\Api4\Utils\CoreUtil;
  */
 trait CustomValueActionTrait {
 
-  function __construct($customGroup) {
+  function __construct($customGroup, $actionName) {
     $this->customGroup = $customGroup;
-    parent::__construct('CustomValue', ['id', 'entity_id']);
+    parent::__construct('CustomValue', $actionName, ['id', 'entity_id']);
   }
 
   /**
