@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 /**
  * Base class for all "Get" api actions.
@@ -11,7 +11,7 @@ namespace Civi\Api4\Generic\Action;
  * @method $this setSelect(array $selects)
  * @method array getSelect()
  */
-abstract class AbstractGet extends AbstractQuery {
+abstract class AbstractGetAction extends AbstractQueryAction {
 
   /**
    * Fields to return. Defaults to all non-custom fields.

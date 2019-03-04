@@ -1,5 +1,5 @@
 <?php
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 use Civi\API\Exception\UnauthorizedException;
 use Civi\API\Kernel;
@@ -66,7 +66,7 @@ abstract class AbstractAction implements \ArrayAccess {
       $namespace = substr(get_class($this), 0, strrpos(get_class($this), '\\'));
       $this->entityName = substr($namespace, strrpos($namespace, '\\') + 1);
       // Oops, someone constructed a generic action without passing the name of their entity.
-      if ($this->entityName == 'Action') {
+      if ($this->entityName == 'Generic') {
         throw new \API_Exception('Constructing a generic action class requires entity name.');
       }
     }

@@ -7,7 +7,7 @@ use Civi\Api4\Generic\Result;
 /**
  * @inheritDoc
  */
-class Create extends \Civi\Api4\Generic\Action\DAOCreate {
+class Create extends \Civi\Api4\Generic\DAOCreateAction {
 
   /**
    * Optional param to indicate you want the street_address field parsed into individual params

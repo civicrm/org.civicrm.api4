@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 use Civi\Api4\Generic\Result;
 
@@ -9,8 +9,8 @@ use Civi\Api4\Generic\Result;
  *
  * Use the where clause (required) to select them.
  */
-class DAOUpdate extends AbstractUpdate {
-  use Traits\DAOTrait;
+class DAOUpdateAction extends AbstractUpdateAction {
+  use Traits\DAOActionTrait;
 
   /**
    * @inheritDoc

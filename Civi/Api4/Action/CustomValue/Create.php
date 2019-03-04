@@ -5,7 +5,7 @@ namespace Civi\Api4\Action\CustomValue;
 /**
  * @inheritDoc
  */
-class Create extends \Civi\Api4\Generic\Action\DAOCreate {
-  use \Civi\Api4\Generic\Action\Traits\CustomValueTrait;
+class Create extends \Civi\Api4\Generic\DAOCreateAction {
+  use \Civi\Api4\Generic\Traits\CustomValueActionTrait;
 
 }

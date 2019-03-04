@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 /**
  * Base class for all "Update" api actions
@@ -13,7 +13,7 @@ namespace Civi\Api4\Generic\Action;
  *
  * @package Civi\Api4\Generic
  */
-abstract class AbstractUpdate extends AbstractBatch {
+abstract class AbstractUpdateAction extends AbstractBatchAction {
 
   /**
    * Field values to update.

@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 /**
  * Base class for all actions that need to fetch records (Get, Update, Delete, etc)
@@ -16,7 +16,7 @@ namespace Civi\Api4\Generic\Action;
  * @method $this setOffset(int $offset)
  * @method int getOffset()
  */
-abstract class AbstractQuery extends AbstractAction {
+abstract class AbstractQueryAction extends AbstractAction {
 
   /**
    * Criteria for selecting items.

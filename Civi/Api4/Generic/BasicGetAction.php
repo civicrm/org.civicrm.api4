@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 use Civi\Api4\Generic\Result;
 
@@ -9,8 +9,8 @@ use Civi\Api4\Generic\Result;
  *
  * Use the 'select' param to determine which fields are returned, defaults to *.
  */
-class BasicGet extends AbstractGet {
-  use \Civi\Api4\Generic\Action\Traits\ArrayQueryTrait;
+class BasicGetAction extends AbstractGetAction {
+  use Traits\ArrayQueryActionTrait;
 
   /**
    * @var callable

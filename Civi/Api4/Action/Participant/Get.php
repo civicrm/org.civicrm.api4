@@ -5,7 +5,7 @@ namespace Civi\Api4\Action\Participant;
 /**
  * @inheritDoc
  */
-class Get extends \Civi\Api4\Generic\Action\DAOGet {
+class Get extends \Civi\Api4\Generic\DAOGetAction {
 
   /**
    * @inheritDoc

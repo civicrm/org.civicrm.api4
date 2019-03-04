@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 use Civi\Api4\Generic\Result;
 
@@ -9,8 +9,8 @@ use Civi\Api4\Generic\Result;
  *
  * This function will create 1 new object. It cannot be used to update existing objects. Use the Update or Replace actions for that.
  */
-class DAOCreate extends AbstractCreate {
-  use Traits\DAOTrait;
+class DAOCreateAction extends AbstractCreateAction {
+  use Traits\DAOActionTrait;
 
   /**
    * @inheritDoc

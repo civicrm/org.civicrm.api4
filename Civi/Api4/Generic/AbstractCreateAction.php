@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 /**
  * Base class for all "Create" api actions.
@@ -11,7 +11,7 @@ namespace Civi\Api4\Generic\Action;
  *
  * @package Civi\Api4\Generic
  */
-abstract class AbstractCreate extends AbstractAction {
+abstract class AbstractCreateAction extends AbstractAction {
 
   /**
    * Field values to set

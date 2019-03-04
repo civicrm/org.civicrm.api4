@@ -8,45 +8,45 @@ namespace Civi\Api4\Generic;
 abstract class DAOEntity extends AbstractEntity {
 
   /**
-   * @return Action\DAOGet
+   * @return DAOGetAction
    */
   public static function get() {
-    return new Action\DAOGet(self::getEntityName());
+    return new DAOGetAction(self::getEntityName());
   }
 
   /**
-   * @return Action\DAOGetFields
+   * @return DAOGetFieldsAction
    */
   public static function getFields() {
-    return new Action\DAOGetFields(self::getEntityName());
+    return new DAOGetFieldsAction(self::getEntityName());
   }
 
   /**
-   * @return Action\DAOCreate
+   * @return DAOCreateAction
    */
   public static function create() {
-    return new Action\DAOCreate(self::getEntityName());
+    return new DAOCreateAction(self::getEntityName());
   }
 
   /**
-   * @return Action\DAOUpdate
+   * @return DAOUpdateAction
    */
   public static function update() {
-    return new Action\DAOUpdate(self::getEntityName());
+    return new DAOUpdateAction(self::getEntityName());
   }
 
   /**
-   * @return Action\DAODelete
+   * @return DAODeleteAction
    */
   public static function delete() {
-    return new Action\DAODelete(self::getEntityName());
+    return new DAODeleteAction(self::getEntityName());
   }
 
   /**
-   * @return Action\BasicReplace
+   * @return BasicReplaceAction
    */
   public static function replace() {
-    return new Action\BasicReplace(self::getEntityName());
+    return new BasicReplaceAction(self::getEntityName());
   }
 
 }

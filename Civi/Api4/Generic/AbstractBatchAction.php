@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 /**
  * Base class for all batch actions (Update, Delete, Replace).
@@ -9,7 +9,7 @@ namespace Civi\Api4\Generic\Action;
  *
  * @package Civi\Api4\Generic
  */
-abstract class AbstractBatch extends AbstractQuery {
+abstract class AbstractBatchAction extends AbstractQueryAction {
 
   /**
    * Criteria for selecting items to process.

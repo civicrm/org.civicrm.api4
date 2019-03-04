@@ -39,9 +39,9 @@ class ValidateFieldsSubscriber extends AbstractPrepareSubscriber {
    * @throws \Exception
    */
   public function onApiPrepare(PrepareEvent $event) {
-    /** @var \Civi\Api4\Generic\Action\AbstractAction $apiRequest */
+    /** @var \Civi\Api4\Generic\AbstractAction $apiRequest */
     $apiRequest = $event->getApiRequest();
-    if (is_a($apiRequest, 'Civi\Api4\Generic\Action\AbstractAction')) {
+    if (is_a($apiRequest, 'Civi\Api4\Generic\AbstractAction')) {
       $paramInfo = $apiRequest->getParamInfo();
       foreach ($paramInfo as $param => $info) {
         $getParam = 'get' . ucfirst($param);

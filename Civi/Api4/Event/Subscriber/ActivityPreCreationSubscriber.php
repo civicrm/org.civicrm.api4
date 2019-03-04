@@ -2,16 +2,16 @@
 
 namespace Civi\Api4\Event\Subscriber;
 
-use Civi\Api4\Generic\Action\DAOCreate;
+use Civi\Api4\Generic\DAOCreateAction;
 use Civi\Api4\OptionValue;
 
 class ActivityPreCreationSubscriber extends PreCreationSubscriber {
   /**
-   * @param DAOCreate $request
+   * @param DAOCreateAction $request
    * @throws \API_Exception
    * @throws \Exception
    */
-  protected function modify(DAOCreate $request) {
+  protected function modify(DAOCreateAction $request) {
     $activityType = $request->getValue('activity_type');
     if ($activityType) {
       $result = OptionValue::get()
@@ -29,11 +29,11 @@ class ActivityPreCreationSubscriber extends PreCreationSubscriber {
   }
 
   /**
-   * @param DAOCreate $request
+   * @param DAOCreateAction $request
    *
    * @return bool
    */
-  protected function applies(DAOCreate $request) {
+  protected function applies(DAOCreateAction $request) {
     return $request->getEntityName() === 'Activity';
   }
 

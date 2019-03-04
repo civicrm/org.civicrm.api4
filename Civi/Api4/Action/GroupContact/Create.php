@@ -10,7 +10,7 @@ use Civi\Api4\Generic\Result;
  * @method $this setMethod(string $method) Indicate who added/removed the group.
  * @method $this setTracking(string $tracking) Specify ip address or other tracking info.
  */
-class Create extends \Civi\Api4\Generic\Action\DAOCreate {
+class Create extends \Civi\Api4\Generic\DAOCreateAction {
 
   /**
    * String to indicate who added/removed the group.

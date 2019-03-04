@@ -1,14 +1,14 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 use Civi\Api4\Generic\Result;
 
 /**
  * Delete one or more items, based on criteria specified in Where param (required).
  */
-class DAODelete extends AbstractBatch {
-  use Traits\DAOTrait;
+class DAODeleteAction extends AbstractBatchAction {
+  use Traits\DAOActionTrait;
 
   /**
    * Batch delete function

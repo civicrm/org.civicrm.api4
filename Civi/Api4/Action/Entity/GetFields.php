@@ -3,12 +3,11 @@
 namespace Civi\Api4\Action\Entity;
 
 use Civi\Api4\Generic\Result;
-use Civi\Api4\Generic\Action\DAOGetFields;
 
 /**
  * Get fields for all entities
  */
-class GetFields extends DAOGetFields {
+class GetFields extends \Civi\Api4\Generic\DAOGetFieldsAction {
 
   public function _run(Result $result) {
     $action = $this->getActionName();

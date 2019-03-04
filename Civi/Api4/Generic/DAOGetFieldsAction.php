@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 use Civi\Api4\Service\Spec\SpecGatherer;
 use Civi\Api4\Service\Spec\SpecFormatter;
@@ -21,7 +21,7 @@ use Civi\Api4\Generic\Result;
  * @method $this addField(string $value)
  * @method array getFields()
  */
-class DAOGetFields extends AbstractAction {
+class DAOGetFieldsAction extends AbstractAction {
 
   /**
    * Override default to allow open access

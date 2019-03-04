@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 use Civi\Api4\Generic\Result;
 
@@ -11,8 +11,8 @@ use Civi\Api4\Generic\Result;
  *
  * Perform joins on other related entities using a dot notation.
  */
-class DAOGet extends AbstractGet {
-  use Traits\DAOTrait;
+class DAOGetAction extends AbstractGetAction {
+  use Traits\DAOActionTrait;
 
   public function _run(Result $result) {
     $result->exchangeArray($this->getObjects());

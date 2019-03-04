@@ -7,7 +7,7 @@ namespace Civi\Api4\Action\Navigation;
  *
  * Fetch items from the navigation menu. By default this will fetch items from the current domain.
  */
-class Get extends \Civi\Api4\Generic\Action\DAOGet {
+class Get extends \Civi\Api4\Generic\DAOGetAction {
 
   /**
    * @inheritDoc

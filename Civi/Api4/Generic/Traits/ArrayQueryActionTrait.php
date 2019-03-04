@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action\Traits;
+namespace Civi\Api4\Generic\Traits;
 use Civi\API\Exception\NotImplementedException;
 
 /**
@@ -8,7 +8,7 @@ use Civi\API\Exception\NotImplementedException;
  *
  * @package Civi\Api4\Generic
  */
-trait ArrayQueryTrait {
+trait ArrayQueryActionTrait {
 
   /**
    * @param array $values

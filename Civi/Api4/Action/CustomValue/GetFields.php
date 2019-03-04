@@ -9,8 +9,8 @@ use Civi\Api4\Service\Spec\SpecFormatter;
 /**
  * Get fields for a custom group.
  */
-class GetFields extends \Civi\Api4\Generic\Action\DAOGetFields {
-  use \Civi\Api4\Generic\Action\Traits\CustomValueTrait;
+class GetFields extends \Civi\Api4\Generic\DAOGetFieldsAction {
+  use \Civi\Api4\Generic\Traits\CustomValueActionTrait;
 
   public function _run(Result $result) {
     /** @var SpecGatherer $gatherer */

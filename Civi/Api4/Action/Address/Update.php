@@ -7,7 +7,7 @@ use Civi\Api4\Generic\Result;
 /**
  * @inheritDoc
  */
-class Update extends \Civi\Api4\Generic\Action\DAOUpdate {
+class Update extends \Civi\Api4\Generic\DAOUpdateAction {
 
   /**
    * Optional param to indicate you want the street_address field parsed into individual params

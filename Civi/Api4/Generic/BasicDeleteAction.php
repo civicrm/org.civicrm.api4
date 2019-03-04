@@ -1,13 +1,13 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 use Civi\Api4\Generic\Result;
 
 /**
  * Delete one or more items, based on criteria specified in Where param (required).
  */
-class BasicDelete extends AbstractBatch {
+class BasicDeleteAction extends AbstractBatchAction {
 
   /**
    * @var callable

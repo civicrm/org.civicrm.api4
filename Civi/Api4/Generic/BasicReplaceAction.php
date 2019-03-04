@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action;
+namespace Civi\Api4\Generic;
 
 use Civi\Api4\Generic\Result;
 
@@ -11,7 +11,7 @@ use Civi\Api4\Generic\Result;
  * @method $this addRecord($record) Add a record to update.
  * @method $this setReload(bool $reload) Specify whether complete objects will be returned after saving.
  */
-class BasicReplace extends AbstractBatch {
+class BasicReplaceAction extends AbstractBatchAction {
 
   /**
    * Array of records.

@@ -1,11 +1,11 @@
 <?php
-namespace Civi\Api4\Generic\Action\Traits;
+namespace Civi\Api4\Generic\Traits;
 
 use CRM_Utils_Array as UtilsArray;
 use Civi\Api4\Utils\FormattingUtil;
 use Civi\Api4\Query\Api4SelectQuery;
 
-trait DAOTrait {
+trait DAOActionTrait {
 
   /* @var array */
   private $entityFields;

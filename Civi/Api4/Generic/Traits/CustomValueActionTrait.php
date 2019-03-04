@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic\Action\Traits;
+namespace Civi\Api4\Generic\Traits;
 
 use Civi\Api4\Utils\FormattingUtil;
 use Civi\Api4\Utils\CoreUtil;
@@ -10,7 +10,7 @@ use Civi\Api4\Utils\CoreUtil;
  *
  * @package Civi\Api4\Generic
  */
-trait CustomValueTrait {
+trait CustomValueActionTrait {
 
   function __construct($customGroup) {
     $this->customGroup = $customGroup;

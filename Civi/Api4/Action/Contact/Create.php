@@ -5,7 +5,7 @@ namespace Civi\Api4\Action\Contact;
 /**
  * @inheritDoc
  */
-class Create extends \Civi\Api4\Generic\Action\DAOCreate {
+class Create extends \Civi\Api4\Generic\DAOCreateAction {
 
   protected function fillDefaults(&$params) {
     // Guess which type of contact is being created

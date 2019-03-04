@@ -27,7 +27,7 @@
 namespace Civi\Api4\Generic;
 
 use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\Generic\Action\AbstractAction;
+use Civi\Api4\Generic\AbstractAction;
 
 /**
  * Base class for all api entities.

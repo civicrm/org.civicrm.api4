@@ -3,7 +3,6 @@
 namespace Civi\Api4\Action\Entity;
 
 use Civi\Api4\CustomGroup;
-use Civi\Api4\Generic\Action\BasicGet as BasicGet;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**
@@ -12,7 +11,7 @@ use Civi\Api4\Utils\ReflectionUtils;
  * @method $this setIncludeCustom(bool $value)
  * @method bool getIncludeCustom()
  */
-class Get extends BasicGet {
+class Get extends \Civi\Api4\Generic\BasicGetAction {
 
   /**
    * Include custom-field-based pseudo-entities?

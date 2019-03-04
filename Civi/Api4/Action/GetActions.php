@@ -3,14 +3,14 @@
 namespace Civi\Api4\Action;
 
 use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\Generic\Action\AbstractAction;
-use Civi\Api4\Generic\Action\BasicGet;
+use Civi\Api4\Generic\AbstractAction;
+use Civi\Api4\Generic\BasicGetAction;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**
  * Get actions for an entity with a list of accepted params
  */
-class GetActions extends BasicGet {
+class GetActions extends BasicGetAction {
 
   /**
    * Override default to allow open access
