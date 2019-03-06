@@ -3,13 +3,11 @@
 namespace Civi\Api4\Generic;
 
 /**
- * Class BasicBatchAction
+ * Basic action for deleting or performing some other task with a set of records.  Ex:
  *
- * Evaluate a query and execute some function on each matching item. Ex:
- *
- * $myAction = new BasicBatchAction('Entity', 'action', ['id', 'number'], function($item) {
- *   // Do something with $item['id'] and $item['number'].
- *   return ['id' => $item['id'], 'frobnication' => $item['number'] * $item['number']];
+ * $myAction = new BasicBatchAction('Entity', 'action', function($item) {
+ *   // Do something with $item
+ *   $return $item;
  * });
  *
  * @package Civi\Api4\Generic
@@ -25,28 +23,27 @@ class BasicBatchAction extends AbstractBatchAction {
 
   /**
    * BasicBatchAction constructor.
+   *
    * @param string $entityName
    * @param string $actionName
    * @param string|array $select
    *   One or more fields to select from each matching item.
-   *   Ex: 'id'
-   * @param null $doer
-   * Function(array $item, BasicBatchAction $thisAction) => array
+   * @param callable $doer
+   *   Function(array $item, BasicBatchAction $thisAction) => array
    */
-  public function __construct($entityName, $actionName, $select, $doer = NULL) {
+  public function __construct($entityName, $actionName, $select = 'id', $doer = NULL) {
     parent::__construct($entityName, $actionName, $select);
     $this->doer = $doer;
   }
 
   /**
-   * We pass the setter function an array representing one object to update.
+   * We pass the doTask function an array representing one item to update.
    * We expect to get the same format back.
    *
    * @param \Civi\Api4\Generic\Result $result
    */
   public function _run(Result $result) {
-    $items = $this->getBatchRecords();
-    foreach ($items as $item) {
+    foreach ($this->getBatchRecords() as $item) {
       $result[] = $this->doTask($item);
     }
   }

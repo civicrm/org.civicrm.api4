@@ -12,27 +12,35 @@ use Civi\Api4\Generic\Result;
 class BasicUpdateAction extends AbstractUpdateAction {
 
   /**
-   * @var callable|NULL
+   * @var callable
    *
    * Function(array $item, BasicUpdateAction $thisAction) => array
    */
   private $setter;
 
-  public function __construct($entityName, $actionName, $setter = NULL, $idField = 'id') {
-    parent::__construct($entityName, $actionName, $idField);
+  /**
+   * BasicUpdateAction constructor.
+   *
+   * @param string $entityName
+   * @param string $actionName
+   * @param string|array $select
+   *   One or more fields to select from each matching item.
+   * @param callable $setter
+   *   Function(array $item, BasicUpdateAction $thisAction) => array
+   */
+  public function __construct($entityName, $actionName, $select = 'id', $setter = NULL) {
+    parent::__construct($entityName, $actionName, $select);
     $this->setter = $setter;
   }
 
   /**
-   * We pass the setter function an array representing one object to update.
+   * We pass the writeRecord function an array representing one item to update.
    * We expect to get the same format back.
    *
    * @param \Civi\Api4\Generic\Result $result
    */
   public function _run(Result $result) {
-    $items = $this->getBatchRecords();
-
-    foreach ($items as $item) {
+    foreach ($this->getBatchRecords() as $item) {
       $result[] = $this->writeRecord($this->values + $item);
     }
   }

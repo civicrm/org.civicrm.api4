@@ -29,22 +29,25 @@ class MockBasicEntity extends Generic\AbstractEntity {
    * @return Generic\BasicUpdateAction
    */
   public static function update() {
-    return new Generic\BasicUpdateAction('MockBasicEntity', __FUNCTION__, [self::STORAGE_CLASS, 'write']);
+    return new Generic\BasicUpdateAction('MockBasicEntity', __FUNCTION__, 'id', [self::STORAGE_CLASS, 'write']);
   }
 
   /**
-   * @return Generic\BasicDeleteAction
+   * @return Generic\BasicBatchAction
    */
   public static function delete() {
-    return new Generic\BasicDeleteAction('MockBasicEntity', __FUNCTION__, [self::STORAGE_CLASS, 'delete']);
+    return new Generic\BasicBatchAction('MockBasicEntity', __FUNCTION__, 'id', [self::STORAGE_CLASS, 'delete']);
   }
 
   /**
    * @return Generic\BasicBatchAction
    */
   public static function batchFrobnicate() {
-    return new Generic\BasicBatchAction('MockBasicEntity', __FUNCTION__, ['id', 'number'], function($item) {
-      return ['id' => $item['id'], 'frobnication' => $item['number'] * $item['number']];
+    return new Generic\BasicBatchAction('MockBasicEntity', __FUNCTION__, ['id', 'number'], function ($item) {
+      return [
+        'id' => $item['id'],
+        'frobnication' => $item['number'] * $item['number'],
+      ];
     });
   }
 

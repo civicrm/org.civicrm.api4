@@ -25,6 +25,7 @@ class MockEntityDataStorage {
 
   public static function delete($record) {
     unset(self::$data[$record['id']]);
+    return $record;
   }
 
 }

@@ -13,12 +13,19 @@ class BasicGetAction extends AbstractGetAction {
   use Traits\ArrayQueryActionTrait;
 
   /**
-   * @var callable|NULL
+   * @var callable
    *
    * Function(BasicGetAction $thisAction) => array<array>
    */
   private $getter;
 
+  /**
+   * Basic Get constructor.
+   *
+   * @param string $entityName
+   * @param string $actionName
+   * @param callable $getter
+   */
   public function __construct($entityName, $actionName, $getter = NULL) {
     parent::__construct($entityName, $actionName);
     $this->getter = $getter;

@@ -12,17 +12,19 @@ use Civi\Api4\Generic\Result;
 class BasicCreateAction extends AbstractCreateAction {
 
   /**
-   * @var callable|NULL
+   * @var callable
    *
    * Function(array $item, BasicCreateAction $thisAction) => array
    */
   private $setter;
 
   /**
-   * BasicCreate constructor.
+   * Basic Create constructor.
+   *
    * @param string $entityName
    * @param string $actionName
    * @param callable $setter
+   *   Function(array $item, BasicCreateAction $thisAction) => array
    */
   public function __construct($entityName, $actionName, $setter = NULL) {
     parent::__construct($entityName, $actionName);
@@ -30,7 +32,7 @@ class BasicCreateAction extends AbstractCreateAction {
   }
 
   /**
-   * We pass the setter function an array representing one object to write.
+   * We pass the writeRecord function an array representing one item to write.
    * We expect to get the same format back.
    *
    * @param \Civi\Api4\Generic\Result $result
