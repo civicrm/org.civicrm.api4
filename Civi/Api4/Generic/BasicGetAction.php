@@ -13,7 +13,9 @@ class BasicGetAction extends AbstractGetAction {
   use Traits\ArrayQueryActionTrait;
 
   /**
-   * @var callable
+   * @var callable|NULL
+   *
+   * Function(BasicGetAction $thisAction) => array<array>
    */
   private $getter;
 
@@ -35,7 +37,7 @@ class BasicGetAction extends AbstractGetAction {
   /**
    * This Basic Get class can be used in one of two ways:
    *
-   * 1. Use this class directly by passing a callable getter from the Entity class.
+   * 1. Use this class directly by passing a callable ($getter) to the constructor.
    * 2. Extend this class and override this function.
    *
    * Either way, this function should return an array of arrays, each representing one retrieved object.

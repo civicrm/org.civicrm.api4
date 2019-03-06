@@ -12,7 +12,9 @@ use Civi\Api4\Generic\Result;
 class BasicCreateAction extends AbstractCreateAction {
 
   /**
-   * @var callable
+   * @var callable|NULL
+   *
+   * Function(array $item, BasicCreateAction $thisAction) => array
    */
   private $setter;
 
@@ -40,7 +42,7 @@ class BasicCreateAction extends AbstractCreateAction {
   /**
    * This Basic Create class can be used in one of two ways:
    *
-   * 1. Use this class directly by passing a callable setter from the Entity class.
+   * 1. Use this class directly by passing a callable ($setter) to the constructor.
    * 2. Extend this class and override this function.
    *
    * Either way, this function should return an array representing the one new object.

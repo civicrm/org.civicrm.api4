@@ -33,7 +33,7 @@ abstract class AbstractUpdateAction extends AbstractBatchAction {
   protected $reload = FALSE;
 
   /**
-   * @param $key
+   * @param string $key
    *
    * @return mixed|null
    */

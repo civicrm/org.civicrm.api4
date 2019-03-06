@@ -21,7 +21,7 @@ abstract class AbstractCreateAction extends AbstractAction {
   protected $values = [];
 
   /**
-   * @param $key
+   * @param string $key
    *
    * @return mixed|null
    */

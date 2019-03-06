@@ -10,7 +10,7 @@ use Civi\Api4\Generic\Result;
 class BasicDeleteAction extends AbstractBatchAction {
 
   /**
-   * @var callable
+   * @var callable|NULL
    */
   private $deleter;
 
@@ -38,7 +38,7 @@ class BasicDeleteAction extends AbstractBatchAction {
   /**
    * This Basic Delete class can be used in one of two ways:
    *
-   * 1. Use this class directly by passing a callable deleter from the Entity class.
+   * 1. Use this class directly by passing a callable ($deleter) to the constructor.
    * 2. Extend this class and override this function.
    *
    * Either way, this function should return an array representing the one new object.
