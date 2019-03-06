@@ -2,44 +2,32 @@
 
 namespace Civi\Api4;
 
-use Civi\Api4\Action\Entity\Get;
-use Civi\Api4\Action\Entity\GetFields;
-use Civi\Api4\Action\Entity\GetLinks;
-use Civi\Api4\Action\GetActions;
-
 /**
  * Retrieves information about all Api4 entities.
  *
  * @package Civi\Api4
  */
-class Entity {
+class Entity extends Generic\AbstractEntity {
 
   /**
-   * @return Get
+   * @return Action\Entity\Get
    */
   public static function get() {
-    return new Get('Entity');
+    return new Action\Entity\Get('Entity', __FUNCTION__);
   }
 
   /**
-   * @return GetActions
-   */
-  public static function getActions() {
-    return new GetActions('Entity');
-  }
-
-  /**
-   * @return GetFields
+   * @return Action\Entity\GetFields
    */
   public static function getFields() {
-    return new GetFields('Entity');
+    return new Action\Entity\GetFields('Entity', __FUNCTION__);
   }
 
   /**
-   * @return GetFields
+   * @return Action\Entity\GetFields
    */
   public static function getLinks() {
-    return new GetLinks('Entity');
+    return new Action\Entity\GetLinks('Entity', __FUNCTION__);
   }
 
   /**

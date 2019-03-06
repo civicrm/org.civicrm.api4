@@ -9,6 +9,7 @@ eval($bootCode);
 preg_match('/require_once\s*\'(.*)\'/', $bootCode, $matches);
 $loader = require sprintf('%s/vendor/autoload.php', $matches[1]);
 $loader->addPsr4('Civi\\Test\\Api4\\', __DIR__);
+$loader->addPsr4('Civi\\Api4\\', __DIR__ . '/Mock/Api4');
 
 /**
  * Call the "cv" command.
@@ -53,23 +54,3 @@ function cv($cmd, $decode = 'json') {
       throw new RuntimeException("Bad decoder format ($decode)");
   }
 }
-
-/**
- * Autoloader for api4 mock entities.
- *
- * @link http://www.php-fig.org/psr/psr-4/examples/
- */
-function _api4_autoload($class) {
-  $prefix = 'Civi\\Api4\\';
-  $base_dir = __DIR__ . '/Mock/Api4/';
-  $len = strlen($prefix);
-  if (strncmp($prefix, $class, $len) !== 0) {
-    return;
-  }
-  $relative_class = substr($class, $len);
-  $file = $base_dir . str_replace('\\', '/', $relative_class) . '.php';
-  if (file_exists($file)) {
-    require $file;
-  }
-}
-spl_autoload_register('_api4_autoload');

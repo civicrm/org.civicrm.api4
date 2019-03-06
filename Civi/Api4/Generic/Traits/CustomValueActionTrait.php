@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Generic;
+namespace Civi\Api4\Generic\Traits;
 
 use Civi\Api4\Utils\FormattingUtil;
 use Civi\Api4\Utils\CoreUtil;
@@ -10,7 +10,12 @@ use Civi\Api4\Utils\CoreUtil;
  *
  * @package Civi\Api4\Generic
  */
-trait CustomValueCRUD {
+trait CustomValueActionTrait {
+
+  function __construct($customGroup, $actionName) {
+    $this->customGroup = $customGroup;
+    parent::__construct('CustomValue', $actionName, ['id', 'entity_id']);
+  }
 
   /**
    * Custom Group name if this is a CustomValue pseudo-entity.
@@ -22,7 +27,7 @@ trait CustomValueCRUD {
   /**
    * @inheritDoc
    */
-  public function getEntity() {
+  public function getEntityName() {
     return 'Custom_' . $this->getCustomGroup();
   }
 
@@ -32,7 +37,7 @@ trait CustomValueCRUD {
   protected function writeObjects($items) {
     $result = [];
     foreach ($items as $item) {
-      FormattingUtil::formatWriteParams($item, $this->getEntity(), $this->getEntityFields());
+      FormattingUtil::formatWriteParams($item, $this->getEntityName(), $this->getEntityFields());
 
       $result[] = \CRM_Core_BAO_CustomValueTable::setValues($item);
     }
@@ -46,12 +51,12 @@ trait CustomValueCRUD {
     $customTable = CoreUtil::getCustomTableByName($this->getCustomGroup());
     $ids = [];
     foreach ($items as $item) {
-      \CRM_Utils_Hook::pre('delete', $this->getEntity(), $item['id'], \CRM_Core_DAO::$_nullArray);
+      \CRM_Utils_Hook::pre('delete', $this->getEntityName(), $item['id'], \CRM_Core_DAO::$_nullArray);
       \CRM_Utils_SQL_Delete::from($customTable)
         ->where('id = #value')
         ->param('#value', $item['id'])
         ->execute();
-      \CRM_Utils_Hook::post('delete', $this->getEntity(), $item['id'], \CRM_Core_DAO::$_nullArray);
+      \CRM_Utils_Hook::post('delete', $this->getEntityName(), $item['id'], \CRM_Core_DAO::$_nullArray);
       $ids[] = $item['id'];
     }
     return $ids;
@@ -62,19 +67,10 @@ trait CustomValueCRUD {
    */
   protected function fillDefaults(&$params) {
     foreach ($this->getEntityFields() as $name => $field) {
-      if (empty($params[$name])) {
+      if (!isset($params[$name]) && isset($field['default_value'])) {
         $params[$name] = $field['default_value'];
       }
     }
-  }
-
-  /**
-   * @param $customGroup
-   * @return static
-   */
-  public function setCustomGroup($customGroup) {
-    $this->customGroup = $customGroup;
-    return $this;
   }
 
   /**

@@ -3,7 +3,6 @@
 namespace Civi\Api4\Action\Entity;
 
 use Civi\Api4\CustomGroup;
-use Civi\Api4\Action\Get as GenericGet;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**
@@ -12,8 +11,7 @@ use Civi\Api4\Utils\ReflectionUtils;
  * @method $this setIncludeCustom(bool $value)
  * @method bool getIncludeCustom()
  */
-class Get extends GenericGet {
-  use \Civi\Api4\Generic\ArrayQueryTrait;
+class Get extends \Civi\Api4\Generic\BasicGetAction {
 
   /**
    * Include custom-field-based pseudo-entities?
@@ -25,7 +23,7 @@ class Get extends GenericGet {
   /**
    * Scan all api directories to discover entities
    */
-  public function getObjects() {
+  protected function getRecords() {
     $entities = [];
     foreach (explode(PATH_SEPARATOR, get_include_path()) as $path) {
       $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4';
@@ -48,7 +46,7 @@ class Get extends GenericGet {
     }
 
     ksort($entities);
-    return $this->queryArray($entities);
+    return $entities;
   }
 
   /**

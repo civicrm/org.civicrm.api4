@@ -9,15 +9,14 @@ use Civi\Api4\Service\Spec\SpecFormatter;
 /**
  * Get fields for a custom group.
  */
-class GetFields extends \Civi\Api4\Action\GetFields {
-  use \Civi\Api4\Generic\CustomValueCRUD;
+class GetFields extends \Civi\Api4\Generic\DAOGetFieldsAction {
+  use \Civi\Api4\Generic\Traits\CustomValueActionTrait;
 
   public function _run(Result $result) {
     /** @var SpecGatherer $gatherer */
     $gatherer = \Civi::container()->get('spec_gatherer');
     $spec = $gatherer->getSpec('Custom_' . $this->getCustomGroup(), $this->getAction(), $this->includeCustom);
     $specArray = SpecFormatter::specToArray($spec->getFields($this->fields), (array) $this->select, $this->getOptions);
-    $result->action = 'getFields';
     $result->exchangeArray(array_values($specArray));
   }
 

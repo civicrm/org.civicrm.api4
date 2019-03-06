@@ -1,11 +1,10 @@
 <?php
 
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Generic;
 
-use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Service\Spec\SpecGatherer;
-use Civi\Api4\Generic\Result;
 use Civi\Api4\Service\Spec\SpecFormatter;
+use Civi\Api4\Generic\Result;
 
 /**
  * Get fields for an entity.
@@ -22,7 +21,7 @@ use Civi\Api4\Service\Spec\SpecFormatter;
  * @method $this addField(string $value)
  * @method array getFields()
  */
-class GetFields extends AbstractAction {
+class DAOGetFieldsAction extends AbstractAction {
 
   /**
    * Override default to allow open access
@@ -74,10 +73,8 @@ class GetFields extends AbstractAction {
     if ($this->fields) {
       $this->includeCustom = strpos(implode('', $this->fields), '.') !== FALSE;
     }
-    $spec = $gatherer->getSpec($this->getEntity(), $this->getAction(), $this->includeCustom);
+    $spec = $gatherer->getSpec($this->getEntityName(), $this->action, $this->includeCustom);
     $fields = SpecFormatter::specToArray($spec->getFields($this->fields), (array) $this->select, $this->getOptions);
-    // Fixme - $this->action ought to already be set. Might be a name conflict upstream causing it to be nullified?
-    $result->action = 'getFields';
     $result->exchangeArray(array_values($fields));
   }
 

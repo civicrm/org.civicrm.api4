@@ -1,13 +1,14 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\AbstractEntity;
 
 /**
  * MockArrayEntity entity.
  *
+ * @method Generic\BasicGetAction get()
+ *
  * @package Civi\Api4
  */
-class MockArrayEntity extends AbstractEntity {
+class MockArrayEntity extends Generic\AbstractEntity {
 
 }

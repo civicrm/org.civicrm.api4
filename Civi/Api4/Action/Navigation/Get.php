@@ -2,14 +2,12 @@
 
 namespace Civi\Api4\Action\Navigation;
 
-use Civi\Api4\Action\Get as DefaultGet;
-
 /**
  * @inheritDoc
  *
  * Fetch items from the navigation menu. By default this will fetch items from the current domain.
  */
-class Get extends DefaultGet {
+class Get extends \Civi\Api4\Generic\DAOGetAction {
 
   /**
    * @inheritDoc

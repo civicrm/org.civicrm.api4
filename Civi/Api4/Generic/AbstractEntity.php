@@ -27,24 +27,10 @@
 namespace Civi\Api4\Generic;
 
 use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\Action\Create;
-use Civi\Api4\Action\Delete;
-use Civi\Api4\Action\Get;
-use Civi\Api4\Action\GetActions;
-use Civi\Api4\Action\GetFields;
-use Civi\Api4\Action\Update;
-use Civi\Api4\Action\Replace;
+use Civi\Api4\Generic\AbstractAction;
 
 /**
  * Base class for all api entities.
- *
- * @method static Get get
- * @method static GetFields getFields
- * @method static GetActions getActions
- * @method static Create create
- * @method static Update update
- * @method static Delete delete
- * @method static Replace replace
  */
 abstract class AbstractEntity {
 
@@ -57,24 +43,23 @@ abstract class AbstractEntity {
    * @throws NotImplementedException
    */
   public static function __callStatic($action, $args) {
-    // Get entity name from called class
-    $entity = substr(static::class, strrpos(static::class, '\\') + 1);
+    $entity = self::getEntityName();
     // Find class for this action
     $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
-    $genericAction = '\Civi\Api4\Action\\' . ucfirst($action);
     if (class_exists($entityAction)) {
-      $actionObject = new $entityAction($entity);
-    }
-    elseif (class_exists($genericAction)) {
-      $actionObject = new $genericAction($entity);
+      $actionObject = new $entityAction($entity, $action);
     }
     else {
       throw new NotImplementedException("Api $entity $action version 4 does not exist.");
     }
-    if (!empty($args[0]) && is_callable([$actionObject, 'setCustomGroup'])) {
-      $actionObject->setCustomGroup($args[0]);
-    }
     return $actionObject;
+  }
+
+  /**
+   * @return \Civi\Api4\Action\GetActions
+   */
+  public static function getActions() {
+    return new \Civi\Api4\Action\GetActions(self::getEntityName(), __FUNCTION__);
   }
 
   /**
@@ -83,14 +68,21 @@ abstract class AbstractEntity {
    * @return array
    */
   public static function permissions() {
-    // Get entity name from called class
-    $entity = substr(static::class, strrpos(static::class, '\\') + 1);
     $permissions = \CRM_Core_Permission::getEntityActionPermissions();
 
     // For legacy reasons the permissions are keyed by lowercase entity name
-    $lcentity = _civicrm_api_get_entity_name_from_camel($entity);
+    $lcentity = _civicrm_api_get_entity_name_from_camel(self::getEntityName());
     // Merge permissions for this entity with the defaults
     return \CRM_Utils_Array::value($lcentity, $permissions, []) + $permissions['default'];
+  }
+
+  /**
+   * Get entity name from called class
+   *
+   * @return string
+   */
+  protected static function getEntityName() {
+    return substr(static::class, strrpos(static::class, '\\') + 1);
   }
 
 }

@@ -1,35 +1,16 @@
 <?php
 
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Generic;
 
-use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\Result;
 
 /**
  * Create a new object from supplied values.
  *
  * This function will create 1 new object. It cannot be used to update existing objects. Use the Update or Replace actions for that.
- *
- * @method $this setValues(array $values) Set all field values from an array of key => value pairs.
- * @method $this addValue($field, $value) Set field value.
  */
-class Create extends AbstractAction {
-
-  /**
-   * Field values to set
-   *
-   * @var array
-   */
-  protected $values = [];
-
-  /**
-   * @param $key
-   *
-   * @return mixed|null
-   */
-  public function getValue($key) {
-    return isset($this->values[$key]) ? $this->values[$key] : NULL;
-  }
+class DAOCreateAction extends AbstractCreateAction {
+  use Traits\DAOActionTrait;
 
   /**
    * @inheritDoc
@@ -58,7 +39,7 @@ class Create extends AbstractAction {
       }
     }
     if ($unmatched) {
-      throw new \API_Exception("Mandatory values missing from Api4 {$this->getEntity()}::{$this->getAction()}: '" . implode("', '", $unmatched) . "'", "mandatory_missing", array("fields" => $unmatched));
+      throw new \API_Exception("Mandatory values missing from Api4 {$this->getEntityName()}::{$this->getActionName()}: '" . implode("', '", $unmatched) . "'", "mandatory_missing", array("fields" => $unmatched));
     }
   }
 

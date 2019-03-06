@@ -1,25 +1,14 @@
 <?php
 
-namespace Civi\Api4\Action;
+namespace Civi\Api4\Generic;
 
 use Civi\Api4\Generic\Result;
 
 /**
- * Delete one or more items, based on criteria specified in Where param.
+ * Delete one or more items, based on criteria specified in Where param (required).
  */
-class Delete extends Get {
-
-  use \Civi\Api4\Generic\BulkActionTrait;
-
-  /**
-   * Criteria for selecting items to delete.
-   *
-   * @required
-   * @var array
-   */
-  protected $where = [];
-
-  protected $select = ['id'];
+class DAODeleteAction extends AbstractBatchAction {
+  use Traits\DAOActionTrait;
 
   /**
    * Batch delete function
@@ -47,27 +36,27 @@ class Delete extends Get {
     $baoName = $this->getBaoName();
     if (method_exists($baoName, 'del')) {
       foreach ($items as $item) {
-        $args = [$item[$this->idField]];
+        $args = [$item['id']];
         $bao = call_user_func_array([$baoName, 'del'], $args);
         if ($bao !== FALSE) {
-          $ids[] = $item[$this->idField];
+          $ids[] = $item['id'];
         }
         else {
-          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item[$this->idField]}");
+          throw new \API_Exception("Could not delete {$this->getEntityName()} id {$item['id']}");
         }
       }
     }
     else {
       foreach ($items as $item) {
         $bao = new $baoName();
-        $bao->id = $item[$this->idField];
+        $bao->id = $item['id'];
         // delete it
         $action_result = $bao->delete();
         if ($action_result) {
-          $ids[] = $item[$this->idField];
+          $ids[] = $item['id'];
         }
         else {
-          throw new \API_Exception("Could not delete {$this->getEntity()} id {$item[$this->idField]}");
+          throw new \API_Exception("Could not delete {$this->getEntityName()} id {$item['id']}");
         }
       }
     }

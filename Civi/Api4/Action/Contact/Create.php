@@ -2,12 +2,10 @@
 
 namespace Civi\Api4\Action\Contact;
 
-use Civi\Api4\Action\Create as DefaultCreate;
-
 /**
  * @inheritDoc
  */
-class Create extends DefaultCreate {
+class Create extends \Civi\Api4\Generic\DAOCreateAction {
 
   protected function fillDefaults(&$params) {
     // Guess which type of contact is being created

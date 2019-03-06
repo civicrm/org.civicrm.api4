@@ -1,23 +1,61 @@
 <?php
 
 namespace Civi\Api4;
-use Civi\Api4\Generic\AbstractEntity;
-use Civi\Api4\Generic\AbstractAction;
-use Civi\API\Exception\NotImplementedException;
 
 /**
  * CustomGroup entity.
  *
  * @package Civi\Api4
- *
- * @method static \Civi\Api4\Action\CustomValue\Get get(string $customGroupName)
- * @method static \Civi\Api4\Action\CustomValue\GetFields getFields(string $customGroupName)
- * @method static \Civi\Api4\Action\CustomValue\Create create(string $customGroupName)
- * @method static \Civi\Api4\Action\CustomValue\Update update(string $customGroupName)
- * @method static \Civi\Api4\Action\CustomValue\Delete delete(string $customGroupName)
- * @method static \Civi\Api4\Action\CustomValue\Replace replace(string $customGroupName)
  */
-class CustomValue extends AbstractEntity {
+class CustomValue extends Generic\AbstractEntity {
+
+  /**
+   * @param string $customGroup
+   * @return Action\CustomValue\Get
+   */
+  public static function get($customGroup) {
+    return new Action\CustomValue\Get($customGroup, __FUNCTION__);
+  }
+
+  /**
+   * @param string $customGroup
+   * @return Action\CustomValue\GetFields
+   */
+  public static function getFields($customGroup) {
+    return new Action\CustomValue\GetFields($customGroup, __FUNCTION__);
+  }
+
+  /**
+   * @param string $customGroup
+   * @return Action\CustomValue\Create
+   */
+  public static function create($customGroup) {
+    return new Action\CustomValue\Create($customGroup, __FUNCTION__);
+  }
+
+  /**
+   * @param string $customGroup
+   * @return Action\CustomValue\Update
+   */
+  public static function update($customGroup) {
+    return new Action\CustomValue\Update($customGroup, __FUNCTION__);
+  }
+
+  /**
+   * @param string $customGroup
+   * @return Action\CustomValue\Delete
+   */
+  public static function delete($customGroup) {
+    return new Action\CustomValue\Delete($customGroup, __FUNCTION__);
+  }
+
+  /**
+   * @param string $customGroup
+   * @return Action\CustomValue\Replace
+   */
+  public static function replace($customGroup) {
+    return new Action\CustomValue\Replace($customGroup, __FUNCTION__);
+  }
 
   /**
    * @inheritDoc

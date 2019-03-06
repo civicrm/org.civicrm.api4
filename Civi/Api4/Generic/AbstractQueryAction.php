@@ -1,33 +1,22 @@
 <?php
 
-namespace Civi\Api4\Action;
-
-use Civi\Api4\Generic\AbstractAction;
-use Civi\Api4\Query\Api4SelectQuery;
-use Civi\Api4\Generic\Result;
+namespace Civi\Api4\Generic;
 
 /**
- * Retrieve items based on criteria specified in the 'where' param.
+ * Base class for all actions that need to fetch records (Get, Update, Delete, etc)
  *
- * Use the 'select' param to determine which fields are returned, defaults to *.
+ * @package Civi\Api4\Generic
  *
- * Perform joins on other related entities using a dot notation.
- *
- * @method $this addSelect(string $select)
- * @method $this setSelect(array $selects)
  * @method $this setWhere(array $wheres)
+ * @method array getWhere()
  * @method $this setOrderBy(array $order)
+ * @method array getOrderBy()
  * @method $this setLimit(int $limit)
+ * @method int getLimit()
  * @method $this setOffset(int $offset)
+ * @method int getOffset()
  */
-class Get extends AbstractAction {
-
-  /**
-   * Fields to return. Defaults to all non-custom fields.
-   *
-   * @var array
-   */
-  protected $select = [];
+abstract class AbstractQueryAction extends AbstractAction {
 
   /**
    * Criteria for selecting items.
@@ -108,23 +97,6 @@ class Get extends AbstractAction {
   public function addOrderBy($field, $direction = 'ASC') {
     $this->orderBy[$field] = $direction;
     return $this;
-  }
-
-  public function _run(Result $result) {
-    $result->exchangeArray($this->getObjects());
-  }
-
-  /**
-   * @return array|int
-   */
-  protected function getObjects() {
-    $query = new Api4SelectQuery($this->getEntity(), $this->checkPermissions);
-    $query->select = $this->select;
-    $query->where = $this->where;
-    $query->orderBy = $this->orderBy;
-    $query->limit = $this->limit;
-    $query->offset = $this->offset;
-    return $query->run();
   }
 
 }
