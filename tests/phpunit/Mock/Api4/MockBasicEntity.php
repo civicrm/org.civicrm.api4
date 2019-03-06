@@ -40,6 +40,15 @@ class MockBasicEntity extends Generic\AbstractEntity {
   }
 
   /**
+   * @return Generic\BasicBatchAction
+   */
+  public static function batchFrobnicate() {
+    return new Generic\BasicBatchAction('MockBasicEntity', __FUNCTION__, ['id', 'number'], function($item) {
+      return ['id' => $item['id'], 'frobnication' => $item['number'] * $item['number']];
+    });
+  }
+
+  /**
    * @return Generic\BasicReplaceAction
    */
   public static function replace() {

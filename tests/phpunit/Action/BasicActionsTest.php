@@ -70,4 +70,22 @@ class BasicActionsTest extends UnitTestCase {
     $this->assertEquals('two', $newObjects[$objects[3]['id']]['group']);
   }
 
+  public function testBatchFrobnicate() {
+    MockBasicEntity::delete()->addWhere('id', '>', 0)->execute();
+
+    $objects = [
+      ['group' => 'one', 'color' => 'red', 'number' => 10],
+      ['group' => 'one', 'color' => 'blue', 'number' => 20],
+      ['group' => 'one', 'color' => 'green', 'number' => 30],
+      ['group' => 'two', 'color' => 'blue', 'number' => 40],
+    ];
+    foreach ($objects as &$object) {
+      $object['id'] = MockBasicEntity::create()->setValues($object)->execute()->first()['id'];
+    }
+
+    $result = MockBasicEntity::batchFrobnicate()->addWhere('color', '=', 'blue')->execute();
+    $this->assertEquals(2, count($result));
+    $this->assertEquals([400, 1600], \CRM_Utils_Array::collect('frobnication', (array) $result));
+  }
+
 }

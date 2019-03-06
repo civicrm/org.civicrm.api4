@@ -28,10 +28,11 @@ abstract class AbstractBatchAction extends AbstractQueryAction {
    * QueryAction constructor.
    * @param string $entityName
    * @param string $actionName
-   * @param string $idField
+   * @param string|array $select
+   *   One or more fields to load for each item.
    */
-  public function __construct($entityName, $actionName, $idField = 'id') {
-    $this->select = (array) $idField;
+  public function __construct($entityName, $actionName, $select = 'id') {
+    $this->select = (array) $select;
     parent::__construct($entityName, $actionName);
   }
 
