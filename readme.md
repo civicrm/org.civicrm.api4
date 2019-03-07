@@ -75,7 +75,7 @@ Architecture
 * All actions extend the [AbstractAction class](Civi/Api4/Generic/AbstractAction.php). A number of other abstract action classes build on this, e.g. [AbstractBatchAction](Civi/Api4/Generic/AbstractBatchAction.php) is the base class for batch-process actions (`delete`, `update`, `replace`).
 * Most entity classes correspond to a `CRM_Core_DAO` subclass. E.g. `Civi\Api4\Contact` corresponds to `CRM_Contact_DAO_Contact`.
 * A set of **`DAO` action classes** (e.g. [DAOGetAction](Civi/Api4/Generic/DAOGetAction.php), [DAODeleteAction](Civi/Api4/Generic/DAODeleteAction.php)) exists to support DAO-based entities. [DAOGetAction](Civi/Api4/Generic/DAOGetAction.php) uses [`Api4SelectQuery`](Civi/API/Api4SelectQuery.php) to query the database.
-* A set of **`Basic` action classes** (e.g. [BasicGetAction](Civi/Api4/Generic/BasicGetAction.php), [BasicDeleteAction](Civi/Api4/Generic/BasicDeleteAction.php)) exists to support many other use-cases, e.g. file-based entities.
+* A set of **`Basic` action classes** (e.g. [BasicGetAction](Civi/Api4/Generic/BasicGetAction.php), [BasicBatchAction](Civi/Api4/Generic/BasicBatchAction.php)) exists to support many other use-cases, e.g. file-based entities.
 * The base action `execute()` method calls the core [`civi_api_kernel`](https://github.com/civicrm/civicrm-core/blob/master/Civi/API/Kernel.php)
 service `runRequest()` method which invokes hooks and then calls the `_run` method for that action.
 * Each action object has a `_run()` method that accepts and updates a [`Result`](Civi/Api4/Generic/Result.php) object (which is an extended [ArrayObject](http://php.net/manual/en/class.arrayobject.php)).
@@ -95,7 +95,7 @@ Create a class which extends a generic action class (see below). Give it the sam
 
 If your entity has a database table and DAO, simply add a class to the `Civi/Api4` directory of your extension. Give the file and class the same name as your entity, and extend the [DAOEntity class](Civi/Api4/Generic/DAOEntity.php).
 
-For specialty apis, try the `BasicGet`, `BasicCreate`, `BasicUpdate`, `BasicDelete` and `BasicReplace` actions as in [this example](tests/phpunit/Mock/Api4/MockBasicEntity.php).
+For specialty apis, try the `BasicGet`, `BasicCreate`, `BasicUpdate`, `BasicBatch` and `BasicReplace` actions as in [this example](tests/phpunit/Mock/Api4/MockBasicEntity.php).
 
 Tests
 -----
