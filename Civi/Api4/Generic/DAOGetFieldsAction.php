@@ -24,12 +24,6 @@ use Civi\Api4\Generic\Result;
 class DAOGetFieldsAction extends AbstractAction {
 
   /**
-   * Override default to allow open access
-   * @inheritDoc
-   */
-  protected $checkPermissions = FALSE;
-
-  /**
    * Include custom fields for this entity, or only core fields?
    *
    * @var bool
