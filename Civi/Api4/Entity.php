@@ -34,7 +34,9 @@ class Entity extends Generic\AbstractEntity {
    * @return array
    */
   public static function permissions() {
-    return [];
+    return [
+      'default' => ['access CiviCRM']
+    ];
   }
 
 }
