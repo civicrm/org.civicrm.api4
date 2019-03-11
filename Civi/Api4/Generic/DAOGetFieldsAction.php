@@ -10,8 +10,8 @@ use Civi\Api4\Service\Spec\SpecFormatter;
  *
  * @method $this setIncludeCustom(bool $value)
  * @method bool getIncludeCustom()
- * @method $this setOptions(bool $value)
- * @method bool getOptions()
+ * @method $this setloadOptions(bool $value)
+ * @method bool getloadOptions()
  * @method $this setAction(string $value)
  */
 class DAOGetFieldsAction extends BasicGetAction {
@@ -28,7 +28,7 @@ class DAOGetFieldsAction extends BasicGetAction {
    *
    * @var bool
    */
-  protected $getOptions = FALSE;
+  protected $loadOptions = FALSE;
 
   /**
    * Which attributes of the fields should be returned?
@@ -53,7 +53,7 @@ class DAOGetFieldsAction extends BasicGetAction {
       $this->includeCustom = strpos(implode('', $fields), '.') !== FALSE;
     }
     $spec = $gatherer->getSpec($this->getEntityName(), $this->action, $this->includeCustom);
-    return SpecFormatter::specToArray($spec->getFields($fields), (array) $this->select, $this->getOptions);
+    return SpecFormatter::specToArray($spec->getFields($fields), (array) $this->select, $this->loadOptions);
   }
 
   /**

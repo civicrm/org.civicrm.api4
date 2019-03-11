@@ -16,7 +16,7 @@ class GetFields extends \Civi\Api4\Generic\DAOGetFieldsAction {
     /** @var SpecGatherer $gatherer */
     $gatherer = \Civi::container()->get('spec_gatherer');
     $spec = $gatherer->getSpec('Custom_' . $this->getCustomGroup(), $this->getAction(), $this->includeCustom);
-    return SpecFormatter::specToArray($spec->getFields($fields), (array) $this->select, $this->getOptions);
+    return SpecFormatter::specToArray($spec->getFields($fields), (array) $this->select, $this->loadOptions);
   }
 
   /**

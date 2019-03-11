@@ -549,7 +549,7 @@
         function loadFieldOptions(entity) {
           if (!fieldOptions[entity]) {
             fieldOptions[entity] = crmApi4(entity, 'getFields', {
-              getOptions: true,
+              loadOptions: true,
               select: ["name", "options"]
             });
           }
