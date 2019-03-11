@@ -2,7 +2,7 @@
 
 namespace Civi\Api4\Generic;
 
-use Civi\Api4\Generic\Result;
+use Civi\API\Exception\NotImplementedException;
 
 /**
  * Update one or more records with new values.
@@ -55,9 +55,13 @@ class BasicUpdateAction extends AbstractUpdateAction {
    *
    * @param array $item
    * @return array
+   * @throws \Civi\API\Exception\NotImplementedException
    */
   protected function writeRecord($item) {
-    return call_user_func($this->setter, $item, $this);
+    if (is_callable($this->setter)) {
+      return call_user_func($this->setter, $item, $this);
+    }
+    throw new NotImplementedException('Setter function not found for api4 ' . $this->getEntityName() . '::' . $this->getActionName());
   }
 
 }

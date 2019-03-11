@@ -2,7 +2,7 @@
 
 namespace Civi\Api4\Generic;
 
-use Civi\Api4\Generic\Result;
+use Civi\API\Exception\NotImplementedException;
 
 /**
  * Retrieve items based on criteria specified in the 'where' param.
@@ -61,9 +61,13 @@ class BasicGetAction extends AbstractGetAction {
    * Note that if $this->select is empty you should return every field.
    *
    * @return array
+   * @throws \Civi\API\Exception\NotImplementedException
    */
   protected function getRecords() {
-    return call_user_func($this->getter, $this);
+    if (is_callable($this->getter)) {
+      return call_user_func($this->getter, $this);
+    }
+    throw new NotImplementedException('Getter function not found for api4 ' . $this->getEntityName() . '::' . $this->getActionName());
   }
 
   /**
