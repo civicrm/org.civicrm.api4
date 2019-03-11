@@ -6,15 +6,12 @@ use Civi\Api4\Service\Spec\SpecGatherer;
 use Civi\Api4\Service\Spec\SpecFormatter;
 
 /**
- * Get fields for an entity.
+ * Get fields for a DAO-based entity.
  *
  * @method $this setIncludeCustom(bool $value)
  * @method bool getIncludeCustom()
- * @method $this setloadOptions(bool $value)
- * @method bool getloadOptions()
- * @method $this setAction(string $value)
  */
-class DAOGetFieldsAction extends BasicGetAction {
+class DAOGetFieldsAction extends BasicGetFieldsAction {
 
   /**
    * Include custom fields for this entity, or only core fields?
@@ -24,26 +21,10 @@ class DAOGetFieldsAction extends BasicGetAction {
   protected $includeCustom = TRUE;
 
   /**
-   * Fetch option lists for fields?
+   * Get fields for a DAO-based entity
    *
-   * @var bool
+   * @return array
    */
-  protected $loadOptions = FALSE;
-
-  /**
-   * Which attributes of the fields should be returned?
-   *
-   * @options name, title, description, default_value, required, options, data_type, fk_entity, serialize, custom_field_id, custom_group_id
-   *
-   * @var array
-   */
-  protected $select = [];
-
-  /**
-   * @var string
-   */
-  protected $action = 'get';
-
   protected function getRecords() {
     $fields = $this->_itemsToGet('name');
     /** @var SpecGatherer $gatherer */
@@ -56,11 +37,17 @@ class DAOGetFieldsAction extends BasicGetAction {
     return SpecFormatter::specToArray($spec->getFields($fields), (array) $this->select, $this->loadOptions);
   }
 
-  /**
-   * @return string
-   */
-  public function getAction() {
-    return $this->action;
+  public function fields() {
+    $fields = parent::fields();
+    $fields[] = [
+      'name' => 'custom_field_id',
+      'data_type' => 'Integer',
+    ];
+    $fields[] = [
+      'name' => 'custom_group_id',
+      'data_type' => 'Integer',
+    ];
+    return $fields;
   }
 
 }

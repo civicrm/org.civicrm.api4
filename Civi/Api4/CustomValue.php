@@ -21,7 +21,7 @@ class CustomValue extends Generic\AbstractEntity {
    * @param string $customGroup
    * @return Action\CustomValue\GetFields
    */
-  public static function getFields($customGroup) {
+  public static function getFields($customGroup = NULL) {
     return new Action\CustomValue\GetFields($customGroup, __FUNCTION__);
   }
 

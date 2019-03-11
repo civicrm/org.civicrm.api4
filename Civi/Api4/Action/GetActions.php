@@ -78,4 +78,25 @@ class GetActions extends BasicGetAction {
     }
   }
 
+  public function fields() {
+    return [
+      [
+        'name' => 'name',
+        'data_type' => 'String',
+      ],
+      [
+        'name' => 'description',
+        'data_type' => 'String',
+      ],
+      [
+        'name' => 'comment',
+        'data_type' => 'String',
+      ],
+      [
+        'name' => 'params',
+        'data_type' => 'Array',
+      ],
+    ];
+  }
+
 }

@@ -27,33 +27,14 @@
 namespace Civi\Api4\Generic;
 
 use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\Generic\AbstractAction;
 
 /**
  * Base class for all api entities.
+ *
+ * When adding your own api from an extension, extend this class only
+ * if your entity does not have an associated DAO. Otherwise extend DAOEntity.
  */
 abstract class AbstractEntity {
-
-  /**
-   * Magic method to return the action object for an api.
-   *
-   * @param string $action
-   * @param null $args
-   * @return AbstractAction
-   * @throws NotImplementedException
-   */
-  public static function __callStatic($action, $args) {
-    $entity = self::getEntityName();
-    // Find class for this action
-    $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
-    if (class_exists($entityAction)) {
-      $actionObject = new $entityAction($entity, $action);
-    }
-    else {
-      throw new NotImplementedException("Api $entity $action version 4 does not exist.");
-    }
-    return $actionObject;
-  }
 
   /**
    * @return \Civi\Api4\Action\GetActions
@@ -61,6 +42,11 @@ abstract class AbstractEntity {
   public static function getActions() {
     return new \Civi\Api4\Action\GetActions(self::getEntityName(), __FUNCTION__);
   }
+
+  /**
+   * @return \Civi\Api4\Generic\BasicGetFieldsAction
+   */
+  abstract public static function getFields();
 
   /**
    * Returns a list of permissions needed to access the various actions in this api.
@@ -83,6 +69,27 @@ abstract class AbstractEntity {
    */
   protected static function getEntityName() {
     return substr(static::class, strrpos(static::class, '\\') + 1);
+  }
+
+  /**
+   * Magic method to return the action object for an api.
+   *
+   * @param string $action
+   * @param null $args
+   * @return AbstractAction
+   * @throws NotImplementedException
+   */
+  public static function __callStatic($action, $args) {
+    $entity = self::getEntityName();
+    // Find class for this action
+    $entityAction = "\\Civi\\Api4\\Action\\$entity\\" . ucfirst($action);
+    if (class_exists($entityAction)) {
+      $actionObject = new $entityAction($entity, $action);
+    }
+    else {
+      throw new NotImplementedException("Api $entity $action version 4 does not exist.");
+    }
+    return $actionObject;
   }
 
 }

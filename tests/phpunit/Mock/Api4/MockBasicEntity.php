@@ -12,6 +12,30 @@ class MockBasicEntity extends Generic\AbstractEntity {
   const STORAGE_CLASS = '\\Civi\\Test\\Api4\\Mock\\MockEntityDataStorage';
 
   /**
+   * @return Generic\BasicGetFieldsAction
+   */
+  public static function getFields() {
+    return new Generic\BasicGetFieldsAction(static::class, __FUNCTION__, function() {
+      return [
+        [
+          'name' => 'id',
+          'type' => 'Integer',
+        ],
+        [
+          'name' => 'group',
+          'options' => [
+            'one' => 'One',
+            'two' => 'Two',
+          ]
+        ],
+        [
+          'name' => 'color',
+        ],
+      ];
+    });
+  }
+
+  /**
    * @return Generic\BasicGetAction
    */
   public static function get() {
@@ -22,14 +46,14 @@ class MockBasicEntity extends Generic\AbstractEntity {
    * @return Generic\BasicCreateAction
    */
   public static function create() {
-    return new Generic\BasicCreateAction('MockBasicEntity', __FUNCTION__, [self::STORAGE_CLASS, 'write']);
+    return new Generic\BasicCreateAction(static::class, __FUNCTION__, [self::STORAGE_CLASS, 'write']);
   }
 
   /**
    * @return Generic\BasicUpdateAction
    */
   public static function update() {
-    return new Generic\BasicUpdateAction('MockBasicEntity', __FUNCTION__, 'id', [self::STORAGE_CLASS, 'write']);
+    return new Generic\BasicUpdateAction(self::getEntityName(), __FUNCTION__, 'id', [self::STORAGE_CLASS, 'write']);
   }
 
   /**

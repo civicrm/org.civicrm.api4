@@ -40,10 +40,10 @@ abstract class AbstractAction implements \ArrayAccess {
   protected $checkPermissions = TRUE;
 
   /* @var string */
-  private $entityName;
+  protected $_entityName;
 
   /* @var string */
-  private $actionName;
+  protected $_actionName;
 
   /* @var \ReflectionClass */
   private $thisReflection;
@@ -66,8 +66,8 @@ abstract class AbstractAction implements \ArrayAccess {
     if (strpos($entityName, '\\') !== FALSE) {
       $entityName = substr($entityName, strrpos($entityName, '\\') + 1);
     }
-    $this->entityName = $entityName;
-    $this->actionName = $actionName;
+    $this->_entityName = $entityName;
+    $this->_actionName = $actionName;
   }
 
   /**
@@ -202,7 +202,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return string
    */
   public function getEntityName() {
-    return $this->entityName;
+    return $this->_entityName;
   }
 
   /**
@@ -210,7 +210,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return string
    */
   public function getActionName() {
-    return $this->actionName;
+    return $this->_actionName;
   }
 
   /**
@@ -295,7 +295,7 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   public function getPermissions() {
-    $permissions = call_user_func(["\\Civi\\Api4\\" . $this->entityName, 'permissions']);
+    $permissions = call_user_func(["\\Civi\\Api4\\" . $this->_entityName, 'permissions']);
     $permissions += [
       // applies to getFields, getActions, etc.
       'meta' => ['access CiviCRM'],
