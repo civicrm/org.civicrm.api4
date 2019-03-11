@@ -12,12 +12,6 @@ use Civi\Api4\Utils\ReflectionUtils;
  */
 class GetActions extends BasicGetAction {
 
-  /**
-   * Override default to allow open access
-   * @inheritDoc
-   */
-  protected $checkPermissions = FALSE;
-
   private $_actions = [];
 
   private $_actionsToGet = [];
