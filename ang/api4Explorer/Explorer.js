@@ -30,7 +30,10 @@
     $scope.fieldsAndJoins = [];
     $scope.availableParams = {};
     $scope.params = {};
-    var getMetaParams = schema.length ? {} : {schema: ['Entity', 'getFields'], links: ['Entity', 'getLinks']},
+    var getMetaParams = schema.length ? {} : {
+      schema: ['Entity', 'get', {chain: {fields: ['$name', 'getFields']}}],
+      links: ['Entity', 'getLinks']
+    },
       objectParams = {orderBy: 'ASC', values: ''},
       helpTitle = '',
       helpContent = {};
