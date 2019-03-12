@@ -1,6 +1,7 @@
 <?php
 
 namespace Civi\Api4\Generic;
+use Civi\API\Exception\NotImplementedException;
 
 /**
  * Basic action for deleting or performing some other task with a set of records.  Ex:
@@ -59,9 +60,13 @@ class BasicBatchAction extends AbstractBatchAction {
    *
    * @param array $item
    * @return array
+   * @throws \Civi\API\Exception\NotImplementedException
    */
   protected function doTask($item) {
-    return call_user_func($this->doer, $item, $this);
+    if (is_callable($this->doer)) {
+      return call_user_func($this->doer, $item, $this);
+    }
+    throw new NotImplementedException('Doer function not found for api4 ' . $this->getEntityName() . '::' . $this->getActionName());
   }
 
 }

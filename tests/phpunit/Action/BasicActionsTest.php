@@ -88,4 +88,37 @@ class BasicActionsTest extends UnitTestCase {
     $this->assertEquals([400, 1600], \CRM_Utils_Array::collect('frobnication', (array) $result));
   }
 
+  public function testGetFields() {
+    $getFields = MockBasicEntity::getFields()->execute()->indexBy('name');
+
+    $this->assertCount(3, $getFields);
+    $this->assertEquals('Id', $getFields['id']['title']);
+    // Ensure default data type is "String" when not specified
+    $this->assertEquals('String', $getFields['color']['data_type']);
+
+    // Getfields should default to loadOptions = false and reduce them to bool
+    $this->assertTrue($getFields['group']['options']);
+    $this->assertFalse($getFields['id']['options']);
+
+    // Now load options
+    $getFields = MockBasicEntity::getFields()
+      ->addWhere('name', '=', 'group')
+      ->setLoadOptions(TRUE)
+      ->execute()->indexBy('name');
+
+    $this->assertCount(1, $getFields);
+    $this->assertArrayHasKey('one', $getFields['group']['options']);
+  }
+
+  public function testItemsToGet() {
+    $get = MockBasicEntity::get()
+      ->addWhere('color', 'NOT IN', ['yellow'])
+      ->addWhere('color', 'IN', ['red', 'blue'])
+      ->addWhere('color', '!=', 'green')
+      ->addWhere('group', '=', 'one');
+
+    $this->assertEquals(['red', 'blue'], $get->_itemsToGet('color'));
+    $this->assertEquals(['one'], $get->_itemsToGet('group'));
+  }
+
 }

@@ -10,7 +10,7 @@ use Civi\Api4\Generic\Result;
 class GetFields extends \Civi\Api4\Generic\DAOGetFieldsAction {
 
   public function _run(Result $result) {
-    $action = $this->getActionName();
+    $action = $this->getAction();
     $includeCustom = $this->getIncludeCustom();
     $entities = \Civi\Api4\Entity::get()->execute();
     foreach ($entities as $entity) {

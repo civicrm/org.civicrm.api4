@@ -3,14 +3,14 @@
 namespace Civi\Api4\Action\Entity;
 
 use \CRM_Core_DAO_AllCoreTables as AllCoreTables;
-use Civi\Api4\Generic\Result;
 
 /**
  * Get a list of FK links between entities
  */
-class GetLinks extends \Civi\Api4\Generic\AbstractAction {
+class GetLinks extends \Civi\Api4\Generic\BasicGetAction {
 
-  public function _run(Result $result) {
+  public function getRecords() {
+    $result = [];
     /** @var \Civi\Api4\Service\Schema\SchemaMap $schema */
     $schema = \Civi::container()->get('schema_map');
     foreach ($schema->getTables() as $table) {
@@ -31,6 +31,21 @@ class GetLinks extends \Civi\Api4\Generic\AbstractAction {
       }
     }
     return $result;
+  }
+
+  public function fields() {
+    return [
+      [
+        'name' => 'entity',
+      ],
+      [
+        'name' => 'table',
+      ],
+      [
+        'name' => 'links',
+        'data_type' => 'Array',
+      ],
+    ];
   }
 
 }

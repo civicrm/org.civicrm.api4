@@ -14,14 +14,11 @@ class GetActions extends BasicGetAction {
 
   private $_actions = [];
 
-  private $_actionsToGet = [];
+  private $_actionsToGet;
 
   protected function getRecords() {
-    foreach ($this->where as $clause) {
-      if ($clause[0] == 'name' && in_array($clause[1], ['=', 'IN'])) {
-        $this->_actionsToGet = (array) $clause[2];
-      }
-    }
+    $this->_actionsToGet = $this->_itemsToGet('name');
+
     $entityReflection = new \ReflectionClass('\Civi\Api4\\' . $this->getEntityName());
     foreach ($entityReflection->getMethods(\ReflectionMethod::IS_STATIC | \ReflectionMethod::IS_PUBLIC) as $method) {
       $actionName = $method->getName();
@@ -79,6 +76,27 @@ class GetActions extends BasicGetAction {
     }
     catch (NotImplementedException $e) {
     }
+  }
+
+  public function fields() {
+    return [
+      [
+        'name' => 'name',
+        'data_type' => 'String',
+      ],
+      [
+        'name' => 'description',
+        'data_type' => 'String',
+      ],
+      [
+        'name' => 'comment',
+        'data_type' => 'String',
+      ],
+      [
+        'name' => 'params',
+        'data_type' => 'Array',
+      ],
+    ];
   }
 
 }
