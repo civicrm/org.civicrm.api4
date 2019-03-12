@@ -11,6 +11,8 @@ use Civi\Api4\Utils\ReflectionUtils;
  *
  * @method $this setCheckPermissions(bool $value)
  * @method bool getCheckPermissions()
+ * @method $this setChain(array $chain)
+ * @method array getChain()
  */
 abstract class AbstractAction implements \ArrayAccess {
 
@@ -21,13 +23,25 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   protected $version = 4;
 
-  /*
-   * Todo: not implemented.
+  /**
+   * Additional api requests - will be called once per result.
+   *
+   * Keys can be any string - this will be the name given to the output.
+   *
+   * You can reference other values in the api results in this call by prefixing them with $
+   *
+   * For example, you could create a contact and place them in a group by chaining the
+   * GroupContact api to the Contact api:
+   *
+   * Contact::create()
+   *   ->setValue('first_name', 'Hello')
+   *   ->addChain('add_to_a_group', GroupContact::create()->setValue('contact_id', '$id')->setValue('group_id', 123))
+   *
+   * This will substitute the id of the newly created contact with $id.
    *
    * @var array
-   *
-  protected $chain = [];
    */
+  protected $chain = [];
 
   /**
    * Whether to enforce acl permissions based on the current user.
@@ -89,6 +103,20 @@ abstract class AbstractAction implements \ArrayAccess {
     if ($val != 4) {
       throw new \API_Exception('Cannot modify api version');
     }
+    return $this;
+  }
+
+  /**
+   * @param string $name
+   *   Unique name for this chained request
+   * @param \Civi\Api4\Generic\AbstractAction $apiRequest
+   * @param string|int $index
+   *   Either a string for how the results should be indexed e.g. 'name'
+   *   or the index of a single result to return e.g. 0 for the first result.
+   * @return $this
+   */
+  public function addChain($name, AbstractAction $apiRequest, $index = NULL) {
+    $this->chain[$name] = [$apiRequest->getEntityName(), $apiRequest->getActionName(), $apiRequest->getParams(), $index];
     return $this;
   }
 
