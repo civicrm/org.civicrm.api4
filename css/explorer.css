@@ -13,6 +13,9 @@
   position: relative;
   top: -5px;
 }
+#bootstrap-theme .explorer-params-panel .panel-heading .form-inline > .select2-container {
+  max-width: 25% !important;
+}
 #bootstrap-theme.api4-explorer-page .api4-explorer-row {
   display: flex;
 }
@@ -135,6 +138,7 @@
 
 #bootstrap-theme.api4-explorer-page .api4-operator,
 #bootstrap-theme.api4-explorer-page .api4-chain-index,
+#bootstrap-theme.api4-explorer-page .api4-index,
 #bootstrap-theme.api4-explorer-page .api4-chain-action {
   width: 70px;
 }

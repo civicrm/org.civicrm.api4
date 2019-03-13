@@ -109,15 +109,7 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
     $this->resolveChainLinks($entity, $row);
     $this->resolveChainLinks($action, $row);
     $this->resolveChainLinks($params, $row);
-    $result = civicrm_api4($entity, $action, $params);
-    if (is_string($index)) {
-      $result->indexBy($index);
-    }
-    $result = (array) $result;
-    if (is_int($index)) {
-      $result = isset($result[$index]) ? $result[$index] : NULL;
-    }
-    return $result;
+    return (array) civicrm_api4($entity, $action, $params, $index);
   }
 
   /**

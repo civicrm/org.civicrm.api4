@@ -29,6 +29,7 @@
     $scope.fieldsAndJoins = [];
     $scope.availableParams = {};
     $scope.params = {};
+    $scope.index = '';
     var getMetaParams = schema.length ? {} : {
       schema: ['Entity', 'get', {chain: {fields: ['$name', 'getFields']}}],
       links: ['Entity', 'getLinks']
@@ -48,6 +49,12 @@
       javascript: '',
       cli: ''
     };
+
+    $scope.$bindToRoute({
+      expr: 'index',
+      param: 'index',
+      default: ''
+    });
 
     function ucfirst(str) {
       return str[0].toUpperCase() + str.slice(1);
@@ -291,12 +298,13 @@
         entity = $scope.entity,
         action = $scope.action,
         params = getParams(),
+        index = isInt($scope.index) ? +$scope.index : $scope.index,
         result = 'result';
       if ($scope.entity && $scope.action) {
         if (action.slice(0, 3) === 'get') {
           result = lcfirst(action.replace(/s$/, '').slice(3) || entity);
         }
-        var results = lcfirst(pluralize(result)),
+        var results = lcfirst(_.isNumber(index) ? result : pluralize(result)),
           paramCount = _.size(params),
           i = 0;
 
@@ -309,7 +317,11 @@
             code.javascript += ' // IGNORED: permissions are always enforced from client-side requests';
           }
         });
-        code.javascript += "\n}).done(function(" + results + ") {\n  // do something with " + results + " array\n});";
+        code.javascript += "\n}";
+        if (index || index === 0) {
+          code.javascript += ', ' + JSON.stringify(index);
+        }
+        code.javascript += ").done(function(" + results + ") {\n  // do something with " + results + " array\n});";
 
         // Write php code
         if (entity.substr(0, 7) !== 'Custom_') {
@@ -336,7 +348,16 @@
             code.php += "\n  ->set" + ucfirst(key) + '(' + phpFormat(param, 4) + ')';
           }
         });
-        code.php += "\n  ->execute();\nforeach ($" + results + ' as $' + result + ') {\n  // do something\n}';
+        code.php += "\n  ->execute()";
+        if (_.isNumber(index)) {
+          code.php += !index ? '\n  ->first()' : (index === -1 ? '\n  ->last()' : '\n  ->itemAt(' + index + ')');
+        } else if (index) {
+          code.php += "\n  ->indexBy('" + index + "')";
+        }
+        code.php += ";\n";
+        if (!_.isNumber(index)) {
+          code.php += "foreach ($" + results + ' as $' + ((_.isString(index) && index) ? index + ' => $' : '') + result + ') {\n  // do something\n}';
+        }
 
         // Write cli code
         code.cli = 'cv api4 ' + entity + '.' + action + " '" + stringify(params) + "'";
@@ -344,15 +365,27 @@
       $scope.code = code;
     }
 
+    function isInt(value) {
+      if (_.isNumber(value)) {
+        return true;
+      }
+      if (!_.isString(value)) {
+        return false;
+      }
+      return /^-{0,1}\d+$/.test(value);
+    }
+
     $scope.execute = function() {
       $scope.status = 'warning';
       $scope.loading = true;
-      crmApi4($scope.entity, $scope.action, getParams())
+      crmApi4($scope.entity, $scope.action, getParams(), $scope.index)
         .then(function(data) {
-          var meta = {length: data.length},
+          var meta = {length: _.size(data)},
             result = JSON.stringify(data, null, 2);
-          data.length = 0;
-          _.assign(meta, data);
+          if (_.isArray(data)) {
+            data.length = 0;
+            _.assign(meta, data);
+          }
           $scope.loading = false;
           $scope.status = 'success';
           $scope.result = [JSON.stringify(meta).replace('{', '').replace(/}$/, ''), result];
@@ -456,7 +489,14 @@
       }
     });
 
+    $scope.indexHelp = {
+      description: ts('(string|int) Index results or select by index.'),
+      comment: ts('Pass a string to index the results by a field value. E.g. index: "name" will return an associative array with names as keys.') + '\n\n' +
+        ts('Pass an integer to return a single result; e.g. index: 0 will return the first result, 1 will return the second, and -1 will return the last.')
+    };
+
     $scope.$watch('params', writeCode, true);
+    $scope.$watch('index', writeCode);
     writeCode();
 
   });

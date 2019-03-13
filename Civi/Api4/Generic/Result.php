@@ -61,10 +61,20 @@ class Result extends \ArrayObject {
    * @return array|null
    */
   public function last() {
-    foreach (array_slice((array) $this, -1) as $values) {
-      return $values;
+    $items = $this->getArrayCopy();
+    return array_pop($items);
+  }
+
+  /**
+   * @param int $index
+   * @return array|null
+   */
+  public function itemAt($index) {
+    $length = $index < 0 ? 0 - $index : $index + 1;
+    if ($length > count($this)) {
+      return NULL;
     }
-    return NULL;
+    return array_slice(array_values($this->getArrayCopy()), $index, 1)[0];
   }
 
   /**
