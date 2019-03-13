@@ -24,7 +24,6 @@
   angular.module('api4Explorer').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, crmUiHelp, crmApi4) {
     var ts = $scope.ts = CRM.ts('api4');
     $scope.entities = entities;
-    $scope.operators = arrayToSelect2(CRM.vars.api4.operators);
     $scope.actions = actions;
     $scope.fields = [];
     $scope.fieldsAndJoins = [];
@@ -34,7 +33,7 @@
       schema: ['Entity', 'get', {chain: {fields: ['$name', 'getFields']}}],
       links: ['Entity', 'getLinks']
     },
-      objectParams = {orderBy: 'ASC', values: ''},
+      objectParams = {orderBy: 'ASC', values: '', chain: ['Entity', 'get', '{}']},
       helpTitle = '',
       helpContent = {};
     $scope.helpTitle = '';
@@ -91,9 +90,9 @@
       return container;
     }
 
-    function getFieldList() {
+    function getFieldList(source) {
       var fields = [];
-      formatForSelect2(entityFields($scope.entity), fields, 'name', ['description', 'required', 'default_value']);
+      formatForSelect2(source, fields, 'name', ['description', 'required', 'default_value']);
       return fields;
     }
 
@@ -137,22 +136,27 @@
       return fields;
     };
 
-    $scope.selectOptions = function() {
-      if ($scope.availableParams.select.options) {
-        return arrayToSelect2($scope.availableParams.select.options);
-      } else {
-        return $scope.fieldsAndJoins;
-      }
-    };
-
     $scope.formatSelect2Item = function(row) {
       return _.escape(row.text) +
         (isFieldRequiredForCreate(row) ? '<span class="crm-marker"> *</span>' : '') +
         (row.description ? '<div class="crm-select2-row-description"><p>' + _.escape(row.description) + '</p></div>' : '');
     };
 
+    $scope.clearParam = function(name) {
+      $scope.params[name] = $scope.availableParams[name].default;
+    };
+
+    $scope.isSpecial = function(name) {
+      var specialParams = ['select', 'fields', 'action', 'where', 'values', 'orderBy', 'chain'];
+      return _.contains(specialParams, name);
+    };
+
     function isFieldRequiredForCreate(field) {
       return field.required && !field.default_value;
+    }
+
+    function getEntity(entityName) {
+      return _.findWhere(schema, {name: entityName || $scope.entity});
     }
 
     // Get all params that have been set
@@ -160,14 +164,18 @@
       var params = {};
       _.each($scope.params, function(param, key) {
         if (param != $scope.availableParams[key].default && !(typeof param === 'object' && _.isEmpty(param))) {
-          params[key] = param;
+          if (_.contains($scope.availableParams[key].type, 'array') && (typeof objectParams[key] === 'undefined')) {
+            params[key] = parseYaml(_.cloneDeep(param));
+          } else {
+            params[key] = param;
+          }
         }
       });
       _.each(objectParams, function(defaultVal, key) {
         if (params[key]) {
           var newParam = {};
           _.each(params[key], function(item) {
-            newParam[item[0]] = parseYaml(item[1]);
+            newParam[item[0]] = parseYaml(_.cloneDeep(item[1]));
           });
           params[key] = newParam;
         }
@@ -179,6 +187,9 @@
     }
 
     function parseYaml(input) {
+      if (typeof input === 'undefined') {
+        return undefined;
+      }
       if (_.isObject(input) || _.isArray(input)) {
         _.each(input, function(item, index) {
           input[index] = parseYaml(item);
@@ -194,10 +205,12 @@
 
     function selectAction() {
       $scope.action = $routeParams.api4action;
-      $scope.fields = getFieldList();
-      $scope.fieldsAndJoins = addJoins($scope.fields);
+      $scope.fieldsAndJoins = [];
+      formatForSelect2(getEntity().actions, actions, 'name', ['description', 'params']);
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
+        $scope.fields = getFieldList(getEntity().fields);
+        $scope.fieldsAndJoins = addJoins($scope.fields);
         _.each(actionInfo.params, function (param, name) {
           var format,
             defaultVal = _.cloneDeep(param.default);
@@ -224,7 +237,7 @@
               param: name,
               format: format,
               default: defaultVal,
-              deep: name === 'where'
+              deep: format === 'json'
             });
           }
           if (typeof objectParams[name] !== 'undefined') {
@@ -240,12 +253,13 @@
               var field = value;
               $timeout(function() {
                 if (field) {
-                  var defaultOp = objectParams[name];
-                  if (_.isEmpty($scope.params[name])) {
-                    $scope.params[name] = [[field, defaultOp]];
-                  } else {
-                    $scope.params[name].push([field, defaultOp]);
+                  var defaultOp = _.cloneDeep(objectParams[name]);
+                  if (name === 'chain') {
+                    var num = $scope.params.chain.length;
+                    defaultOp[0] = field;
+                    field = 'name_me_' + num;
                   }
+                  $scope.params[name].push([field, defaultOp]);
                   $scope.controls[name] = null;
                 }
               });
@@ -305,7 +319,7 @@
         }
         _.each(params, function(param, key) {
           var val = '';
-          if (typeof objectParams[key] !== 'undefined') {
+          if (typeof objectParams[key] !== 'undefined' && key !== 'chain') {
             _.each(param, function(item, index) {
               val = stringify(index) + ', ' + stringify(item);
               code.php += "\n  ->add" + ucfirst(key).replace(/s$/, '') + '(' + val + ')';
@@ -319,7 +333,7 @@
               }
             });
           } else {
-            code.php += "\n  ->set" + ucfirst(key) + '(' + stringify(param) + ')';
+            code.php += "\n  ->set" + ucfirst(key) + '(' + phpFormat(param, 4) + ')';
           }
         });
         code.php += "\n  ->execute();\nforeach ($" + results + ' as $' + result + ') {\n  // do something\n}';
@@ -349,6 +363,29 @@
         });
     };
 
+    /**
+     * Format value to look like php code
+     */
+    function phpFormat(val, indent) {
+      indent = (typeof indent === 'number') ? _.repeat(' ', indent) : (indent || '');
+      var ret = '',
+        baseLine = indent ? indent.slice(0, -2) : '',
+        newLine = indent ? '\n' : '';
+      if ($.isPlainObject(val)) {
+        $.each(val, function(k, v) {
+          ret += (ret ? ', ' : '') + newLine + indent + "'" + k + "' => " + phpFormat(v);
+        });
+        return '[' + ret + newLine + baseLine + ']';
+      }
+      if ($.isArray(val)) {
+        $.each(val, function(k, v) {
+          ret += (ret ? ', ' : '') + newLine + indent + phpFormat(v);
+        });
+        return '[' + ret + newLine + baseLine + ']';
+      }
+      return JSON.stringify(val).replace(/\$/g, '\\$');
+    }
+
     function fetchMeta() {
       crmApi4(getMetaParams)
         .then(function(data) {
@@ -364,15 +401,15 @@
             links = data.links;
           }
           if (data.actions) {
-            formatForSelect2(data.actions, actions, 'name', ['description', 'params']);
+            getEntity().actions = data.actions;
             selectAction();
           }
         });
     }
 
     // Help for an entity with no action selected
-    function showEntityHelp(entity) {
-      var entityInfo = _.findWhere(schema, {name: entity});
+    function showEntityHelp(entityName) {
+      var entityInfo = getEntity(entityName);
       $scope.helpTitle = helpTitle = $scope.entity;
       $scope.helpContent = helpContent = {
         description: entityInfo.description,
@@ -386,11 +423,11 @@
       if (getMetaParams.schema) {
         fetchMeta();
       }
-    } else if (!actions.length) {
+    } else if (!actions.length && (!schema.length || !getEntity().actions)) {
       if (getMetaParams.schema) {
         entities.push({id: $scope.entity, text: $scope.entity});
       }
-      getMetaParams.actions = [$scope.entity, 'getActions'];
+      getMetaParams.actions = [$scope.entity, 'getActions', {chain: {fields: [$scope.entity, 'getFields', {action: '$name'}]}}];
       fetchMeta();
     } else {
       selectAction();
@@ -434,6 +471,7 @@
         var ts = scope.ts = CRM.ts('api4');
         scope.newClause = '';
         scope.conjunctions = ['AND', 'OR', 'NOT'];
+        scope.operators = CRM.vars.api4.operators;
 
         scope.addGroup = function(op) {
           scope.data.where.push([op, []]);
@@ -570,8 +608,50 @@
     };
   });
 
-  function entityFields(entity) {
-    return _.result(_.findWhere(schema, {name: entity}), 'fields');
+
+  angular.module('api4Explorer').directive('api4ExpChain', function(crmApi4) {
+    return {
+      scope: {
+        chain: '=api4ExpChain',
+        entities: '='
+      },
+      templateUrl: '~/api4Explorer/Chain.html',
+      link: function (scope, element, attrs) {
+        var ts = scope.ts = CRM.ts('api4');
+
+        function changeEntity(newEntity) {
+          if (!newEntity) {
+            scope.chain[0] = '';
+            return;
+          }
+          if (getEntity(newEntity).actions) {
+            setActions();
+          } else {
+            crmApi4(newEntity, 'getActions', {chain: {fields: [newEntity, 'getFields', {action: '$name'}]}})
+              .then(function(data) {
+                getEntity(data.entity).actions = data;
+                if (data.entity === scope.chain[1][0]) {
+                  setActions();
+                }
+              });
+          }
+        }
+
+        function setActions() {
+          scope.actions = _.pluck(getEntity(scope.chain[1][0]).actions, 'name');
+        }
+
+        scope.$watch("chain[1][0]", changeEntity);
+      }
+    };
+  });
+
+  function getEntity(entityName) {
+    return _.findWhere(schema, {name: entityName});
+  }
+
+  function entityFields(entityName) {
+    return _.result(getEntity(entityName), 'fields');
   }
 
   // Collapsible optgroups for select2
