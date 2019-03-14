@@ -97,8 +97,9 @@
     }
 
     function getFieldList(source) {
-      var fields = [];
-      formatForSelect2(source, fields, 'name', ['description', 'required', 'default_value']);
+      var fields = [],
+        fieldInfo = _.findWhere(getEntity().actions, {name: $scope.action}).fields;
+      formatForSelect2(fieldInfo, fields, 'name', ['description', 'required', 'default_value']);
       return fields;
     }
 
@@ -215,8 +216,12 @@
       formatForSelect2(getEntity().actions, actions, 'name', ['description', 'params']);
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
-        $scope.fields = getFieldList(getEntity().fields);
-        $scope.fieldsAndJoins = addJoins($scope.fields);
+        $scope.fields = getFieldList();
+        if (_.contains(['get', 'update', 'delete', 'replace'], $scope.action)) {
+          $scope.fieldsAndJoins = addJoins($scope.fields);
+        } else {
+          $scope.fieldsAndJoins = $scope.fields;
+        }
         _.each(actionInfo.params, function (param, name) {
           var format,
             defaultVal = _.cloneDeep(param.default);

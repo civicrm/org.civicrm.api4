@@ -9,12 +9,16 @@ use Civi\Api4\Generic\Result;
  *
  * @method $this setRecords(array $records) Array of records.
  * @method $this addRecord($record) Add a record to update.
+ * @method array getRecords()
  * @method $this setReload(bool $reload) Specify whether complete objects will be returned after saving.
+ * @method bool getReload()
  */
 class BasicReplaceAction extends AbstractBatchAction {
 
   /**
    * Array of records.
+   *
+   * Should be in the same format as returned by Get.
    *
    * @required
    * @var array
