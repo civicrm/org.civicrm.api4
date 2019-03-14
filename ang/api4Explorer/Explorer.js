@@ -13,13 +13,12 @@
 
 
   angular.module('api4Explorer').config(function($routeProvider) {
-      $routeProvider.when('/explorer/:api4entity?/:api4action?', {
-        controller: 'Api4Explorer',
-        templateUrl: '~/api4Explorer/Explorer.html',
-        reloadOnSearch: false
-      });
-    }
-  );
+    $routeProvider.when('/explorer/:api4entity?/:api4action?', {
+      controller: 'Api4Explorer',
+      templateUrl: '~/api4Explorer/Explorer.html',
+      reloadOnSearch: false
+    });
+  });
 
   angular.module('api4Explorer').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, crmUiHelp, crmApi4) {
     var ts = $scope.ts = CRM.ts('api4');
