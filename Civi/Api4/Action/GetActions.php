@@ -68,7 +68,7 @@ class GetActions extends BasicGetAction {
             unset($actionInfo['method']);
             $this->_actions[$actionName] += $actionInfo;
           }
-          if (!$this->select || in_array('name', $this->select)) {
+          if (!$this->select || in_array('params', $this->select)) {
             $this->_actions[$actionName]['params'] = $action->getParamInfo();
           }
         }

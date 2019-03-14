@@ -43,6 +43,9 @@ abstract class AbstractQueryAction extends AbstractAction {
    *
    * Defaults to unlimited.
    *
+   * Note: the Api Explorer sets this to 25 by default to avoid timeouts.
+   * Change or remove this default for your application code.
+   *
    * @var int
    */
   protected $limit = 0;

@@ -13,25 +13,27 @@
 
 
   angular.module('api4Explorer').config(function($routeProvider) {
-      $routeProvider.when('/explorer/:api4entity?/:api4action?', {
-        controller: 'Api4Explorer',
-        templateUrl: '~/api4Explorer/Explorer.html',
-        reloadOnSearch: false
-      });
-    }
-  );
+    $routeProvider.when('/explorer/:api4entity?/:api4action?', {
+      controller: 'Api4Explorer',
+      templateUrl: '~/api4Explorer/Explorer.html',
+      reloadOnSearch: false
+    });
+  });
 
   angular.module('api4Explorer').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, crmUiHelp, crmApi4) {
     var ts = $scope.ts = CRM.ts('api4');
     $scope.entities = entities;
-    $scope.operators = arrayToSelect2(CRM.vars.api4.operators);
     $scope.actions = actions;
     $scope.fields = [];
     $scope.fieldsAndJoins = [];
     $scope.availableParams = {};
     $scope.params = {};
-    var getMetaParams = schema.length ? {} : {schema: ['Entity', 'getFields'], links: ['Entity', 'getLinks']},
-      objectParams = {orderBy: 'ASC', values: ''},
+    $scope.index = '';
+    var getMetaParams = schema.length ? {} : {
+      schema: ['Entity', 'get', {chain: {fields: ['$name', 'getFields']}}],
+      links: ['Entity', 'getLinks']
+    },
+      objectParams = {orderBy: 'ASC', values: '', chain: ['Entity', 'get', '{}']},
       helpTitle = '',
       helpContent = {};
     $scope.helpTitle = '';
@@ -46,6 +48,12 @@
       javascript: '',
       cli: ''
     };
+
+    $scope.$bindToRoute({
+      expr: 'index',
+      param: 'index',
+      default: ''
+    });
 
     function ucfirst(str) {
       return str[0].toUpperCase() + str.slice(1);
@@ -88,9 +96,10 @@
       return container;
     }
 
-    function getFieldList() {
-      var fields = [];
-      formatForSelect2(entityFields($scope.entity), fields, 'name', ['description', 'required', 'default_value']);
+    function getFieldList(source) {
+      var fields = [],
+        fieldInfo = _.findWhere(getEntity().actions, {name: $scope.action}).fields;
+      formatForSelect2(fieldInfo, fields, 'name', ['description', 'required', 'default_value']);
       return fields;
     }
 
@@ -134,22 +143,27 @@
       return fields;
     };
 
-    $scope.selectOptions = function() {
-      if ($scope.availableParams.select.options) {
-        return arrayToSelect2($scope.availableParams.select.options);
-      } else {
-        return $scope.fieldsAndJoins;
-      }
-    };
-
     $scope.formatSelect2Item = function(row) {
       return _.escape(row.text) +
         (isFieldRequiredForCreate(row) ? '<span class="crm-marker"> *</span>' : '') +
         (row.description ? '<div class="crm-select2-row-description"><p>' + _.escape(row.description) + '</p></div>' : '');
     };
 
+    $scope.clearParam = function(name) {
+      $scope.params[name] = $scope.availableParams[name].default;
+    };
+
+    $scope.isSpecial = function(name) {
+      var specialParams = ['select', 'fields', 'action', 'where', 'values', 'orderBy', 'chain'];
+      return _.contains(specialParams, name);
+    };
+
     function isFieldRequiredForCreate(field) {
       return field.required && !field.default_value;
+    }
+
+    function getEntity(entityName) {
+      return _.findWhere(schema, {name: entityName || $scope.entity});
     }
 
     // Get all params that have been set
@@ -157,14 +171,18 @@
       var params = {};
       _.each($scope.params, function(param, key) {
         if (param != $scope.availableParams[key].default && !(typeof param === 'object' && _.isEmpty(param))) {
-          params[key] = param;
+          if (_.contains($scope.availableParams[key].type, 'array') && (typeof objectParams[key] === 'undefined')) {
+            params[key] = parseYaml(_.cloneDeep(param));
+          } else {
+            params[key] = param;
+          }
         }
       });
       _.each(objectParams, function(defaultVal, key) {
         if (params[key]) {
           var newParam = {};
           _.each(params[key], function(item) {
-            newParam[item[0]] = parseYaml(item[1]);
+            newParam[item[0]] = parseYaml(_.cloneDeep(item[1]));
           });
           params[key] = newParam;
         }
@@ -176,6 +194,9 @@
     }
 
     function parseYaml(input) {
+      if (typeof input === 'undefined') {
+        return undefined;
+      }
       if (_.isObject(input) || _.isArray(input)) {
         _.each(input, function(item, index) {
           input[index] = parseYaml(item);
@@ -191,10 +212,16 @@
 
     function selectAction() {
       $scope.action = $routeParams.api4action;
-      $scope.fields = getFieldList();
-      $scope.fieldsAndJoins = addJoins($scope.fields);
+      $scope.fieldsAndJoins = [];
+      formatForSelect2(getEntity().actions, actions, 'name', ['description', 'params']);
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
+        $scope.fields = getFieldList();
+        if (_.contains(['get', 'update', 'delete', 'replace'], $scope.action)) {
+          $scope.fieldsAndJoins = addJoins($scope.fields);
+        } else {
+          $scope.fieldsAndJoins = $scope.fields;
+        }
         _.each(actionInfo.params, function (param, name) {
           var format,
             defaultVal = _.cloneDeep(param.default);
@@ -221,7 +248,7 @@
               param: name,
               format: format,
               default: defaultVal,
-              deep: name === 'where'
+              deep: format === 'json'
             });
           }
           if (typeof objectParams[name] !== 'undefined') {
@@ -237,12 +264,13 @@
               var field = value;
               $timeout(function() {
                 if (field) {
-                  var defaultOp = objectParams[name];
-                  if (_.isEmpty($scope.params[name])) {
-                    $scope.params[name] = [[field, defaultOp]];
-                  } else {
-                    $scope.params[name].push([field, defaultOp]);
+                  var defaultOp = _.cloneDeep(objectParams[name]);
+                  if (name === 'chain') {
+                    var num = $scope.params.chain.length;
+                    defaultOp[0] = field;
+                    field = 'name_me_' + num;
                   }
+                  $scope.params[name].push([field, defaultOp]);
                   $scope.controls[name] = null;
                 }
               });
@@ -274,12 +302,13 @@
         entity = $scope.entity,
         action = $scope.action,
         params = getParams(),
+        index = isInt($scope.index) ? +$scope.index : $scope.index,
         result = 'result';
       if ($scope.entity && $scope.action) {
         if (action.slice(0, 3) === 'get') {
           result = lcfirst(action.replace(/s$/, '').slice(3) || entity);
         }
-        var results = lcfirst(pluralize(result)),
+        var results = lcfirst(_.isNumber(index) ? result : pluralize(result)),
           paramCount = _.size(params),
           i = 0;
 
@@ -292,7 +321,11 @@
             code.javascript += ' // IGNORED: permissions are always enforced from client-side requests';
           }
         });
-        code.javascript += "\n}).done(function(" + results + ") {\n  // do something with " + results + " array\n});";
+        code.javascript += "\n}";
+        if (index || index === 0) {
+          code.javascript += ', ' + JSON.stringify(index);
+        }
+        code.javascript += ").done(function(" + results + ") {\n  // do something with " + results + " array\n});";
 
         // Write php code
         if (entity.substr(0, 7) !== 'Custom_') {
@@ -302,7 +335,7 @@
         }
         _.each(params, function(param, key) {
           var val = '';
-          if (typeof objectParams[key] !== 'undefined') {
+          if (typeof objectParams[key] !== 'undefined' && key !== 'chain') {
             _.each(param, function(item, index) {
               val = stringify(index) + ', ' + stringify(item);
               code.php += "\n  ->add" + ucfirst(key).replace(/s$/, '') + '(' + val + ')';
@@ -316,10 +349,19 @@
               }
             });
           } else {
-            code.php += "\n  ->set" + ucfirst(key) + '(' + stringify(param) + ')';
+            code.php += "\n  ->set" + ucfirst(key) + '(' + phpFormat(param, 4) + ')';
           }
         });
-        code.php += "\n  ->execute();\nforeach ($" + results + ' as $' + result + ') {\n  // do something\n}';
+        code.php += "\n  ->execute()";
+        if (_.isNumber(index)) {
+          code.php += !index ? '\n  ->first()' : (index === -1 ? '\n  ->last()' : '\n  ->itemAt(' + index + ')');
+        } else if (index) {
+          code.php += "\n  ->indexBy('" + index + "')";
+        }
+        code.php += ";\n";
+        if (!_.isNumber(index)) {
+          code.php += "foreach ($" + results + ' as $' + ((_.isString(index) && index) ? index + ' => $' : '') + result + ') {\n  // do something\n}';
+        }
 
         // Write cli code
         code.cli = 'cv api4 ' + entity + '.' + action + " '" + stringify(params) + "'";
@@ -327,15 +369,27 @@
       $scope.code = code;
     }
 
+    function isInt(value) {
+      if (_.isNumber(value)) {
+        return true;
+      }
+      if (!_.isString(value)) {
+        return false;
+      }
+      return /^-{0,1}\d+$/.test(value);
+    }
+
     $scope.execute = function() {
       $scope.status = 'warning';
       $scope.loading = true;
-      crmApi4($scope.entity, $scope.action, getParams())
+      crmApi4($scope.entity, $scope.action, getParams(), $scope.index)
         .then(function(data) {
-          var meta = {length: data.length},
+          var meta = {length: _.size(data)},
             result = JSON.stringify(data, null, 2);
-          data.length = 0;
-          _.assign(meta, data);
+          if (_.isArray(data)) {
+            data.length = 0;
+            _.assign(meta, data);
+          }
           $scope.loading = false;
           $scope.status = 'success';
           $scope.result = [JSON.stringify(meta).replace('{', '').replace(/}$/, ''), result];
@@ -345,6 +399,29 @@
           $scope.result = [JSON.stringify(data, null, 2)];
         });
     };
+
+    /**
+     * Format value to look like php code
+     */
+    function phpFormat(val, indent) {
+      indent = (typeof indent === 'number') ? _.repeat(' ', indent) : (indent || '');
+      var ret = '',
+        baseLine = indent ? indent.slice(0, -2) : '',
+        newLine = indent ? '\n' : '';
+      if ($.isPlainObject(val)) {
+        $.each(val, function(k, v) {
+          ret += (ret ? ', ' : '') + newLine + indent + "'" + k + "' => " + phpFormat(v);
+        });
+        return '[' + ret + newLine + baseLine + ']';
+      }
+      if ($.isArray(val)) {
+        $.each(val, function(k, v) {
+          ret += (ret ? ', ' : '') + newLine + indent + phpFormat(v);
+        });
+        return '[' + ret + newLine + baseLine + ']';
+      }
+      return JSON.stringify(val).replace(/\$/g, '\\$');
+    }
 
     function fetchMeta() {
       crmApi4(getMetaParams)
@@ -361,15 +438,15 @@
             links = data.links;
           }
           if (data.actions) {
-            formatForSelect2(data.actions, actions, 'name', ['description', 'params']);
+            getEntity().actions = data.actions;
             selectAction();
           }
         });
     }
 
     // Help for an entity with no action selected
-    function showEntityHelp(entity) {
-      var entityInfo = _.findWhere(schema, {name: entity});
+    function showEntityHelp(entityName) {
+      var entityInfo = getEntity(entityName);
       $scope.helpTitle = helpTitle = $scope.entity;
       $scope.helpContent = helpContent = {
         description: entityInfo.description,
@@ -383,11 +460,11 @@
       if (getMetaParams.schema) {
         fetchMeta();
       }
-    } else if (!actions.length) {
+    } else if (!actions.length && (!schema.length || !getEntity().actions)) {
       if (getMetaParams.schema) {
         entities.push({id: $scope.entity, text: $scope.entity});
       }
-      getMetaParams.actions = [$scope.entity, 'getActions'];
+      getMetaParams.actions = [$scope.entity, 'getActions', {chain: {fields: [$scope.entity, 'getFields', {action: '$name'}]}}];
       fetchMeta();
     } else {
       selectAction();
@@ -416,7 +493,14 @@
       }
     });
 
+    $scope.indexHelp = {
+      description: ts('(string|int) Index results or select by index.'),
+      comment: ts('Pass a string to index the results by a field value. E.g. index: "name" will return an associative array with names as keys.') + '\n\n' +
+        ts('Pass an integer to return a single result; e.g. index: 0 will return the first result, 1 will return the second, and -1 will return the last.')
+    };
+
     $scope.$watch('params', writeCode, true);
+    $scope.$watch('index', writeCode);
     writeCode();
 
   });
@@ -431,6 +515,7 @@
         var ts = scope.ts = CRM.ts('api4');
         scope.newClause = '';
         scope.conjunctions = ['AND', 'OR', 'NOT'];
+        scope.operators = CRM.vars.api4.operators;
 
         scope.addGroup = function(op) {
           scope.data.where.push([op, []]);
@@ -567,8 +652,50 @@
     };
   });
 
-  function entityFields(entity) {
-    return _.result(_.findWhere(schema, {name: entity}), 'fields');
+
+  angular.module('api4Explorer').directive('api4ExpChain', function(crmApi4) {
+    return {
+      scope: {
+        chain: '=api4ExpChain',
+        entities: '='
+      },
+      templateUrl: '~/api4Explorer/Chain.html',
+      link: function (scope, element, attrs) {
+        var ts = scope.ts = CRM.ts('api4');
+
+        function changeEntity(newEntity) {
+          if (!newEntity) {
+            scope.chain[0] = '';
+            return;
+          }
+          if (getEntity(newEntity).actions) {
+            setActions();
+          } else {
+            crmApi4(newEntity, 'getActions', {chain: {fields: [newEntity, 'getFields', {action: '$name'}]}})
+              .then(function(data) {
+                getEntity(data.entity).actions = data;
+                if (data.entity === scope.chain[1][0]) {
+                  setActions();
+                }
+              });
+          }
+        }
+
+        function setActions() {
+          scope.actions = _.pluck(getEntity(scope.chain[1][0]).actions, 'name');
+        }
+
+        scope.$watch("chain[1][0]", changeEntity);
+      }
+    };
+  });
+
+  function getEntity(entityName) {
+    return _.findWhere(schema, {name: entityName});
+  }
+
+  function entityFields(entityName) {
+    return _.result(getEntity(entityName), 'fields');
   }
 
   // Collapsible optgroups for select2
