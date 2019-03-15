@@ -15,12 +15,12 @@
   ],
   "Activity": [
     {
-      "name": "Test Phone Activity",
+      "subject": "Test Phone Activity",
       "activity_type": "Phone Call",
       "source_contact_id": "@ref test_contact_1.id"
     },
     {
-      "name": "Another Activity",
+      "subject": "Another Activity",
       "activity_type": "Meeting",
       "source_contact_id": "@ref test_contact_1.id",
       "assignee_contact_id": [
