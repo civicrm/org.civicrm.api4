@@ -27,7 +27,7 @@ class TestCreationParameterProvider {
    */
   public function getRequired($entity) {
     $createSpec = $this->gatherer->getSpec($entity, 'create', FALSE);
-    $requiredFields = $createSpec->getRequiredFields();
+    $requiredFields = array_merge($createSpec->getRequiredFields(), $createSpec->getConditionalRequiredFields());
 
     if ($entity === 'Contact') {
       $requiredFields[] = $createSpec->getFieldByName('first_name');
@@ -137,6 +137,9 @@ class TestCreationParameterProvider {
 
       case 'Money':
         return sprintf('%d.%2d', rand(0, 2000), rand(1, 99));
+
+      case 'Date':
+        return '20100102';
     }
 
     return NULL;

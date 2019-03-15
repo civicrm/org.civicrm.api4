@@ -66,6 +66,9 @@ abstract class AbstractAction implements \ArrayAccess {
   private $thisParamInfo;
 
   /* @var array */
+  private $entityFields;
+
+  /* @var array */
   private $thisArrayStorage;
 
   /**
@@ -341,6 +344,23 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   /**
+   * Returns schema fields for this entity & action.
+   *
+   * @return array
+   * @throws \API_Exception
+   */
+  protected function getEntityFields() {
+    if (!$this->entityFields) {
+      $params = ['action' => $this->getActionName()];
+      if (method_exists($this, 'getBaoName')) {
+        $params['includeCustom'] = FALSE;
+      }
+      $this->entityFields = (array) civicrm_api4($this->getEntityName(), 'getFields', $params, 'name');
+    }
+    return $this->entityFields;
+  }
+
+  /**
    * @return \ReflectionClass
    */
   protected function getReflection() {
@@ -351,11 +371,22 @@ abstract class AbstractAction implements \ArrayAccess {
   }
 
   /**
+   * This function is used internally for evaluating field annotations.
+   *
+   * It should never be passed raw user input.
+   *
    * @param string $expr
+   *   Conditional in php format e.g. $foo > $bar
    * @param array $vars
+   *   Variable name => value
    * @return bool
+   * @throws \API_Exception
+   * @throws \Exception
    */
-  public function evaluateExpression($expr, $vars) {
+  protected function evaluateCondition($expr, $vars) {
+    if (strpos($expr, '}') !== FALSE || strpos($expr, '{') !== FALSE) {
+      throw new \API_Exception('Illegal character in expression');
+    }
     $tpl = "{if $expr}1{else}0{/if}";
     return (bool) trim(\CRM_Core_Smarty::singleton()->fetchWith('string:' . $tpl, $vars));
   }
