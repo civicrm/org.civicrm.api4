@@ -132,9 +132,6 @@
     $scope.valuesFields = function() {
       var fields = [];
       _.each(_.cloneDeep($scope.fields), function(field, index) {
-        if ((field.id === 'id' && $scope.action === 'create') || field.children) {
-          return;
-        }
         if ($scope.params.values && typeof $scope.params.values[field.id] !== 'undefined') {
           field.disabled = true;
         }
