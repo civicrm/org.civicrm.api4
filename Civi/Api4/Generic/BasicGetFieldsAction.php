@@ -2,7 +2,7 @@
 
 namespace Civi\Api4\Generic;
 
-use Civi\API\Exception\NotImplementedException;
+use Civi\Api4\Utils\ActionUtil;
 
 /**
  * Get fields for an entity.
@@ -40,8 +40,7 @@ class BasicGetFieldsAction extends BasicGetAction {
    * @throws \Civi\API\Exception\NotImplementedException
    */
   public function _run(Result $result) {
-    $params = method_exists($this, 'getCustomGroup') ? $this->getCustomGroup() : NULL;
-    $actionClass = call_user_func(["\\Civi\\Api4\\" . $this->_entityName, $this->action], $params);
+    $actionClass = ActionUtil::getAction($this->getEntityName(), $this->action);
     if (method_exists($actionClass, 'fields')) {
       $values = $actionClass->fields();
     }

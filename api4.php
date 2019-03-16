@@ -23,18 +23,7 @@ use Symfony\Component\Config\FileLocator;
  * @throws \Civi\API\Exception\NotImplementedException
  */
 function civicrm_api4($entity, $action, $params = [], $index = NULL) {
-  /** @var \Civi\Api4\Generic\AbstractAction $apiCall */
-  // For custom pseudo-entities
-  if (strpos($entity, 'Custom_') === 0) {
-    $apiCall = Civi\Api4\CustomValue::$action(substr($entity, 7));
-  }
-  else {
-    $callable = ["Civi\\Api4\\$entity", $action];
-    if (!is_callable($callable)) {
-      throw new \Civi\API\Exception\NotImplementedException("API ($entity, $action) does not exist (join the API team and implement it!)");
-    }
-    $apiCall = call_user_func($callable);
-  }
+  $apiCall = \Civi\Api4\Utils\ActionUtil::getAction($entity, $action);
   foreach ($params as $name => $param) {
     $setter = 'set' . ucfirst($name);
     $apiCall->$setter($param);

@@ -58,6 +58,14 @@ class CustomValue extends Generic\AbstractEntity {
   }
 
   /**
+   * @param string $customGroup
+   * @return Action\CustomValue\GetActions
+   */
+  public static function getActions($customGroup = NULL) {
+    return new Action\CustomValue\GetActions($customGroup, __FUNCTION__);
+  }
+
+  /**
    * @inheritDoc
    */
   public static function permissions() {
