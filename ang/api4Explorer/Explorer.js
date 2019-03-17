@@ -130,14 +130,12 @@
     };
 
     $scope.valuesFields = function() {
-      var fields = [];
-      _.each(_.cloneDeep($scope.fields), function(field, index) {
-        if ($scope.params.values && typeof $scope.params.values[field.id] !== 'undefined') {
-          field.disabled = true;
-        }
-        fields.push(field);
+      var fields = _.cloneDeep($scope.fields);
+      // Disable fields that are already in use
+      _.each($scope.params.values || [], function(val) {
+        (_.findWhere(fields, {id: val[0]}) || {}).disabled = true;
       });
-      return fields;
+      return {results: fields};
     };
 
     $scope.formatSelect2Item = function(row) {
