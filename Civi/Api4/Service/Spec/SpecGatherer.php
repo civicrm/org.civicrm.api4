@@ -73,7 +73,7 @@ class SpecGatherer {
       if ($DAOField['name'] == 'id' && $action == 'create') {
         continue;
       }
-      if ($action !== 'create') {
+      if ($action !== 'create' || isset($DAOField['default'])) {
         $DAOField['required'] = FALSE;
       }
       $field = SpecFormatter::arrayToField($DAOField, $entity);
