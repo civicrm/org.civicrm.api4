@@ -62,7 +62,7 @@ class CustomValueTest extends BaseCustomValueTest {
       ],
       [
         'name' => 'id',
-        'title' => ts('Custom Table Unique ID'),
+        'title' => ts('Custom Value ID'),
         'entity' => "Custom_$group",
         'data_type' => 'Integer',
         'fk_entity' => NULL,
