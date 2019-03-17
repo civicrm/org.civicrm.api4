@@ -301,7 +301,8 @@
         result = 'result';
       if ($scope.entity && $scope.action) {
         if (action.slice(0, 3) === 'get') {
-          result = lcfirst(action.replace(/s$/, '').slice(3) || entity);
+          result = entity.substr(0, 7) === 'Custom_' ? _.camelCase(entity.substr(7)) : entity;
+          result = lcfirst(action.replace(/s$/, '').slice(3) || result);
         }
         var results = lcfirst(_.isNumber(index) ? result : pluralize(result)),
           paramCount = _.size(params),
