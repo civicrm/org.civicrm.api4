@@ -333,7 +333,7 @@
           var val = '';
           if (typeof objectParams[key] !== 'undefined' && key !== 'chain') {
             _.each(param, function(item, index) {
-              val = stringify(index) + ', ' + stringify(item);
+              val = stringify(index) + ', ' + phpFormat(item, 4);
               code.php += "\n  ->add" + ucfirst(key).replace(/s$/, '') + '(' + val + ')';
             });
           } else if (key === 'where') {
@@ -400,6 +400,9 @@
      * Format value to look like php code
      */
     function phpFormat(val, indent) {
+      if (typeof val === 'undefined') {
+        return '';
+      }
       indent = (typeof indent === 'number') ? _.repeat(' ', indent) : (indent || '');
       var ret = '',
         baseLine = indent ? indent.slice(0, -2) : '',
