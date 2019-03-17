@@ -140,7 +140,7 @@
 
     $scope.formatSelect2Item = function(row) {
       return _.escape(row.text) +
-        (isFieldRequiredForCreate(row) ? '<span class="crm-marker"> *</span>' : '') +
+        (isFieldRequired(row) ? '<span class="crm-marker"> *</span>' : '') +
         (row.description ? '<div class="crm-select2-row-description"><p>' + _.escape(row.description) + '</p></div>' : '');
     };
 
@@ -153,7 +153,7 @@
       return _.contains(specialParams, name);
     };
 
-    function isFieldRequiredForCreate(field) {
+    function isFieldRequired(field) {
       return field.required && !field.default_value;
     }
 
@@ -254,6 +254,9 @@
             if (name == 'limit') {
               defaultVal = 25;
             }
+            if (name === 'values') {
+              defaultVal = defaultValues(defaultVal);
+            }
             $scope.$bindToRoute({
               expr: 'params["' + name + '"]',
               param: name,
@@ -291,6 +294,15 @@
         $scope.availableParams = actionInfo.params;
       }
       writeCode();
+    }
+
+    function defaultValues(defaultVal) {
+      _.each($scope.fields, function(field) {
+        if (isFieldRequired(field)) {
+          defaultVal.push([field.id, '']);
+        }
+      });
+      return defaultVal;
     }
 
     function stringify(value, trim) {
