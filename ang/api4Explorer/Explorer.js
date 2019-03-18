@@ -183,9 +183,25 @@
         }
       });
       if (params.where) {
-        params.where = parseYaml(_.cloneDeep(params.where));
+        formatWhereClause(params.where);
       }
       return params;
+    }
+
+    // Coerce value to an array when the operator is IN or NOT IN
+    // Note this has already been passed through parseYaml once
+    function formatWhereClause(where) {
+      _.each(where, function(clause) {
+        if (_.isArray(clause)) {
+          if (clause.length === 3) {
+            if (_.contains(['IN', 'NOT IN'], clause[1]) && (_.isNumber(clause[2]) || (_.isString(clause[2]) && clause[2].length))) {
+              clause[2] = parseYaml('[' + clause[2] + ']');
+            }
+          } else {
+            formatWhereClause(clause);
+          }
+        }
+      });
     }
 
     function parseYaml(input) {
@@ -600,7 +616,8 @@
 
         function makeWidget(field, op) {
           var $el = $(element),
-            dataType = field.data_type;
+            dataType = field.data_type,
+            multi = _.includes(['IN', 'NOT IN'], op);
           if (op === 'IS NULL' || op === 'IS NOT NULL') {
             $el.hide();
             return;
@@ -609,20 +626,20 @@
             if (_.includes(['=', '!=', '<>', '<', '>=', '<', '<='], op)) {
               $el.crmDatepicker({time: dataType === 'Timestamp'});
             }
-          } else if (_.includes(['=', '!=', '<>'], op)) {
+          } else if (_.includes(['=', '!=', '<>', 'IN', 'NOT IN'], op)) {
             if (field.fk_entity) {
-              $el.crmEntityRef({entity: field.fk_entity});
+              $el.crmEntityRef({entity: field.fk_entity, select:{multiple: multi}});
             } else if (field.options) {
-              $el.addClass('loading').attr('placeholder', ts('- select -')).crmSelect2({allowClear: false, data: [{id: '', text: ''}]});
+              $el.addClass('loading').attr('placeholder', ts('- select -')).crmSelect2({multiple: multi, data: [{id: '', text: ''}]});
               loadFieldOptions(field.entity).then(function(data) {
                 var options = [];
                 _.each(_.findWhere(data, {name: field.name}).options, function(val, key) {
                   options.push({id: key, text: val});
                 });
-                $el.removeClass('loading').select2({data: options});
+                $el.removeClass('loading').select2({data: options, multiple: multi});
               });
             } else if (dataType === 'Boolean') {
-              $el.attr('placeholder', ts('- select -')).crmSelect2({allowClear: false, placeholder: ts('- select -'), data: [
+              $el.attr('placeholder', ts('- select -')).crmSelect2({allowClear: false, multiple: multi, placeholder: ts('- select -'), data: [
                 {id: '1', text: ts('Yes')},
                 {id: '0', text: ts('No')}
               ]});
