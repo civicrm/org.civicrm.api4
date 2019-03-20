@@ -42,23 +42,33 @@ class BasicGetAction extends AbstractGetAction {
   }
 
   /**
-   * This Basic Get class can be used in one of two ways:
+   * This Basic Get class is a general-purpose api for non-DAO-based entities.
    *
+   * Useful for fetching records from files or other places.
+   * You can specify any php function to retrieve the records, and this class will
+   * automatically filter, sort, select & limit the raw data from your callback.
+   *
+   * You can implement this action in one of two ways:
    * 1. Use this class directly by passing a callable ($getter) to the constructor.
    * 2. Extend this class and override this function.
    *
    * Either way, this function should return an array of arrays, each representing one retrieved object.
    *
-   * The getter/override for this function will have $this available if it wishes to do any pre-filtering.
-   * Depending on the expense of fetching objects that may be worthwhile,
-   * but note the WHERE clause can potentially be very complex.
-   * Consider using this->_itemsToGet() helper instead of trying to parse $this->where yourself.
-   * Be careful not to make assumptions, e.g. if LIMIT 100 is specified and your getter "helpfully" truncates the list
-   * at 100 without accounting for the WHERE clause, the final filtered result may be less than expected.
+   * The simplest thing for your getter function to do is return every full record
+   * and allow this class to automatically do the sorting and filtering.
    *
-   * $this->select is a simple array of fields to return. If any fields are expensive to retrieve,
-   * you can check (!$this->select || in_array('fieldName', $this->select) before doing so.
-   * Note that if $this->select is empty you should return every field.
+   * Sometimes however that may not be practical for performance reasons.
+   * To optimize your getter, it can use the following helpers from $this:
+   *
+   * Use this->_itemsToGet() to match records to field values in the WHERE clause.
+   * Note the WHERE clause can potentially be very complex and it is not recommended
+   * to parse $this->where yourself.
+   *
+   * Use $this->_isFieldSelected() to check if a field value is called for - useful
+   * if loading the field involves expensive calculations.
+   *
+   * Be careful not to make assumptions, e.g. if LIMIT 100 is specified and your getter "helpfully" truncates the list
+   * at 100 without accounting for WHERE, ORDER BY and LIMIT clauses, the final filtered result may be very incorrect.
    *
    * @return array
    * @throws \Civi\API\Exception\NotImplementedException
@@ -77,8 +87,8 @@ class BasicGetAction extends AbstractGetAction {
    * one or more records by name or id.
    *
    * Ex: If getRecords fetches a long list of items each with a unique name,
-   * but the user has specified a single record to retrieve, we can optimize the call
-   * by using $this->_itemsToGet('name') and only fetching items requested by name.
+   * but the user has specified a single record to retrieve, you can optimize the call
+   * by checking $this->_itemsToGet('name') and only fetching the item(s) with that name.
    *
    * @param string $field
    * @return array|null
@@ -90,6 +100,45 @@ class BasicGetAction extends AbstractGetAction {
       }
     }
     return NULL;
+  }
+
+  /**
+   * Helper to see if a field should be selected by the getRecords function.
+   *
+   * Checks the SELECT, WHERE and ORDER BY params to see what fields are needed.
+   *
+   * Note that if no SELECT clause has been set then all fields should be selected
+   * and this function will always return TRUE.
+   *
+   * @param string $field
+   * @return bool
+   */
+  public function _isFieldSelected($field) {
+    if (!$this->select || in_array($field, $this->select) || isset($this->orderBy[$field])) {
+      return TRUE;
+    }
+    return $this->_whereContains($field, $this->where);
+  }
+
+  /**
+   * Walk through the where clause and check if a field is in use.
+   *
+   * @param string $field
+   * @param array $clauses
+   * @return bool
+   */
+  private function _whereContains($field, $clauses) {
+    foreach ($clauses as $clause) {
+      if (is_array($clause) && is_string($clause[0])) {
+        if ($clause[0] == $field) {
+          return TRUE;
+        }
+        elseif (is_array($clause[1])) {
+          return $this->_whereContains($field, $clause[1]);
+        }
+      }
+    }
+    return FALSE;
   }
 
 }

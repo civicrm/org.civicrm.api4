@@ -31,6 +31,15 @@ class MockBasicEntity extends Generic\AbstractEntity {
         [
           'name' => 'color',
         ],
+        [
+          'name' => 'shape',
+        ],
+        [
+          'name' => 'size',
+        ],
+        [
+          'name' => 'weight',
+        ],
       ];
     });
   }

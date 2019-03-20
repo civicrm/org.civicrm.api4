@@ -3,7 +3,6 @@
 namespace Civi\Api4\Action;
 
 use Civi\API\Exception\NotImplementedException;
-use Civi\Api4\Generic\AbstractAction;
 use Civi\Api4\Generic\BasicGetAction;
 use Civi\Api4\Utils\ActionUtil;
 use Civi\Api4\Utils\ReflectionUtils;
@@ -59,17 +58,16 @@ class GetActions extends BasicGetAction {
   private function loadAction($actionName) {
     try {
       if (!isset($this->_actions[$actionName]) && (!$this->_actionsToGet || in_array($actionName, $this->_actionsToGet))) {
-        /* @var AbstractAction $action */
         $action = ActionUtil::getAction($this->getEntityName(), $actionName);
         if (is_object($action)) {
           $this->_actions[$actionName] = ['name' => $actionName];
-          if (!$this->select || array_diff($this->select, ['params', 'name'])) {
+          if ($this->_isFieldSelected('description') || $this->_isFieldSelected('comment')) {
             $actionReflection = new \ReflectionClass($action);
             $actionInfo = ReflectionUtils::getCodeDocs($actionReflection);
             unset($actionInfo['method']);
             $this->_actions[$actionName] += $actionInfo;
           }
-          if (!$this->select || in_array('params', $this->select)) {
+          if ($this->_isFieldSelected('params')) {
             $this->_actions[$actionName]['params'] = $action->getParamInfo();
           }
         }

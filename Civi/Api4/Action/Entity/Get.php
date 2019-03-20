@@ -32,7 +32,7 @@ class Get extends \Civi\Api4\Generic\BasicGetAction {
           $matches = [];
           preg_match('/(\w*).php/', $file, $matches);
           $entity = ['name' => $matches[1]];
-          if (!$this->select || $this->select != ['name']) {
+          if ($this->_isFieldSelected('description') || $this->_isFieldSelected('comment')) {
             $this->addDocs($entity);
           }
           $entities[$matches[1]] = $entity;
