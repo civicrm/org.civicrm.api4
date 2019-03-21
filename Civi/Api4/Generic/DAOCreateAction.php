@@ -32,15 +32,7 @@ class DAOCreateAction extends AbstractCreateAction {
     if (!empty($this->values['id'])) {
       throw new \API_Exception('Cannot pass id to Create action. Use Update action instead.');
     }
-    $unmatched = [];
-    foreach ($this->getEntityFields() as $fieldName => $fieldInfo) {
-      if (!$this->getValue($fieldName) && !empty($fieldInfo['required']) && !isset($fieldInfo['default_value'])) {
-        $unmatched[] = $fieldName;
-      }
-    }
-    if ($unmatched) {
-      throw new \API_Exception("Mandatory values missing from Api4 {$this->getEntityName()}::{$this->getActionName()}: '" . implode("', '", $unmatched) . "'", "mandatory_missing", array("fields" => $unmatched));
-    }
+    parent::validateValues();
   }
 
   /**

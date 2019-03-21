@@ -7,9 +7,6 @@ use Civi\Api4\Query\Api4SelectQuery;
 
 trait DAOActionTrait {
 
-  /* @var array */
-  private $entityFields;
-
   /**
    * @return \CRM_Core_DAO|string
    */
@@ -124,20 +121,6 @@ trait DAOActionTrait {
     \CRM_Utils_Hook::post($hook, $this->getEntityName(), $instance->id, $instance);
 
     return $instance;
-  }
-
-  /**
-   * Returns schema fields for this entity & action.
-   *
-   * @return array
-   * @throws \API_Exception
-   */
-  public function getEntityFields() {
-    if (!$this->entityFields) {
-      $this->entityFields = civicrm_api4($this->getEntityName(), 'getFields', ['action' => $this->getActionName(), 'includeCustom' => FALSE])
-        ->indexBy('name');
-    }
-    return $this->entityFields;
   }
 
   /**
