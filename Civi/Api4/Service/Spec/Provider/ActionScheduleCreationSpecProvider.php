@@ -13,8 +13,8 @@ class ActionScheduleCreationSpecProvider implements SpecProviderInterface {
     $spec->getFieldByName('title')->setRequired(TRUE);
     $spec->getFieldByName('mapping_id')->setRequired(TRUE);
     $spec->getFieldByName('entity_value')->setRequired(TRUE);
-    $spec->getFieldByName('start_action_date')->setRequiredIf('!$absolute_date');
-    $spec->getFieldByName('absolute_date')->setRequiredIf('!$start_action_date');
+    $spec->getFieldByName('start_action_date')->setRequiredIf('empty($values.absolute_date)');
+    $spec->getFieldByName('absolute_date')->setRequiredIf('empty($values.start_action_date)');
   }
 
   /**
