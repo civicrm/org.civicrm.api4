@@ -147,13 +147,7 @@ abstract class AbstractAction implements \ArrayAccess {
           return $this->$param;
 
         case 'set':
-          if (is_array($this->$param)) {
-            // Don't overwrite any defaults
-            $this->$param = $arguments[0] + $this->$param;
-          }
-          else {
-            $this->$param = $arguments[0];
-          }
+          $this->$param = $arguments[0];
           return $this;
 
         case 'add':
