@@ -504,7 +504,7 @@
         $location.url('/explorer/' + $scope.entity + '/' + newVal);
       } else if (newVal) {
         $scope.helpTitle = helpTitle = $scope.entity + '::' + newVal;
-        $scope.helpContent = helpContent = _.pick(_.findWhere(actions, {id: newVal}), ['description', 'comment']);
+        $scope.helpContent = helpContent = _.pick(_.findWhere(getEntity().actions, {name: newVal}), ['description', 'comment']);
       }
     });
 
