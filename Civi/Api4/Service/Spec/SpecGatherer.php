@@ -76,6 +76,9 @@ class SpecGatherer {
       if ($action !== 'create' || isset($DAOField['default'])) {
         $DAOField['required'] = FALSE;
       }
+      if ($DAOField['name'] == 'is_active' && empty($DAOField['default'])) {
+        $DAOField['default'] = '1';
+      }
       $field = SpecFormatter::arrayToField($DAOField, $entity);
       $specification->addFieldSpec($field);
     }

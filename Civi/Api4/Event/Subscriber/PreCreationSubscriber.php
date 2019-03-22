@@ -45,9 +45,6 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
    * @param DAOCreateAction $request
    */
   protected function addDefaultCreationValues(DAOCreateAction $request) {
-    if (NULL === $request->getValue('is_active')) {
-      $request->addValue('is_active', 1);
-    }
   }
 
 }
