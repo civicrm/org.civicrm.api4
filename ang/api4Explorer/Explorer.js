@@ -656,13 +656,16 @@
         }
 
         function loadFieldOptions(entity) {
-          if (!fieldOptions[entity]) {
-            fieldOptions[entity] = crmApi4(entity, 'getFields', {
+          var action = $routeParams.api4action;
+          if (!fieldOptions[entity + action]) {
+            fieldOptions[entity + action] = crmApi4(entity, 'getFields', {
               loadOptions: true,
+              action: action,
+              where: [["options", "!=", false]],
               select: ["name", "options"]
             });
           }
-          return fieldOptions[entity];
+          return fieldOptions[entity + action];
         }
 
         scope.$watchCollection('data', function(data) {
