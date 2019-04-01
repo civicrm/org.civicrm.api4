@@ -80,7 +80,7 @@
           </fieldset>
           <fieldset ng-if="availableParams.chain" ng-mouseenter="help('chain', availableParams.chain)" ng-mouseleave="help()">
             <legend>chain</legend>
-            <div class="api4-input form-inline" ng-repeat="clause in params.chain" api4-exp-chain="clause" entities="entities" >
+            <div class="api4-input form-inline" ng-repeat="clause in params.chain" api4-exp-chain="clause" entities="entities" main-entity="entity" >
             </div>
             <div class="api4-input form-inline">
               <input class="form-control" ng-model="controls.chain" crm-ui-select="{data: entities}" placeholder="Add chain" />

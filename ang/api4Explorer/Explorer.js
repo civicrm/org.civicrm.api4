@@ -33,7 +33,7 @@
       schema: ['Entity', 'get', {chain: {fields: ['$name', 'getFields']}}],
       links: ['Entity', 'getLinks']
     },
-      objectParams = {orderBy: 'ASC', values: '', chain: ['Entity', 'get', '{}']},
+      objectParams = {orderBy: 'ASC', values: '', chain: ['Entity', '', '{}']},
       helpTitle = '',
       helpContent = {};
     $scope.helpTitle = '';
@@ -687,16 +687,22 @@
     return {
       scope: {
         chain: '=api4ExpChain',
+        mainEntity: '=',
         entities: '='
       },
       templateUrl: '~/api4Explorer/Chain.html',
       link: function (scope, element, attrs) {
         var ts = scope.ts = CRM.ts('api4');
 
-        function changeEntity(newEntity) {
+        function changeEntity(newEntity, oldEntity) {
+          // When clearing entity remove this chain
           if (!newEntity) {
             scope.chain[0] = '';
             return;
+          }
+          // Reset action && index
+          if (newEntity !== oldEntity) {
+            scope.chain[1][1] = scope.chain[1][2] = '';
           }
           if (getEntity(newEntity).actions) {
             setActions();
@@ -712,10 +718,45 @@
         }
 
         function setActions() {
-          scope.actions = _.pluck(getEntity(scope.chain[1][0]).actions, 'name');
+          scope.actions = [''].concat(_.pluck(getEntity(scope.chain[1][0]).actions, 'name'));
+        }
+
+        // Set default params when choosing action
+        function changeAction(newAction, oldAction) {
+          var link;
+          // Prepopulate links
+          if (newAction && newAction !== oldAction) {
+            // Clear index
+            scope.chain[1][3] = '';
+            // Look for links back to main entity
+            _.each(entityFields(scope.chain[1][0]), function(field) {
+              if (field.fk_entity === scope.mainEntity) {
+                link = [field.name, '$id'];
+              }
+            });
+            // Look for links from main entity
+            if (!link && newAction !== 'create') {
+              _.each(entityFields(scope.mainEntity), function(field) {
+                if (field.fk_entity === scope.chain[1][0]) {
+                  link = ['id', '$' + field.name];
+                  // Since we're specifying the id, set index to getsingle
+                  scope.chain[1][3] = '0';
+                }
+              });
+            }
+            if (link && _.contains(['get', 'update', 'replace', 'delete'], newAction)) {
+              scope.chain[1][2] = '{where: [[' + link[0] + ', =, ' + link[1] + ']]}';
+            }
+            else if (link && _.contains(['create'], newAction)) {
+              scope.chain[1][2] = '{values: {' + link[0] + ': ' + link[1] + '}}';
+            } else {
+              scope.chain[1][2] = '{}';
+            }
+          }
         }
 
         scope.$watch("chain[1][0]", changeEntity);
+        scope.$watch("chain[1][1]", changeAction);
       }
     };
   });
