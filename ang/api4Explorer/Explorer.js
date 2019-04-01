@@ -357,15 +357,15 @@
           var val = '';
           if (typeof objectParams[key] !== 'undefined' && key !== 'chain') {
             _.each(param, function(item, index) {
-              val = stringify(index) + ', ' + phpFormat(item, 4);
+              val = phpFormat(index) + ', ' + phpFormat(item, 4);
               code.php += "\n  ->add" + ucfirst(key).replace(/s$/, '') + '(' + val + ')';
             });
           } else if (key === 'where') {
             _.each(param, function (clause) {
               if (clause[0] === 'AND' || clause[0] === 'OR' || clause[0] === 'NOT') {
-                code.php += "\n  ->addClause('" + clause[0] + "', " + stringify(clause[1], true) + ')';
+                code.php += "\n  ->addClause(" + phpFormat(clause[0]) + ", " + phpFormat(clause[1]).slice(1, -1) + ')';
               } else {
-                code.php += "\n  ->addWhere(" + stringify(clause, true) + ")";
+                code.php += "\n  ->addWhere(" + phpFormat(clause).slice(1, -1) + ")";
               }
             });
           } else {
@@ -442,6 +442,9 @@
           ret += (ret ? ', ' : '') + newLine + indent + phpFormat(v);
         });
         return '[' + ret + newLine + baseLine + ']';
+      }
+      if (_.isString(val) && !_.contains(val, "'")) {
+        return "'" + val + "'";
       }
       return JSON.stringify(val).replace(/\$/g, '\\$');
     }
