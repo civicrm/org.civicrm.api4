@@ -1,5 +1,4 @@
 <?php
-use CRM_Api4_ExtensionUtil as E;
 
 class CRM_Api4_Page_Api4Explorer extends CRM_Core_Page {
 
@@ -19,7 +18,6 @@ class CRM_Api4_Page_Api4Explorer extends CRM_Core_Page {
       'defaultRoute' => '/explorer',
     ]);
     $loader->load();
-    CRM_Utils_System::setTitle('CiviCRM');
     parent::run();
   }
 
