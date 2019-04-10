@@ -345,7 +345,7 @@
         if (index || index === 0) {
           code.javascript += ', ' + JSON.stringify(index);
         }
-        code.javascript += ").done(function(" + results + ") {\n  // do something with " + results + " array\n});";
+        code.javascript += ").then(function(" + results + ") {\n  // do something with " + results + " array\n}, function(failure) {\n  // handle failure\n});";
 
         // Write php code
         if (entity.substr(0, 7) !== 'Custom_') {
