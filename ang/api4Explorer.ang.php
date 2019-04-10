@@ -1,9 +1,5 @@
 <?php
 // Autoloader data for Api4 explorer.
-$vars = [
-  'operators' => \CRM_Core_DAO::acceptedSQLOperators(),
-];
-\Civi::resources()->addVars('api4', $vars);
 return [
   'js' => [
     'ang/api4Explorer.js',
