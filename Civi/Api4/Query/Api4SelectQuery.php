@@ -338,7 +338,7 @@ class Api4SelectQuery extends SelectQuery {
 
     // custom groups use aliases for field names
     if ($lastLink instanceof CustomGroupJoinable) {
-      $field = $lastLink->getSqlColumn();
+      $field = $lastLink->getSqlColumn($field);
     }
 
     $this->fkSelectAliases[$key] = sprintf('%s.%s', $lastLink->getAlias(), $field);
