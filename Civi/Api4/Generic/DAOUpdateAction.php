@@ -41,8 +41,8 @@ class DAOUpdateAction extends AbstractUpdateAction {
       throw new \API_Exception('Parameter "where" is required unless an id is supplied in values.');
     }
 
-    // Update a single record by ID
-    if (count($this->where) === 1 && $this->where[0][0] === 'id' && $this->where[0][1] === '=' && !empty($this->where[0][2])) {
+    // Update a single record by ID unless select requires more than id
+    if ($this->getSelect() === ['id'] && count($this->where) === 1 && $this->where[0][0] === 'id' && $this->where[0][1] === '=' && !empty($this->where[0][2])) {
       $this->values['id'] = $this->where[0][2];
       $result->exchangeArray($this->writeObjects([$this->values]));
       return;
