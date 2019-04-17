@@ -89,6 +89,8 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
    */
   protected function handleChains($action, $result) {
     foreach ($action->getChain() as $name => $request) {
+      $request += [NULL, NULL, [], NULL];
+      $request[2]['checkPermissions'] = $action->getCheckPermissions();
       foreach ($result as &$row) {
         $row[$name] = $this->runChain($request, $row);
       }
@@ -104,7 +106,7 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
    * @throws \API_Exception
    */
   protected function runChain($request, $row) {
-    list($entity, $action, $params, $index) = $request + [NULL, NULL, [], NULL];
+    list($entity, $action, $params, $index) = $request;
     // Swap out variables in $entity, $action & $params
     $this->resolveChainLinks($entity, $row);
     $this->resolveChainLinks($action, $row);
