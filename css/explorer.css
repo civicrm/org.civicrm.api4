@@ -28,7 +28,7 @@
   flex: 2;
 }
 /* Fix weird shorditch style */
-#bootstrap-theme.api4-explorer-page .panel .panel-heading {
+#bootstrap-theme.api4-explorer-page .api4-explorer-row .panel .panel-heading {
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
   margin-bottom: 0;
