@@ -77,6 +77,11 @@ trait DAOActionTrait {
       FormattingUtil::formatWriteParams($item, $this->getEntityName(), $this->getEntityFields());
       $this->formatCustomParams($item, $entityId);
 
+      // For some reason the contact bao requires this
+      if ($entityId && $this->getEntityName() == 'Contact') {
+        $item['contact_id'] = $entityId;
+      }
+
       if (method_exists($baoName, $method)) {
         $createResult = $baoName::$method($item);
       }
