@@ -17,7 +17,7 @@
   <version>4.3.0</version>
   <develStage>stable</develStage>
   <compatibility>
-    <ver>5.13</ver>
+    <ver>5.14</ver>
   </compatibility>
   <comments>This extension does nothing on its own. Install it if other extensions require you to do so.</comments>
   <classloader>
