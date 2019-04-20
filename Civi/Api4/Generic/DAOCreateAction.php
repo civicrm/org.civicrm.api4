@@ -48,8 +48,8 @@ class DAOCreateAction extends AbstractCreateAction {
     $coreFields = array_column($bao::fields(), NULL, 'name');
 
     foreach ($fields as $name => $field) {
-      // If a default value is set in the api but not in core, the api should supply it.
-      if (!isset($params[$name]) && !empty($field['default_value']) && empty($coreFields[$name]['default'])) {
+      // If a default value in the api field is different than in core, the api should override it.
+      if (!isset($params[$name]) && !empty($field['default_value']) && $field['default_value'] != \CRM_Utils_Array::pathGet($coreFields, [$name, 'default'])) {
         $params[$name] = $field['default_value'];
       }
     }
