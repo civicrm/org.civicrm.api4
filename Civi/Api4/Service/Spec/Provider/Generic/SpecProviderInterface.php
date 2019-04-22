@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Service\Spec\Provider;
+namespace Civi\Api4\Service\Spec\Provider\Generic;
 
 use Civi\Api4\Service\Spec\RequestSpec;
 

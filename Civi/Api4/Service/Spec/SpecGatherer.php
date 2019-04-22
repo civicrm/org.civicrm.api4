@@ -3,7 +3,7 @@
 namespace Civi\Api4\Service\Spec;
 
 use Civi\Api4\CustomField;
-use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
+use Civi\Api4\Service\Spec\Provider\Generic\SpecProviderInterface;
 use Civi\Api4\Utils\CoreUtil;
 
 class SpecGatherer {

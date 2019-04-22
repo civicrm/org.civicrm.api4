@@ -4,7 +4,7 @@ namespace Civi\Api4\Event\Subscriber;
 
 use Civi\Api4\Generic\DAOCreateAction;
 
-class CustomGroupPreCreationSubscriber extends PreCreationSubscriber {
+class CustomGroupPreCreationSubscriber extends Generic\PreCreationSubscriber {
   /**
    * @param DAOCreateAction $request
    */

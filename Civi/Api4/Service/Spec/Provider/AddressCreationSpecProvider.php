@@ -6,7 +6,7 @@ use Civi\Api4\Service\Spec\FieldSpec;
 use Civi\Api4\Service\Spec\RequestSpec;
 
 
-class AddressCreationSpecProvider implements SpecProviderInterface {
+class AddressCreationSpecProvider implements Generic\SpecProviderInterface {
 
   /**
    * @param RequestSpec $spec

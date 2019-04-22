@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Api4\Event\Subscriber;
+namespace Civi\Api4\Event\Subscriber\Generic;
 
 use Civi\API\Event\PrepareEvent;
 use Civi\Api4\Generic\DAOCreateAction;

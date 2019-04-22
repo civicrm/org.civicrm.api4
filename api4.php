@@ -53,6 +53,9 @@ function api4_civicrm_container($container) {
   $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
   $loader->load('services.xml');
 
+  _api4_load_services('Civi\Api4\Service\Spec\Provider', 'spec_provider', $container);
+  _api4_load_services('Civi\Api4\Event\Subscriber', 'event_subscriber', $container);
+
   $container->getDefinition('civi_api_kernel')->addMethodCall(
     'registerApiProvider',
     [new Reference('action_object_provider')]
@@ -82,6 +85,27 @@ function api4_civicrm_container($container) {
 
   if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
     $loader->load('tests/services.xml');
+  }
+}
+
+/**
+ * Load all services in a given directory
+ *
+ * @param string $namespace
+ * @param ContainerBuilder $container
+ */
+function _api4_load_services($namespace, $tag, $container) {
+  $namespace = \CRM_Utils_File::addTrailingSlash($namespace, '\\');
+  $includePaths = array_unique(explode(PATH_SEPARATOR, get_include_path()));
+  foreach ($includePaths as $path) {
+    $path = \CRM_Utils_File::addTrailingSlash($path) . str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
+    foreach (glob("$path*.php") as $file) {
+      $matches = [];
+      preg_match('/(\w*).php/', $file, $matches);
+      $serviceName = $namespace . array_pop($matches);
+      $definition = $container->register(str_replace('\\', '_', $serviceName), $serviceName);
+      $definition->addTag($tag);
+    }
   }
 }
 

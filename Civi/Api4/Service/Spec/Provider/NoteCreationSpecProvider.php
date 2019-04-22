@@ -5,7 +5,7 @@ namespace Civi\Api4\Service\Spec\Provider;
 use Civi\Api4\Service\Spec\RequestSpec;
 
 
-class NoteCreationSpecProvider implements SpecProviderInterface {
+class NoteCreationSpecProvider implements Generic\SpecProviderInterface {
 
   /**
    * @param RequestSpec $spec

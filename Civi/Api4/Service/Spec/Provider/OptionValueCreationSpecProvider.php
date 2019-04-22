@@ -4,7 +4,7 @@ namespace Civi\Api4\Service\Spec\Provider;
 
 use Civi\Api4\Service\Spec\RequestSpec;
 
-class OptionValueCreationSpecProvider implements SpecProviderInterface {
+class OptionValueCreationSpecProvider implements Generic\SpecProviderInterface {
   /**
    * @inheritDoc
    */
