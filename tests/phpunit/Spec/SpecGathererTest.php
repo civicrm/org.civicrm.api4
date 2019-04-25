@@ -3,7 +3,7 @@
 namespace Civi\Test\Api4\Spec;
 
 use Civi\Api4\Service\Spec\FieldSpec;
-use Civi\Api4\Service\Spec\Provider\SpecProviderInterface;
+use Civi\Api4\Service\Spec\Provider\Generic\SpecProviderInterface;
 use Civi\Api4\Service\Spec\RequestSpec;
 use Civi\Api4\Service\Spec\SpecGatherer;
 use Civi\Test\Api4\Traits\OptionCleanupTrait;

@@ -32,7 +32,7 @@ use Civi\API\Event\PrepareEvent;
 /**
  * Validate field inputs based on annotations in the action class
  */
-class ValidateFieldsSubscriber extends AbstractPrepareSubscriber {
+class ValidateFieldsSubscriber extends Generic\AbstractPrepareSubscriber {
 
   /**
    * @param PrepareEvent $event
