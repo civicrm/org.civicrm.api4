@@ -97,9 +97,46 @@ class Api4SelectQuery extends SelectQuery {
    * @return array|int
    */
   public function run() {
-    $this->preRun();
-    $baseResults = parent::run();
-    $event = new PostSelectQueryEvent($baseResults, $this);
+    $this->addJoins();
+    $this->buildSelectFields();
+    $this->buildWhereClause();
+
+    // Select
+    if (in_array('count_rows', $this->select)) {
+      $this->query->select("count(*) as c");
+    }
+    else {
+      foreach ($this->selectFields as $column => $alias) {
+        $this->query->select("$column as `$alias`");
+      }
+      // Order by
+      $this->buildOrderBy();
+    }
+
+    // Limit
+    if (!empty($this->limit) || !empty($this->offset)) {
+      $this->query->limit($this->limit, $this->offset);
+    }
+
+    $results = [];
+    $query = \CRM_Core_DAO::executeQuery($this->query->toSQL());
+
+    while ($query->fetch()) {
+      if (in_array('count_rows', $this->select)) {
+        // Fixme
+        return (int) $query->c;
+      }
+      $results[$query->id] = [];
+      foreach ($this->selectFields as $column => $alias) {
+        $returnName = $alias;
+        $alias = str_replace('.', '_', $alias);
+        $results[$query->id][$returnName] = NULL;
+        if (property_exists($query, $alias)) {
+          $results[$query->id][$returnName] = $query->$alias;
+        }
+      };
+    }
+    $event = new PostSelectQueryEvent($results, $this);
     \Civi::dispatcher()->dispatch(Events::POST_SELECT_QUERY, $event);
 
     return $event->getResults();
@@ -108,7 +145,7 @@ class Api4SelectQuery extends SelectQuery {
   /**
    * Gets all FK fields and does the required joins
    */
-  protected function preRun() {
+  protected function addJoins() {
     $allFields = array_merge($this->select, array_keys($this->orderBy));
     $recurse = function($clauses) use (&$allFields, &$recurse) {
       foreach ($clauses as $clause) {
