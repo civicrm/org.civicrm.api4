@@ -21,12 +21,4 @@ class Contact extends Generic\DAOEntity {
     return new Action\Contact\Create(__CLASS__, __FUNCTION__);
   }
 
-  /**
-   * @return \Civi\Api4\Generic\DAOUpdateAction
-   */
-  public static function update() {
-    // For some reason the contact bao requires this for updating
-    return new Generic\DAOUpdateAction(__CLASS__, __FUNCTION__, ['id', 'contact_type']);
-  }
-
 }

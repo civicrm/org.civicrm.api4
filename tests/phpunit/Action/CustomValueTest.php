@@ -22,6 +22,7 @@ class CustomValueTest extends BaseCustomValueTest {
 
     $group = uniqid('groupc');
     $colorField = uniqid('colorc');
+    $textField = uniqid('txt');
 
     $customGroup = CustomGroup::create()
       ->setCheckPermissions(FALSE)
@@ -40,6 +41,14 @@ class CustomValueTest extends BaseCustomValueTest {
       ->addValue('data_type', 'String')
       ->execute();
 
+    CustomField::create()
+      ->setCheckPermissions(FALSE)
+      ->addValue('label', $textField)
+      ->addValue('custom_group_id', $customGroup['id'])
+      ->addValue('html_type', 'Text')
+      ->addValue('data_type', 'String')
+      ->execute();
+
     $this->contactID = Contact::create()
       ->setCheckPermissions(FALSE)
       ->addValue('first_name', 'Johann')
@@ -55,7 +64,16 @@ class CustomValueTest extends BaseCustomValueTest {
         'custom_field_id' => 1,
         'custom_group' => $group,
         'name' => $colorField,
-        'title' => ts($colorField),
+        'title' => $colorField,
+        'entity' => "Custom_$group",
+        'data_type' => 'String',
+        'fk_entity' => NULL,
+      ],
+      [
+        'custom_field_id' => 2,
+        'custom_group' => $group,
+        'name' => $textField,
+        'title' => $textField,
         'entity' => "Custom_$group",
         'data_type' => 'String',
         'fk_entity' => NULL,

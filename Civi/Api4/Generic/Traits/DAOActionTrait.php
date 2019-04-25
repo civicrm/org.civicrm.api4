@@ -48,12 +48,12 @@ trait DAOActionTrait {
   }
 
   /**
-   * Write a bao object as part of a create/update action.
+   * Write bao objects as part of a create/update action.
    *
    * @param array $items
-   *   The record to write to the DB.
+   *   The records to write to the DB.
    * @return array
-   *   The record after being written to the DB (e.g. including newly assigned "id").
+   *   The records after being written to the DB (e.g. including newly assigned "id").
    * @throws \API_Exception
    */
   protected function writeObjects($items) {
@@ -81,6 +81,7 @@ trait DAOActionTrait {
       if ($entityId && $this->getEntityName() == 'Contact') {
         $item['contact_id'] = $entityId;
       }
+
       if (method_exists($baoName, $method)) {
         $createResult = $baoName::$method($item);
       }
