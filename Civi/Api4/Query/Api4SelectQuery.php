@@ -130,10 +130,7 @@ class Api4SelectQuery extends SelectQuery {
       foreach ($this->selectFields as $column => $alias) {
         $returnName = $alias;
         $alias = str_replace('.', '_', $alias);
-        $results[$query->id][$returnName] = NULL;
-        if (property_exists($query, $alias)) {
-          $results[$query->id][$returnName] = $query->$alias;
-        }
+        $results[$query->id][$returnName] = property_exists($query, $alias) ? $query->$alias : NULL;
       };
     }
     $event = new PostSelectQueryEvent($results, $this);
@@ -246,7 +243,6 @@ class Api4SelectQuery extends SelectQuery {
       if ($this->getField($field)) {
         $this->query->orderBy(self::MAIN_TABLE_ALIAS . '.' . $field . " $dir");
       }
-      // TODO: Handle joined fields, custom fields, etc.
       else {
         throw new \API_Exception("Invalid sort field. Cannot order by $field $dir");
       }
