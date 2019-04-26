@@ -62,6 +62,7 @@ trait DAOActionTrait {
     // Some BAOs are weird and don't support a straightforward "create" method.
     $oddballs = [
       'Address' => 'add',
+      'EntityTag' => 'add',
       'GroupContact' => 'add',
       'Website' => 'add',
     ];
