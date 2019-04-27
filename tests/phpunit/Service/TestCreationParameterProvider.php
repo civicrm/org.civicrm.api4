@@ -82,16 +82,7 @@ class TestCreationParameterProvider {
    */
   private function getOption(FieldSpec $field) {
     $options = $field->getOptions();
-    $useKeyNames = ['data_type', 'html_type'];
-    $shouldUseKey = in_array($field->getName(), $useKeyNames);
-    $isIdField = substr($field->getName(), -3) === '_id';
-
-    if ($isIdField || $shouldUseKey) {
-      return array_rand($options); // return key (ID)
-    }
-    else {
-      return $options[array_rand($options)];
-    }
+    return array_rand($options);
   }
 
   /**
