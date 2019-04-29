@@ -1,9 +1,9 @@
 (function(angular, $, _, undefined) {
 
-  // Cache schema metadata
-  var schema = [];
-  // Cache fk schema data
-  var links = [];
+  // Schema metadata
+  var schema = CRM.vars.api4.schema;
+  // FK schema data
+  var links = CRM.vars.api4.links;
   // Cache list of entities
   var entities = [];
   // Cache list of actions
@@ -29,10 +29,7 @@
     $scope.availableParams = {};
     $scope.params = {};
     $scope.index = '';
-    var getMetaParams = schema.length ? {} : {
-      schema: ['Entity', 'get', {chain: {fields: ['$name', 'getFields']}}],
-      links: ['Entity', 'getLinks']
-    },
+    var getMetaParams = {},
       objectParams = {orderBy: 'ASC', values: '', chain: ['Entity', '', '{}']},
       helpTitle = '',
       helpContent = {};
@@ -48,6 +45,10 @@
       javascript: '',
       cli: ''
     };
+
+    if (!entities.length) {
+      formatForSelect2(schema, entities, 'name', ['description']);
+    }
 
     $scope.$bindToRoute({
       expr: 'index',
@@ -452,17 +453,6 @@
     function fetchMeta() {
       crmApi4(getMetaParams)
         .then(function(data) {
-          if (data.schema) {
-            schema = data.schema;
-            entities.length = 0;
-            formatForSelect2(schema, entities, 'name', ['description']);
-            if ($scope.entity && !$scope.action) {
-              showEntityHelp($scope.entity);
-            }
-          }
-          if (data.links) {
-            links = data.links;
-          }
           if (data.actions) {
             getEntity().actions = data.actions;
             selectAction();
@@ -483,20 +473,14 @@
     if (!$scope.entity) {
       $scope.helpTitle = helpTitle = ts('Help');
       $scope.helpContent = helpContent = {description: ts('Welcome to the api explorer.'), comment: ts('Select an entity to begin.')};
-      if (getMetaParams.schema) {
-        fetchMeta();
-      }
-    } else if (!actions.length && (!schema.length || !getEntity().actions)) {
-      if (getMetaParams.schema) {
-        entities.push({id: $scope.entity, text: $scope.entity});
-      }
+    } else if (!actions.length && !getEntity().actions) {
       getMetaParams.actions = [$scope.entity, 'getActions', {chain: {fields: [$scope.entity, 'getFields', {action: '$name'}]}}];
       fetchMeta();
     } else {
       selectAction();
     }
 
-    if ($scope.entity && schema.length) {
+    if ($scope.entity) {
       showEntityHelp($scope.entity);
     }
 
