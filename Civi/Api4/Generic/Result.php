@@ -102,4 +102,17 @@ class Result extends \ArrayObject {
     return $this;
   }
 
+  /**
+   * Returns the number of results
+   *
+   * @return int
+   */
+  public function count() {
+    $count = parent::count();
+    if ($count == 1 && array_keys($this->first()) == ['row_count']) {
+      return $this->first()['row_count'];
+    }
+    return $count;
+  }
+
 }

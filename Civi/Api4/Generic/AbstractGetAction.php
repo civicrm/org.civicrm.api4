@@ -14,10 +14,22 @@ namespace Civi\Api4\Generic;
 abstract class AbstractGetAction extends AbstractQueryAction {
 
   /**
-   * Fields to return. Defaults to all non-custom fields.
+   * Fields to return. Defaults to all fields.
+   *
+   * Set to ["row_count"] to return only the number of items found.
    *
    * @var array
    */
   protected $select = [];
+
+  /**
+   * Only return the number of found items.
+   *
+   * @return $this
+   */
+  public function selectRowCount() {
+    $this->select = ['row_count'];
+    return $this;
+  }
 
 }

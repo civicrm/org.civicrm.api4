@@ -20,8 +20,8 @@ class BasicActionsTest extends UnitTestCase {
 
     $id2 = MockBasicEntity::create()->addValue('foo', 'two')->execute()->first()['id'];
 
-    $result = MockBasicEntity::get()->execute();
-    $this->assertCount(2, $result);
+    $result = MockBasicEntity::get()->selectRowCount()->execute();
+    $this->assertEquals(2, $result->count());
 
     MockBasicEntity::update()->addWhere('id', '=', $id2)->addValue('foo', 'new')->execute();
 

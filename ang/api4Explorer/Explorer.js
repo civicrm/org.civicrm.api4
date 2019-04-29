@@ -154,6 +154,21 @@
       return _.contains(specialParams, name);
     };
 
+    $scope.selectRowCount = function() {
+      if ($scope.isSelectRowCount()) {
+        $scope.params.select = [];
+      } else {
+        $scope.params.select = ['row_count'];
+        if ($scope.params.limit == 25) {
+          $scope.params.limit = 0;
+        }
+      }
+    };
+
+    $scope.isSelectRowCount = function() {
+      return $scope.params && $scope.params.select && $scope.params.select.length === 1 && $scope.params.select[0] === 'row_count';
+    };
+
     function getEntity(entityName) {
       return _.findWhere(schema, {name: entityName || $scope.entity});
     }
@@ -331,7 +346,12 @@
         }
         var results = lcfirst(_.isNumber(index) ? result : pluralize(result)),
           paramCount = _.size(params),
+          isSelectRowCount = params.select && params.select.length === 1 && params.select[0] === 'row_count',
           i = 0;
+
+        if (isSelectRowCount) {
+          results = result + 'Count';
+        }
 
         // Write javascript
         code.javascript = "CRM.api4('" + entity + "', '" + action + "', {";
@@ -369,6 +389,8 @@
                 code.php += "\n  ->addWhere(" + phpFormat(clause).slice(1, -1) + ")";
               }
             });
+          } else if (key === 'select' && isSelectRowCount) {
+            code.php += "\n  ->selectRowCount()";
           } else {
             code.php += "\n  ->set" + ucfirst(key) + '(' + phpFormat(param, 4) + ')';
           }
@@ -378,9 +400,11 @@
           code.php += !index ? '\n  ->first()' : (index === -1 ? '\n  ->last()' : '\n  ->itemAt(' + index + ')');
         } else if (index) {
           code.php += "\n  ->indexBy('" + index + "')";
+        } else if (isSelectRowCount) {
+          code.php += "\n  ->count()";
         }
         code.php += ";\n";
-        if (!_.isNumber(index)) {
+        if (!_.isNumber(index) && !isSelectRowCount) {
           code.php += "foreach ($" + results + ' as $' + ((_.isString(index) && index) ? index + ' => $' : '') + result + ') {\n  // do something\n}';
         }
 
