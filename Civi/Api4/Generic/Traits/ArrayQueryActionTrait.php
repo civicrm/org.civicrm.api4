@@ -19,8 +19,8 @@ trait ArrayQueryActionTrait {
   protected function queryArray($values) {
     $values = $this->filterArray($values);
     $values = $this->sortArray($values);
-    $values = $this->selectArray($values);
     $values = $this->limitArray($values);
+    $values = $this->selectArray($values);
     return $values;
   }
 
@@ -175,7 +175,10 @@ trait ArrayQueryActionTrait {
    * @return array
    */
   protected function selectArray($values) {
-    if ($this->getSelect()) {
+    if ($this->getSelect() === ['row_count']) {
+      $values = [['row_count' => count($values)]];
+    }
+    elseif ($this->getSelect()) {
       foreach ($values as &$value) {
         $value = array_intersect_key($value, array_flip($this->getSelect()));
       }

@@ -30,8 +30,12 @@
               <input type="checkbox" id="api4-param-{{ name }}" ng-model="params[name]"/>
               <label for="api4-param-{{ name }}">{{ name }}<span class="crm-marker" ng-if="param.required"> *</span></label>
             </div>
+            <div class="form-control" ng-mouseenter="help('selectRowCount', availableParams.select)" ng-mouseleave="help()" ng-class="{'api4-option-selected': isSelectRowCount()}" ng-if="availableParams.select">
+              <input type="checkbox" id="api4-param-selectRowCount" ng-checked="isSelectRowCount()" ng-click="selectRowCount()" />
+              <label for="api4-param-selectRowCount">SelectRowCount</label>
+            </div>
           </div>
-          <div class="api4-input form-inline" ng-mouseenter="help('select', availableParams.select)" ng-mouseleave="help()" ng-if="availableParams.select">
+          <div class="api4-input form-inline" ng-mouseenter="help('select', availableParams.select)" ng-mouseleave="help()" ng-if="availableParams.select && !isSelectRowCount()">
             <label for="api4-param-select">select<span class="crm-marker" ng-if="availableParams.select.required"> *</span></label>
             <input class="collapsible-optgroups form-control" ng-list crm-ui-select="{data: fieldsAndJoins, multiple: true}" id="api4-param-select" ng-model="params.select" style="width: 85%;"/>
           </div>

@@ -20,7 +20,7 @@
     });
   });
 
-  angular.module('api4Explorer').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, crmUiHelp, crmApi4) {
+  angular.module('api4Explorer').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, $http, crmUiHelp, crmApi4) {
     var ts = $scope.ts = CRM.ts('api4');
     $scope.entities = entities;
     $scope.actions = actions;
@@ -152,6 +152,21 @@
     $scope.isSpecial = function(name) {
       var specialParams = ['select', 'fields', 'action', 'where', 'values', 'orderBy', 'chain'];
       return _.contains(specialParams, name);
+    };
+
+    $scope.selectRowCount = function() {
+      if ($scope.isSelectRowCount()) {
+        $scope.params.select = [];
+      } else {
+        $scope.params.select = ['row_count'];
+        if ($scope.params.limit == 25) {
+          $scope.params.limit = 0;
+        }
+      }
+    };
+
+    $scope.isSelectRowCount = function() {
+      return $scope.params && $scope.params.select && $scope.params.select.length === 1 && $scope.params.select[0] === 'row_count';
     };
 
     function getEntity(entityName) {
@@ -331,7 +346,12 @@
         }
         var results = lcfirst(_.isNumber(index) ? result : pluralize(result)),
           paramCount = _.size(params),
+          isSelectRowCount = params.select && params.select.length === 1 && params.select[0] === 'row_count',
           i = 0;
+
+        if (isSelectRowCount) {
+          results = result + 'Count';
+        }
 
         // Write javascript
         code.javascript = "CRM.api4('" + entity + "', '" + action + "', {";
@@ -369,6 +389,8 @@
                 code.php += "\n  ->addWhere(" + phpFormat(clause).slice(1, -1) + ")";
               }
             });
+          } else if (key === 'select' && isSelectRowCount) {
+            code.php += "\n  ->selectRowCount()";
           } else {
             code.php += "\n  ->set" + ucfirst(key) + '(' + phpFormat(param, 4) + ')';
           }
@@ -378,9 +400,11 @@
           code.php += !index ? '\n  ->first()' : (index === -1 ? '\n  ->last()' : '\n  ->itemAt(' + index + ')');
         } else if (index) {
           code.php += "\n  ->indexBy('" + index + "')";
+        } else if (isSelectRowCount) {
+          code.php += "\n  ->count()";
         }
         code.php += ";\n";
-        if (!_.isNumber(index)) {
+        if (!_.isNumber(index) && !isSelectRowCount) {
           code.php += "foreach ($" + results + ' as $' + ((_.isString(index) && index) ? index + ' => $' : '') + result + ') {\n  // do something\n}';
         }
 
@@ -400,24 +424,30 @@
       return /^-{0,1}\d+$/.test(value);
     }
 
+    function formatMeta(resp) {
+      var ret = '';
+      _.each(resp, function(val, key) {
+        if (val !== Object(val)) {
+          ret += (ret.length ? ', ' : '') + key + ': ' + val;
+        }
+      });
+      return ret;
+    }
+
     $scope.execute = function() {
       $scope.status = 'warning';
       $scope.loading = true;
-      crmApi4($scope.entity, $scope.action, getParams(), $scope.index)
-        .then(function(data) {
-          var meta = {length: _.size(data)},
-            result = JSON.stringify(data, null, 2);
-          if (_.isArray(data)) {
-            data.length = 0;
-            _.assign(meta, data);
-          }
+      $http.get(CRM.url('civicrm/ajax/api4/' + $scope.entity + '/' + $scope.action, {
+        params: angular.toJson(getParams()),
+        index: $scope.index
+      })).then(function(resp) {
           $scope.loading = false;
           $scope.status = 'success';
-          $scope.result = [JSON.stringify(meta).replace('{', '').replace(/}$/, ''), result];
-        }, function(data) {
+          $scope.result = [formatMeta(resp.data), JSON.stringify(resp.data.values, null, 2)];
+        }, function(resp) {
           $scope.loading = false;
           $scope.status = 'danger';
-          $scope.result = [JSON.stringify(data, null, 2)];
+          $scope.result = [formatMeta(resp), JSON.stringify(resp.data, null, 2)];
         });
     };
 

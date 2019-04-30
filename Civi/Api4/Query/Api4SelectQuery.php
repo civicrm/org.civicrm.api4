@@ -102,7 +102,7 @@ class Api4SelectQuery extends SelectQuery {
     $this->buildWhereClause();
 
     // Select
-    if (in_array('count_rows', $this->select)) {
+    if (in_array('row_count', $this->select)) {
       $this->query->select("count(*) as c");
     }
     else {
@@ -122,9 +122,9 @@ class Api4SelectQuery extends SelectQuery {
     $query = \CRM_Core_DAO::executeQuery($this->query->toSQL());
 
     while ($query->fetch()) {
-      if (in_array('count_rows', $this->select)) {
-        // Fixme
-        return (int) $query->c;
+      if (in_array('row_count', $this->select)) {
+        $results[]['row_count'] = (int) $query->c;
+        break;
       }
       $results[$query->id] = [];
       foreach ($this->selectFields as $column => $alias) {

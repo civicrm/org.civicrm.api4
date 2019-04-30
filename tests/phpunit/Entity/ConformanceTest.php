@@ -70,6 +70,7 @@ class ConformanceTest extends UnitTestCase {
       $this->checkFields($entityClass, $entity);
       $id = $this->checkCreation($entity, $entityClass);
       $this->checkGet($entityClass, $id, $entity);
+      $this->checkGetCount($entityClass, $id, $entity);
       $this->checkUpdateFailsFromCreate($entityClass, $id);
       $this->checkWrongParamType($entityClass);
       $this->checkDeleteWithNoId($entityClass);
@@ -159,7 +160,30 @@ class ConformanceTest extends UnitTestCase {
       ->execute();
 
     $errMsg = sprintf('Failed to fetch a %s after creation', $entity);
-    $this->assertEquals(1, count($getResult), $errMsg);
+    $this->assertEquals($id, $getResult->first()['id'], $errMsg);
+    $this->assertEquals(1, $getResult->count(), $errMsg);
+  }
+
+  /**
+   * @param AbstractEntity|string $entityClass
+   * @param int $id
+   * @param string $entity
+   */
+  protected function checkGetCount($entityClass, $id, $entity) {
+    $getResult = $entityClass::get()
+      ->setCheckPermissions(FALSE)
+      ->addWhere('id', '=', $id)
+      ->selectRowCount()
+      ->execute();
+    $errMsg = sprintf('%s getCount failed', $entity);
+    $this->assertEquals(1, $getResult->count(), $errMsg);
+
+    $getResult = $entityClass::get()
+      ->setCheckPermissions(FALSE)
+      ->selectRowCount()
+      ->execute();
+    $errMsg = sprintf('%s getCount failed', $entity);
+    $this->assertGreaterThanOrEqual(1, $getResult->count(), $errMsg);
   }
 
   /**
