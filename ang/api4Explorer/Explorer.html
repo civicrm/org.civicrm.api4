@@ -116,7 +116,7 @@
           <table>
             <tr ng-repeat="(type, item) in code">
               <td>{{ type }}</td>
-              <td><pre>{{ item }}</pre></td>
+              <td><pre class="prettyprint" ng-bind-html="item"></pre></td>
             </tr>
           </table>
         </div>
@@ -132,7 +132,7 @@
           </h3>
         </div>
         <div class="panel-body">
-          <pre ng-repeat="code in result">{{ code }}</pre>
+          <pre class="prettyprint" ng-repeat="code in result" ng-bind-html="code"></pre>
         </div>
       </div>
   </div>

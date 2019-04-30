@@ -14,5 +14,5 @@ return [
     'ang/api4Explorer',
   ],
   'basePages' => [],
-  'requires' => ['crmUi', 'crmUtil', 'ngRoute', 'crmRouteBinder', 'ui.sortable', 'api4'],
+  'requires' => ['crmUi', 'crmUtil', 'ngRoute', 'crmRouteBinder', 'ui.sortable', 'api4', 'ngSanitize'],
 ];

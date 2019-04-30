@@ -411,6 +411,9 @@
         // Write cli code
         code.cli = 'cv api4 ' + entity + '.' + action + " '" + stringify(params) + "'";
       }
+      _.each(code, function(val, type) {
+        code[type] = prettyPrintOne(val);
+      });
       $scope.code = code;
     }
 
@@ -431,7 +434,7 @@
           ret += (ret.length ? ', ' : '') + key + ': ' + val;
         }
       });
-      return ret;
+      return prettyPrintOne(ret);
     }
 
     $scope.execute = function() {
@@ -443,11 +446,11 @@
       })).then(function(resp) {
           $scope.loading = false;
           $scope.status = 'success';
-          $scope.result = [formatMeta(resp.data), JSON.stringify(resp.data.values, null, 2)];
+          $scope.result = [formatMeta(resp.data), prettyPrintOne(JSON.stringify(resp.data.values, null, 2), 'js', 1)];
         }, function(resp) {
           $scope.loading = false;
           $scope.status = 'danger';
-          $scope.result = [formatMeta(resp), JSON.stringify(resp.data, null, 2)];
+          $scope.result = [formatMeta(resp), prettyPrintOne(JSON.stringify(resp.data, null, 2))];
         });
     };
 
