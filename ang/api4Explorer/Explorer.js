@@ -20,7 +20,7 @@
     });
   });
 
-  angular.module('api4Explorer').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, crmUiHelp, crmApi4) {
+  angular.module('api4Explorer').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, $http, crmUiHelp, crmApi4) {
     var ts = $scope.ts = CRM.ts('api4');
     $scope.entities = entities;
     $scope.actions = actions;
@@ -424,24 +424,30 @@
       return /^-{0,1}\d+$/.test(value);
     }
 
+    function formatMeta(resp) {
+      var ret = '';
+      _.each(resp, function(val, key) {
+        if (val !== Object(val)) {
+          ret += (ret.length ? ', ' : '') + key + ': ' + val;
+        }
+      });
+      return ret;
+    }
+
     $scope.execute = function() {
       $scope.status = 'warning';
       $scope.loading = true;
-      crmApi4($scope.entity, $scope.action, getParams(), $scope.index)
-        .then(function(data) {
-          var meta = {length: _.size(data)},
-            result = JSON.stringify(data, null, 2);
-          if (_.isArray(data)) {
-            data.length = 0;
-            _.assign(meta, data);
-          }
+      $http.get(CRM.url('civicrm/ajax/api4/' + $scope.entity + '/' + $scope.action, {
+        params: angular.toJson(getParams()),
+        index: $scope.index
+      })).then(function(resp) {
           $scope.loading = false;
           $scope.status = 'success';
-          $scope.result = [JSON.stringify(meta).replace('{', '').replace(/}$/, ''), result];
-        }, function(data) {
+          $scope.result = [formatMeta(resp.data), JSON.stringify(resp.data.values, null, 2)];
+        }, function(resp) {
           $scope.loading = false;
           $scope.status = 'danger';
-          $scope.result = [JSON.stringify(data, null, 2)];
+          $scope.result = [formatMeta(resp), JSON.stringify(resp.data, null, 2)];
         });
     };
 
