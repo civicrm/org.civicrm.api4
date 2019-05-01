@@ -412,13 +412,12 @@
         code.cli = 'cv api4 ' + entity + '.' + action + " '" + stringify(params) + "'";
       }
       _.each(code, function(val, type) {
-        code[type] = prettyPrintOne(val);
+        $scope.code[type] = prettyPrintOne(val);
       });
-      $scope.code = code;
     }
 
     function isInt(value) {
-      if (_.isNumber(value)) {
+      if (_.isFinite(value)) {
         return true;
       }
       if (!_.isString(value)) {
