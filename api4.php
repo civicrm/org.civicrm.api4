@@ -96,9 +96,8 @@ function api4_civicrm_container($container) {
  */
 function _api4_load_services($namespace, $tag, $container) {
   $namespace = \CRM_Utils_File::addTrailingSlash($namespace, '\\');
-  $includePaths = array_unique(explode(PATH_SEPARATOR, get_include_path()));
-  foreach ($includePaths as $path) {
-    $path = \CRM_Utils_File::addTrailingSlash($path) . str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
+  foreach (\CRM_Extension_System::singleton()->getMapper()->getActiveModuleFiles() as $ext) {
+    $path = \CRM_Utils_File::addTrailingSlash(dirname($ext['filePath'])) . str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
     foreach (glob("$path*.php") as $file) {
       $matches = [];
       preg_match('/(\w*).php/', $file, $matches);

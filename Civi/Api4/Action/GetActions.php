@@ -27,11 +27,10 @@ class GetActions extends BasicGetAction {
       }
     }
     if (!$this->_actionsToGet || count($this->_actionsToGet) > count($this->_actions)) {
-      $includePaths = array_unique(explode(PATH_SEPARATOR, get_include_path()));
       // Search entity-specific actions (including those provided by extensions)
-      foreach ($includePaths as $path) {
-        $dir = \CRM_Utils_File::addTrailingSlash($path) . 'Civi/Api4/Action/' . $this->_entityName;
-        $this->scanDir($dir);
+      foreach (\CRM_Extension_System::singleton()->getMapper()->getActiveModuleFiles() as $ext) {
+        $dir = \CRM_Utils_File::addTrailingSlash(dirname($ext['filePath']));
+        $this->scanDir($dir . 'Civi/Api4/Action/' . $this->_entityName);
       }
     }
     ksort($this->_actions);
