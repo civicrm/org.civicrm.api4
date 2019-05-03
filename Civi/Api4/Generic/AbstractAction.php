@@ -3,7 +3,6 @@ namespace Civi\Api4\Generic;
 
 use Civi\API\Exception\UnauthorizedException;
 use Civi\API\Kernel;
-use Civi\Api4\Generic\Result;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**
@@ -172,10 +171,10 @@ abstract class AbstractAction implements \ArrayAccess {
    * At this point all the params have been sent in and we initiate the api call & return the result.
    * This is basically the outer wrapper for api v4.
    *
-   * @return Result|array
+   * @return \Civi\Api4\Generic\Result
    * @throws UnauthorizedException
    */
-  final public function execute() {
+  public function execute() {
     /** @var Kernel $kernel */
     $kernel = \Civi::service('civi_api_kernel');
 
@@ -276,7 +275,7 @@ abstract class AbstractAction implements \ArrayAccess {
     if ($offset == 'check_permissions') {
       return $this->checkPermissions;
     }
-    if (isset ($this->thisArrayStorage[$offset])) {
+    if (isset($this->thisArrayStorage[$offset])) {
       return $this->thisArrayStorage[$offset];
     }
     return $val;

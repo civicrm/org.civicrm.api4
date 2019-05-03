@@ -429,8 +429,8 @@
     function formatMeta(resp) {
       var ret = '';
       _.each(resp, function(val, key) {
-        if (val !== Object(val)) {
-          ret += (ret.length ? ', ' : '') + key + ': ' + val;
+        if (key !== 'values' && !_.isPlainObject(val) && !_.isFunction(val)) {
+          ret += (ret.length ? ', ' : '') + key + ': ' + (_.isArray(val) ? '[' + val + ']' : val);
         }
       });
       return prettyPrintOne(ret);

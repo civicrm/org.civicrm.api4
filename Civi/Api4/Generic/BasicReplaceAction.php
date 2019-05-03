@@ -2,8 +2,6 @@
 
 namespace Civi\Api4\Generic;
 
-use Civi\Api4\Generic\Result;
-
 /**
  * Given a set of records, will appropriately update the database.
  *
@@ -34,6 +32,13 @@ class BasicReplaceAction extends AbstractBatchAction {
    * @var bool
    */
   protected $reload = FALSE;
+
+  /**
+   * @return \Civi\Api4\Result\ReplaceResult
+   */
+  public function execute() {
+    return parent::execute();
+  }
 
   /**
    * @inheritDoc
@@ -70,7 +75,6 @@ class BasicReplaceAction extends AbstractBatchAction {
       }
     }
 
-    $result->deleted = [];
     if ($toDelete) {
       $result->deleted = (array) civicrm_api4($this->getEntityName(), 'delete', [
         'where' => [[$idField, 'IN', array_keys($toDelete)]],

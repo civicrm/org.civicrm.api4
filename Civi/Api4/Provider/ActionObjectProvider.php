@@ -32,6 +32,7 @@ use Civi\API\Provider\ProviderInterface;
 use Civi\Api4\Generic\AbstractAction;
 use Civi\API\Events;
 use Civi\Api4\Generic\Result;
+use Civi\Api4\Utils\ReflectionUtils;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
@@ -70,10 +71,14 @@ class ActionObjectProvider implements EventSubscriberInterface, ProviderInterfac
    *
    * @param AbstractAction $action
    *
-   * @return array|mixed
+   * @return Result
    */
   public function invoke($action) {
-    $result = new Result();
+    // Load result class based on @return annotation in the execute() method.
+    $reflection = new \ReflectionClass($action);
+    $doc = ReflectionUtils::getCodeDocs($reflection->getMethod('execute'), 'Method');
+    $resultClass = \CRM_Utils_Array::value('return', $doc, '\\Civi\\Api4\\Generic\\Result');
+    $result = new $resultClass();
     $result->action = $action->getActionName();
     $result->entity = $action->getEntityName();
     $action->_run($result);
