@@ -2,7 +2,9 @@
 namespace Civi\Api4\Generic\Traits;
 
 /**
- * @inheritDoc
+ * This trait adds the $current param to a Get action.
+ *
+ * @see \Civi\Api4\Event\Subscriber\IsCurrentSubscriber
  */
 trait IsCurrentTrait {
 
@@ -33,17 +35,6 @@ trait IsCurrentTrait {
   public function setCurrent($current) {
     $this->current = $current;
     return $this;
-  }
-
-  protected function getObjects() {
-    if ($this->current) {
-      $this->addWhere('is_active', '=', '1');
-      $this->addClause('OR', ['end_date', 'IS NULL'], ['end_date', '>=', 'now']);
-    }
-    elseif ($this->current === FALSE) {
-      $this->addClause('OR', ['is_active', '=', '0'], ['end_date', '<', 'now']);
-    }
-    return parent::getObjects();
   }
 
 }
