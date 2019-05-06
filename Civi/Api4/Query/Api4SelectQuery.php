@@ -302,6 +302,7 @@ class Api4SelectQuery extends SelectQuery {
 
   /**
    * @param $key
+   * @throws \API_Exception
    */
   protected function joinFK($key) {
     $pathArray = explode('.', $key);
@@ -334,6 +335,10 @@ class Api4SelectQuery extends SelectQuery {
       foreach ($lastLink->getEntityFields() as $fieldObject) {
         $this->apiFieldSpec[$prefix . $fieldObject->getName()] = $fieldObject->toArray() + ['entity' => $joinEntity];
       }
+    }
+
+    if (!$lastLink->getField($field)) {
+      throw new \API_Exception('Invalid join');
     }
 
     // custom groups use aliases for field names
