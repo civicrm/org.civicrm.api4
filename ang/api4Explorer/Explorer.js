@@ -227,7 +227,9 @@
         return input;
       }
       try {
-        return input === '>' ? '>' : jsyaml.safeLoad(input);
+        var output = (input === '>') ? '>' : jsyaml.safeLoad(input);
+        // We don't want dates parsed to js objects
+        return _.isDate(output) ? input : output;
       } catch (e) {
         return input;
       }
