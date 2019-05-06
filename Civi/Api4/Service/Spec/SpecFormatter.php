@@ -105,7 +105,7 @@ class SpecFormatter {
    */
   private static function getDataType(array $data) {
     if (isset($data['data_type'])) {
-      return $data['data_type'];
+      return !empty($data['time_format']) ? 'Timestamp' : $data['data_type'];
     }
 
     $dataTypeInt = ArrayHelper::value('type', $data);
