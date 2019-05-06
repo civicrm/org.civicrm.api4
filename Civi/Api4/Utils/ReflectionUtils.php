@@ -116,4 +116,23 @@ class ReflectionUtils {
     return $info;
   }
 
+  /**
+   * List all traits used by a class and its parents.
+   *
+   * @param object|string $class
+   * @return array
+   */
+  public static function getTraits($class) {
+    $traits = [];
+    // Get traits of this class + parent classes
+    do {
+      $traits = array_merge(class_uses($class), $traits);
+    } while ($class = get_parent_class($class));
+    // Get traits of traits
+    foreach ($traits as $trait => $same) {
+      $traits = array_merge(class_uses($trait), $traits);
+    }
+    return $traits;
+  }
+
 }
