@@ -36,7 +36,7 @@ trait CustomValueActionTrait {
    */
   protected function writeObjects($items) {
     $result = [];
-    $fields = $this->getEntityFields();
+    $fields = $this->entityFields();
     foreach ($items as $item) {
       FormattingUtil::formatWriteParams($item, $this->getEntityName(), $fields);
 
@@ -75,7 +75,7 @@ trait CustomValueActionTrait {
    * @inheritDoc
    */
   protected function fillDefaults(&$params) {
-    foreach ($this->getEntityFields() as $name => $field) {
+    foreach ($this->entityFields() as $name => $field) {
       if (!isset($params[$name]) && isset($field['default_value'])) {
         $params[$name] = $field['default_value'];
       }
