@@ -35,7 +35,7 @@ abstract class AbstractCreateAction extends AbstractAction {
   protected function validateValues() {
     $unmatched = [];
     $params = NULL;
-    foreach ($this->getEntityFields() as $fieldName => $fieldInfo) {
+    foreach ($this->entityFields() as $fieldName => $fieldInfo) {
       if (!$this->getValue($fieldName)) {
         if (!empty($fieldInfo['required']) && !isset($fieldInfo['default_value'])) {
           $unmatched[] = $fieldName;

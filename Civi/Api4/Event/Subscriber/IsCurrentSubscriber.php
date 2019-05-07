@@ -3,6 +3,7 @@
 namespace Civi\Api4\Event\Subscriber;
 
 use Civi\API\Event\PrepareEvent;
+use Civi\Api4\Generic\AbstractQueryAction;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**
@@ -13,17 +14,24 @@ use Civi\Api4\Utils\ReflectionUtils;
 class IsCurrentSubscriber extends Generic\AbstractPrepareSubscriber {
 
   public function onApiPrepare(PrepareEvent $event) {
+    /** @var AbstractQueryAction $action */
     $action = $event->getApiRequest();
-    if ($action['version'] == 4) {
-      $traits = ReflectionUtils::getTraits($action);
-      if (in_array('Civi\Api4\Generic\Traits\IsCurrentTrait', $traits)) {
-        if ($action->getCurrent()) {
+    if ($action['version'] == 4 && method_exists($action, 'getCurrent')
+      && in_array('Civi\Api4\Generic\Traits\IsCurrentTrait', ReflectionUtils::getTraits($action))
+    ) {
+      $fields = $action->entityFields();
+      if ($action->getCurrent()) {
+        if (isset($fields['is_active'])) {
           $action->addWhere('is_active', '=', '1');
-          $action->addClause('OR', ['end_date', 'IS NULL'], ['end_date', '>=', 'now']);
         }
-        elseif ($action->getCurrent() === FALSE) {
-          $action->addClause('OR', ['is_active', '=', '0'], ['end_date', '<', 'now']);
+        $action->addClause('OR', ['end_date', 'IS NULL'], ['end_date', '>=', 'now']);
+      }
+      elseif ($action->getCurrent() === FALSE) {
+        $conditions = [['end_date', '<', 'now']];
+        if (isset($fields['is_active'])) {
+          $conditions[] = ['is_active', '=', '0'];
         }
+        $action->addClause('OR', $conditions);
       }
     }
   }

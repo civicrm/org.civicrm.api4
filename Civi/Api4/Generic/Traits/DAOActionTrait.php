@@ -75,7 +75,7 @@ trait DAOActionTrait {
 
     foreach ($items as $item) {
       $entityId = UtilsArray::value('id', $item);
-      FormattingUtil::formatWriteParams($item, $this->getEntityName(), $this->getEntityFields());
+      FormattingUtil::formatWriteParams($item, $this->getEntityName(), $this->entityFields());
       $this->formatCustomParams($item, $entityId);
 
       // For some reason the contact bao requires this

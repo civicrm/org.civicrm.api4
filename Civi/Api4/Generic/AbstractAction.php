@@ -59,16 +59,16 @@ abstract class AbstractAction implements \ArrayAccess {
   protected $_actionName;
 
   /* @var \ReflectionClass */
-  private $thisReflection;
+  private $_reflection;
 
   /* @var array */
-  private $thisParamInfo;
+  private $_paramInfo;
 
   /* @var array */
-  private $entityFields;
+  private $_entityFields;
 
   /* @var array */
-  private $thisArrayStorage;
+  private $_arrayStorage = [];
 
   /**
    * Action constructor.
@@ -192,7 +192,7 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   public function getParams() {
     $params = [];
-    foreach ($this->getReflection()->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+    foreach ($this->reflect()->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
       $name = $property->getName();
       // Skip variables starting with an underscore
       if ($name[0] != '_') {
@@ -209,17 +209,17 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return array of arrays [description, type, default, (comment)]
    */
   public function getParamInfo($param = NULL) {
-    if (!isset($this->thisParamInfo)) {
+    if (!isset($this->_paramInfo)) {
       $defaults = $this->getParamDefaults();
-      foreach ($this->getReflection()->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
+      foreach ($this->reflect()->getProperties(\ReflectionProperty::IS_PROTECTED) as $property) {
         $name = $property->getName();
         if ($name != 'version' && $name[0] != '_') {
-          $this->thisParamInfo[$name] = ReflectionUtils::getCodeDocs($property, 'Property');
-          $this->thisParamInfo[$name]['default'] = $defaults[$name];
+          $this->_paramInfo[$name] = ReflectionUtils::getCodeDocs($property, 'Property');
+          $this->_paramInfo[$name]['default'] = $defaults[$name];
         }
       }
     }
-    return $param ? $this->thisParamInfo[$param] : $this->thisParamInfo;
+    return $param ? $this->_paramInfo[$param] : $this->_paramInfo;
   }
 
   /**
@@ -241,7 +241,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @param string $param
    * @return bool
    */
-  protected function paramExists($param) {
+  public function paramExists($param) {
     return array_key_exists($param, $this->getParams());
   }
 
@@ -249,14 +249,14 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return array
    */
   protected function getParamDefaults() {
-    return array_intersect_key($this->getReflection()->getDefaultProperties(), $this->getParams());
+    return array_intersect_key($this->reflect()->getDefaultProperties(), $this->getParams());
   }
 
   /**
    * @inheritDoc
    */
   public function offsetExists($offset) {
-    return in_array($offset, ['entity', 'action', 'params', 'version', 'check_permissions']) || isset($this->thisArrayStorage[$offset]);
+    return in_array($offset, ['entity', 'action', 'params', 'version', 'check_permissions']) || isset($this->_arrayStorage[$offset]);
   }
 
   /**
@@ -275,8 +275,8 @@ abstract class AbstractAction implements \ArrayAccess {
     if ($offset == 'check_permissions') {
       return $this->checkPermissions;
     }
-    if (isset($this->thisArrayStorage[$offset])) {
-      return $this->thisArrayStorage[$offset];
+    if (isset($this->_arrayStorage[$offset])) {
+      return $this->_arrayStorage[$offset];
     }
     return $val;
   }
@@ -292,7 +292,7 @@ abstract class AbstractAction implements \ArrayAccess {
       $this->setCheckPermissions($value);
     }
     else {
-      $this->thisArrayStorage[$offset] = $value;
+      $this->_arrayStorage[$offset] = $value;
     }
   }
 
@@ -303,7 +303,7 @@ abstract class AbstractAction implements \ArrayAccess {
     if (in_array($offset, ['entity', 'action', 'entityName', 'actionName', 'params', 'check_permissions', 'version'])) {
       throw new \API_Exception('Cannot modify api4 state via array access');
     }
-    unset($this->thisArrayStorage[$offset]);
+    unset($this->_arrayStorage[$offset]);
   }
 
   /**
@@ -342,25 +342,25 @@ abstract class AbstractAction implements \ArrayAccess {
    * @return array
    * @throws \API_Exception
    */
-  protected function getEntityFields() {
-    if (!$this->entityFields) {
+  public function entityFields() {
+    if (!$this->_entityFields) {
       $params = ['action' => $this->getActionName()];
       if (method_exists($this, 'getBaoName')) {
         $params['includeCustom'] = FALSE;
       }
-      $this->entityFields = (array) civicrm_api4($this->getEntityName(), 'getFields', $params, 'name');
+      $this->_entityFields = (array) civicrm_api4($this->getEntityName(), 'getFields', $params, 'name');
     }
-    return $this->entityFields;
+    return $this->_entityFields;
   }
 
   /**
    * @return \ReflectionClass
    */
-  protected function getReflection() {
-    if (!$this->thisReflection) {
-      $this->thisReflection = new \ReflectionClass($this);
+  public function reflect() {
+    if (!$this->_reflection) {
+      $this->_reflection = new \ReflectionClass($this);
     }
-    return $this->thisReflection;
+    return $this->_reflection;
   }
 
   /**

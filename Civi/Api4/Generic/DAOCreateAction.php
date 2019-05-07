@@ -43,7 +43,7 @@ class DAOCreateAction extends AbstractCreateAction {
    * @param array $params
    */
   protected function fillDefaults(&$params) {
-    $fields = $this->getEntityFields();
+    $fields = $this->entityFields();
     $bao = $this->getBaoName();
     $coreFields = array_column($bao::fields(), NULL, 'name');
 
