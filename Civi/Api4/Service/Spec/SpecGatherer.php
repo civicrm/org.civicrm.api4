@@ -91,6 +91,7 @@ class SpecGatherer {
   private function addCustomFields($entity, RequestSpec $specification) {
     $extends = ($entity == 'Contact') ? ['Contact', 'Individual', 'Organization', 'Household'] : [$entity];
     $customFields = CustomField::get()
+      ->setCheckPermissions(FALSE)
       ->addWhere('custom_group.extends', 'IN', $extends)
       ->setSelect(['custom_group.name', 'custom_group_id', 'name', 'label', 'data_type', 'html_type', 'is_searchable', 'is_search_range', 'weight', 'is_active', 'is_view', 'option_group_id', 'default_value', 'date_format', 'time_format'])
       ->execute();
