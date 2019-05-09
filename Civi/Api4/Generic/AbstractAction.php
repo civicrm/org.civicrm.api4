@@ -344,7 +344,10 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   public function entityFields() {
     if (!$this->_entityFields) {
-      $params = ['action' => $this->getActionName()];
+      $params = [
+        'action' => $this->getActionName(),
+        'checkPermissions' => $this->checkPermissions,
+      ];
       if (method_exists($this, 'getBaoName')) {
         $params['includeCustom'] = FALSE;
       }
