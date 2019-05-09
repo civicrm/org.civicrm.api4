@@ -66,6 +66,7 @@ class BasicGetFieldsAction extends BasicGetAction {
       if (!$this->loadOptions) {
         $field['options'] = (bool) $field['options'];
       }
+      $field += array_fill_keys(array_column($this->fields(), 'name'), NULL);
     }
   }
 
