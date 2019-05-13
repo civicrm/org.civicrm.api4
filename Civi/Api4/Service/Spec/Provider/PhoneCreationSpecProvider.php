@@ -10,7 +10,6 @@ class PhoneCreationSpecProvider implements Generic\SpecProviderInterface {
    */
   public function modifySpec(RequestSpec $spec) {
     $spec->getFieldByName('contact_id')->setRequired(TRUE);
-    $spec->getFieldByName('location_type_id')->setRequired(TRUE);
     $spec->getFieldByName('phone')->setRequired(TRUE);
   }
 
