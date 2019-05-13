@@ -109,7 +109,7 @@ class Result extends \ArrayObject {
    */
   public function count() {
     $count = parent::count();
-    if ($count == 1 && array_keys($this->first()) == ['row_count']) {
+    if ($count == 1 && is_array($this->first()) && array_keys($this->first()) == ['row_count']) {
       return $this->first()['row_count'];
     }
     return $count;
