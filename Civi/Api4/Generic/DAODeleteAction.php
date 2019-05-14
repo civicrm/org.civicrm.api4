@@ -39,7 +39,7 @@ class DAODeleteAction extends AbstractBatchAction {
         $args = [$item['id']];
         $bao = call_user_func_array([$baoName, 'del'], $args);
         if ($bao !== FALSE) {
-          $ids[] = $item['id'];
+          $ids[] = ['id' => $item['id']];
         }
         else {
           throw new \API_Exception("Could not delete {$this->getEntityName()} id {$item['id']}");
@@ -53,7 +53,7 @@ class DAODeleteAction extends AbstractBatchAction {
         // delete it
         $action_result = $bao->delete();
         if ($action_result) {
-          $ids[] = $item['id'];
+          $ids[] = ['id' => $item['id']];
         }
         else {
           throw new \API_Exception("Could not delete {$this->getEntityName()} id {$item['id']}");

@@ -187,7 +187,7 @@ class ParticipantTest extends UnitTestCase {
       ->setCheckPermissions(FALSE)
       ->execute();
     $expectedDeletes = [2, 7, 12, 17];
-    $this->assertEquals($expectedDeletes, (array) $deleteResult,
+    $this->assertEquals($expectedDeletes, array_column((array) $deleteResult, 'id'),
       "didn't delete every second record as expected");
 
     $sqlCount = $this->getRowCount('civicrm_participant');

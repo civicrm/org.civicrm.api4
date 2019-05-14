@@ -229,7 +229,7 @@ class ConformanceTest extends UnitTestCase {
       ->execute();
 
     // should get back an array of deleted id
-    $this->assertEquals([$id], (array) $deleteResult);
+    $this->assertEquals([['id' => $id]], (array) $deleteResult);
   }
 
   /**

@@ -64,7 +64,7 @@ class ReplaceTest extends UnitTestCase {
     // Should have saved 2 records
     $this->assertEquals(2, $replaced->count());
     // Should have deleted email2
-    $this->assertEquals([$e2], $replaced->deleted);
+    $this->assertEquals([['id' => $e2]], $replaced->deleted);
     // Verify contact now has the new email records
     $results = Email::get()
       ->addWhere('contact_id', '=', $cid1)
