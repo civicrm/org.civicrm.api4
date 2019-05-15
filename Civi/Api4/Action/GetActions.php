@@ -46,7 +46,10 @@ class GetActions extends BasicGetAction {
         $matches = [];
         preg_match('/(\w*).php/', $file, $matches);
         $actionName = array_pop($matches);
-        $this->loadAction(lcfirst($actionName));
+        $actionClass = new \ReflectionClass('\\Civi\\Api4\\Action\\' . $this->_entityName . '\\' . $actionName);
+        if ($actionClass->isInstantiable() && $actionClass->isSubclassOf('\\Civi\\Api4\\Generic\\AbstractAction')) {
+          $this->loadAction(lcfirst($actionName));
+        }
       }
     }
   }

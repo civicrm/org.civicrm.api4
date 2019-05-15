@@ -62,7 +62,7 @@
             <input class="form-control" type="{{ param.type[0] === 'int' && param.type.length === 1 ? 'number' : 'text' }}" id="api4-param-{{ name }}" ng-model="params[name]"/>
             <a href class="crm-hover-button" title="Clear" ng-click="clearParam(name)" ng-show="!!params[name]"><i class="crm-i fa-times"></i></a>
           </div>
-          <div class="api4-input" ng-mouseenter="help(name, param)" ng-mouseleave="help()" ng-repeat="(name, param) in availableParams" ng-if="!isSpecial(name) && param.type[0] === 'array'">
+          <div class="api4-input" ng-mouseenter="help(name, param)" ng-mouseleave="help()" ng-repeat="(name, param) in availableParams" ng-if="!isSpecial(name) && (param.type[0] === 'array' || param.type[0] === 'mixed')">
             <label for="api4-param-{{ name }}">{{ name }}<span class="crm-marker" ng-if="param.required"> *</span></label>
             <textarea class="form-control" type="{{ param.type[0] === 'int' && param.type.length === 1 ? 'number' : 'text' }}" id="api4-param-{{ name }}" ng-model="params[name]">
             </textarea>

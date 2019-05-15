@@ -45,14 +45,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   public function getEntities() {
-    $result = [];
-    $entities = Entity::get()->setCheckPermissions(FALSE)->execute();
-    foreach ($entities as $entity) {
-      if ($entity['name'] != 'Entity') {
-        $result[] = [$entity['name']];
-      }
-    }
-    return $result;
+    return Entity::get()->setCheckPermissions(FALSE)->execute()->column('name');
   }
 
   /**
@@ -63,10 +56,16 @@ class ConformanceTest extends UnitTestCase {
     $this->assertNotEmpty($entities);
 
     foreach ($entities as $data) {
-      $entity = $data[0];
+      $entity = $data;
       $entityClass = 'Civi\Api4\\' . $entity;
 
-      $this->checkActions($entityClass);
+      $actions = $this->checkActions($entityClass);
+
+      // Go no further if it's not a CRUD entity
+      if (array_diff(['get', 'create', 'update', 'delete'], array_keys($actions))) {
+        continue;
+      }
+
       $this->checkFields($entityClass, $entity);
       $id = $this->checkCreation($entity, $entityClass);
       $this->checkGet($entityClass, $id, $entity);
@@ -105,7 +104,8 @@ class ConformanceTest extends UnitTestCase {
       ->execute()
       ->indexBy('name');
 
-    $this->assertNotEmpty($actions->getArrayCopy());
+    $this->assertNotEmpty($actions);
+    return (array) $actions;
   }
 
   /**

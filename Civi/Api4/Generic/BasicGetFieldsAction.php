@@ -52,21 +52,30 @@ class BasicGetFieldsAction extends BasicGetAction {
   }
 
   /**
+   * Ensure every result contains, at minimum, the array keys as defined in $this->fields.
+   *
+   * Attempt to set some sensible defaults for some fields.
+   *
+   * In most cases it's not necessary to override this function, even if your entity is really weird.
+   * Instead just override $this->fields and thes function will respect that.
+   *
    * @param array $values
    */
-  private function padResults(&$values) {
+  protected function padResults(&$values) {
+    $fields = array_column($this->fields(), 'name');
     foreach ($values as &$field) {
-      $field += [
-        'title' => ucwords(str_replace('_', ' ', $field['name'])),
+      $defaults = array_intersect_key([
+        'title' => empty($field['name']) ? NULL : ucwords(str_replace('_', ' ', $field['name'])),
         'entity' => $this->getEntityName(),
         'required' => FALSE,
-        'options' => FALSE,
+        'options' => !empty($field['pseudoconstant']),
         'data_type' => 'String',
-      ];
-      if (!$this->loadOptions) {
+      ], array_flip($fields));
+      $field += $defaults;
+      if (!$this->loadOptions && isset($defaults['options'])) {
         $field['options'] = (bool) $field['options'];
       }
-      $field += array_fill_keys(array_column($this->fields(), 'name'), NULL);
+      $field += array_fill_keys($fields, NULL);
     }
   }
 
@@ -114,6 +123,10 @@ class BasicGetFieldsAction extends BasicGetAction {
       [
         'name' => 'serialize',
         'data_type' => 'Integer',
+      ],
+      [
+        'name' => 'entity',
+        'data_type' => 'String',
       ],
     ];
   }
