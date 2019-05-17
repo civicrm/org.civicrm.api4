@@ -40,6 +40,10 @@ function civicrm_api4($entity, $action, $params = [], $index = NULL) {
     if (is_null($item)) {
       throw new \API_Exception("Index $index not found in api results");
     }
+    // Attempt to return a Result object if item is array, otherwise just return the item
+    if (!is_array($item)) {
+      return $item;
+    }
     $result->exchangeArray($item);
 
   }

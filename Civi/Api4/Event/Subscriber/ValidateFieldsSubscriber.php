@@ -87,6 +87,9 @@ class ValidateFieldsSubscriber extends Generic\AbstractPrepareSubscriber {
           }
           break;
 
+        case 'mixed':
+          return TRUE;
+
         default:
           throw new \API_Exception('Unknown parameter type: ' . $type);
       }

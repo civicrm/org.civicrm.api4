@@ -115,4 +115,14 @@ class Result extends \ArrayObject {
     return $count;
   }
 
+  /**
+   * Reduce each result to one field
+   *
+   * @param $name
+   * @return array
+   */
+  public function column($name) {
+    return array_column($this->getArrayCopy(), $name);
+  }
+
 }
