@@ -660,7 +660,7 @@
               $el.crmEntityRef({entity: field.fk_entity, select:{multiple: multi}});
             } else if (field.options) {
               $el.addClass('loading').attr('placeholder', ts('- select -')).crmSelect2({multiple: multi, data: [{id: '', text: ''}]});
-              loadFieldOptions(field.entity).then(function(data) {
+              loadFieldOptions(field.entity || entity).then(function(data) {
                 var options = [];
                 _.each(_.findWhere(data, {name: field.name}).options, function(val, key) {
                   options.push({id: key, text: val});
