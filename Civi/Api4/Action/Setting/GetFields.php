@@ -17,8 +17,10 @@ class GetFields extends \Civi\Api4\Generic\BasicGetFieldsAction {
   protected $domainId;
 
   protected function getRecords() {
-    $names = $this->_itemsToGet('name');
-    $filter = $names && count($names) == 1 ? ['name' => $names[0]] : [];
+    // TODO: Waiting for filter handling to get fixed in core
+    // $names = $this->_itemsToGet('name');
+    // $filter = $names ? ['name' => $names] : [];
+    $filter = [];
     return \Civi\Core\SettingsMetadata::getMetadata($filter, $this->domainId, $this->loadOptions);
   }
 
