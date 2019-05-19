@@ -2,7 +2,7 @@
 namespace Civi\Api4\Action\Setting;
 
 /**
- * Get the value of a CiviCRM setting.
+ * Base class for setting actions.
  *
  * @method int getDomainId
  * @method $this setDomainId(int $domainId)

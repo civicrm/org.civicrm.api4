@@ -2,7 +2,7 @@
 namespace Civi\Api4\Action\Setting;
 
 /**
- * Set the value of a CiviCRM setting.
+ * Set the value of one or more CiviCRM settings.
  *
  * @method array getValues
  * @method $this setValues(array $value)

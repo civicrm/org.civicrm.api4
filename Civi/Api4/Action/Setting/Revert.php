@@ -2,7 +2,7 @@
 namespace Civi\Api4\Action\Setting;
 
 /**
- * Revert a CiviCRM setting to its default value.
+ * Revert one or more CiviCRM settings to their default value.
  *
  * @method array getSelect
  * @method $this addSelect(string $name)
