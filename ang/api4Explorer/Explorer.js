@@ -633,7 +633,7 @@
           var $el = $(element),
             dataType = field.data_type;
           if (!op) {
-            op = field.serialize || field.type === 'Array' ? 'IN' : '=';
+            op = field.serialize || dataType === 'Array' ? 'IN' : '=';
           }
           multi = _.includes(['IN', 'NOT IN'], op);
           if (op === 'IS NULL' || op === 'IS NOT NULL') {
@@ -644,7 +644,7 @@
             if (_.includes(['=', '!=', '<>', '<', '>=', '<', '<='], op)) {
               $el.crmDatepicker({time: dataType === 'Timestamp'});
             }
-          } else if (_.includes(['=', '!=', '<>', 'IN', 'NOT IN'], op)) {
+          } else if (_.includes(['=', '!=', '<>', 'IN', 'NOT IN'], op) && (field.fk_entity || field.options || dataType === 'Boolean')) {
             if (field.fk_entity) {
               $el.crmEntityRef({entity: field.fk_entity, select:{multiple: multi}});
             } else if (field.options) {
@@ -662,6 +662,8 @@
                 {id: '0', text: ts('No')}
               ]});
             }
+          } else if (dataType === 'Integer') {
+            $el.attr('type', 'number');
           }
         }
 

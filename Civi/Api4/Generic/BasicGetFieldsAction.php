@@ -74,7 +74,7 @@ class BasicGetFieldsAction extends BasicGetAction {
         'entity' => $this->getEntityName(),
         'required' => FALSE,
         'options' => !empty($field['pseudoconstant']),
-        'data_type' => 'String',
+        'data_type' => \CRM_Utils_Array::value('type', $field, 'String'),
       ], array_flip($fields));
       $field += $defaults;
       if (!$this->loadOptions && isset($defaults['options'])) {
