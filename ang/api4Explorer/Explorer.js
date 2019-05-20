@@ -219,7 +219,9 @@
     function selectAction() {
       $scope.action = $routeParams.api4action;
       $scope.fieldsAndJoins = [];
-      formatForSelect2(getEntity().actions, actions, 'name', ['description', 'params']);
+      if (!actions.length) {
+        formatForSelect2(getEntity().actions, actions, 'name', ['description', 'params']);
+      }
       if ($scope.action) {
         var actionInfo = _.findWhere(actions, {id: $scope.action});
         $scope.fields = getFieldList();
