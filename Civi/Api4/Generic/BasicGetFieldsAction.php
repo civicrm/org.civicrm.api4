@@ -2,6 +2,7 @@
 
 namespace Civi\Api4\Generic;
 
+use Civi\API\Exception\NotImplementedException;
 use Civi\Api4\Utils\ActionUtil;
 
 /**
@@ -40,8 +41,12 @@ class BasicGetFieldsAction extends BasicGetAction {
    * @throws \Civi\API\Exception\NotImplementedException
    */
   public function _run(Result $result) {
-    $actionClass = ActionUtil::getAction($this->getEntityName(), $this->action);
-    if (method_exists($actionClass, 'fields')) {
+    try {
+      $actionClass = ActionUtil::getAction($this->getEntityName(), $this->action);
+    }
+    catch (NotImplementedException $e) {
+    }
+    if (isset($actionClass) && method_exists($actionClass, 'fields')) {
       $values = $actionClass->fields();
     }
     else {
