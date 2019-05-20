@@ -19,8 +19,11 @@ class Set extends AbstractSettingAction {
   protected $values = [];
 
   public function _run(\Civi\Api4\Generic\Result $result) {
-    $this->validateSettings(array_keys($this->values));
+    $meta = $this->validateSettings(array_keys($this->values));
     foreach ($this->values as $name => $value) {
+      if (isset($value) && !empty($meta[$name]['serialize'])) {
+        $value = \CRM_Core_DAO::serializeField($value, $meta[$name]['serialize']);
+      }
       \Civi::settings($this->domainId)->set($name, $value);
     }
     $result->exchangeArray($this->values);

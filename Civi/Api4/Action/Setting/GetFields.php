@@ -70,6 +70,10 @@ class GetFields extends \Civi\Api4\Generic\BasicGetFieldsAction {
         'name' => 'add',
         'data_type' => 'String',
       ],
+      [
+        'name' => 'serialize',
+        'data_type' => 'Integer',
+      ],
     ];
   }
 

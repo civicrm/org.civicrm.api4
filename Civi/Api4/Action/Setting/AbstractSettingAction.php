@@ -20,15 +20,16 @@ abstract class AbstractSettingAction extends \Civi\Api4\Generic\AbstractAction {
    * Ensure setting exists.
    *
    * @param array|string $names
+   * @return array
    * @throws \API_Exception
    */
   protected function validateSettings($names) {
     $allSettings = \Civi\Core\SettingsMetadata::getMetadata([], $this->domainId);
-    foreach ((array) $names as $name) {
-      if (!isset($allSettings[$name])) {
-        throw new \API_Exception('Unknown setting: ' . $name);
-      }
+    $invalid = array_diff($names, array_keys($allSettings));
+    if ($invalid) {
+      throw new \API_Exception('Unknown settings: ' . implode(', ', $invalid));
     }
+    return $allSettings;
   }
 
 }

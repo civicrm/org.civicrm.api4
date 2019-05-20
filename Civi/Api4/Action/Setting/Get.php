@@ -18,7 +18,7 @@ class Get extends AbstractSettingAction {
   protected $select = [];
 
   public function _run(\Civi\Api4\Generic\Result $result) {
-    $this->validateSettings($this->select);
+    $meta = $this->validateSettings($this->select);
     $settingsBag = \Civi::settings($this->domainId);
     if ($this->select) {
       foreach ($this->select as $name) {
@@ -27,6 +27,11 @@ class Get extends AbstractSettingAction {
     }
     else {
       $result->exchangeArray($settingsBag->all());
+    }
+    foreach ($result as $name => &$value) {
+      if (isset($value) && !empty($meta[$name]['serialize'])) {
+        $value = \CRM_Core_DAO::unSerializeField($value, $meta[$name]['serialize']);
+      }
     }
   }
 
