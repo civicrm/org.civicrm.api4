@@ -611,7 +611,8 @@
       },
       link: function (scope, element, attrs) {
         var ts = scope.ts = CRM.ts('api4'),
-          entity = $routeParams.api4entity;
+          entity = $routeParams.api4entity,
+          action = $routeParams.api4action;
 
         function getField(fieldName) {
           var fieldNames = fieldName.split('.');
@@ -619,9 +620,9 @@
 
           function get(entity, fieldNames) {
             if (fieldNames.length === 1) {
-              return _.findWhere(entityFields(entity), {name: fieldNames[0]});
+              return _.findWhere(entityFields(entity, action), {name: fieldNames[0]});
             }
-            var comboName = _.findWhere(entityFields(entity), {name: fieldNames[0] + '.' + fieldNames[1]});
+            var comboName = _.findWhere(entityFields(entity, action), {name: fieldNames[0] + '.' + fieldNames[1]});
             if (comboName) {
               return comboName;
             }
@@ -677,7 +678,6 @@
         }
 
         function loadFieldOptions(entity) {
-          var action = $routeParams.api4action;
           if (!fieldOptions[entity + action]) {
             fieldOptions[entity + action] = crmApi4(entity, 'getFields', {
               loadOptions: true,
@@ -783,8 +783,12 @@
     return _.findWhere(schema, {name: entityName});
   }
 
-  function entityFields(entityName) {
-    return _.result(getEntity(entityName), 'fields');
+  function entityFields(entityName, action) {
+    var entity = getEntity(entityName);
+    if (entity && action && entity.actions) {
+      return _.findWhere(entity.actions, {name: action}).fields;
+    }
+    return _.result(entity, 'fields');
   }
 
   // Collapsible optgroups for select2
