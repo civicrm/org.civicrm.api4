@@ -194,26 +194,7 @@
           params[key] = newParam;
         }
       });
-      if (params.where) {
-        formatWhereClause(params.where);
-      }
       return params;
-    }
-
-    // Coerce value to an array when the operator is IN or NOT IN
-    // Note this has already been passed through parseYaml once
-    function formatWhereClause(where) {
-      _.each(where, function(clause) {
-        if (_.isArray(clause)) {
-          if (clause.length === 3) {
-            if (_.contains(['IN', 'NOT IN'], clause[1]) && (_.isNumber(clause[2]) || (_.isString(clause[2]) && clause[2].length))) {
-              clause[2] = parseYaml('[' + clause[2] + ']');
-            }
-          } else {
-            formatWhereClause(clause);
-          }
-        }
-      });
     }
 
     function parseYaml(input) {
@@ -609,8 +590,10 @@
       scope: {
         data: '=api4ExpValue'
       },
-      link: function (scope, element, attrs) {
+      require: 'ngModel',
+      link: function (scope, element, attrs, ctrl) {
         var ts = scope.ts = CRM.ts('api4'),
+          multi = _.includes(['IN', 'NOT IN'], scope.data.op),
           entity = $routeParams.api4entity,
           action = $routeParams.api4action;
 
@@ -646,8 +629,11 @@
 
         function makeWidget(field, op) {
           var $el = $(element),
-            dataType = field.data_type,
-            multi = _.includes(['IN', 'NOT IN'], op);
+            dataType = field.data_type;
+          if (!op) {
+            op = field.serialize || field.type === 'Array' ? 'IN' : '=';
+          }
+          multi = _.includes(['IN', 'NOT IN'], op);
           if (op === 'IS NULL' || op === 'IS NOT NULL') {
             $el.hide();
             return;
@@ -689,11 +675,42 @@
           return fieldOptions[entity + action];
         }
 
+        // Copied from ng-list but applied conditionally if field is multi-valued
+        var parseList = function(viewValue) {
+          // If the viewValue is invalid (say required but empty) it will be `undefined`
+          if (_.isUndefined(viewValue)) return;
+
+          if (!multi) {
+            return viewValue;
+          }
+
+          var list = [];
+
+          if (viewValue) {
+            _.each(viewValue.split(','), function(value) {
+              if (value) list.push(_.trim(value));
+            });
+          }
+
+          return list;
+        };
+
+        // Copied from ng-list
+        ctrl.$parsers.push(parseList);
+        ctrl.$formatters.push(function(value) {
+          return _.isArray(value) ? value.join(', ') : value;
+        });
+
+        // Copied from ng-list
+        ctrl.$isEmpty = function(value) {
+          return !value || !value.length;
+        };
+
         scope.$watchCollection('data', function(data) {
           destroyWidget();
           var field = getField(data.field);
           if (field) {
-            makeWidget(field, data.op || '=');
+            makeWidget(field, data.op);
           }
         });
       }
