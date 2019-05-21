@@ -1,6 +1,8 @@
 <?php
 namespace Civi\Api4\Action\Setting;
 
+use Civi\Api4\Generic\Result;
+
 /**
  * Set the value of one or more CiviCRM settings.
  *
@@ -18,15 +20,25 @@ class Set extends AbstractSettingAction {
    */
   protected $values = [];
 
-  public function _run(\Civi\Api4\Generic\Result $result) {
-    $meta = $this->validateSettings(array_keys($this->values));
+  /**
+   * @param \Civi\Api4\Generic\Result $result
+   * @param \Civi\Core\SettingsBag $settingsBag
+   * @param array $meta
+   * @param int $domain
+   * @throws \Exception
+   */
+  protected function processSettings(Result $result, $settingsBag, $meta, $domain) {
     foreach ($this->values as $name => $value) {
       if (isset($value) && !empty($meta[$name]['serialize'])) {
         $value = \CRM_Core_DAO::serializeField($value, $meta[$name]['serialize']);
       }
-      \Civi::settings($this->domainId)->set($name, $value);
+      $settingsBag->set($name, $value);
+      $result[] = [
+        'name' => $name,
+        'value' => $this->values[$name],
+        'domain_id' => $domain,
+      ];
     }
-    $result->exchangeArray($this->values);
   }
 
 }

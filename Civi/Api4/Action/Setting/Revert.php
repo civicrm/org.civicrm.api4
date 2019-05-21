@@ -1,6 +1,8 @@
 <?php
 namespace Civi\Api4\Action\Setting;
 
+use Civi\Api4\Generic\Result;
+
 /**
  * Revert one or more CiviCRM settings to their default value.
  *
@@ -18,12 +20,26 @@ class Revert extends AbstractSettingAction {
    */
   protected $select = [];
 
-  public function _run(\Civi\Api4\Generic\Result $result) {
-    $this->validateSettings($this->select);
-    $settingsBag = \Civi::settings($this->domainId);
+  /**
+   * @param \Civi\Api4\Generic\Result $result
+   * @param \Civi\Core\SettingsBag $settingsBag
+   * @param array $meta
+   * @param int $domain
+   * @throws \Exception
+   */
+  protected function processSettings(Result $result, $settingsBag, $meta, $domain) {
     foreach ($this->select as $name) {
       $settingsBag->revert($name);
-      $result[$name] = $settingsBag->get($name);
+      $result[] = [
+        'name' => $name,
+        'value' => $settingsBag->get($name),
+        'domain_id' => $domain,
+      ];
+    }
+    foreach ($result as $name => &$setting) {
+      if (isset($setting['value']) && !empty($meta[$name]['serialize'])) {
+        $setting['value'] = \CRM_Core_DAO::unSerializeField($setting['value'], $meta[$name]['serialize']);
+      }
     }
   }
 

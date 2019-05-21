@@ -1,6 +1,8 @@
 <?php
 namespace Civi\Api4\Action\Setting;
 
+use Civi\Api4\Generic\Result;
+
 /**
  * Get the value of one or more CiviCRM settings.
  *
@@ -17,20 +19,35 @@ class Get extends AbstractSettingAction {
    */
   protected $select = [];
 
-  public function _run(\Civi\Api4\Generic\Result $result) {
-    $meta = $this->validateSettings($this->select);
-    $settingsBag = \Civi::settings($this->domainId);
+  /**
+   * @param \Civi\Api4\Generic\Result $result
+   * @param \Civi\Core\SettingsBag $settingsBag
+   * @param array $meta
+   * @param int $domain
+   * @throws \Exception
+   */
+  protected function processSettings(Result $result, $settingsBag, $meta, $domain) {
     if ($this->select) {
       foreach ($this->select as $name) {
-        $result[$name] = $settingsBag->get($name);
+        $result[] = [
+          'name' => $name,
+          'value' => $settingsBag->get($name),
+          'domain_id' => $domain,
+        ];
       }
     }
     else {
-      $result->exchangeArray($settingsBag->all());
+      foreach ($settingsBag->all() as $name => $value) {
+        $result[] = [
+          'name' => $name,
+          'value' => $value,
+          'domain_id' => $domain,
+        ];
+      }
     }
-    foreach ($result as $name => &$value) {
-      if (isset($value) && !empty($meta[$name]['serialize'])) {
-        $value = \CRM_Core_DAO::unSerializeField($value, $meta[$name]['serialize']);
+    foreach ($result as $name => &$setting) {
+      if (isset($setting['value']) && !empty($meta[$name]['serialize'])) {
+        $setting['value'] = \CRM_Core_DAO::unSerializeField($setting['value'], $meta[$name]['serialize']);
       }
     }
   }
