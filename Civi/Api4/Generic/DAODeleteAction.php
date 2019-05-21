@@ -2,8 +2,6 @@
 
 namespace Civi\Api4\Generic;
 
-use Civi\Api4\Generic\Result;
-
 /**
  * Delete one or more items, based on criteria specified in Where param (required).
  */
@@ -16,10 +14,14 @@ class DAODeleteAction extends AbstractBatchAction {
   public function _run(Result $result) {
     $defaults = $this->getParamDefaults();
     if ($defaults['where'] && !array_diff_key($this->where, $defaults['where'])) {
-      throw new \API_Exception('Cannot delete with no "where" parameter specified');
+      throw new \API_Exception('Cannot delete ' . $this->getEntityName() . ' with no "where" parameter specified');
     }
 
     $items = $this->getObjects();
+
+    if (!$items) {
+      throw new \API_Exception('Cannot delete ' . $this->getEntityName() . ', no records found with ' . $this->whereClauseToString());
+    }
 
     $ids = $this->deleteObjects($items);
 
