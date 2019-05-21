@@ -45,6 +45,8 @@ class Result extends \ArrayObject {
    */
   public $version = 4;
 
+  private $indexedBy;
+
   /**
    * Return first result.
    * @return array|null
@@ -87,6 +89,7 @@ class Result extends \ArrayObject {
    * @throws \API_Exception
    */
   public function indexBy($key) {
+    $this->indexedBy = $key;
     if (count($this)) {
       $newResults = [];
       foreach ($this as $values) {
@@ -122,7 +125,7 @@ class Result extends \ArrayObject {
    * @return array
    */
   public function column($name) {
-    return array_column($this->getArrayCopy(), $name);
+    return array_column($this->getArrayCopy(), $name, $this->indexedBy);
   }
 
 }

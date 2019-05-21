@@ -11,13 +11,15 @@ use Civi\Test\Api4\UnitTestCase;
 class SettingTest extends UnitTestCase {
 
   public function testSettingASetting() {
-    Setting::set()->addValue('menubar_position', 'above-crm-container')->setCheckPermissions(FALSE)->execute();
-    $value = Setting::get()->addSelect('menubar_position')->setCheckPermissions(FALSE)->execute()->first();
-    $this->assertEquals('above-crm-container', $value);
+    $setting = Setting::set()->addValue('menubar_position', 'above-crm-container')->setCheckPermissions(FALSE)->execute()->first();
+    $this->assertEquals('above-crm-container', $setting['value']);
+    $setting = Setting::get()->addSelect('menubar_position')->setCheckPermissions(FALSE)->execute()->first();
+    $this->assertEquals('above-crm-container', $setting['value']);
 
-    Setting::revert()->addSelect('menubar_position')->setCheckPermissions(FALSE)->execute();
-    $value = civicrm_api4('Setting', 'get', ['select' => ['menubar_position'], 'checkPermissions' => FALSE], 0);
-    $this->assertEquals('over-cms-menu', $value);
+    $setting = Setting::revert()->addSelect('menubar_position')->setCheckPermissions(FALSE)->execute()->indexBy('name')->column('value');
+    $this->assertEquals(['menubar_position' => 'over-cms-menu'], $setting);
+    $setting = civicrm_api4('Setting', 'get', ['select' => ['menubar_position'], 'checkPermissions' => FALSE], 0);
+    $this->assertEquals('over-cms-menu', $setting['value']);
   }
 
   public function testInvalidSetting() {
