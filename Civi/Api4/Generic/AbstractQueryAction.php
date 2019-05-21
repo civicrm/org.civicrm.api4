@@ -119,7 +119,11 @@ abstract class AbstractQueryAction extends AbstractAction {
     }
     if (in_array($whereClause[0], ['AND', 'OR', 'NOT'])) {
       $op = array_shift($whereClause);
-      return '(' . $this->whereClauseToString($whereClause, $op) . ')';
+      if ($op == 'NOT') {
+        $output = 'NOT ';
+        $op = 'AND';
+      }
+      return $output . '(' . $this->whereClauseToString($whereClause, $op) . ')';
     }
     elseif (isset($whereClause[1]) && in_array($whereClause[1], \CRM_Core_DAO::acceptedSQLOperators())) {
       $output = $whereClause[0] . ' ' . $whereClause[1] . ' ';

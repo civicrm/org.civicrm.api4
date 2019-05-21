@@ -2,8 +2,6 @@
 
 namespace Civi\Api4\Generic;
 
-use Civi\Api4\Generic\Result;
-
 /**
  * Create a new object from supplied values.
  *

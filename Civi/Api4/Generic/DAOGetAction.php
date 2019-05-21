@@ -2,8 +2,6 @@
 
 namespace Civi\Api4\Generic;
 
-use Civi\Api4\Generic\Result;
-
 /**
  * Retrieve items based on criteria specified in the 'where' param.
  *

@@ -2,8 +2,6 @@
 
 namespace Civi\Api4\Generic;
 
-use Civi\Api4\Generic\Result;
-
 /**
  * Update one or more records with new values.
  *
@@ -52,6 +50,10 @@ class DAOUpdateAction extends AbstractUpdateAction {
     $items = $this->getObjects();
     foreach ($items as &$item) {
       $item = $this->values + $item;
+    }
+
+    if (!$items) {
+      throw new \API_Exception('Cannot ' . $this->getActionName() . ' ' . $this->getEntityName() . ', no records found with ' . $this->whereClauseToString());
     }
 
     $result->exchangeArray($this->writeObjects($items));
