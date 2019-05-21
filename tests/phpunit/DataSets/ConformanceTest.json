@@ -3,7 +3,8 @@
     {
       "first_name": "Janice",
       "last_name": "Voss",
-      "contact_type": "Individual"
+      "contact_type": "Individual",
+      "@ref": "test_contact_1"
     }
   ],
   "CustomGroup": [
@@ -23,6 +24,13 @@
     {
       "name": "the_group",
       "title": "The Group"
+    }
+  ],
+  "Activity": [
+    {
+      "subject": "Test A Phone Activity",
+      "activity_type": "Phone Call",
+      "source_contact_id": "@ref test_contact_1.id"
     }
   ]
 }
