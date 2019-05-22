@@ -94,7 +94,7 @@ class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
     $this->assertEquals($result['api_key'], $key);
 
     // Now we can update the key
-    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'administer CiviCRM'];
+    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'administer CiviCRM', 'edit all contacts'];
 
     Contact::update()
       ->addWhere('id', '=', $contact['id'])
@@ -112,7 +112,7 @@ class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
   }
 
   public function testUpdateOwnApiKey() {
-    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'edit own api keys'];
+    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'edit own api keys', 'edit my contact'];
     $key = uniqid();
 
     $contact = Contact::create()
@@ -135,14 +135,14 @@ class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
       $error = $e->getMessage();
     }
 
+    $this->assertContains('key', $error);
+
     $result = Contact::get()
       ->setCheckPermissions(FALSE)
       ->addWhere('id', '=', $contact['id'])
       ->addSelect('api_key')
       ->execute()
       ->first();
-
-    $this->assertContains('key', $error);
 
     // Assert key is still the same
     $this->assertEquals($result['api_key'], $key);
