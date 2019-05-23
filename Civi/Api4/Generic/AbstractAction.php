@@ -1,8 +1,6 @@
 <?php
 namespace Civi\Api4\Generic;
 
-use Civi\API\Exception\UnauthorizedException;
-use Civi\API\Kernel;
 use Civi\Api4\Utils\ReflectionUtils;
 
 /**
@@ -52,23 +50,42 @@ abstract class AbstractAction implements \ArrayAccess {
    */
   protected $checkPermissions = TRUE;
 
-  /* @var string */
+  /**
+   * @var string
+   */
   protected $_entityName;
 
-  /* @var string */
+  /**
+   * @var string
+   */
   protected $_actionName;
 
-  /* @var \ReflectionClass */
+  /**
+   * @var \ReflectionClass
+   */
   private $_reflection;
 
-  /* @var array */
+  /**
+   * @var array
+   */
   private $_paramInfo;
 
-  /* @var array */
+  /**
+   * @var array
+   */
   private $_entityFields;
 
-  /* @var array */
+  /**
+   * @var array
+   */
   private $_arrayStorage = [];
+
+  /**
+   * @var int
+   * Used to identify api calls for transactions
+   * @see \Civi\Core\Transaction\Manager
+   */
+  private $_id;
 
   /**
    * Action constructor.
@@ -84,6 +101,7 @@ abstract class AbstractAction implements \ArrayAccess {
     }
     $this->_entityName = $entityName;
     $this->_actionName = $actionName;
+    $this->_id = \Civi\API\Request::getNextId();
   }
 
   /**
@@ -172,10 +190,10 @@ abstract class AbstractAction implements \ArrayAccess {
    * This is basically the outer wrapper for api v4.
    *
    * @return \Civi\Api4\Generic\Result
-   * @throws UnauthorizedException
+   * @throws \Civi\API\Exception\UnauthorizedException
    */
   public function execute() {
-    /** @var Kernel $kernel */
+    /** @var \Civi\API\Kernel $kernel */
     $kernel = \Civi::service('civi_api_kernel');
 
     return $kernel->runRequest($this);
@@ -256,7 +274,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @inheritDoc
    */
   public function offsetExists($offset) {
-    return in_array($offset, ['entity', 'action', 'params', 'version', 'check_permissions']) || isset($this->_arrayStorage[$offset]);
+    return in_array($offset, ['entity', 'action', 'params', 'version', 'check_permissions', 'id']) || isset($this->_arrayStorage[$offset]);
   }
 
   /**
@@ -275,6 +293,9 @@ abstract class AbstractAction implements \ArrayAccess {
     if ($offset == 'check_permissions') {
       return $this->checkPermissions;
     }
+    if ($offset == 'id') {
+      return $this->_id;
+    }
     if (isset($this->_arrayStorage[$offset])) {
       return $this->_arrayStorage[$offset];
     }
@@ -285,7 +306,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @inheritDoc
    */
   public function offsetSet($offset, $value) {
-    if (in_array($offset, ['entity', 'action', 'entityName', 'actionName', 'params', 'version'])) {
+    if (in_array($offset, ['entity', 'action', 'entityName', 'actionName', 'params', 'version', 'id'])) {
       throw new \API_Exception('Cannot modify api4 state via array access');
     }
     if ($offset == 'check_permissions') {
@@ -300,7 +321,7 @@ abstract class AbstractAction implements \ArrayAccess {
    * @inheritDoc
    */
   public function offsetUnset($offset) {
-    if (in_array($offset, ['entity', 'action', 'entityName', 'actionName', 'params', 'check_permissions', 'version'])) {
+    if (in_array($offset, ['entity', 'action', 'entityName', 'actionName', 'params', 'check_permissions', 'version', 'id'])) {
       throw new \API_Exception('Cannot modify api4 state via array access');
     }
     unset($this->_arrayStorage[$offset]);
@@ -318,6 +339,9 @@ abstract class AbstractAction implements \ArrayAccess {
     return \CRM_Core_Permission::check($permissions);
   }
 
+  /**
+   * @return array
+   */
   public function getPermissions() {
     $permissions = call_user_func(["\\Civi\\Api4\\" . $this->_entityName, 'permissions']);
     $permissions += [
