@@ -262,8 +262,8 @@ class FieldSpec {
         $fieldName = sprintf('custom_%d', $this->getCustomFieldId());
       }
 
-      $dao = CoreUtil::getDAOFromApiName($this->getEntity());
-      $options = $dao::buildOptions($fieldName);
+      $bao = CoreUtil::getBAOFromApiName($this->getEntity());
+      $options = $bao::buildOptions($fieldName);
 
       if (!is_array($options) || !$options) {
         $options = FALSE;

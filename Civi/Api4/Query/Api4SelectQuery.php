@@ -79,7 +79,7 @@ class Api4SelectQuery extends SelectQuery {
     $this->entity = $entity;
     $this->checkPermissions = $checkPermissions;
 
-    $baoName = CoreUtil::getDAOFromApiName($entity);
+    $baoName = CoreUtil::getBAOFromApiName($entity);
     $bao = new $baoName();
 
     $this->entityFieldNames = _civicrm_api3_field_names(_civicrm_api3_build_fields_array($bao));
