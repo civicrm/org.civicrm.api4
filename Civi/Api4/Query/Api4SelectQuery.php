@@ -572,7 +572,6 @@ class Api4SelectQuery extends SelectQuery {
     else {
       $bao = new $baoName();
       $this->query = \CRM_Utils_SQL_Select::from($bao->tableName() . ' ' . self::MAIN_TABLE_ALIAS);
-      $bao->free();
     }
   }
 
