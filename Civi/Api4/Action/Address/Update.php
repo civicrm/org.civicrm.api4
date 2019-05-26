@@ -14,7 +14,7 @@ class Update extends \Civi\Api4\Generic\DAOUpdateAction {
    *
    * @var bool
    */
-  protected $streetParsing = TRUE;
+  protected $streetParsing = FALSE;
 
   /**
    * Optional param to indicate you want to skip geocoding (useful when importing a lot of addresses at once, the job Geocode and Parse Addresses can execute this task after the import)
@@ -34,9 +34,10 @@ class Update extends \Civi\Api4\Generic\DAOUpdateAction {
    * @inheritDoc
    */
   public function _run(Result $result) {
-    $this->values['street_parsing'] = $this->streetParsing;
+    if ($this->streetParsing && !empty($this->values['street_address'])) {
+      $this->values = array_merge($this->values, \CRM_Core_BAO_Address::parseStreetAddress($this->values['street_address']));
+    }
     $this->values['skip_geocode'] = $this->skipGeocode;
-    $this->values['fix_address'] = $this->fixAddress;
     parent::_run($result);
   }
 

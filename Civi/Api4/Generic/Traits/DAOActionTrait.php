@@ -61,7 +61,6 @@ trait DAOActionTrait {
 
     // Some BAOs are weird and don't support a straightforward "create" method.
     $oddballs = [
-      'Address' => 'add',
       'EntityTag' => 'add',
       'GroupContact' => 'add',
       'Website' => 'add',
@@ -95,7 +94,10 @@ trait DAOActionTrait {
         $this->checkContactPermissions($baoName, $item);
       }
 
-      if (method_exists($baoName, $method)) {
+      if ($this->getEntityName() == 'Address') {
+        $createResult = $baoName::add($item, $this->fixAddress);
+      }
+      elseif (method_exists($baoName, $method)) {
         $createResult = $baoName::$method($item);
       }
       else {
