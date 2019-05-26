@@ -14,14 +14,14 @@ class CoreUtil {
    * @param $entityName
    *
    * @return \CRM_Core_DAO|string
-   *   The DAO name for use in static calls. Return doc block is hacked to allow
+   *   The BAO name for use in static calls. Return doc block is hacked to allow
    *   auto-completion of static methods
    */
-  public static function getDAOFromApiName($entityName) {
+  public static function getBAOFromApiName($entityName) {
     if ($entityName === 'CustomValue' || strpos($entityName, 'Custom_') === 0) {
       return 'CRM_Contact_BAO_Contact';
     }
-    return \_civicrm_api3_get_DAO($entityName);
+    return \_civicrm_api3_get_BAO($entityName);
   }
 
   /**

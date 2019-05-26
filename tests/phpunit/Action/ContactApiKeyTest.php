@@ -10,7 +10,7 @@ use Civi\Api4\Contact;
 class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
 
   public function testGetApiKey() {
-    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'add contacts', 'edit api keys'];
+    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'add contacts', 'edit api keys', 'view all contacts'];
     $key = uniqid();
 
     $contact = Contact::create()
@@ -26,13 +26,19 @@ class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
       ->addSelect('api_key')
       ->execute()
       ->first();
-    $this->assertEquals($result['api_key'], $key);
+    $this->assertEquals($key, $result['api_key']);
 
     // Remove permission and we should not see the key
     \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM'];
     $result = Contact::get()
       ->addWhere('id', '=', $contact['id'])
       ->addSelect('api_key')
+      ->execute()
+      ->first();
+    $this->assertTrue(empty($result['api_key']));
+
+    $result = Contact::get()
+      ->addWhere('id', '=', $contact['id'])
       ->execute()
       ->first();
     $this->assertTrue(empty($result['api_key']));

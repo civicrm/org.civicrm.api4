@@ -124,9 +124,9 @@ class SpecGatherer {
    * @return array
    */
   private function getDAOFields($entityName) {
-    $dao = CoreUtil::getDAOFromApiName($entityName);
+    $bao = CoreUtil::getBAOFromApiName($entityName);
 
-    return $dao::fields();
+    return $bao::fields();
   }
 
 }
