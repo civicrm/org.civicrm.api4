@@ -30,12 +30,13 @@ namespace Civi\Api4\Query;
 use Civi\API\SelectQuery;
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\PostSelectQueryEvent;
+use Civi\Api4\Generic\Result;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
+use Civi\Api4\Utils\ActionUtil;
 use Civi\Api4\Utils\FormattingUtil;
 use Civi\Api4\Utils\CoreUtil;
 use CRM_Core_DAO_AllCoreTables as TableHelper;
-use CRM_Core_DAO_CustomField as CustomFieldDAO;
 use CRM_Utils_Array as UtilsArray;
 
 /**
@@ -65,7 +66,7 @@ class Api4SelectQuery extends SelectQuery {
   protected $fkSelectAliases = [];
 
   /**
-   * @var Joinable[]
+   * @var \Civi\Api4\Service\Schema\Joinable\Joinable[]
    *   The joinable tables that have been joined so far
    */
   protected $joinedTables = [];
@@ -324,11 +325,21 @@ class Api4SelectQuery extends SelectQuery {
   }
 
   /**
-   * @inheritDoc
+   * Here we bypass the api wrapper and execute the getFields action directly.
+   * This is because we DON'T want the wrapper to check permissions as this is an internal op,
+   * but we DO want permissions to be checked inside the getFields request so e.g. the api_key
+   * field can be conditionally included.
+   * @see \Civi\Api4\Action\Contact\GetFields
    */
   protected function getFields() {
-    $fields = civicrm_api4($this->entity, 'getFields', ['action' => 'get', 'checkPermissions' => $this->checkPermissions, 'includeCustom' => FALSE])->indexBy('name');
-    return (array) $fields;
+    $getFields = ActionUtil::getAction($this->entity, 'getFields');
+    $result = new Result();
+    $getFields
+      ->setCheckPermissions($this->checkPermissions)
+      ->setAction('get')
+      ->setIncludeCustom(FALSE)
+      ->_run($result);
+    return (array) $result->indexBy('name');
   }
 
   /**
@@ -370,7 +381,7 @@ class Api4SelectQuery extends SelectQuery {
     }
 
     $joinPath = $joiner->join($this, $pathString);
-    /** @var Joinable $lastLink */
+    /** @var \Civi\Api4\Service\Schema\Joinable\Joinable $lastLink */
     $lastLink = array_pop($joinPath);
 
     // Cache field info for retrieval by $this->getField()
@@ -399,7 +410,7 @@ class Api4SelectQuery extends SelectQuery {
   }
 
   /**
-   * @param Joinable $joinable
+   * @param \Civi\Api4\Service\Schema\Joinable\Joinable $joinable
    *
    * @return $this
    */
@@ -529,14 +540,14 @@ class Api4SelectQuery extends SelectQuery {
   }
 
   /**
-   * @return Joinable[]
+   * @return \Civi\Api4\Service\Schema\Joinable\Joinable[]
    */
   public function getJoinedTables() {
     return $this->joinedTables;
   }
 
   /**
-   * @return Joinable
+   * @return \Civi\Api4\Service\Schema\Joinable\Joinable
    */
   public function getJoinedTable($alias) {
     foreach ($this->joinedTables as $join) {
