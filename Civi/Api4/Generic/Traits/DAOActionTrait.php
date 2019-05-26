@@ -91,7 +91,7 @@ trait DAOActionTrait {
         $item['contact_id'] = $entityId;
       }
 
-      if ($this->getCheckPermissions() && $entityId) {
+      if ($this->getCheckPermissions()) {
         $this->checkContactPermissions($baoName, $item);
       }
 
@@ -214,7 +214,7 @@ trait DAOActionTrait {
    * @throws \Civi\API\Exception\UnauthorizedException
    */
   protected function checkContactPermissions($baoName, $item) {
-    if ($baoName == 'CRM_Contact_BAO_Contact') {
+    if ($baoName == 'CRM_Contact_BAO_Contact' && !empty($item['id'])) {
       $permission = $this->getActionName() == 'delete' ? \CRM_Core_Permission::DELETE : \CRM_Core_Permission::EDIT;
       if (!\CRM_Contact_BAO_Contact_Permission::allow($item['id'], $permission)) {
         throw new \Civi\API\Exception\UnauthorizedException('Permission denied to modify contact record');
