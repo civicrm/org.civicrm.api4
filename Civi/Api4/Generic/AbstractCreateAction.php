@@ -49,7 +49,7 @@ abstract class AbstractCreateAction extends AbstractAction {
       }
     }
     if ($unmatched) {
-      throw new \API_Exception("Mandatory values missing from Api4 {$this->getEntityName()}::{$this->getActionName()}: '" . implode("', '", $unmatched) . "'", "mandatory_missing", ["fields" => $unmatched]);
+      throw new \API_Exception("Mandatory values missing from Api4 {$this->getEntityName()}::{$this->getActionName()}: " . implode(", ", $unmatched), "mandatory_missing", ["fields" => $unmatched]);
     }
   }
 
