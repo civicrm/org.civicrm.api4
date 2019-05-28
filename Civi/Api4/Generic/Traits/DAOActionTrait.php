@@ -150,7 +150,7 @@ trait DAOActionTrait {
    * @param int $entityId
    * @return mixed
    */
-  private function formatCustomParams(&$params, $entityId) {
+  protected function formatCustomParams(&$params, $entityId) {
     $customParams = [];
 
     // $customValueID is the ID of the custom value in the custom table for this

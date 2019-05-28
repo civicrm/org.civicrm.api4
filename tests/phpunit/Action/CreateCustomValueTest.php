@@ -25,7 +25,7 @@ class CreateCustomValueTest extends BaseCustomValueTest {
     CustomField::create()
       ->setCheckPermissions(FALSE)
       ->addValue('label', 'Color')
-      ->addValue('options', $optionValues)
+      ->addValue('option_values', $optionValues)
       ->addValue('custom_group_id', $customGroup['id'])
       ->addValue('html_type', 'Select')
       ->addValue('data_type', 'String')

@@ -4,7 +4,6 @@ namespace Civi\Test\Api4\Spec;
 
 use Civi\Api4\Service\Spec\FieldSpec;
 use Civi\Api4\Service\Spec\Provider\Generic\SpecProviderInterface;
-use Civi\Api4\Service\Spec\RequestSpec;
 use Civi\Api4\Service\Spec\SpecGatherer;
 use Civi\Test\Api4\Traits\OptionCleanupTrait;
 use Civi\Test\Api4\UnitTestCase;
@@ -26,7 +25,7 @@ class SpecGathererTest extends UnitTestCase {
     $this->cleanup([
       'tablesToTruncate' => [
         'civicrm_custom_group',
-        'civicrm_custom_field'
+        'civicrm_custom_field',
       ],
     ]);
     return parent::setUpHeadless();
@@ -49,7 +48,7 @@ class SpecGathererTest extends UnitTestCase {
     $provider = $this->prophesize(SpecProviderInterface::class);
     $provider->applies('Contact', 'create')->willReturn(TRUE);
     $provider->modifySpec(Argument::any())->will(function ($args) {
-      /** @var RequestSpec $spec */
+      /** @var \Civi\Api4\Service\Spec\RequestSpec $spec */
       $spec = $args[0];
       $spec->addFieldSpec(new FieldSpec('foo', 'Contact'));
     });
@@ -75,7 +74,7 @@ class SpecGathererTest extends UnitTestCase {
       ->setCheckPermissions(FALSE)
       ->addValue('label', 'FavColor')
       ->addValue('custom_group_id', $customGroupId)
-      ->addValue('options', $options)
+      ->addValue('option_values', $options)
       ->addValue('html_type', 'Select')
       ->addValue('data_type', 'String')
       ->execute();
