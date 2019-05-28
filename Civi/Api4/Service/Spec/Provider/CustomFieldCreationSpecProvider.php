@@ -15,6 +15,7 @@ class CustomFieldCreationSpecProvider implements Generic\SpecProviderInterface {
     $optionField->setTitle(ts('Option Values'));
     $optionField->setDescription('Pass an array of options (value => label) to create this field\'s option values');
     $spec->addFieldSpec($optionField);
+    $spec->getFieldByName('data_type')->setDefaultValue('String')->setRequired(FALSE);
   }
 
   /**
