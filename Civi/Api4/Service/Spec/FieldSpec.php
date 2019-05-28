@@ -187,7 +187,7 @@ class FieldSpec {
   }
 
   /**
-   * @param bool $required
+   * @param bool $requiredIf
    *
    * @return $this
    */
@@ -244,7 +244,7 @@ class FieldSpec {
    * @return array
    */
   private function getValidDataTypes() {
-    $extraTypes = ['Boolean', 'Text', 'Float', 'Url'];
+    $extraTypes = ['Boolean', 'Text', 'Float', 'Url', 'Array'];
     $extraTypes = array_combine($extraTypes, $extraTypes);
 
     return array_merge(\CRM_Utils_Type::dataTypes(), $extraTypes);
