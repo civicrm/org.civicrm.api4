@@ -9,13 +9,13 @@ namespace Civi\Api4\Generic\Traits;
 trait IsCurrentTrait {
 
   /**
-   * Convenience filter for selecting items that are enabled and do not have a past end-date.
+   * Convenience filter for selecting items that are enabled and are currently within their start/end dates.
    *
    * Adding current = TRUE is a shortcut for
-   *   WHERE is_active = 1 AND (end_date IS NULL OR end_date >= now)
+   *   WHERE is_active = 1 AND (end_date IS NULL OR end_date >= now) AND (start_date IS NULL OR start_DATE <= now)
    *
    * Adding current = FALSE is a shortcut for
-   *   WHERE is_active = 0 OR end_date < now
+   *   WHERE is_active = 0 OR start_date > now OR end_date < now
    *
    * @var bool
    */
