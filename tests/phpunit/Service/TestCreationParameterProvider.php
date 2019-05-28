@@ -127,7 +127,7 @@ class TestCreationParameterProvider {
         return StringHelper::createRandom(100, implode('', range('a', 'z')));
 
       case 'Money':
-        return sprintf('%d.%2d', rand(0, 2000), rand(1, 99));
+        return sprintf('%d.%2d', rand(0, 2000), rand(10, 99));
 
       case 'Date':
         return '20100102';
