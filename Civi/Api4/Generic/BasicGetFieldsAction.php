@@ -114,6 +114,10 @@ class BasicGetFieldsAction extends BasicGetAction {
         'data_type' => 'Boolean',
       ],
       [
+        'name' => 'required_if',
+        'data_type' => 'String',
+      ],
+      [
         'name' => 'options',
         'data_type' => 'Array',
       ],

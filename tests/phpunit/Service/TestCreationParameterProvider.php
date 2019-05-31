@@ -4,17 +4,16 @@ namespace Civi\Test\Api4\Service;
 
 use Civi\Api4\Service\Spec\FieldSpec;
 use Civi\Api4\Service\Spec\SpecGatherer;
-use \CRM_Utils_String as StringHelper;
 
 class TestCreationParameterProvider {
 
   /**
-   * @var SpecGatherer
+   * @var \Civi\Api4\Service\Spec\SpecGatherer
    */
   protected $gatherer;
 
   /**
-   * @param SpecGatherer $gatherer
+   * @param \Civi\Api4\Service\Spec\SpecGatherer $gatherer
    */
   public function __construct(SpecGatherer $gatherer) {
     $this->gatherer = $gatherer;
@@ -49,7 +48,7 @@ class TestCreationParameterProvider {
    * Attempt to get a value using field option, defaults, FKEntity, or a random
    * value based on the data type.
    *
-   * @param FieldSpec $field
+   * @param \Civi\Api4\Service\Spec\FieldSpec $field
    *
    * @return mixed
    * @throws \Exception
@@ -76,7 +75,7 @@ class TestCreationParameterProvider {
   }
 
   /**
-   * @param FieldSpec $field
+   * @param \Civi\Api4\Service\Spec\FieldSpec $field
    *
    * @return mixed
    */
@@ -86,7 +85,7 @@ class TestCreationParameterProvider {
   }
 
   /**
-   * @param FieldSpec $field
+   * @param \Civi\Api4\Service\Spec\FieldSpec $field
    *
    * @return mixed
    * @throws \Exception
@@ -121,16 +120,19 @@ class TestCreationParameterProvider {
         return rand(1, 2000);
 
       case 'String':
-        return StringHelper::createRandom(10, implode('', range('a', 'z')));
+        return \CRM_Utils_String::createRandom(10, implode('', range('a', 'z')));
 
       case 'Text':
-        return StringHelper::createRandom(100, implode('', range('a', 'z')));
+        return \CRM_Utils_String::createRandom(100, implode('', range('a', 'z')));
 
       case 'Money':
         return sprintf('%d.%2d', rand(0, 2000), rand(10, 99));
 
       case 'Date':
         return '20100102';
+
+      case 'Timestamp':
+        return 'now';
     }
 
     return NULL;
