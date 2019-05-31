@@ -9,7 +9,7 @@ use Civi\Api4\Utils\CoreUtil;
 class SpecGatherer {
 
   /**
-   * @var SpecProviderInterface[]
+   * @var \Civi\Api4\Service\Spec\Provider\Generic\SpecProviderInterface[]
    */
   protected $specProviders = [];
 
@@ -56,7 +56,7 @@ class SpecGatherer {
   }
 
   /**
-   * @param SpecProviderInterface $provider
+   * @param \Civi\Api4\Service\Spec\Provider\Generic\SpecProviderInterface $provider
    */
   public function addSpecProvider(SpecProviderInterface $provider) {
     $this->specProviders[] = $provider;
@@ -64,7 +64,8 @@ class SpecGatherer {
 
   /**
    * @param string $entity
-   * @param RequestSpec $specification
+   * @param string $action
+   * @param \Civi\Api4\Service\Spec\RequestSpec $specification
    */
   private function addDAOFields($entity, $action, RequestSpec $specification) {
     $DAOFields = $this->getDAOFields($entity);
@@ -86,7 +87,7 @@ class SpecGatherer {
 
   /**
    * @param string $entity
-   * @param RequestSpec $specification
+   * @param \Civi\Api4\Service\Spec\RequestSpec $specification
    */
   private function addCustomFields($entity, RequestSpec $specification) {
     $extends = ($entity == 'Contact') ? ['Contact', 'Individual', 'Organization', 'Household'] : [$entity];
@@ -104,7 +105,7 @@ class SpecGatherer {
 
   /**
    * @param string $customGroup
-   * @param RequestSpec $specification
+   * @param \Civi\Api4\Service\Spec\RequestSpec $specification
    */
   private function getCustomGroupFields($customGroup, RequestSpec $specification) {
     $customFields = CustomField::get()
