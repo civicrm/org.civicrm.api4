@@ -11,7 +11,7 @@ class EntityTagCreationSpecProvider implements Generic\SpecProviderInterface {
    * @param RequestSpec $spec
    */
   public function modifySpec(RequestSpec $spec) {
-    $spec->getFieldByName('entity_table')->setRequired(TRUE);
+    $spec->getFieldByName('entity_table')->setRequired(FALSE)->setDefaultValue('civicrm_contact');
   }
 
   /**
