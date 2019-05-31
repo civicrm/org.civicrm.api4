@@ -4,14 +4,13 @@ namespace Civi\Api4\Service\Spec\Provider;
 
 use Civi\Api4\Service\Spec\RequestSpec;
 
-
 class EntityTagCreationSpecProvider implements Generic\SpecProviderInterface {
 
   /**
-   * @param RequestSpec $spec
+   * @param \Civi\Api4\Service\Spec\RequestSpec $spec
    */
   public function modifySpec(RequestSpec $spec) {
-    $spec->getFieldByName('entity_table')->setRequired(TRUE);
+    $spec->getFieldByName('entity_table')->setRequired(FALSE)->setDefaultValue('civicrm_contact');
   }
 
   /**

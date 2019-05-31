@@ -5,8 +5,9 @@ namespace Civi\Api4\Service\Spec\Provider\Generic;
 use Civi\Api4\Service\Spec\RequestSpec;
 
 interface SpecProviderInterface {
+
   /**
-   * @param RequestSpec $spec
+   * @param \Civi\Api4\Service\Spec\RequestSpec $spec
    *
    * @return void
    */
