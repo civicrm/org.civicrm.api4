@@ -22,7 +22,8 @@ class CustomGroupJoinable extends Joinable {
    * @param $targetTable
    * @param $alias
    * @param bool $isMultiRecord
-   * @param null $entity
+   * @param string $entity
+   * @param string $columns
    */
   public function __construct($targetTable, $alias, $isMultiRecord, $entity, $columns) {
     $this->entity = $entity;
