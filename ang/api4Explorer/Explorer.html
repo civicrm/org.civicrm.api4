@@ -71,7 +71,7 @@
           </fieldset>
           <fieldset ng-if="availableParams.values" ng-mouseenter="help('values', availableParams.values)" ng-mouseleave="help()">
             <legend>values<span class="crm-marker" ng-if="availableParams.values.required"> *</span></legend>
-            <div class="api4-input form-inline" ng-repeat="clause in params.values">
+            <div class="api4-input form-inline" ng-repeat="clause in params.values" ng-mouseenter="help('value: ' + clause[0], fieldHelp(clause[0]))" ng-mouseleave="help('values', availableParams.values)">
               <input class="collapsible-optgroups form-control" ng-model="clause[0]" crm-ui-select="{formatResult: formatSelect2Item, formatSelection: formatSelect2Item, data: valuesFields, allowClear: true, placeholder: 'Field'}" />
               <input class="form-control" ng-model="clause[1]" api4-exp-value="{field: clause[0]}" />
             </div>

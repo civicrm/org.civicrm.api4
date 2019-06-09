@@ -130,6 +130,26 @@
       }
     };
 
+    $scope.fieldHelp = function(fieldName) {
+      var field = getField(fieldName, $scope.entity, $scope.action);
+      if (!field) {
+        return;
+      }
+      var info = {
+          description: field.description,
+          type: field.data_type
+        };
+      if (field.default_value) {
+        info.default = field.default_value;
+      }
+      if (field.required_if) {
+        info.required_if = field.required_if;
+      } else if (field.required) {
+        info.required = 'true';
+      }
+      return info;
+    };
+
     $scope.valuesFields = function() {
       var fields = _.cloneDeep($scope.fields);
       // Disable fields that are already in use
@@ -599,25 +619,6 @@
           entity = $routeParams.api4entity,
           action = $routeParams.api4action;
 
-        function getField(fieldName) {
-          var fieldNames = fieldName.split('.');
-          return get(entity, fieldNames);
-
-          function get(entity, fieldNames) {
-            if (fieldNames.length === 1) {
-              return _.findWhere(entityFields(entity, action), {name: fieldNames[0]});
-            }
-            var comboName = _.findWhere(entityFields(entity, action), {name: fieldNames[0] + '.' + fieldNames[1]});
-            if (comboName) {
-              return comboName;
-            }
-            var linkName = fieldNames.shift(),
-              entityLinks = _.findWhere(links, {entity: entity}).links,
-              newEntity = _.findWhere(entityLinks, {alias: linkName}).entity;
-            return get(newEntity, fieldNames);
-          }
-        }
-
         function destroyWidget() {
           var $el = $(element);
           if ($el.is('.crm-form-date-wrapper .crm-hidden-date')) {
@@ -712,7 +713,7 @@
 
         scope.$watchCollection('data', function(data) {
           destroyWidget();
-          var field = getField(data.field);
+          var field = getField(data.field, entity, action);
           if (field) {
             makeWidget(field, data.op);
           }
@@ -810,6 +811,25 @@
       return _.findWhere(entity.actions, {name: action}).fields;
     }
     return _.result(entity, 'fields');
+  }
+
+  function getField(fieldName, entity, action) {
+    var fieldNames = fieldName.split('.');
+    return get(entity, fieldNames);
+
+    function get(entity, fieldNames) {
+      if (fieldNames.length === 1) {
+        return _.findWhere(entityFields(entity, action), {name: fieldNames[0]});
+      }
+      var comboName = _.findWhere(entityFields(entity, action), {name: fieldNames[0] + '.' + fieldNames[1]});
+      if (comboName) {
+        return comboName;
+      }
+      var linkName = fieldNames.shift(),
+        entityLinks = _.findWhere(links, {entity: entity}).links,
+        newEntity = _.findWhere(entityLinks, {alias: linkName}).entity;
+      return get(newEntity, fieldNames);
+    }
   }
 
   // Collapsible optgroups for select2
