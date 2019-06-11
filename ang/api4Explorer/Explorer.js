@@ -30,7 +30,7 @@
     $scope.params = {};
     $scope.index = '';
     var getMetaParams = {},
-      objectParams = {orderBy: 'ASC', values: '', chain: ['Entity', '', '{}']},
+      objectParams = {orderBy: 'ASC', values: '', filter: '', chain: ['Entity', '', '{}']},
       helpTitle = '',
       helpContent = {};
     $scope.helpTitle = '';
@@ -170,7 +170,7 @@
     };
 
     $scope.isSpecial = function(name) {
-      var specialParams = ['select', 'fields', 'action', 'where', 'values', 'orderBy', 'chain'];
+      var specialParams = ['select', 'fields', 'action', 'where', 'values', 'orderBy', 'chain', 'filter'];
       return _.contains(specialParams, name);
     };
 

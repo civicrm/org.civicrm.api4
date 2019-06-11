@@ -37,6 +37,7 @@ class BasicGetAction extends AbstractGetAction {
    * @param \Civi\Api4\Generic\Result $result
    */
   public function _run(Result $result) {
+    $this->applyFilters();
     $values = $this->getRecords();
     $result->exchangeArray($this->queryArray($values));
   }
