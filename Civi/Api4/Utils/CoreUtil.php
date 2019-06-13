@@ -3,6 +3,7 @@
 namespace Civi\Api4\Utils;
 
 use Civi\Api4\CustomGroup;
+use CRM_Core_DAO_AllCoreTables as AllCoreTables;
 
 require_once 'api/v3/utils.php';
 
@@ -37,6 +38,16 @@ class CoreUtil {
       ->addWhere('name', '=', $customGroupName)
       ->execute()
       ->first()['table_name'];
+  }
+
+  /**
+   * Given a sql table name, return the name of the api entity.
+   *
+   * @param $tableName
+   * @return string
+   */
+  public static function getApiNameFromTableName($tableName) {
+    return AllCoreTables::getBriefName(AllCoreTables::getClassForTable($tableName));
   }
 
 }

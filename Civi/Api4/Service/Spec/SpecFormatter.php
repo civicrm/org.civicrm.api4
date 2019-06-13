@@ -3,7 +3,7 @@
 namespace Civi\Api4\Service\Spec;
 
 use CRM_Utils_Array as ArrayHelper;
-use CRM_Core_DAO_AllCoreTables as TableHelper;
+use CRM_Core_DAO_AllCoreTables as AllCoreTables;
 
 class SpecFormatter {
   /**
@@ -67,7 +67,7 @@ class SpecFormatter {
     $fkAPIName = ArrayHelper::value('FKApiName', $data);
     $fkClassName = ArrayHelper::value('FKClassName', $data);
     if ($fkAPIName || $fkClassName) {
-      $field->setFkEntity($fkAPIName ?: TableHelper::getBriefName($fkClassName));
+      $field->setFkEntity($fkAPIName ?: AllCoreTables::getBriefName($fkClassName));
     }
 
     return $field;
