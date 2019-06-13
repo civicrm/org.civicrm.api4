@@ -9,7 +9,7 @@ use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Civi\Api4\Service\Schema\Joinable\OptionValueJoinable;
-use CRM_Core_DAO_AllCoreTables as TableHelper;
+use CRM_Core_DAO_AllCoreTables as AllCoreTables;
 use CRM_Utils_Array as UtilsArray;
 
 class SchemaMapBuilder {
@@ -50,7 +50,7 @@ class SchemaMapBuilder {
    */
   private function loadTables(SchemaMap $map) {
     /** @var \CRM_Core_DAO $daoName */
-    foreach (TableHelper::get() as $daoName => $data) {
+    foreach (AllCoreTables::get() as $daoName => $data) {
       $table = new Table($data['table']);
       foreach ($daoName::fields() as $field => $fieldData) {
         $this->addJoins($table, $field, $fieldData);
@@ -74,7 +74,7 @@ class SchemaMapBuilder {
 
     // can there be multiple methods e.g. pseudoconstant and fkclass
     if ($fkClass) {
-      $tableName = TableHelper::getTableForClass($fkClass);
+      $tableName = AllCoreTables::getTableForClass($fkClass);
       $fkKey = UtilsArray::value('FKKeyColumn', $data, 'id');
       $alias = str_replace('_id', '', $field);
       $joinable = new Joinable($tableName, $fkKey, $alias);

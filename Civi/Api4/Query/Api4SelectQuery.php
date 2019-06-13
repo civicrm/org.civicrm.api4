@@ -36,7 +36,7 @@ use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Civi\Api4\Utils\ActionUtil;
 use Civi\Api4\Utils\FormattingUtil;
 use Civi\Api4\Utils\CoreUtil;
-use CRM_Core_DAO_AllCoreTables as TableHelper;
+use CRM_Core_DAO_AllCoreTables as AllCoreTables;
 use CRM_Utils_Array as UtilsArray;
 
 /**
@@ -424,7 +424,7 @@ class Api4SelectQuery extends SelectQuery {
    * @return FALSE|string
    */
   public function getFrom() {
-    return TableHelper::getTableForClass(TableHelper::getFullName($this->entity));
+    return AllCoreTables::getTableForClass(AllCoreTables::getFullName($this->entity));
   }
 
   /**
