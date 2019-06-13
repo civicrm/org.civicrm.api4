@@ -6,21 +6,21 @@ use CRM_Utils_Array as ArrayHelper;
 use CRM_Core_DAO_AllCoreTables as AllCoreTables;
 
 class SpecFormatter {
+
   /**
    * @param FieldSpec[] $fields
-   * @param array $return
    * @param bool $includeFieldOptions
    *
    * @return array
    */
-  public static function specToArray($fields, $return = [], $includeFieldOptions = FALSE) {
+  public static function specToArray($fields, $includeFieldOptions = FALSE) {
     $fieldArray = [];
 
     foreach ($fields as $field) {
-      if ($includeFieldOptions || in_array('options', $return)) {
+      if ($includeFieldOptions) {
         $field->getOptions();
       }
-      $fieldArray[$field->getName()] = $field->toArray($return);
+      $fieldArray[$field->getName()] = $field->toArray();
     }
 
     return $fieldArray;
