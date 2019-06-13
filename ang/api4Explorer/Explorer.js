@@ -632,6 +632,7 @@
 
         function makeWidget(field, op) {
           var $el = $(element),
+            inputType = field.input_type;
             dataType = field.data_type;
           if (!op) {
             op = field.serialize || dataType === 'Array' ? 'IN' : '=';
@@ -641,9 +642,9 @@
             $el.hide();
             return;
           }
-          if (dataType === 'Timestamp' || dataType === 'Date') {
+          if (inputType === 'Date') {
             if (_.includes(['=', '!=', '<>', '<', '>=', '<', '<='], op)) {
-              $el.crmDatepicker({time: dataType === 'Timestamp'});
+              $el.crmDatepicker({time: (field.input_attrs && field.input_attrs.time) || false});
             }
           } else if (_.includes(['=', '!=', '<>', 'IN', 'NOT IN'], op) && (field.fk_entity || field.options || dataType === 'Boolean')) {
             if (field.fk_entity) {

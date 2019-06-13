@@ -126,6 +126,14 @@ class BasicGetFieldsAction extends BasicGetAction {
         'data_type' => 'String',
       ],
       [
+        'name' => 'input_type',
+        'data_type' => 'String',
+      ],
+      [
+        'name' => 'input_attrs',
+        'data_type' => 'Array',
+      ],
+      [
         'name' => 'fk_entity',
         'data_type' => 'String',
       ],

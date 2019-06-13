@@ -48,16 +48,18 @@ class SpecFormatterTest extends UnitTestCase {
       'id' => $customFieldId,
       'name' => $name,
       'data_type' => 'String',
-      'html_type' => 'MultiSelect',
+      'html_type' => 'Multi-Select',
     ];
 
-    /** @var CustomFieldSpec $field */
+    /** @var \Civi\Api4\Service\Spec\CustomFieldSpec $field */
     $field = SpecFormatter::arrayToField($data, 'TestEntity');
 
     $this->assertInstanceOf(CustomFieldSpec::class, $field);
     $this->assertEquals('my_group', $field->getCustomGroupName());
     $this->assertEquals($customFieldId, $field->getCustomFieldId());
     $this->assertEquals(\CRM_Core_DAO::SERIALIZE_SEPARATOR_BOOKEND, $field->getSerialize());
+    $this->assertEquals('Select', $field->getInputType());
+    $this->assertTrue($field->getInputAttrs()['multiple']);
   }
 
   /**
@@ -69,20 +71,21 @@ class SpecFormatterTest extends UnitTestCase {
         [
           'name' => 'Foo',
           'title' => 'Bar',
-          'type' => \CRM_Utils_Type::T_STRING
+          'type' => \CRM_Utils_Type::T_STRING,
         ],
         'Foo',
-        'String'
+        'String',
       ],
       [
         [
           'name' => 'MyField',
           'title' => 'Bar',
           'type' => \CRM_Utils_Type::T_STRING,
-          'data_type' => 'Boolean' // this should take precedence
+          // this should take precedence
+          'data_type' => 'Boolean',
         ],
         'MyField',
-        'Boolean'
+        'Boolean',
       ],
     ];
   }
