@@ -3,6 +3,9 @@
 namespace Civi\Api4\Service\Schema;
 
 use Civi\Api4\Service\Schema\Joinable\Joinable;
+use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
+use Civi\Api4\CustomGroup;
+use Civi\Api4\Utils\CoreUtil;
 
 class Table {
 
@@ -67,6 +70,18 @@ class Table {
       if ($link === $linkToRemove) {
         unset($this->tableLinks[$index]);
       }
+    }
+  }
+
+  /**
+   * @return void
+   */
+  public function addCustomTableLinks() {
+    $entity = CoreUtil::getApiNameFromTableName($this->getName());
+
+    foreach (CoreUtil::getCustomTableLinks($entity) as $alias => $link) {
+      $joinable = new CustomGroupJoinable($link['tableName'], $alias, $link['isMultiple'], $entity, $link['columns']);
+      $this->addTableLink('id', $joinable);
     }
   }
 
