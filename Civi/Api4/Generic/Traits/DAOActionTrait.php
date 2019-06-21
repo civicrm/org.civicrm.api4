@@ -5,7 +5,20 @@ use CRM_Utils_Array as UtilsArray;
 use Civi\Api4\Utils\FormattingUtil;
 use Civi\Api4\Query\Api4SelectQuery;
 
+/**
+ * @method string getLanguage()
+ * @method setLanguage(string $language)
+ */
 trait DAOActionTrait {
+
+  /**
+   * Specify the language to use if this is a multi-lingual environment.
+   *
+   * E.g. "en_US" or "fr_CA"
+   *
+   * @var string
+   */
+  protected $language;
 
   /**
    * @return \CRM_Core_DAO|string
