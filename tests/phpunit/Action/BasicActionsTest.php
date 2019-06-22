@@ -52,7 +52,7 @@ class BasicActionsTest extends UnitTestCase {
     $replacements = [
       ['color' => 'red', 'id' => $objects[0]['id']],
       ['color' => 'not blue', 'id' => $objects[1]['id']],
-      ['color' => 'yellow']
+      ['color' => 'yellow'],
     ];
 
     MockBasicEntity::replace()->addWhere('group', '=', 'one')->setRecords($replacements)->execute();
@@ -117,38 +117,44 @@ class BasicActionsTest extends UnitTestCase {
       ->addWhere('color', '!=', 'green')
       ->addWhere('group', '=', 'one');
 
-    $this->assertEquals(['red', 'blue'], $get->_itemsToGet('color'));
-    $this->assertEquals(['one'], $get->_itemsToGet('group'));
+    $itemsToGet = new \ReflectionMethod($get, '_itemsToGet');
+    $itemsToGet->setAccessible(TRUE);
+
+    $this->assertEquals(['red', 'blue'], $itemsToGet->invoke($get, 'color'));
+    $this->assertEquals(['one'], $itemsToGet->invoke($get, 'group'));
   }
 
   public function testFieldsToGet() {
     $get = MockBasicEntity::get()
       ->addWhere('color', '!=', 'green');
 
+    $isFieldSelected = new \ReflectionMethod($get, '_isFieldSelected');
+    $isFieldSelected->setAccessible(TRUE);
+
     // If no "select" is set, should always return true
-    $this->assertTrue($get->_isFieldSelected('color'));
-    $this->assertTrue($get->_isFieldSelected('shape'));
-    $this->assertTrue($get->_isFieldSelected('size'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'color'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'shape'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'size'));
 
     // With a non-empty "select" fieldsToSelect() will return fields needed to evaluate each clause.
     $get->addSelect('id');
-    $this->assertTrue($get->_isFieldSelected('color'));
-    $this->assertTrue($get->_isFieldSelected('id'));
-    $this->assertFalse($get->_isFieldSelected('shape'));
-    $this->assertFalse($get->_isFieldSelected('size'));
-    $this->assertFalse($get->_isFieldSelected('weight'));
-    $this->assertFalse($get->_isFieldSelected('group'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'color'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'id'));
+    $this->assertFalse($isFieldSelected->invoke($get, 'shape'));
+    $this->assertFalse($isFieldSelected->invoke($get, 'size'));
+    $this->assertFalse($isFieldSelected->invoke($get, 'weight'));
+    $this->assertFalse($isFieldSelected->invoke($get, 'group'));
 
     $get->addClause('OR', ['shape', '=', 'round'], ['AND', [['size', '=', 'big'], ['weight', '!=', 'small']]]);
-    $this->assertTrue($get->_isFieldSelected('color'));
-    $this->assertTrue($get->_isFieldSelected('id'));
-    $this->assertTrue($get->_isFieldSelected('shape'));
-    $this->assertTrue($get->_isFieldSelected('size'));
-    $this->assertTrue($get->_isFieldSelected('weight'));
-    $this->assertFalse($get->_isFieldSelected('group'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'color'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'id'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'shape'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'size'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'weight'));
+    $this->assertFalse($isFieldSelected->invoke($get, 'group'));
 
     $get->addOrderBy('group');
-    $this->assertTrue($get->_isFieldSelected('group'));
+    $this->assertTrue($isFieldSelected->invoke($get, 'group'));
   }
 
 }

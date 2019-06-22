@@ -46,6 +46,13 @@ class SpecGatherer {
       $this->getCustomGroupFields(substr($entity, 7), $specification);
     }
 
+    // Default value only makes sense for create actions
+    if ($action != 'create') {
+      foreach ($specification->getFields() as $field) {
+        $field->setDefaultValue(NULL);
+      }
+    }
+
     foreach ($this->specProviders as $provider) {
       if ($provider->applies($entity, $action)) {
         $provider->modifySpec($specification);

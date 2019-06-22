@@ -62,11 +62,13 @@ class ParticipantTest extends UnitTestCase {
       'contacts' => $this->createEntity([
         'type' => 'Individual',
         'count' => $contactCount,
-        'seq' => 1]),
+        'seq' => 1,
+      ]),
       'events' => $this->createEntity([
         'type' => 'Event',
         'count' => $eventCount,
-        'seq' => 1]),
+        'seq' => 1,
+      ]),
       'sources' => ['Paddington', 'Springfield', 'Central'],
     ];
 
@@ -77,8 +79,10 @@ class ParticipantTest extends UnitTestCase {
         'overrides' => [
           'event_id' => $dummy['events'][$i % $eventCount]['id'],
           'contact_id' => $dummy['contacts'][$i % $contactCount]['id'],
-          'source' => $dummy['sources'][$i % 3], // 3 = number of sources
-      ]])['sample_params'];
+          // 3 = number of sources
+          'source' => $dummy['sources'][$i % 3],
+        ],
+      ])['sample_params'];
 
       Participant::create()
         ->setValues($dummy['participants'][$i])
@@ -137,10 +141,9 @@ class ParticipantTest extends UnitTestCase {
       ->setCheckPermissions(FALSE)
       ->setSelect(['id'])
       ->addClause('NOT', [
-          ['event_id', '=', $firstEventId],
-          ['contact_id', '=', $firstContactId],
-        ]
-      )
+        ['event_id', '=', $firstEventId],
+        ['contact_id', '=', $firstContactId],
+      ])
       ->execute()
       ->indexBy('id');
 
@@ -149,10 +152,9 @@ class ParticipantTest extends UnitTestCase {
       ->setCheckPermissions(FALSE)
       ->setSelect(['id'])
       ->addClause('NOT', 'AND', [
-          ['event_id', '=', $firstEventId],
-          ['contact_id', '=', $firstContactId],
-        ]
-      )
+        ['event_id', '=', $firstEventId],
+        ['contact_id', '=', $firstContactId],
+      ])
       ->execute()
       ->indexBy('id');
 
@@ -195,6 +197,27 @@ class ParticipantTest extends UnitTestCase {
       $participantCount - count($expectedDeletes),
       $sqlCount,
       "records not gone from database after delete");
+
+    // Try creating is_test participants
+    foreach ($dummy['contacts'] as $contact) {
+      Participant::create()
+        ->addValue('is_test', 1)
+        ->addValue('contact_id', $contact['id'])
+        ->addValue('event_id', $secondEventId)
+        ->execute();
+    }
+
+    // Test records show up if you add is_test to the query
+    $testParticipants = Participant::get()->addWhere('event_id', '=', $secondEventId)->addWhere('is_test', '=', 1)->execute();
+    $this->assertCount($contactCount, $testParticipants);
+
+    // Or if you search by id
+    $this->assertEquals(1, Participant::get()->selectRowCount()->addWhere('id', '=', $testParticipants->first()['id'])->execute()->count());
+
+    $this->markTestIncomplete('Not yet setting default for is_test field. See dev/core#1062.');
+
+    // By default is_test participants are hidden
+    $this->assertEmpty(Participant::get()->selectRowCount()->addWhere('event_id', '=', $secondEventId)->execute()->count());
   }
 
 }
