@@ -71,6 +71,10 @@ class GetActions extends BasicGetAction {
           }
           if ($this->_isFieldSelected('params')) {
             $this->_actions[$actionName]['params'] = $action->getParamInfo();
+            // Language param is only relevant on multilingual sites
+            if (count((array) \Civi::settings()->get('languageLimit')) < 2) {
+              unset($this->_actions[$actionName]['params']['language']);
+            }
           }
         }
       }
