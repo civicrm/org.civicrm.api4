@@ -115,13 +115,18 @@ class BasicActionsTest extends UnitTestCase {
       ->addWhere('color', 'NOT IN', ['yellow'])
       ->addWhere('color', 'IN', ['red', 'blue'])
       ->addWhere('color', '!=', 'green')
-      ->addWhere('group', '=', 'one');
+      ->addWhere('group', '=', 'one')
+      ->addWhere('size', 'LIKE', 'big')
+      ->addWhere('shape', 'LIKE', '%a');
 
     $itemsToGet = new \ReflectionMethod($get, '_itemsToGet');
     $itemsToGet->setAccessible(TRUE);
 
     $this->assertEquals(['red', 'blue'], $itemsToGet->invoke($get, 'color'));
     $this->assertEquals(['one'], $itemsToGet->invoke($get, 'group'));
+    $this->assertEquals(['big'], $itemsToGet->invoke($get, 'size'));
+    $this->assertEmpty($itemsToGet->invoke($get, 'shape'));
+    $this->assertEmpty($itemsToGet->invoke($get, 'weight'));
   }
 
   public function testFieldsToGet() {
