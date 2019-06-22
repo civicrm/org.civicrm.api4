@@ -207,17 +207,15 @@ class ParticipantTest extends UnitTestCase {
         ->execute();
     }
 
+    // By default is_test participants are hidden
+    $this->assertCount(0, Participant::get()->selectRowCount()->addWhere('event_id', '=', $secondEventId)->execute());
+
     // Test records show up if you add is_test to the query
-    $testParticipants = Participant::get()->addWhere('event_id', '=', $secondEventId)->addWhere('is_test', '=', 1)->execute();
+    $testParticipants = Participant::get()->addWhere('event_id', '=', $secondEventId)->addWhere('is_test', '=', 1)->addSelect('id')->execute();
     $this->assertCount($contactCount, $testParticipants);
 
     // Or if you search by id
-    $this->assertEquals(1, Participant::get()->selectRowCount()->addWhere('id', '=', $testParticipants->first()['id'])->execute()->count());
-
-    $this->markTestIncomplete('Not yet setting default for is_test field. See dev/core#1062.');
-
-    // By default is_test participants are hidden
-    $this->assertEmpty(Participant::get()->selectRowCount()->addWhere('event_id', '=', $secondEventId)->execute()->count());
+    $this->assertCount(1, Participant::get()->selectRowCount()->addWhere('id', '=', $testParticipants->first()['id'])->execute());
   }
 
 }
