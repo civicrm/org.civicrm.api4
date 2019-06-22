@@ -13,6 +13,7 @@ class DAOGetAction extends AbstractGetAction {
   use Traits\DAOActionTrait;
 
   public function _run(Result $result) {
+    $this->setDefaultWhereClause();
     $result->exchangeArray($this->getObjects());
   }
 
