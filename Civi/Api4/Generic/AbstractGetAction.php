@@ -66,7 +66,8 @@ abstract class AbstractGetAction extends AbstractQueryAction {
    */
   protected function _itemsToGet($field) {
     foreach ($this->where as $clause) {
-      if ($clause[0] == $field && in_array($clause[1], ['=', 'IN'])) {
+      // Look for exact-match operators (=, IN, or LIKE with no wildcard)
+      if ($clause[0] == $field && (in_array($clause[1], ['=', 'IN']) || ($clause[1] == 'LIKE' && !(is_string($clause[2]) && strpos($clause[2], '%') !== FALSE)))) {
         return (array) $clause[2];
       }
     }
