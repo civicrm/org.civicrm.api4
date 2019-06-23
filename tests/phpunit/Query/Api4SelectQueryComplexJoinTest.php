@@ -27,7 +27,7 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
   }
 
   public function testWithComplexRelatedEntitySelect() {
-    $query = new Api4SelectQuery('Contact', FALSE);
+    $query = new Api4SelectQuery('Contact', FALSE, civicrm_api4('Contact', 'getFields', ['includeCustom' => FALSE, 'checkPermissions' => FALSE, 'action' => 'get'], 'name'));
     $query->select[] = 'id';
     $query->select[] = 'display_name';
     $query->select[] = 'phones.phone';
@@ -59,7 +59,7 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
   }
 
   public function testWithSelectOfOrphanDeepValues() {
-    $query = new Api4SelectQuery('Contact', FALSE);
+    $query = new Api4SelectQuery('Contact', FALSE, civicrm_api4('Contact', 'getFields', ['includeCustom' => FALSE, 'checkPermissions' => FALSE, 'action' => 'get'], 'name'));
     $query->select[] = 'id';
     $query->select[] = 'first_name';
     $query->select[] = 'emails.location_type.name'; // emails not selected
@@ -70,7 +70,7 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
   }
 
   public function testOrderDoesNotMatter() {
-    $query = new Api4SelectQuery('Contact', FALSE);
+    $query = new Api4SelectQuery('Contact', FALSE, civicrm_api4('Contact', 'getFields', ['includeCustom' => FALSE, 'checkPermissions' => FALSE, 'action' => 'get'], 'name'));
     $query->select[] = 'id';
     $query->select[] = 'first_name';
     $query->select[] = 'emails.location_type.name'; // before emails selection

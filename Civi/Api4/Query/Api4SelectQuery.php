@@ -30,10 +30,8 @@ namespace Civi\Api4\Query;
 use Civi\API\SelectQuery;
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\PostSelectQueryEvent;
-use Civi\Api4\Generic\Result;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
-use Civi\Api4\Utils\ActionUtil;
 use Civi\Api4\Utils\FormattingUtil;
 use Civi\Api4\Utils\CoreUtil;
 use CRM_Core_DAO_AllCoreTables as AllCoreTables;
@@ -74,8 +72,9 @@ class Api4SelectQuery extends SelectQuery {
   /**
    * @param string $entity
    * @param bool $checkPermissions
+   * @param array $fields
    */
-  public function __construct($entity, $checkPermissions) {
+  public function __construct($entity, $checkPermissions, $fields) {
     require_once 'api/v3/utils.php';
     $this->entity = $entity;
     $this->checkPermissions = $checkPermissions;
@@ -84,7 +83,7 @@ class Api4SelectQuery extends SelectQuery {
     $bao = new $baoName();
 
     $this->entityFieldNames = _civicrm_api3_field_names(_civicrm_api3_build_fields_array($bao));
-    $this->apiFieldSpec = $this->getFields();
+    $this->apiFieldSpec = (array) $fields;
 
     \CRM_Utils_SQL_Select::from($this->getTableName($baoName) . ' ' . self::MAIN_TABLE_ALIAS);
 
@@ -325,21 +324,10 @@ class Api4SelectQuery extends SelectQuery {
   }
 
   /**
-   * Here we bypass the api wrapper and execute the getFields action directly.
-   * This is because we DON'T want the wrapper to check permissions as this is an internal op,
-   * but we DO want permissions to be checked inside the getFields request so e.g. the api_key
-   * field can be conditionally included.
-   * @see \Civi\Api4\Action\Contact\GetFields
+   * @inheritDoc
    */
   protected function getFields() {
-    $getFields = ActionUtil::getAction($this->entity, 'getFields');
-    $result = new Result();
-    $getFields
-      ->setCheckPermissions($this->checkPermissions)
-      ->setAction('get')
-      ->setIncludeCustom(FALSE)
-      ->_run($result);
-    return (array) $result->indexBy('name');
+    return $this->apiFieldSpec;
   }
 
   /**
