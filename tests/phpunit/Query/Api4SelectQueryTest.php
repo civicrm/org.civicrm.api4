@@ -32,7 +32,7 @@ class Api4SelectQueryTest extends UnitTestCase {
   public function testWithSingleWhereJoin() {
     $phoneNum = $this->getReference('test_phone_1')['phone'];
 
-    $query = new Api4SelectQuery('Contact', FALSE);
+    $query = new Api4SelectQuery('Contact', FALSE, civicrm_api4('Contact', 'getFields', ['includeCustom' => FALSE, 'checkPermissions' => FALSE, 'action' => 'get'], 'name'));
     $query->where[] = ['phones.phone', '=', $phoneNum];
     $results = $query->run();
 
@@ -42,7 +42,7 @@ class Api4SelectQueryTest extends UnitTestCase {
   public function testOneToManyJoin() {
     $phoneNum = $this->getReference('test_phone_1')['phone'];
 
-    $query = new Api4SelectQuery('Contact', FALSE);
+    $query = new Api4SelectQuery('Contact', FALSE, civicrm_api4('Contact', 'getFields', ['includeCustom' => FALSE, 'checkPermissions' => FALSE, 'action' => 'get'], 'name'));
     $query->select[] = 'id';
     $query->select[] = 'first_name';
     $query->select[] = 'phones.phone';
@@ -60,7 +60,7 @@ class Api4SelectQueryTest extends UnitTestCase {
     $phoneNum = $this->getReference('test_phone_1')['phone'];
     $contact = $this->getReference('test_contact_1');
 
-    $query = new Api4SelectQuery('Phone', FALSE);
+    $query = new Api4SelectQuery('Phone', FALSE, civicrm_api4('Phone', 'getFields', ['includeCustom' => FALSE, 'checkPermissions' => FALSE, 'action' => 'get'], 'name'));
     $query->select[] = 'id';
     $query->select[] = 'phone';
     $query->select[] = 'contact.display_name';
@@ -76,7 +76,7 @@ class Api4SelectQueryTest extends UnitTestCase {
   }
 
   public function testOneToManyMultipleJoin() {
-    $query = new Api4SelectQuery('Contact', FALSE);
+    $query = new Api4SelectQuery('Contact', FALSE, civicrm_api4('Contact', 'getFields', ['includeCustom' => FALSE, 'checkPermissions' => FALSE, 'action' => 'get'], 'name'));
     $query->select[] = 'id';
     $query->select[] = 'first_name';
     $query->select[] = 'phones.phone';

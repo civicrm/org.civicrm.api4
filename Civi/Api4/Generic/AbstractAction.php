@@ -2,6 +2,7 @@
 namespace Civi\Api4\Generic;
 
 use Civi\Api4\Utils\ReflectionUtils;
+use Civi\Api4\Utils\ActionUtil;
 
 /**
  * Base class for all api actions.
@@ -363,19 +364,26 @@ abstract class AbstractAction implements \ArrayAccess {
   /**
    * Returns schema fields for this entity & action.
    *
+   * Here we bypass the api wrapper and execute the getFields action directly.
+   * This is because we DON'T want the wrapper to check permissions as this is an internal op,
+   * but we DO want permissions to be checked inside the getFields request so e.g. the api_key
+   * field can be conditionally included.
+   * @see \Civi\Api4\Action\Contact\GetFields
+   *
    * @return array
-   * @throws \API_Exception
    */
   public function entityFields() {
     if (!$this->_entityFields) {
-      $params = [
-        'action' => $this->getActionName(),
-        'checkPermissions' => $this->checkPermissions,
-      ];
+      $getFields = ActionUtil::getAction($this->getEntityName(), 'getFields');
+      $result = new Result();
       if (method_exists($this, 'getBaoName')) {
-        $params['includeCustom'] = FALSE;
+        $getFields->setIncludeCustom(FALSE);
       }
-      $this->_entityFields = (array) civicrm_api4($this->getEntityName(), 'getFields', $params, 'name');
+      $getFields
+        ->setCheckPermissions($this->checkPermissions)
+        ->setAction($this->getActionName())
+        ->_run($result);
+      $this->_entityFields = (array) $result->indexBy('name');
     }
     return $this->_entityFields;
   }

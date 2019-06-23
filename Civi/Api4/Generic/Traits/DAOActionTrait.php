@@ -51,7 +51,7 @@ trait DAOActionTrait {
    * @return array|int
    */
   protected function getObjects() {
-    $query = new Api4SelectQuery($this->getEntityName(), $this->getCheckPermissions());
+    $query = new Api4SelectQuery($this->getEntityName(), $this->getCheckPermissions(), $this->entityFields());
     $query->select = $this->getSelect();
     $query->where = $this->getWhere();
     $query->orderBy = $this->getOrderBy();
