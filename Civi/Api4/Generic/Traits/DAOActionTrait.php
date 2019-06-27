@@ -29,7 +29,7 @@ trait DAOActionTrait {
     foreach ($fields as $key => $field) {
       $name = $field['name'];
       if (property_exists($bao, $name)) {
-        $values[$name] = $bao->$name;
+        $values[$name] = isset($bao->$name) ? $bao->$name : NULL;
       }
     }
     return $values;
@@ -83,13 +83,6 @@ trait DAOActionTrait {
       $this->formatCustomParams($item, $entityId);
       $item['check_permissions'] = $this->getCheckPermissions();
 
-      $apiKeyPermission = $this->getEntityName() != 'Contact' || !$this->getCheckPermissions() || array_key_exists('api_key', $this->getEntityFields())
-        || ($entityId && \CRM_Core_Permission::check('edit own api keys') && \CRM_Core_Session::getLoggedInContactID() == $entityId);
-
-      if (!$apiKeyPermission && array_key_exists('api_key', $item)) {
-        throw new \Civi\API\Exception\UnauthorizedException('Permission denied to modify api key');
-      }
-
       // For some reason the contact bao requires this
       if ($entityId && $this->getEntityName() == 'Contact') {
         $item['contact_id'] = $entityId;
@@ -117,10 +110,6 @@ trait DAOActionTrait {
 
       // trim back the junk and just get the array:
       $resultArray = $this->baoToArray($createResult);
-
-      if (!$apiKeyPermission && array_key_exists('api_key', $resultArray)) {
-        unset($resultArray['api_key']);
-      }
 
       $result[] = $resultArray;
     }
