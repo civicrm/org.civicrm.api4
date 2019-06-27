@@ -4,6 +4,7 @@ namespace Civi\Api4\Service\Schema;
 
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
+use Civi\Api4\Service\Schema\Joinable\BridgeJoinable;
 use Civi\Api4\CustomGroup;
 use Civi\Api4\Utils\CoreUtil;
 
@@ -77,11 +78,27 @@ class Table {
    * @return void
    */
   public function addCustomTableLinks() {
-    $entity = CoreUtil::getApiNameFromTableName($this->getName());
+    $tableName = $this->getName();
+    if (strstr($tableName, 'civicrm_value_')) {
+      $entity = CoreUtil::getCustomEntityByTableName($tableName);
+      $links = CoreUtil::getCustomTableLinksByTableName($tableName);
+    }
+    else {
+      $entity = CoreUtil::getApiNameFromTableName($tableName);
+      $links = CoreUtil::getCustomTableLinks($entity);
+    }
 
-    foreach (CoreUtil::getCustomTableLinks($entity) as $alias => $link) {
+    foreach ($links as $alias => $link) {
       $joinable = new CustomGroupJoinable($link['tableName'], $alias, $link['isMultiple'], $entity, $link['columns']);
       $this->addTableLink('id', $joinable);
+
+      foreach ($link['columns'] as $alias => $column) {
+        $middleLink = new Joinable('civicrm_custom_field', 'id', $alias);
+        $bridge = new BridgeJoinable('civicrm_custom_field', 'id', $alias, $middleLink);
+        $bridge->setBaseTable('civicrm_custom_field');
+        $bridge->setJoinType(Joinable::JOIN_TYPE_ONE_TO_ONE);
+        $this->addTableLink($column, $bridge);
+      }
     }
   }
 
