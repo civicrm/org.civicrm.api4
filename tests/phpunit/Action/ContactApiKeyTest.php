@@ -3,6 +3,7 @@
 namespace Civi\Test\Api4\Action;
 
 use Civi\Api4\Contact;
+use Civi\Api4\Email;
 
 /**
  * @group headless
@@ -10,13 +11,18 @@ use Civi\Api4\Contact;
 class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
 
   public function testGetApiKey() {
-    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'add contacts', 'edit api keys', 'view all contacts'];
+    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'add contacts', 'edit api keys', 'view all contacts', 'edit all contacts'];
     $key = uniqid();
 
     $contact = Contact::create()
       ->addValue('first_name', 'Api')
       ->addValue('last_name', 'Key0')
       ->addValue('api_key', $key)
+      ->addChain('email', Email::create()
+        ->addValue('contact_id', '$id')
+        ->addValue('email', 'test@key.get'),
+        0
+      )
       ->execute()
       ->first();
 
@@ -28,6 +34,13 @@ class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
       ->first();
     $this->assertEquals($key, $result['api_key']);
 
+    // Can also be fetched via join
+    $email = Email::get()
+      ->addSelect('contact.api_key')
+      ->addWhere('id', '=', $contact['email']['id'])
+      ->execute()->first();
+    $this->assertEquals($key, $email['contact']['api_key']);
+
     // Remove permission and we should not see the key
     \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM'];
     $result = Contact::get()
@@ -36,6 +49,13 @@ class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
       ->execute()
       ->first();
     $this->assertTrue(empty($result['api_key']));
+
+    // Also not available via join
+    $email = Email::get()
+      ->addSelect('contact.api_key')
+      ->addWhere('id', '=', $contact['email']['id'])
+      ->execute()->first();
+    $this->assertTrue(empty($email['contact']['api_key']));
 
     $result = Contact::get()
       ->addWhere('id', '=', $contact['id'])
