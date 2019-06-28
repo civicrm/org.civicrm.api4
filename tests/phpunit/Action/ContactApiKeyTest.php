@@ -64,7 +64,7 @@ class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
   }
 
   public function testUpdateApiKey() {
-    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM'];
+    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'edit all contacts'];
     $key = uniqid();
 
     $contact = Contact::create()
@@ -118,7 +118,7 @@ class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
   }
 
   public function testUpdateOwnApiKey() {
-    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'edit own api keys', 'edit my contact'];
+    \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'edit own api keys', 'edit all contacts'];
     $key = uniqid();
 
     $contact = Contact::create()
