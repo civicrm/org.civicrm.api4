@@ -26,6 +26,12 @@
       "title": "The Group"
     }
   ],
+  "Mapping": [
+    {
+      "name": "the_mapping",
+      "mapping_type_id": "1"
+    }
+  ],
   "Activity": [
     {
       "subject": "Test A Phone Activity",
