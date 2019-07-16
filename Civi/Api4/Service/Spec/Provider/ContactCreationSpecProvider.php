@@ -11,7 +11,6 @@ class ContactCreationSpecProvider implements Generic\SpecProviderInterface {
    */
   public function modifySpec(RequestSpec $spec) {
     $spec->getFieldByName('contact_type')
-      ->setRequired(TRUE)
       ->setDefaultValue('Individual');
 
     $spec->getFieldByName('is_opt_out')->setRequired(FALSE);
