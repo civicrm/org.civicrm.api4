@@ -22,6 +22,7 @@
 
   angular.module('api4Explorer').controller('Api4Explorer', function($scope, $routeParams, $location, $timeout, $http, crmUiHelp, crmApi4) {
     var ts = $scope.ts = CRM.ts('api4');
+    $scope.checkPerm = CRM.checkPerm;
     $scope.entities = entities;
     $scope.actions = actions;
     $scope.fields = [];
@@ -170,7 +171,7 @@
     };
 
     $scope.isSpecial = function(name) {
-      var specialParams = ['select', 'fields', 'action', 'where', 'values', 'orderBy', 'chain'];
+      var specialParams = ['select', 'fields', 'action', 'where', 'values', 'orderBy', 'chain', 'actingUser'];
       return _.contains(specialParams, name);
     };
 

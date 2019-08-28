@@ -11,6 +11,7 @@ class CRM_Api4_Page_Api4Explorer extends CRM_Core_Page {
     ];
     Civi::resources()
       ->addVars('api4', $vars)
+      ->addPermissions(['administer CiviCRM', 'view all contacts'])
       ->addScriptFile('org.civicrm.api4', 'js/load-bootstrap.js')
       ->addScriptFile('civicrm', 'bower_components/google-code-prettify/bin/prettify.min.js')
       ->addStyleFile('civicrm', 'bower_components/google-code-prettify/bin/prettify.min.css');
