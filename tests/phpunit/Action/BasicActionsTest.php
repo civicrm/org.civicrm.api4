@@ -29,9 +29,23 @@ class BasicActionsTest extends UnitTestCase {
     $this->assertCount(1, $result);
     $this->assertEquals('new', $result->first()['foo']);
 
+    $result = MockBasicEntity::save()
+      ->addRecord(['id' => $id1, 'foo' => 'one updated'])
+      ->addRecord(['id' => $id2])
+      ->addRecord(['foo' => 'three'])
+      ->setReload(TRUE)
+      ->execute()
+      ->indexBy('id');
+
+    $this->assertEquals('new', $result[$id2]['foo']);
+    $this->assertEquals('three', $result->last()['foo']);
+    $this->assertCount(3, $result);
+
+    $this->assertEquals('one updated', MockBasicEntity::get()->addWhere('id', '=', $id1)->execute()->first()['foo']);
+
     MockBasicEntity::delete()->addWhere('id', '=', $id2);
     $result = MockBasicEntity::get()->execute();
-    $this->assertEquals('one', $result->first()['foo']);
+    $this->assertEquals('one updated', $result->first()['foo']);
   }
 
   public function testReplace() {

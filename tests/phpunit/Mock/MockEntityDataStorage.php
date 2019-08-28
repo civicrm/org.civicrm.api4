@@ -18,8 +18,11 @@ class MockEntityDataStorage {
   public static function write($record) {
     if (empty($record['id'])) {
       $record['id'] = self::$nextId++;
+      self::$data[$record['id']] = $record;
     }
-    self::$data[$record['id']] = $record;
+    else {
+      self::$data[$record['id']] = $record + self::$data[$record['id']];
+    }
     return $record;
   }
 

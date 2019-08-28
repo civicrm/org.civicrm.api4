@@ -42,7 +42,7 @@ class BasicGetFieldsAction extends BasicGetAction {
    */
   public function _run(Result $result) {
     try {
-      $actionClass = ActionUtil::getAction($this->getEntityName(), $this->action);
+      $actionClass = ActionUtil::getAction($this->getEntityName(), $this->getAction());
     }
     catch (NotImplementedException $e) {
     }
@@ -88,7 +88,12 @@ class BasicGetFieldsAction extends BasicGetAction {
    * @return string
    */
   public function getAction() {
-    return $this->action;
+    // For actions that build on top of other actions, return fields for the simpler action
+    $sub = [
+      'save' => 'create',
+      'replace' => 'create',
+    ];
+    return $sub[$this->action] ?? $this->action;
   }
 
   public function fields() {

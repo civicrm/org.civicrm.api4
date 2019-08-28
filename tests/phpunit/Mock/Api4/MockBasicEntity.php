@@ -26,7 +26,7 @@ class MockBasicEntity extends Generic\AbstractEntity {
           'options' => [
             'one' => 'One',
             'two' => 'Two',
-          ]
+          ],
         ],
         [
           'name' => 'color',
@@ -56,6 +56,13 @@ class MockBasicEntity extends Generic\AbstractEntity {
    */
   public static function create() {
     return new Generic\BasicCreateAction(static::class, __FUNCTION__, [self::STORAGE_CLASS, 'write']);
+  }
+
+  /**
+   * @return Generic\BasicUpdateAction
+   */
+  public static function save() {
+    return new Generic\BasicSaveAction(self::getEntityName(), __FUNCTION__, 'id', [self::STORAGE_CLASS, 'write']);
   }
 
   /**
