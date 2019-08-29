@@ -62,7 +62,10 @@ class TestCreationParameterProvider {
       return $field->getDefaultValue();
     }
     elseif ($field->getFkEntity()) {
-      return $this->getFkID($field);
+      return $this->getFkID($field, $field->getFkEntity());
+    }
+    elseif (in_array($field->getName(), ['entity_id', 'contact_id'])) {
+      return $this->getFkID($field, 'Contact');
     }
 
     $randomValue = $this->getRandomValue($field->getDataType());
@@ -86,12 +89,12 @@ class TestCreationParameterProvider {
 
   /**
    * @param \Civi\Api4\Service\Spec\FieldSpec $field
+   * @param string $fkEntity
    *
    * @return mixed
    * @throws \Exception
    */
-  private function getFkID(FieldSpec $field) {
-    $fkEntity = $field->getFkEntity();
+  private function getFkID(FieldSpec $field, $fkEntity) {
     $params = ['checkPermissions' => FALSE];
     // Be predictable about what type of contact we select
     if ($fkEntity === 'Contact') {
