@@ -61,6 +61,26 @@ trait DAOActionTrait {
   }
 
   /**
+   * Fill field defaults which were declared by the api.
+   *
+   * Note: default values from core are ignored because the BAO or database layer will supply them.
+   *
+   * @param array $params
+   */
+  protected function fillDefaults(&$params) {
+    $fields = $this->entityFields();
+    $bao = $this->getBaoName();
+    $coreFields = array_column($bao::fields(), NULL, 'name');
+
+    foreach ($fields as $name => $field) {
+      // If a default value in the api field is different than in core, the api should override it.
+      if (!isset($params[$name]) && !empty($field['default_value']) && $field['default_value'] != \CRM_Utils_Array::pathGet($coreFields, [$name, 'default'])) {
+        $params[$name] = $field['default_value'];
+      }
+    }
+  }
+
+  /**
    * Write bao objects as part of a create/update action.
    *
    * @param array $items
@@ -78,7 +98,7 @@ trait DAOActionTrait {
       'GroupContact' => 'add',
       'Website' => 'add',
     ];
-    $method = UtilsArray::value($this->getEntityName(), $oddballs, 'create');
+    $method = $oddballs[$this->getEntityName()] ?? 'create';
     if (!method_exists($baoName, $method)) {
       $method = 'add';
     }
