@@ -106,6 +106,11 @@ function _api4_load_services($namespace, $tag, $container) {
       $matches = [];
       preg_match('/(\w*).php/', $file, $matches);
       $serviceName = $namespace . array_pop($matches);
+      if (strpos($serviceName, '\Abstract') !== 0) {
+        // Do not register Civi\Api4\Event\Subscriber\AbstractPrepareSubscriber
+        // as it is an abstract class & cannot be loaded.
+        continue;
+      }
       $definition = $container->register(str_replace('\\', '_', $serviceName), $serviceName);
       $definition->addTag($tag);
     }
