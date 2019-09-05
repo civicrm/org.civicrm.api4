@@ -4,7 +4,6 @@ require_once 'api4.civix.php';
 require_once 'api/Exception.php';
 
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
 
@@ -51,7 +50,7 @@ function civicrm_api4($entity, $action, $params = [], $index = NULL) {
 }
 
 /**
- * @param ContainerBuilder $container
+ * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
  */
 function api4_civicrm_container($container) {
   $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
@@ -96,7 +95,7 @@ function api4_civicrm_container($container) {
  * Load all services in a given directory
  *
  * @param string $namespace
- * @param ContainerBuilder $container
+ * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
  */
 function _api4_load_services($namespace, $tag, $container) {
   $namespace = \CRM_Utils_File::addTrailingSlash($namespace, '\\');
@@ -106,8 +105,11 @@ function _api4_load_services($namespace, $tag, $container) {
       $matches = [];
       preg_match('/(\w*).php/', $file, $matches);
       $serviceName = $namespace . array_pop($matches);
-      $definition = $container->register(str_replace('\\', '_', $serviceName), $serviceName);
-      $definition->addTag($tag);
+      $serviceClass = new \ReflectionClass($serviceName);
+      if ($serviceClass->isInstantiable()) {
+        $definition = $container->register(str_replace('\\', '_', $serviceName), $serviceName);
+        $definition->addTag($tag);
+      }
     }
   }
 }
