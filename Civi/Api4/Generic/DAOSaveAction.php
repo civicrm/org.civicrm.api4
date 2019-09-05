@@ -18,7 +18,7 @@ class DAOSaveAction extends AbstractSaveAction {
   public function _run(Result $result) {
     foreach ($this->records as &$record) {
       $record += $this->defaults;
-      if (!empty($record['id'])) {
+      if (empty($record['id'])) {
         $this->fillDefaults($record);
       }
     }

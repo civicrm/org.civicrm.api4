@@ -44,6 +44,7 @@ class BasicSaveAction extends AbstractSaveAction {
   public function _run(Result $result) {
     $this->validateValues();
     foreach ($this->records as $record) {
+      $record += $this->defaults;
       $result[] = $this->writeRecord($record);
     }
     if ($this->reload) {

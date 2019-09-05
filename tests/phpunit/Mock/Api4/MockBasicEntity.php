@@ -59,7 +59,7 @@ class MockBasicEntity extends Generic\AbstractEntity {
   }
 
   /**
-   * @return Generic\BasicUpdateAction
+   * @return Generic\BasicSaveAction
    */
   public static function save() {
     return new Generic\BasicSaveAction(self::getEntityName(), __FUNCTION__, 'id', [self::STORAGE_CLASS, 'write']);

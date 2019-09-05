@@ -33,6 +33,7 @@ class BasicActionsTest extends UnitTestCase {
       ->addRecord(['id' => $id1, 'foo' => 'one updated'])
       ->addRecord(['id' => $id2])
       ->addRecord(['foo' => 'three'])
+      ->addDefault('color', 'pink')
       ->setReload(TRUE)
       ->execute()
       ->indexBy('id');
@@ -40,6 +41,9 @@ class BasicActionsTest extends UnitTestCase {
     $this->assertEquals('new', $result[$id2]['foo']);
     $this->assertEquals('three', $result->last()['foo']);
     $this->assertCount(3, $result);
+    foreach ($result as $item) {
+      $this->assertEquals('pink', $item['color']);
+    }
 
     $this->assertEquals('one updated', MockBasicEntity::get()->addWhere('id', '=', $id1)->execute()->first()['foo']);
 
