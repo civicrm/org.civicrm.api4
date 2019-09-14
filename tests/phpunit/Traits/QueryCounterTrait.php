@@ -2,7 +2,7 @@
 
 namespace Civi\Test\Api4\Traits;
 
-use \CRM_Utils_Array as ArrayHelper;
+use CRM_Utils_Array as ArrayHelper;
 
 trait QueryCounterTrait {
 

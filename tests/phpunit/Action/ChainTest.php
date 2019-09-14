@@ -22,7 +22,7 @@ class ChainTest extends UnitTestCase {
     $entities = \Civi\Api4\Entity::get()
       ->addSelect('name')
       ->setChain([
-        'actions' => ['$name', 'getActions', ['select' => ['name']], 'name']
+        'actions' => ['$name', 'getActions', ['select' => ['name']], 'name'],
       ])
       ->execute()
       ->indexBy('name');

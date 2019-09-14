@@ -5,6 +5,7 @@ namespace Civi\Api4\Service\Spec\Provider;
 use Civi\Api4\Service\Spec\RequestSpec;
 
 class UFFieldCreationSpecProvider implements Generic\SpecProviderInterface {
+
   /**
    * @inheritDoc
    */

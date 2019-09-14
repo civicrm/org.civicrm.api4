@@ -12,6 +12,7 @@ use Civi\Test\Api4\UnitTestCase;
  * @group headless
  */
 class SelectQueryMultiJoinTest extends UnitTestCase {
+
   public function setUpHeadless() {
     $this->cleanup(['tablesToTruncate' => ['civicrm_contact', 'civicrm_email']]);
     $this->loadDataSet('MultiContactMultiEmail');
@@ -34,8 +35,8 @@ class SelectQueryMultiJoinTest extends UnitTestCase {
     $secondContactEmails = array_column($secondContact['emails'], 'email');
 
     $expectedFirstEmails = [
-    'test_contact_one_home@fakedomain.com',
-    'test_contact_one_work@fakedomain.com',
+      'test_contact_one_home@fakedomain.com',
+      'test_contact_one_work@fakedomain.com',
     ];
     $expectedSecondEmails = [
       'test_contact_two_home@fakedomain.com',

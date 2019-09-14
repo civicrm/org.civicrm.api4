@@ -5,7 +5,7 @@ namespace Civi\Test\Api4\Action;
 use Civi\Api4\Contact;
 use Civi\Api4\CustomField;
 use Civi\Api4\CustomGroup;
-use \CRM_Core_BAO_CustomValueTable as CustomValueTable;
+use CRM_Core_BAO_CustomValueTable as CustomValueTable;
 
 /**
  * @group headless

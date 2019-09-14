@@ -35,7 +35,7 @@ use Civi\API\Event\PrepareEvent;
 class ValidateFieldsSubscriber extends Generic\AbstractPrepareSubscriber {
 
   /**
-   * @param PrepareEvent $event
+   * @param \Civi\API\Event\PrepareEvent $event
    * @throws \Exception
    */
   public function onApiPrepare(PrepareEvent $event) {

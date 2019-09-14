@@ -31,6 +31,7 @@ namespace Civi\Api4\Utils;
  * Just another place to put static functions...
  */
 class ReflectionUtils {
+
   /**
    * @param \Reflector|\ReflectionClass $reflection
    * @param string $type
@@ -58,7 +59,8 @@ class ReflectionUtils {
           $newReflection = $reflection->getParentClass();
         }
       }
-      catch (\ReflectionException $e) {}
+      catch (\ReflectionException $e) {
+      }
       if ($newReflection) {
         // Mix in
         $additionalDocs = self::getCodeDocs($newReflection, $type);

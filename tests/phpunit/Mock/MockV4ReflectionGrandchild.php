@@ -2,7 +2,6 @@
 
 namespace Civi\Test\Api4\Mock;
 
-
 /**
  * Grandchild class
  *

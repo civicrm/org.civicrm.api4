@@ -55,7 +55,7 @@ class ReplaceTest extends UnitTestCase {
       ->first()['id'];
     $replacement = [
       ['email' => 'firstedited@example.com', 'id' => $e1],
-      ['contact_id' => $cid1, 'email' => 'third@example.com', 'location_type_id' => 1]
+      ['contact_id' => $cid1, 'email' => 'third@example.com', 'location_type_id' => 1],
     ];
     $replaced = Email::replace()
       ->setRecords($replacement)

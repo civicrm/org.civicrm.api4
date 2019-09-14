@@ -1,5 +1,6 @@
 <?php
 namespace Civi\Api4;
+
 /**
  * GroupNesting entity.
  *

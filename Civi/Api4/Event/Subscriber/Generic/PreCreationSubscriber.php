@@ -6,8 +6,9 @@ use Civi\API\Event\PrepareEvent;
 use Civi\Api4\Generic\DAOCreateAction;
 
 abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
+
   /**
-   * @param PrepareEvent $event
+   * @param \Civi\API\Event\PrepareEvent $event
    */
   public function onApiPrepare(PrepareEvent $event) {
     $apiRequest = $event->getApiRequest();
@@ -24,7 +25,7 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
    * Modify the request
    *
-   * @param DAOCreateAction $request
+   * @param \Civi\Api4\Generic\DAOCreateAction $request
    *
    * @return void
    */
@@ -33,7 +34,7 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
    * Check if this subscriber should be applied to the request
    *
-   * @param DAOCreateAction $request
+   * @param \Civi\Api4\Generic\DAOCreateAction $request
    *
    * @return bool
    */
@@ -42,7 +43,7 @@ abstract class PreCreationSubscriber extends AbstractPrepareSubscriber {
   /**
    * Sets default values common to all creation requests
    *
-   * @param DAOCreateAction $request
+   * @param \Civi\Api4\Generic\DAOCreateAction $request
    */
   protected function addDefaultCreationValues(DAOCreateAction $request) {
   }

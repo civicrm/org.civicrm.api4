@@ -8,14 +8,14 @@ use Civi\Api4\OptionGroup;
 class OptionValuePreCreationSubscriber extends Generic\PreCreationSubscriber {
 
   /**
-   * @param DAOCreateAction $request
+   * @param \Civi\Api4\Generic\DAOCreateAction $request
    */
   protected function modify(DAOCreateAction $request) {
     $this->setOptionGroupId($request);
   }
 
   /**
-   * @param DAOCreateAction $request
+   * @param \Civi\Api4\Generic\DAOCreateAction $request
    *
    * @return bool
    */
@@ -24,7 +24,7 @@ class OptionValuePreCreationSubscriber extends Generic\PreCreationSubscriber {
   }
 
   /**
-   * @param DAOCreateAction $request
+   * @param \Civi\Api4\Generic\DAOCreateAction $request
    * @throws \API_Exception
    * @throws \Exception
    */

@@ -7,4 +7,5 @@ namespace Civi\Api4\Action\GroupContact;
  */
 class Update extends \Civi\Api4\Generic\DAOUpdateAction {
   use GroupContactSaveTrait;
+
 }

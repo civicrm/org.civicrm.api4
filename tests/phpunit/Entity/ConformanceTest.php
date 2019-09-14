@@ -2,9 +2,7 @@
 
 namespace Civi\Test\Api4\Entity;
 
-use Civi\Api4\Generic\AbstractEntity;
 use Civi\Api4\Entity;
-use Civi\Test\Api4\Service\TestCreationParameterProvider;
 use Civi\Test\Api4\Traits\TableDropperTrait;
 use Civi\Test\Api4\UnitTestCase;
 
@@ -19,7 +17,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @var TestCreationParameterProvider
+   * @var \Civi\Test\Api4\Service\TestCreationParameterProvider
    */
   protected $creationParamProvider;
 
@@ -110,7 +108,7 @@ class ConformanceTest extends UnitTestCase {
 
   /**
    * @param string $entity
-   * @param AbstractEntity|string $entityClass
+   * @param \Civi\Api4\Generic\AbstractEntity|string $entityClass
    *
    * @return mixed
    */
@@ -131,7 +129,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity|string $entityClass
+   * @param \Civi\Api4\Generic\AbstractEntity|string $entityClass
    * @param int $id
    */
   protected function checkUpdateFailsFromCreate($entityClass, $id) {
@@ -149,7 +147,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity|string $entityClass
+   * @param \Civi\Api4\Generic\AbstractEntity|string $entityClass
    * @param int $id
    * @param string $entity
    */
@@ -165,7 +163,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity|string $entityClass
+   * @param \Civi\Api4\Generic\AbstractEntity|string $entityClass
    * @param int $id
    * @param string $entity
    */
@@ -187,7 +185,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity|string $entityClass
+   * @param \Civi\Api4\Generic\AbstractEntity|string $entityClass
    */
   protected function checkDeleteWithNoId($entityClass) {
     $exceptionThrown = '';
@@ -202,7 +200,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity|string $entityClass
+   * @param \Civi\Api4\Generic\AbstractEntity|string $entityClass
    */
   protected function checkWrongParamType($entityClass) {
     $exceptionThrown = '';
@@ -219,7 +217,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity|string $entityClass
+   * @param \Civi\Api4\Generic\AbstractEntity|string $entityClass
    * @param int $id
    */
   protected function checkDeletion($entityClass, $id) {
@@ -233,7 +231,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   /**
-   * @param AbstractEntity|string $entityClass
+   * @param \Civi\Api4\Generic\AbstractEntity|string $entityClass
    * @param int $id
    * @param string $entity
    */

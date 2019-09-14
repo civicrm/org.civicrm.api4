@@ -3,6 +3,7 @@
 namespace Civi\Test\Api4\Traits;
 
 trait TableDropperTrait {
+
   /**
    * @param $prefix
    */

@@ -1,12 +1,13 @@
 <?php
 
 namespace Civi\Api4\Event\Subscriber;
+
 use Civi\Api4\Generic\AbstractAction;
 
 class CustomFieldPreSaveSubscriber extends Generic\PreSaveSubscriber {
-  
+
   public $supportedOperation = 'create';
-  
+
   public function modify(&$field, AbstractAction $request) {
     if (!empty($field['option_values'])) {
       $weight = 0;
@@ -33,5 +34,5 @@ class CustomFieldPreSaveSubscriber extends Generic\PreSaveSubscriber {
   public function applies(AbstractAction $request) {
     return $request->getEntityName() === 'CustomField';
   }
-  
+
 }

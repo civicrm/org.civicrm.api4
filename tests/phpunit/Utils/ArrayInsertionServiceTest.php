@@ -18,7 +18,7 @@ class ArrayInsertionServiceTest extends UnitTestCase {
 
     $expected = [
       'foo' => [
-        'bar' => 'LALA'
+        'bar' => 'LALA',
       ],
     ];
 
@@ -29,25 +29,25 @@ class ArrayInsertionServiceTest extends UnitTestCase {
     $contacts = [
       [
         'id' => 1,
-        'first_name' => 'Jim'
+        'first_name' => 'Jim',
       ],
       [
         'id' => 2,
-        'first_name' => 'Karen'
+        'first_name' => 'Karen',
       ],
     ];
     $emails = [
       [
         'email' => 'jim@jim.com',
         'id' => 2,
-        '_parent_id' => 1
+        '_parent_id' => 1,
       ],
     ];
     $locationTypes = [
       [
         'name' => 'Home',
         'id' => 3,
-        '_parent_id' => 2
+        '_parent_id' => 2,
       ],
     ];
 

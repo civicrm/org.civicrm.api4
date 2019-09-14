@@ -216,7 +216,8 @@ trait DAOActionTrait {
           $customParams,
           $value,
           $customFieldExtends,
-          NULL, // todo check when this is needed
+          // todo check when this is needed
+          NULL,
           $entityId,
           FALSE,
           FALSE,

@@ -3,8 +3,6 @@
 namespace Civi\Test\Api4\Query;
 
 use Civi\Api4\Contact;
-use Civi\Api4\OptionGroup;
-use Civi\Api4\OptionValue;
 use Civi\Test\Api4\UnitTestCase;
 
 /**

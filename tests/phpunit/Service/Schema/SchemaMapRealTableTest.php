@@ -8,6 +8,7 @@ use Civi\Test\Api4\UnitTestCase;
  * @group headless
  */
 class SchemaMapRealTableTest extends UnitTestCase {
+
   public function testAutoloadWillPopulateTablesByDefault() {
     $map = \Civi::container()->get('schema_map');
     $this->assertNotEmpty($map->getTables());

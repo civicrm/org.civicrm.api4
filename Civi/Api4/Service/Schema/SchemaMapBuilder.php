@@ -14,7 +14,7 @@ use CRM_Utils_Array as UtilsArray;
 
 class SchemaMapBuilder {
   /**
-   * @var EventDispatcherInterface
+   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
    */
   protected $dispatcher;
   /**
@@ -23,7 +23,7 @@ class SchemaMapBuilder {
   protected $apiEntities;
 
   /**
-   * @param EventDispatcherInterface $dispatcher
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
    */
   public function __construct(EventDispatcherInterface $dispatcher) {
     $this->dispatcher = $dispatcher;

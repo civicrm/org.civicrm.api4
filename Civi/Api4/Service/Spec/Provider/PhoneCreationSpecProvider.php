@@ -5,6 +5,7 @@ namespace Civi\Api4\Service\Spec\Provider;
 use Civi\Api4\Service\Spec\RequestSpec;
 
 class PhoneCreationSpecProvider implements Generic\SpecProviderInterface {
+
   /**
    * @inheritDoc
    */

@@ -62,7 +62,8 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
     $query = new Api4SelectQuery('Contact', FALSE, civicrm_api4('Contact', 'getFields', ['includeCustom' => FALSE, 'checkPermissions' => FALSE, 'action' => 'get'], 'name'));
     $query->select[] = 'id';
     $query->select[] = 'first_name';
-    $query->select[] = 'emails.location_type.name'; // emails not selected
+    // emails not selected
+    $query->select[] = 'emails.location_type.name';
     $results = $query->run();
     $firstResult = array_shift($results);
 
@@ -73,7 +74,8 @@ class Api4SelectQueryComplexJoinTest extends UnitTestCase {
     $query = new Api4SelectQuery('Contact', FALSE, civicrm_api4('Contact', 'getFields', ['includeCustom' => FALSE, 'checkPermissions' => FALSE, 'action' => 'get'], 'name'));
     $query->select[] = 'id';
     $query->select[] = 'first_name';
-    $query->select[] = 'emails.location_type.name'; // before emails selection
+    // before emails selection
+    $query->select[] = 'emails.location_type.name';
     $query->select[] = 'emails.email';
     $query->where[] = ['emails.email', 'IS NOT NULL'];
     $results = $query->run();

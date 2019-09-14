@@ -70,8 +70,12 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
   /**
    * Create sample entities (using V3 for now).
    *
-   * @param array $params (type, seq, overrides, count)
-   * @return array (either single, or array of array if count >1)
+   * @param array $params
+   *   (type, seq, overrides, count)
+   * @return array
+   *   (either single, or array of array if count >1)
+   * @throws \CiviCRM_API3_Exception
+   * @throws \Exception
    */
   public static function createEntity($params) {
     $params += [
@@ -154,7 +158,8 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
       if (substr($value, 0, 6) === 'dummy.') {
         $foreign_entity = self::createEntity([
           'type' => substr($value, 6),
-          'seq' => $params['seq']]);
+          'seq' => $params['seq'],
+        ]);
         $sample_params[$key] = $foreign_entity['id'];
       }
     }
@@ -217,7 +222,8 @@ class UnitTestCase extends \PHPUnit_Framework_TestCase implements HeadlessInterf
       ],
       'Contribution' => [
         'contact_id' => 'dummy.Individual',
-        'financial_type_id' => 1, // donation, 2 = member, 3 = campaign contribution, 4=event
+        // donation, 2 = member, 3 = campaign contribution, 4=event
+        'financial_type_id' => 1,
         'total_amount' => 7.3,
       ],
       'Activity' => [
