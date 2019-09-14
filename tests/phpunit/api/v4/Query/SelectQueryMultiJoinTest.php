@@ -62,7 +62,7 @@ class SelectQueryMultiJoinTest extends UnitTestCase {
     $secondContactEmailIds = [$thirdEmail['id'], $fourthEmail['id']];
 
     foreach ($results as $id => $email) {
-      $displayName = $email['contact']['display_name'];
+      $displayName = $email['contact.display_name'];
       if (in_array($id, $firstContactEmailIds)) {
         $this->assertEquals('First Contact', $displayName);
       }

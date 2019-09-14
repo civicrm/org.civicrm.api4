@@ -88,14 +88,9 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       ->execute()
       ->first();
 
-    $this->assertArrayHasKey($group, $result);
-    $favoriteThings = $result[$group];
-    $favoriteFood = $favoriteThings[$foodField];
-    $favoriteColor = $favoriteThings[$colorField];
-    $financialStuff = $result['FinancialStuff'];
-    $this->assertEquals('Red', $favoriteColor['label']);
-    $this->assertEquals('Corn', $favoriteFood['label']);
-    $this->assertEquals(50000, $financialStuff['Salary']);
+    $this->assertEquals('Red', $result["$group.$colorField.label"]);
+    $this->assertEquals('Corn', $result["$group.$foodField.label"]);
+    $this->assertEquals(50000, $result['FinancialStuff.Salary']);
   }
 
   public function testWithCustomDataForMultipleContacts() {
@@ -182,9 +177,9 @@ class CreateWithOptionGroupTest extends BaseCustomValueTest {
       }
     }
 
-    $this->assertEquals('Blue', $blueCheese[$group][$colorField]['label']);
-    $this->assertEquals('Cheese', $blueCheese[$group][$foodField]['label']);
-    $this->assertEquals(500000, $blueCheese['FinancialStuff']['Salary']);
+    $this->assertEquals('Blue', $blueCheese["$group.$colorField.label"]);
+    $this->assertEquals('Cheese', $blueCheese["$group.$foodField.label"]);
+    $this->assertEquals(500000, $blueCheese['FinancialStuff.Salary']);
   }
 
 }

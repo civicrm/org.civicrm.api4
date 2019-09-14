@@ -119,7 +119,8 @@ class Api4SelectQuery extends SelectQuery {
     }
 
     $results = [];
-    $query = \CRM_Core_DAO::executeQuery($this->query->toSQL());
+    $sql = $this->query->toSQL();
+    $query = \CRM_Core_DAO::executeQuery($sql);
 
     while ($query->fetch()) {
       if (in_array('row_count', $this->select)) {
@@ -194,30 +195,11 @@ class Api4SelectQuery extends SelectQuery {
     // core return fields
     foreach ($return as $fieldName) {
       $field = $this->getField($fieldName);
-      if ($field && in_array($field['name'], $this->entityFieldNames)) {
+      if (strpos($fieldName, '.') && !empty($this->fkSelectAliases[$fieldName]) && !array_filter($this->getPathJoinTypes($fieldName))) {
+        $this->selectFields[$this->fkSelectAliases[$fieldName]] = $fieldName;
+      }
+      elseif ($field && in_array($field['name'], $this->entityFieldNames)) {
         $this->selectFields[self::MAIN_TABLE_ALIAS . "." . UtilsArray::value('column_name', $field, $field['name'])] = $field['name'];
-      }
-      elseif (strpos($fieldName, '.')) {
-        $fkField = $this->addFkField($fieldName, 'LEFT');
-        if ($fkField) {
-          $this->selectFields[implode('.', $fkField)] = $fieldName;
-        }
-      }
-      elseif ($field && strpos($fieldName, 'custom_') === 0) {
-        list($table_name, $column_name) = $this->addCustomField($field, 'LEFT');
-
-        if ($field['data_type'] != 'ContactReference') {
-          // 'ordinary' custom field. We will select the value as custom_XX.
-          $this->selectFields["$table_name.$column_name"] = $fieldName;
-        }
-        else {
-          // contact reference custom field. The ID will be stored in custom_XX_id.
-          // custom_XX will contain the sort name of the contact.
-          $this->query->join("c_$fieldName", "LEFT JOIN civicrm_contact c_$fieldName ON c_$fieldName.id = `$table_name`.`$column_name`");
-          $this->selectFields["$table_name.$column_name"] = $fieldName . "_id";
-          // We will call the contact table for the join c_XX.
-          $this->selectFields["c_$fieldName.sort_name"] = $fieldName;
-        }
       }
     }
   }
@@ -561,6 +543,38 @@ class Api4SelectQuery extends SelectQuery {
       $bao = new $baoName();
       $this->query = \CRM_Utils_SQL_Select::from($bao->tableName() . ' ' . self::MAIN_TABLE_ALIAS);
     }
+  }
+
+  /**
+   * Separates a string like 'emails.location_type.label' into an array, where
+   * each value in the array tells whether it is 1-1 or 1-n join type
+   *
+   * @param string $pathString
+   *   Dot separated path to the field
+   *
+   * @return array
+   *   Index is table alias and value is boolean whether is 1-to-many join
+   */
+  public function getPathJoinTypes($pathString) {
+    $pathParts = explode('.', $pathString);
+    // remove field
+    array_pop($pathParts);
+    $path = [];
+    $query = $this;
+    $isMultipleChecker = function($alias) use ($query) {
+      foreach ($query->getJoinedTables() as $table) {
+        if ($table->getAlias() === $alias) {
+          return $table->getJoinType() === Joinable::JOIN_TYPE_ONE_TO_MANY;
+        }
+      }
+      return FALSE;
+    };
+
+    foreach ($pathParts as $part) {
+      $path[$part] = $isMultipleChecker($part);
+    }
+
+    return $path;
   }
 
 }
