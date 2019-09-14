@@ -3,10 +3,6 @@
 require_once 'api4.civix.php';
 require_once 'api/Exception.php';
 
-use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\Config\FileLocator;
-
 /**
  * Procedural wrapper for the OO api version 4.
  *
@@ -53,65 +49,8 @@ function civicrm_api4($entity, $action, $params = [], $index = NULL) {
  * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
  */
 function api4_civicrm_container($container) {
-  $loader = new XmlFileLoader($container, new FileLocator(__DIR__));
-  $loader->load('services.xml');
-
-  _api4_load_services('Civi\Api4\Service\Spec\Provider', 'spec_provider', $container);
-  _api4_load_services('Civi\Api4\Event\Subscriber', 'event_subscriber', $container);
-
-  $container->getDefinition('civi_api_kernel')->addMethodCall(
-    'registerApiProvider',
-    [new Reference('action_object_provider')]
-  );
-
-  // add event subscribers$container->get(
-  $dispatcher = $container->getDefinition('dispatcher');
-  $subscribers = $container->findTaggedServiceIds('event_subscriber');
-
-  foreach (array_keys($subscribers) as $subscriber) {
-    $dispatcher->addMethodCall(
-      'addSubscriber',
-      [new Reference($subscriber)]
-    );
-  }
-
-  // add spec providers
-  $providers = $container->findTaggedServiceIds('spec_provider');
-  $gatherer = $container->getDefinition('spec_gatherer');
-
-  foreach (array_keys($providers) as $provider) {
-    $gatherer->addMethodCall(
-      'addSpecProvider',
-      [new Reference($provider)]
-    );
-  }
-
-  if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
-    $loader->load('tests/services.xml');
-  }
-}
-
-/**
- * Load all services in a given directory
- *
- * @param string $namespace
- * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
- */
-function _api4_load_services($namespace, $tag, $container) {
-  $namespace = \CRM_Utils_File::addTrailingSlash($namespace, '\\');
-  foreach (\CRM_Extension_System::singleton()->getMapper()->getActiveModuleFiles() as $ext) {
-    $path = \CRM_Utils_File::addTrailingSlash(dirname($ext['filePath'])) . str_replace('\\', DIRECTORY_SEPARATOR, $namespace);
-    foreach (glob("$path*.php") as $file) {
-      $matches = [];
-      preg_match('/(\w*).php/', $file, $matches);
-      $serviceName = $namespace . array_pop($matches);
-      $serviceClass = new \ReflectionClass($serviceName);
-      if ($serviceClass->isInstantiable()) {
-        $definition = $container->register(str_replace('\\', '_', $serviceName), $serviceName);
-        $definition->addTag($tag);
-      }
-    }
-  }
+  require_once __DIR__ . '/CRM/Api4/Services.php';
+  CRM_Api4_Services::hook_container($container);
 }
 
 /**
