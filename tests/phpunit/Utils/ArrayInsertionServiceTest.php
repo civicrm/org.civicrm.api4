@@ -1,9 +1,9 @@
 <?php
 
-namespace Civi\Test\Api4\Utils;
+namespace api\v4\Utils;
 
 use Civi\Api4\Utils\ArrayInsertionUtil;
-use Civi\Test\Api4\UnitTestCase;
+use api\v4\UnitTestCase;
 
 /**
  * @group headless

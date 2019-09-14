@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Test\Api4\Mock;
+namespace api\v4\Mock;
 
 /**
  * Grandchild class

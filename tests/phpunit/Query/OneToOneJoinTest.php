@@ -1,13 +1,13 @@
 <?php
 
-namespace Civi\Test\Api4\Query;
+namespace api\v4\Query;
 
 use Civi\Api4\Contact;
-use Civi\Test\Api4\UnitTestCase;
+use api\v4\UnitTestCase;
 
 /**
  * Class OneToOneJoinTest
- * @package Civi\Test\Api4\Query
+ * @package api\v4\Query
  * @group headless
  */
 class OneToOneJoinTest extends UnitTestCase {

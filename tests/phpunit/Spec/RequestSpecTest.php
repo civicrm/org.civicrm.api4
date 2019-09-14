@@ -1,10 +1,10 @@
 <?php
 
-namespace Civi\Test\Api4\Spec;
+namespace api\v4\Spec;
 
 use Civi\Api4\Service\Spec\FieldSpec;
 use Civi\Api4\Service\Spec\RequestSpec;
-use Civi\Test\Api4\UnitTestCase;
+use api\v4\UnitTestCase;
 
 /**
  * @group headless

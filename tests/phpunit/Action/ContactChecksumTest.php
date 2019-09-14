@@ -1,13 +1,13 @@
 <?php
 
-namespace Civi\Test\Api4\Action;
+namespace api\v4\Action;
 
 use Civi\Api4\Contact;
 
 /**
  * @group headless
  */
-class ContactChecksumTest extends \Civi\Test\Api4\UnitTestCase {
+class ContactChecksumTest extends \api\v4\UnitTestCase {
 
   public function testGetChecksum() {
     $contact = Contact::create()

@@ -1,10 +1,10 @@
 <?php
 
-namespace Civi\Test\Api4\Action;
+namespace api\v4\Action;
 
 use Civi\Api4\Contact;
 use Civi\Api4\Relationship;
-use Civi\Test\Api4\UnitTestCase;
+use api\v4\UnitTestCase;
 
 /**
  * @group headless

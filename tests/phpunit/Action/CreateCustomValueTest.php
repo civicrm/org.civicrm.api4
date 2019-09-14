@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Test\Api4\Action;
+namespace api\v4\Action;
 
 use Civi\Api4\CustomField;
 use Civi\Api4\CustomGroup;

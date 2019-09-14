@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Test\Api4\Action;
+namespace api\v4\Action;
 
 use Civi\Api4\Contact;
 use Civi\Api4\Email;
@@ -8,7 +8,7 @@ use Civi\Api4\Email;
 /**
  * @group headless
  */
-class ContactApiKeyTest extends \Civi\Test\Api4\UnitTestCase {
+class ContactApiKeyTest extends \api\v4\UnitTestCase {
 
   public function testGetApiKey() {
     \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM', 'add contacts', 'edit api keys', 'view all contacts', 'edit all contacts'];

@@ -1,13 +1,13 @@
 <?php
 
-namespace Civi\Test\Api4\Action;
+namespace api\v4\Action;
 
-use Civi\Test\Api4\UnitTestCase;
-use Civi\Test\Api4\Traits\TableDropperTrait;
+use api\v4\UnitTestCase;
+use api\v4\Traits\TableDropperTrait;
 
 abstract class BaseCustomValueTest extends UnitTestCase {
 
-  use \Civi\Test\Api4\Traits\OptionCleanupTrait {
+  use \api\v4\Traits\OptionCleanupTrait {
     setUp as setUpOptionCleanup;
   }
   use TableDropperTrait;

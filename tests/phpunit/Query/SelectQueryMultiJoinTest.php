@@ -1,14 +1,14 @@
 <?php
 
-namespace Civi\Test\Api4\Query;
+namespace api\v4\Query;
 
 use Civi\Api4\Contact;
 use Civi\Api4\Email;
-use Civi\Test\Api4\UnitTestCase;
+use api\v4\UnitTestCase;
 
 /**
  * Class SelectQueryMultiJoinTest
- * @package Civi\Test\Api4\Query
+ * @package api\v4\Query
  * @group headless
  */
 class SelectQueryMultiJoinTest extends UnitTestCase {

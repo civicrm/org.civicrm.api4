@@ -1,10 +1,10 @@
 <?php
 
-namespace Civi\Test\Api4\Entity;
+namespace api\v4\Entity;
 
 use Civi\Api4\Entity;
-use Civi\Test\Api4\Traits\TableDropperTrait;
-use Civi\Test\Api4\UnitTestCase;
+use api\v4\Traits\TableDropperTrait;
+use api\v4\UnitTestCase;
 
 /**
  * @group headless
@@ -12,12 +12,12 @@ use Civi\Test\Api4\UnitTestCase;
 class ConformanceTest extends UnitTestCase {
 
   use TableDropperTrait;
-  use \Civi\Test\Api4\Traits\OptionCleanupTrait {
+  use \api\v4\Traits\OptionCleanupTrait {
     setUp as setUpOptionCleanup;
   }
 
   /**
-   * @var \Civi\Test\Api4\Service\TestCreationParameterProvider
+   * @var \api\v4\Service\TestCreationParameterProvider
    */
   protected $creationParamProvider;
 

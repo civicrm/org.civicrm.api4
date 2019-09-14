@@ -1,9 +1,9 @@
 <?php
 
-namespace Civi\Test\Api4\Query;
+namespace api\v4\Query;
 
 use Civi\Api4\Query\Api4SelectQuery;
-use Civi\Test\Api4\UnitTestCase;
+use api\v4\UnitTestCase;
 
 /**
  * @group headless

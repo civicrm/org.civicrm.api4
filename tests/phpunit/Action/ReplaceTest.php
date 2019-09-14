@@ -1,13 +1,13 @@
 <?php
 
-namespace Civi\Test\Api4\Action;
+namespace api\v4\Action;
 
 use Civi\Api4\CustomField;
 use Civi\Api4\CustomGroup;
 use Civi\Api4\CustomValue;
 use Civi\Api4\Email;
-use Civi\Test\Api4\Traits\TableDropperTrait;
-use Civi\Test\Api4\UnitTestCase;
+use api\v4\Traits\TableDropperTrait;
+use api\v4\UnitTestCase;
 use Civi\Api4\Contact;
 
 /**

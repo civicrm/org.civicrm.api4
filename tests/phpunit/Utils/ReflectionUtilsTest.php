@@ -1,10 +1,10 @@
 <?php
 
-namespace Civi\Test\Api4\Utils;
+namespace api\v4\Utils;
 
 use Civi\Api4\Utils\ReflectionUtils;
-use Civi\Test\Api4\Mock\MockV4ReflectionGrandchild;
-use Civi\Test\Api4\UnitTestCase;
+use api\v4\Mock\MockV4ReflectionGrandchild;
+use api\v4\UnitTestCase;
 
 /**
  * @group headless

@@ -1,8 +1,8 @@
 <?php
 
-namespace Civi\Test\Api4\Service\Schema;
+namespace api\v4\Service\Schema;
 
-use Civi\Test\Api4\UnitTestCase;
+use api\v4\UnitTestCase;
 
 /**
  * @group headless

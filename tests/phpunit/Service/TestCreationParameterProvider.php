@@ -1,6 +1,6 @@
 <?php
 
-namespace Civi\Test\Api4\Service;
+namespace api\v4\Service;
 
 use Civi\Api4\Service\Spec\FieldSpec;
 use Civi\Api4\Service\Spec\SpecGatherer;
