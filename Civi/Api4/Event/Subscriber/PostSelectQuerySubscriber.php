@@ -5,7 +5,6 @@ namespace Civi\Api4\Event\Subscriber;
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\PostSelectQueryEvent;
 use Civi\Api4\Query\Api4SelectQuery;
-use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Civi\Api4\Utils\ArrayInsertionUtil;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 

@@ -46,7 +46,7 @@ class ExtendFromIndividualTest extends BaseCustomValueTest {
       ->execute()
       ->first();
 
-    $this->assertEquals('Red',  $contact['MyContactFields.FavColor']);
+    $this->assertEquals('Red', $contact['MyContactFields.FavColor']);
   }
 
 }

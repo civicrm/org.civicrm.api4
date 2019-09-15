@@ -7,7 +7,7 @@ namespace api\v4\Mock;
  */
 class MockV4ReflectionChild extends MockV4ReflectionBase {
   /**
-   * @inheritDoc
+   * @var array
    *
    * In the child class, foo has been barred.
    */

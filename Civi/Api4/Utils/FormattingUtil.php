@@ -45,7 +45,6 @@ class FormattingUtil {
       elseif (array_key_exists($name, $params) && $params[$name] === NULL) {
         $params[$name] = 'null';
       }
-
     }
   }
 
@@ -56,6 +55,8 @@ class FormattingUtil {
    *
    * @param $value
    * @param $fieldSpec
+   * @param string $entity
+   *   Ex: 'Contact', 'Domain'
    * @throws \API_Exception
    */
   public static function formatValue(&$value, $fieldSpec, $entity) {
