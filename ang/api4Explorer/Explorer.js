@@ -217,7 +217,17 @@
         if (params[key]) {
           var newParam = {};
           _.each(params[key], function(item) {
-            newParam[item[0]] = parseYaml(_.cloneDeep(item[1]));
+            var val = _.cloneDeep(item[1]);
+            // Remove blank items from "chain" array
+            if (_.isArray(val)) {
+              _.eachRight(item[1], function(v, k) {
+                if (v) {
+                  return false;
+                }
+                val.length--;
+              });
+            }
+            newParam[item[0]] = parseYaml(val);
           });
           params[key] = newParam;
         }
@@ -384,7 +394,7 @@
         });
         code.php += "\n]";
         if (index || index === 0) {
-          code.php += ', ' + JSON.stringify(index);
+          code.php += ', ' + phpFormat(index);
         }
         code.php += ");";
         
@@ -806,6 +816,9 @@
             }
             else if (link && _.contains(['create'], newAction)) {
               scope.chain[1][2] = '{values: {' + link[0] + ': ' + link[1] + '}}';
+            }
+            else if (link && _.contains(['save'], newAction)) {
+              scope.chain[1][2] = '{records: [{' + link[0] + ': ' + link[1] + '}]}';
             } else {
               scope.chain[1][2] = '{}';
             }
