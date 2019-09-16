@@ -8,6 +8,8 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\Config\FileLocator;
 
+if (!is_callable('civicrm_api4')) {
+
 /**
  * Procedural wrapper for the OO api version 4.
  *
@@ -83,6 +85,8 @@ function api4_civicrm_container($container) {
   if (defined('CIVICRM_UF') && CIVICRM_UF === 'UnitTests') {
     $loader->load('tests/services.xml');
   }
+}
+
 }
 
 /**
