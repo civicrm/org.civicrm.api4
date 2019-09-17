@@ -57,12 +57,14 @@ class CRM_Api4_Upgrader extends CRM_Api4_Upgrader_Base {
    * Uninstall script
    */
   public function uninstall() {
-    // Remove Api4 Explorer navigation menu item
-    civicrm_api3('Navigation', 'get', [
-      'name' => 'Api Explorer v4',
-      'return' => ['id'],
-      'api.Navigation.delete' => [],
-    ]);
+    // Remove Api4 Explorer navigation menu item unless civicrm core includes api4
+    if (version_compare(CRM_Utils_System::version(), '5.19.alpha1', '<')) {
+      civicrm_api3('Navigation', 'get', [
+        'name' => 'Api Explorer v4',
+        'return' => ['id'],
+        'api.Navigation.delete' => [],
+      ]);
+    }
   }
 
   /**
