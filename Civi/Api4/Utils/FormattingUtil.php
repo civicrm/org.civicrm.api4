@@ -57,6 +57,8 @@ class FormattingUtil {
         }
       }
     }
+
+    HtmlUtils::singleton()->encodeRow($params);
   }
 
   /**
@@ -100,6 +102,11 @@ class FormattingUtil {
       case 'Date':
         $value = date('Ymd', strtotime($value));
         break;
+    }
+
+    $hic = HtmlUtils::singleton();
+    if (!$hic->isSkippedField($fieldSpec['name'])) {
+      $value = $hic->encodeValue($value);
     }
   }
 
