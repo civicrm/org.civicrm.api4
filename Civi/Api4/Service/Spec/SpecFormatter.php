@@ -64,6 +64,7 @@ class SpecFormatter {
     $field->setDefaultValue(ArrayHelper::value('default', $data));
     $field->setDescription(ArrayHelper::value('description', $data));
 
+    $field->setPermission(ArrayHelper::value('permission', $data));
     $fkAPIName = ArrayHelper::value('FKApiName', $data);
     $fkClassName = ArrayHelper::value('FKClassName', $data);
     if ($fkAPIName || $fkClassName) {
