@@ -195,3 +195,25 @@ function api4_civicrm_angularModules(&$angularModules) {
 function api4_civicrm_alterSettingsFolders(&$metaDataFolders = NULL) {
   _api4_civix_civicrm_alterSettingsFolders($metaDataFolders);
 }
+
+/**
+ * Implements hook_civicrm_check().
+ */
+function api4_civicrm_check(&$messages) {
+  // Upgrading APIv4 @4.4.3+ without also upgrading core will make things worse.
+  // It's fine to upgrade them in whatever order - you just need to do it.
+  $ver = CRM_Utils_System::version();
+  $hasBaoApiKeyEnforcement =
+    (version_compare($ver, '5.13.7', '>=') && version_compare($ver, '5.14', '<'))
+    ||
+    (version_compare($ver, '5.19.2', '>='));
+  if (!$hasBaoApiKeyEnforcement) {
+    $messages[] = new CRM_Utils_Check_Message(
+      'api4_insecure',
+      ts('The APIv4 extension (v4.4.3+) relies on the security updates of 20-Nov-19. Update to CiviCRM 5.13.7+ or 5.19.2+. (Or, if you cannot, then downgrade to extension v4.4.2).'),
+      ts('APIv4 Security Requirement'),
+      \Psr\Log\LogLevel::WARNING,
+      'fa-flag'
+    );
+  }
+}
