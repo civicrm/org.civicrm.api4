@@ -40,8 +40,8 @@ class ContactJoinTest extends UnitTestCase {
         'select' => ['contact.display_name', 'contact.id'],
       ]);
       foreach ($results as $result) {
-        $this->assertEquals($contact['id'], $result['contact']['id']);
-        $this->assertEquals($contact['display_name'], $result['contact']['display_name']);
+        $this->assertEquals($contact['id'], $result['contact.id']);
+        $this->assertEquals($contact['display_name'], $result['contact.display_name']);
       }
     }
   }

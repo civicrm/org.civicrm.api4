@@ -70,9 +70,7 @@ class Api4SelectQueryTest extends UnitTestCase {
 
     $this->assertCount(1, $results);
     $firstResult = array_shift($results);
-    $this->assertArrayHasKey('contact', $firstResult);
-    $resultContact = $firstResult['contact'];
-    $this->assertEquals($contact['display_name'], $resultContact['display_name']);
+    $this->assertEquals($contact['display_name'], $firstResult['contact.display_name']);
   }
 
   public function testOneToManyMultipleJoin() {

@@ -38,14 +38,14 @@ class SpecFormatter {
     if (!empty($data['custom_group_id'])) {
       $field = new CustomFieldSpec($data['name'], $entity, $dataTypeName);
       if (strpos($entity, 'Custom_') !== 0) {
-        $field->setName($data['custom_group']['name'] . '.' . $data['name']);
+        $field->setName($data['custom_group.name'] . '.' . $data['name']);
       }
       else {
-        $field->setCustomTableName($data['custom_group']['table_name']);
+        $field->setCustomTableName($data['custom_group.table_name']);
         $field->setCustomFieldColumnName($data['column_name']);
       }
       $field->setCustomFieldId(ArrayHelper::value('id', $data));
-      $field->setCustomGroupName($data['custom_group']['name']);
+      $field->setCustomGroupName($data['custom_group.name']);
       $field->setTitle(ArrayHelper::value('label', $data));
       $field->setOptions(self::customFieldHasOptions($data));
       if (\CRM_Core_BAO_CustomField::isSerialized($data)) {

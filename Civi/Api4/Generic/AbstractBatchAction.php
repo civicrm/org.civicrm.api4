@@ -14,8 +14,8 @@ abstract class AbstractBatchAction extends AbstractQueryAction {
   /**
    * Criteria for selecting items to process.
    *
-   * @required
    * @var array
+   * @required
    */
   protected $where = [];
 

@@ -46,10 +46,7 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
       ->execute()
       ->first();
 
-    $this->assertArrayHasKey('MyContactFields', $contact);
-    $contactFields = $contact['MyContactFields'];
-    $this->assertArrayHasKey('FavColor', $contactFields);
-    $this->assertEquals('Red', $contactFields['FavColor']);
+    $this->assertEquals('Red', $contact['MyContactFields.FavColor']);
 
     Contact::update()
       ->addWhere('id', '=', $contactId)
@@ -63,8 +60,7 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
       ->execute()
       ->first();
 
-    $contactFields = $contact['MyContactFields'];
-    $this->assertEquals('Blue', $contactFields['FavColor']);
+    $this->assertEquals('Blue', $contact['MyContactFields.FavColor']);
   }
 
   public function testWithTwoFields() {
@@ -121,10 +117,8 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
       ->execute()
       ->first();
 
-    $this->assertArrayHasKey('MyContactFields', $contact);
-    $contactFields = $contact['MyContactFields'];
-    $this->assertArrayHasKey('FavColor', $contactFields);
-    $this->assertEquals('Red', $contactFields['FavColor']);
+    $this->assertArrayHasKey('MyContactFields.FavColor', $contact);
+    $this->assertEquals('Red', $contact['MyContactFields.FavColor']);
 
     Contact::update()
       ->addWhere('id', '=', $contactId1)
@@ -138,8 +132,7 @@ class BasicCustomFieldTest extends BaseCustomValueTest {
       ->execute()
       ->first();
 
-    $contactFields = $contact['MyContactFields'];
-    $this->assertEquals('Blue', $contactFields['FavColor']);
+    $this->assertEquals('Blue', $contact['MyContactFields.FavColor']);
 
     $search = Contact::get()
       ->setCheckPermissions(FALSE)

@@ -5,7 +5,6 @@ namespace Civi\Api4\Event\Subscriber;
 use Civi\Api4\Event\Events;
 use Civi\Api4\Event\PostSelectQueryEvent;
 use Civi\Api4\Query\Api4SelectQuery;
-use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Civi\Api4\Utils\ArrayInsertionUtil;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
@@ -46,9 +45,9 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
     $this->unserializeFields($results, $query->getEntity(), $fieldSpec);
 
     // Group the selects to avoid queries for each field
-    $groupedSelects = $this->getJoinedDotSelects($query);
+    $groupedSelects = $this->getNtoManyJoinSelects($query);
     foreach ($groupedSelects as $finalAlias => $selects) {
-      $joinPath = $this->getJoinPathInfo($selects[0], $query);
+      $joinPath = $query->getPathJoinTypes($selects[0]);
       $selects = $this->formatSelects($finalAlias, $selects, $query);
       $joinResults = $this->getJoinResults($query, $finalAlias, $selects);
       $this->formatJoinResults($joinResults, $query, $finalAlias);
@@ -92,11 +91,6 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
    * @param array $fields
    */
   protected function unserializeFields(&$results, $entity, $fields = []) {
-    if (empty($fields)) {
-      $params = ['action' => 'get', 'includeCustom' => FALSE];
-      $fields = civicrm_api4($entity, 'getFields', $params)->indexBy('name');
-    }
-
     foreach ($results as &$result) {
       foreach ($result as $field => &$value) {
         if (!empty($fields[$field]['serialize']) && is_string($value)) {
@@ -108,17 +102,18 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
   }
 
   /**
+   * Find only those joins that need to be handled by a separate query and weren't done in the main query.
+   *
    * @param \Civi\Api4\Query\Api4SelectQuery $query
    *
    * @return array
    */
-  private function getJoinedDotSelects(Api4SelectQuery $query) {
-    // Remove selects that are not in a joined table
+  private function getNtoManyJoinSelects(Api4SelectQuery $query) {
     $fkAliases = $query->getFkSelectAliases();
     $joinedDotSelects = array_filter(
       $query->getSelect(),
-      function ($select) use ($fkAliases) {
-        return isset($fkAliases[$select]);
+      function ($select) use ($fkAliases, $query) {
+        return isset($fkAliases[$select]) && array_filter($query->getPathJoinTypes($select));
       }
     );
 
@@ -287,38 +282,6 @@ class PostSelectQuerySubscriber implements EventSubscriberInterface {
     });
 
     return $joinResults;
-  }
-
-  /**
-   * Separates a string like 'emails.location_type.label' into an array, where
-   * each value in the array tells whether it is 1-1 or 1-n join type
-   *
-   * @param string $pathString
-   *   Dot separated path to the field
-   * @param \Civi\Api4\Query\Api4SelectQuery $query
-   *
-   * @return array
-   *   Index is table alias and value is boolean whether is 1-to-many join
-   */
-  private function getJoinPathInfo($pathString, $query) {
-    $pathParts = explode('.', $pathString);
-    // remove field
-    array_pop($pathParts);
-    $path = [];
-    $isMultipleChecker = function($alias) use ($query) {
-      foreach ($query->getJoinedTables() as $table) {
-        if ($table->getAlias() === $alias) {
-          return $table->getJoinType() === Joinable::JOIN_TYPE_ONE_TO_MANY;
-        }
-      }
-      return FALSE;
-    };
-
-    foreach ($pathParts as $part) {
-      $path[$part] = $isMultipleChecker($part);
-    }
-
-    return $path;
   }
 
   /**

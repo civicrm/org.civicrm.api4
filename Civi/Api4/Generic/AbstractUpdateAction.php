@@ -18,8 +18,8 @@ abstract class AbstractUpdateAction extends AbstractBatchAction {
   /**
    * Field values to update.
    *
-   * @required
    * @var array
+   * @required
    */
   protected $values = [];
 

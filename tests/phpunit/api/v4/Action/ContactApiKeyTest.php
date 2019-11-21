@@ -39,7 +39,7 @@ class ContactApiKeyTest extends \api\v4\UnitTestCase {
       ->addSelect('contact.api_key')
       ->addWhere('id', '=', $contact['email']['id'])
       ->execute()->first();
-    $this->assertEquals($key, $email['contact']['api_key']);
+    $this->assertEquals($key, $email['contact.api_key']);
 
     // Remove permission and we should not see the key
     \CRM_Core_Config::singleton()->userPermissionClass->permissions = ['access CiviCRM'];
@@ -55,7 +55,7 @@ class ContactApiKeyTest extends \api\v4\UnitTestCase {
       ->addSelect('contact.api_key')
       ->addWhere('id', '=', $contact['email']['id'])
       ->execute()->first();
-    $this->assertTrue(empty($email['contact']['api_key']));
+    $this->assertTrue(empty($email['contact.api_key']));
 
     $result = Contact::get()
       ->addWhere('id', '=', $contact['id'])
