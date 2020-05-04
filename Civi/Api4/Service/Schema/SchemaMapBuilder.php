@@ -9,14 +9,17 @@ use Civi\Api4\Service\Schema\Joinable\CustomGroupJoinable;
 use Civi\Api4\Service\Schema\Joinable\Joinable;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Civi\Api4\Service\Schema\Joinable\OptionValueJoinable;
+use Civi\Api4\Utils\CoreUtil;
 use CRM_Core_DAO_AllCoreTables as AllCoreTables;
 use CRM_Utils_Array as UtilsArray;
 
 class SchemaMapBuilder {
+
   /**
    * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
    */
   protected $dispatcher;
+
   /**
    * @var array
    */
@@ -169,46 +172,23 @@ class SchemaMapBuilder {
    * @param string $entity
    */
   private function addCustomFields(SchemaMap $map, Table $baseTable, $entity) {
-    // Don't be silly
-    if (!array_key_exists($entity, \CRM_Core_SelectValues::customGroupExtends())) {
-      return;
-    }
-    $queryEntity = (array) $entity;
-    if ($entity == 'Contact') {
-      $queryEntity = ['Contact', 'Individual', 'Organization', 'Household'];
-    }
-    $fieldData = \CRM_Utils_SQL_Select::from('civicrm_custom_field f')
-      ->join('custom_group', 'INNER JOIN civicrm_custom_group g ON g.id = f.custom_group_id')
-      ->select(['g.name as custom_group_name', 'g.table_name', 'g.is_multiple', 'f.name', 'label', 'column_name', 'option_group_id'])
-      ->where('g.extends IN (@entity)', ['@entity' => $queryEntity])
-      ->where('g.is_active')
-      ->where('f.is_active')
-      ->execute();
+    $links = CoreUtil::getCustomTableLinks($entity);
 
-    $links = [];
-
-    while ($fieldData->fetch()) {
-      $tableName = $fieldData->table_name;
-
-      $customTable = $map->getTableByName($tableName);
+    foreach ($links as $alias => $link) {
+      $customTable = $map->getTableByName($link['tableName']);
       if (!$customTable) {
-        $customTable = new Table($tableName);
+        $customTable = new Table($link['tableName']);
       }
 
-      if (!empty($fieldData->option_group_id)) {
-        $optionValueJoinable = new OptionValueJoinable($fieldData->option_group_id, $fieldData->label);
-        $customTable->addTableLink($fieldData->column_name, $optionValueJoinable);
+      if (!empty($link['option_group_id'])) {
+        $optionValueJoinable = new OptionValueJoinable($link['option_group_id'], $link['label']);
+        foreach ($link['columns'] as $columnName) {
+          $customTable->addTableLink($columnName, $optionValueJoinable);
+        }
       }
 
       $map->addTable($customTable);
 
-      $alias = $fieldData->custom_group_name;
-      $links[$alias]['tableName'] = $tableName;
-      $links[$alias]['isMultiple'] = !empty($fieldData->is_multiple);
-      $links[$alias]['columns'][$fieldData->name] = $fieldData->column_name;
-    }
-
-    foreach ($links as $alias => $link) {
       $joinable = new CustomGroupJoinable($link['tableName'], $alias, $link['isMultiple'], $entity, $link['columns']);
       $baseTable->addTableLink('id', $joinable);
     }

@@ -2,6 +2,9 @@
 
 namespace api\v4\Entity;
 
+use Civi\Api4\CustomField;
+use Civi\Api4\CustomGroup;
+use Civi\Api4\Generic\AbstractEntity;
 use Civi\Api4\Entity;
 use api\v4\Traits\TableDropperTrait;
 use api\v4\UnitTestCase;
@@ -33,6 +36,7 @@ class ConformanceTest extends UnitTestCase {
       'civicrm_participant',
     ];
     $this->dropByPrefix('civicrm_value_myfavorite');
+    $this->dropByPrefix('civicrm_value_api4conform');
     $this->cleanup(['tablesToTruncate' => $tablesToTruncate]);
     $this->setUpOptionCleanup();
     $this->loadDataSet('ConformanceTest');
@@ -43,7 +47,7 @@ class ConformanceTest extends UnitTestCase {
   }
 
   public function getEntities() {
-    return Entity::get()->setCheckPermissions(FALSE)->execute()->column('name');
+    return Entity::get()->setCheckPermissions(FALSE)->setIncludeCustom(FALSE)->execute()->column('name');
   }
 
   /**
@@ -53,8 +57,7 @@ class ConformanceTest extends UnitTestCase {
     $entities = $this->getEntities();
     $this->assertNotEmpty($entities);
 
-    foreach ($entities as $data) {
-      $entity = $data;
+    foreach ($entities as $entity) {
       $entityClass = 'Civi\Api4\\' . $entity;
 
       $actions = $this->checkActions($entityClass);
@@ -70,6 +73,7 @@ class ConformanceTest extends UnitTestCase {
       $this->checkGetCount($entityClass, $id, $entity);
       $this->checkUpdateFailsFromCreate($entityClass, $id);
       $this->checkWrongParamType($entityClass);
+      $this->checkCustomField($entity, $id);
       $this->checkDeleteWithNoId($entityClass);
       $this->checkDeletion($entityClass, $id);
       $this->checkPostDelete($entityClass, $id, $entity);
@@ -182,6 +186,27 @@ class ConformanceTest extends UnitTestCase {
       ->execute();
     $errMsg = sprintf('%s getCount failed', $entity);
     $this->assertGreaterThanOrEqual(1, $getResult->count(), $errMsg);
+  }
+
+  protected function checkCustomField($entity, $id) {
+    if (!isset(\CRM_Core_BAO_CustomQuery::$extendsMap[$entity])) {
+      return;
+    }
+    $custom = CustomGroup::create()
+      ->addValue('title', "api4conformance $entity")
+      ->addValue('extends', $entity)
+      ->addChain('field', CustomField::create()
+        ->addValue('custom_group_id', '$id')
+        ->addValue('label', "$entity Field")
+        ->addValue('html_type', 'Text'), 0)
+      ->execute()->first();
+    $customName = $custom['name'] . '.' . $custom['field']['name'];
+
+    $val = uniqid($entity);
+    civicrm_api4($entity, 'update', ['values' => ['id' => $id, $customName => $val]]);
+
+    $get = civicrm_api4($entity, 'get', ['where' => [['id', '=', $id]], 'select' => [$customName]])->first();
+    $this->assertEquals($val, $get[$custom['name']][$custom['field']['name']]);
   }
 
   /**

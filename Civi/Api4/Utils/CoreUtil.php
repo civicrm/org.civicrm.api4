@@ -41,6 +41,27 @@ class CoreUtil {
   }
 
   /**
+   * Get entity of given Custom table name
+   *
+   * @param string $tableName
+   *
+   * @return string
+   */
+  public static function getCustomEntityByTableName($tableName) {
+    $entity = CustomGroup::get()
+      ->addSelect('extends')
+      ->addWhere('table_name', '=', $tableName)
+      ->execute()
+      ->first()['extends'];
+
+    if (in_array($entity, ['Contact', 'Individual', 'Organization', 'Household'])) {
+      $entity = 'Contact';
+    }
+
+    return $entity;
+  }
+
+  /**
    * Given a sql table name, return the name of the api entity.
    *
    * @param $tableName
@@ -48,6 +69,74 @@ class CoreUtil {
    */
   public static function getApiNameFromTableName($tableName) {
     return AllCoreTables::getBriefName(AllCoreTables::getClassForTable($tableName));
+  }
+
+  /**
+   * Get custom table links for given custom table name
+   *
+   * @param string $tableName
+   *
+   * @return array
+   */
+  public static function getCustomTableLinksByTableName($tableName) {
+    $links = [];
+    $fieldData = \CRM_Utils_SQL_Select::from('civicrm_custom_field f')
+      ->join('custom_group', 'INNER JOIN civicrm_custom_group g ON g.id = f.custom_group_id')
+      ->select(['g.name as custom_group_name', 'g.table_name', 'g.is_multiple', 'f.name', 'label', 'column_name', 'option_group_id'])
+      ->where('g.table_name = @tableName', ['@tableName' => $tableName])
+      ->where('g.is_active')
+      ->where('f.is_active')
+      ->execute();
+
+    while ($fieldData->fetch()) {
+      $alias = $fieldData->custom_group_name;
+      $links[$alias]['tableName'] = $fieldData->table_name;
+      $links[$alias]['label'] = $fieldData->label;
+      $links[$alias]['option_group_id'] = $fieldData->option_group_id;
+      $links[$alias]['isMultiple'] = !empty($fieldData->is_multiple);
+      $links[$alias]['columns'][$fieldData->name] = $fieldData->column_name;
+    }
+
+    return $links;
+  }
+
+  /**
+   * Get custom table links for given entity
+   *
+   * @param string $entity
+   *
+   * @return array
+   */
+  public static function getCustomTableLinks($entity) {
+    // Don't be silly
+    if (!array_key_exists($entity, \CRM_Core_SelectValues::customGroupExtends())) {
+      return [];
+    }
+
+    $queryEntity = (array) $entity;
+    if ($entity == 'Contact') {
+      $queryEntity = ['Contact', 'Individual', 'Organization', 'Household'];
+    }
+
+    $links = [];
+    $fieldData = \CRM_Utils_SQL_Select::from('civicrm_custom_field f')
+      ->join('custom_group', 'INNER JOIN civicrm_custom_group g ON g.id = f.custom_group_id')
+      ->select(['g.name as custom_group_name', 'g.table_name', 'g.is_multiple', 'f.name', 'label', 'column_name', 'option_group_id'])
+      ->where('g.extends IN (@entity)', ['@entity' => $queryEntity])
+      ->where('g.is_active')
+      ->where('f.is_active')
+      ->execute();
+
+    while ($fieldData->fetch()) {
+      $alias = $fieldData->custom_group_name;
+      $links[$alias]['tableName'] = $fieldData->table_name;
+      $links[$alias]['label'] = $fieldData->label;
+      $links[$alias]['option_group_id'] = $fieldData->option_group_id;
+      $links[$alias]['isMultiple'] = !empty($fieldData->is_multiple);
+      $links[$alias]['columns'][$fieldData->name] = $fieldData->column_name;
+    }
+
+    return $links;
   }
 
 }
