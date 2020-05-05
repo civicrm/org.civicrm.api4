@@ -54,6 +54,10 @@ class CRM_Api4_Page_AJAX extends CRM_Core_Page {
    */
   protected function execute($entity, $action, $params = [], $index = NULL) {
     $params['checkPermissions'] = TRUE;
+    // Must have very high permission level to change acting user from client-side
+    if (!empty($params['actingUser']) && !CRM_Core_Permission::check(['administer CiviCRM', 'view all contacts'])) {
+      $params['actingUser'] = NULL;
+    }
 
     // Handle numeric indexes later so we can get the count
     $itemAt = CRM_Utils_Type::validate($index, 'Integer', FALSE);

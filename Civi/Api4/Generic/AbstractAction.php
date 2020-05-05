@@ -9,6 +9,8 @@ use Civi\Api4\Utils\ActionUtil;
  *
  * @method $this setCheckPermissions(bool $value)
  * @method bool getCheckPermissions()
+ * @method $this setActingUser(int $cid)
+ * @method int getActingUser()
  * @method $this setChain(array $chain)
  * @method array getChain()
  */
@@ -50,6 +52,15 @@ abstract class AbstractAction implements \ArrayAccess {
    * @var bool
    */
   protected $checkPermissions = TRUE;
+
+  /**
+   * Contact on which to base permissiaon checks & log actions against.
+   *
+   * Defaults to the current logged-in user.
+   *
+   * @var int
+   */
+  protected $actingUser;
 
   /**
    * @var string
